@@ -1,8 +1,12 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const secretKey = 'ayoub';
-const Utilisateur = require('../models/UtilisateurModel'); 
+const nodemailer = require("nodemailer");
+const { Op } = require("sequelize");
 
+const crypto = require("crypto");
+const Utilisateur = require('../models/UtilisateurModel'); 
+require("dotenv").config();
 
 exports.signup = async (req, res) => {
     const { nom, prenom, email, motDePasse, genre, photo, type , etat} = req.body;
@@ -119,6 +123,136 @@ exports.findUser = async (req, res) => {
   }
 };
 
+const FROM_EMAIL = process.env.MAILER_EMAIL_ID;
+const AUTH_PASSWORD = process.env.MAILER_PASSWORD;
 
+const API_ENDPOINT =
+  process.env.NODE_ENV === "production"
+    ? process.env.PRODUCTION_API_URL
+    : process.env.DEVELOPMENT_API_URL;
 
-  module.exports = exports;
+const smtpTransport = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  service: "gmail",
+  auth: {
+    user: FROM_EMAIL,
+    pass: AUTH_PASSWORD,
+  },
+});
+
+const {
+  forgotPasswordEmailTemplate,
+  resetPasswordConfirmationEmailTemplate,
+} = require("../template/userAccountEmailTemplates");
+
+exports.forgotPassword = async (req, res) => {
+  try {
+    const user = await Utilisateur.findOne({
+      where: { email: req.body.email },
+    });
+
+    if (!user) {
+      throw new Error("Utilisateur not found.");
+    }
+    console.log(user);
+    const token = Math.floor(1000 + Math.random() * 9000);
+
+    await Utilisateur.update(
+      {
+        resetPasswordToken: token,
+        resetPasswordExpires: new Date(Date.now() + 3600000), // token expires in 1 hour
+      },
+      { where: { id_utilisateur: user.id_utilisateur } }
+    );
+
+    const template = forgotPasswordEmailTemplate(
+      user.nom_prenom,
+      user.email,
+      API_ENDPOINT,
+      token
+    );
+
+    const data = {
+      from: FROM_EMAIL,
+      to: user.email,
+      subject: "Reinitialisation de votre mot de passe",
+      html: template,
+    };
+    // Assuming smtpTransport is properly configured and defined
+    await smtpTransport.sendMail(data);
+
+    return res.json({
+      message: "Veuillez vérifier votre e-mail pour plus d'instructions",
+    });
+  } catch (error) {
+    return res.status(422).json({ message: error.message });
+  }
+}
+
+exports.checkResetToken = async (req, res) => {
+  try {
+    const user = await Utilisateur.findOne({
+      where: {
+        resetPasswordToken: req.params.token,
+        resetPasswordExpires: { [Op.gt]: Date.now() },
+      },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        isValid: false,
+        message: "Password reset token is invalid or has expired.",
+      });
+    }
+
+    return res.json({ isValid: true });
+  } catch (error) {
+    return res.status(500).json({ isValid: false, message: error.message });
+  }
+}
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const user = await Utilisateur.findOne({
+      where: {
+        resetPasswordToken: req.params.token,
+        resetPasswordExpires: { [Op.gt]: Date.now() },
+      },
+    });
+
+    if (!user) {
+      return res.status(400).send({
+        message: "Password reset token is invalid or has expired.",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
+
+    await Utilisateur.update(
+      {
+        motDePasse: hashedPassword,
+        resetPasswordToken: null,
+        resetPasswordExpires: null,
+      },
+      { where: { id_utilisateur: user.id_utilisateur } }
+    );
+
+    const template = resetPasswordConfirmationEmailTemplate(user.nom);
+    const data = {
+      to: user.email,
+      from: FROM_EMAIL,
+      subject: "Confirmation de réinitialisation du mot de passe",
+      html: template,
+    };
+
+    await smtpTransport.sendMail(data);
+
+    return res.json({ message: "Réinitialisation du mot de passe" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+module.exports = exports;

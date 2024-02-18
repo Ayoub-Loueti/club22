@@ -30,7 +30,15 @@ const UtilisateurModel = sequelize.define('Utilisateur', {
     },
     etat:{
         type: DataTypes.ENUM('autorise','bloque')
-    }
+    },
+    resetPasswordToken: {
+        type: DataTypes.STRING,
+      },
+    
+      resetPasswordExpires: {
+        type: DataTypes.DATE,
+        defaultValue: null,
+      },
 }, {
     tableName: 'utilisateur',
     timestamps: false
