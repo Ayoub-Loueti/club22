@@ -1,23 +1,53 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
+
 import '../assets/login.css';
 import ooredoo1Image from '../assets/ooredoo1.png';
 import ooredoo3Image from '../assets/ooredoo3.png';
 
 function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [motDePasse, setMotDePasse] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); 
 
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
+    try {
+      const response = await axios.post('http://localhost:5000/login', {
+        email,
+        motDePasse,
+      });
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Ajoutez ici la logique de connexion
+      const token = response.data.token;
+      localStorage.setItem(
+        'login',
+        JSON.stringify({
+          isAuthenticated: true,
+          token: token,
+        })
+      );
+      alert('Login successful!');
+      navigate('/signup');
+    } catch (error) {
+      if (error.response) {
+
+        if (error.response.data.error === 'User account is not authorized to log inz') {
+          alert('Your account is blocked. Please contact the administrator.');
+        } else {
+          alert('Invalid email or password.');
+        }
+      } else if (error.request) {
+        alert('Network Error. Please try again later.');
+      } else {
+        alert('An error occurred. Please try again later.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -53,8 +83,8 @@ function Login() {
                 <h3 className="input-label">Utilisateur</h3>
                 <input
                   type="text"
-                  value={username}
-                  onChange={handleUsernameChange}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="input-field"
                 />
               </div>
@@ -62,8 +92,8 @@ function Login() {
                 <h3 className="input-label">Mot de passe</h3>
                 <input
                   type="password"
-                  value={password}
-                  onChange={handlePasswordChange}
+                  value={motDePasse}
+                  onChange={(e) => setMotDePasse(e.target.value)}
                   className="input-field"
                 />
               </div>

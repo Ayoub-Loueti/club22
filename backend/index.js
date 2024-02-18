@@ -4,14 +4,13 @@ const app = express();
 const utilisateur = require('./routes/UtilisateurRoute');
 const admin = require('./routes/AdminRoute');
 const dotenv = require('dotenv');
-
+const cors = require('cors');
 
 dotenv.config();
 app.use(express.json()); 
+app.use(cors());
 
-app.get('/api', (req, res) => {
-    res.send('Hello from the backend!');
-});
+
 
 app.use(utilisateur);
 app.use(admin);
