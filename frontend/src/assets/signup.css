@@ -1,0 +1,61 @@
+.signup-container {
+  background-color: #1e1e1e;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  align-items: center;
+  
+}
+
+.signup-white-square {
+  background-color: white;
+  width: 500px;
+  height: 650px;
+}
+
+.signup-green-square {
+  width: 700px;
+  height: 650px;
+  position: relative;
+}
+
+.signup-gray-rectangle {
+  background-color: #e4e4e4;
+  width: 140px;
+  height: 250px;
+  padding: 130px;
+  border-radius: 10px;
+  position: absolute;
+  left: calc(90% - 0px); /* Adjust to move the rectangle to the left */
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  box-shadow: 0px 4px 12px 4px rgba(0, 0, 0, 0.5);
+}
+
+.signup-input-label {
+  color: #4f5475;
+  margin-bottom: 5px;
+  font-weight: BOLD;
+  font-family: inherit;
+  text-align: left; /* Align input labels to the left */
+  margin-left: -100px; /* Adjust the margin to move labels to the left */
+  font-size: 14px;
+}
+
+.signup-input-field {
+  border: none;
+  border-bottom: 1px solid #909090;
+  width: calc(100% + 180px); /* Rendre les champs de saisie plus longs */
+  padding: 5px 0;
+  font-size: 16px;
+  margin-bottom: 20px;
+  outline: none;
+  background-color: #e4e4e4;
+  margin-left: -100px; /* Adjust the margin to move input fields to the left */
+}
+
+.signup-input-field:focus {
+  border-bottom: 2px solid #909090;
+}
