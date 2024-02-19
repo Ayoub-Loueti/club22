@@ -193,9 +193,11 @@ exports.forgotPassword = async (req, res) => {
 
 exports.checkResetToken = async (req, res) => {
   try {
+    const { resetPasswordToken } = req.body;
+
     const user = await Utilisateur.findOne({
       where: {
-        resetPasswordToken: req.params.token,
+        resetPasswordToken: resetPasswordToken,
         resetPasswordExpires: { [Op.gt]: Date.now() },
       },
     });

@@ -12,6 +12,16 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate(); 
 
+  const handleForgotPassword = async (email) => {
+    try {
+      await axios.post('http://localhost:5000/forgot-password', { email });
+      alert('Password reset email sent!');
+    } catch (error) {
+      alert('Failed to send password reset email. Please try again.');
+    }
+  };
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -35,7 +45,7 @@ function Login() {
     } catch (error) {
       if (error.response) {
 
-        if (error.response.data.error === 'User account is not authorized to log inz') {
+        if (error.response.data.error === 'User account is not authorized to log in') {
           alert('Your account is blocked. Please contact the administrator.');
         } else {
           alert('Invalid email or password.');
@@ -80,7 +90,7 @@ function Login() {
             </h2>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <h3 className="input-label">Utilisateur</h3>
+                <h3 className="input-label">Email</h3>
                 <input
                   type="text"
                   value={email}
@@ -100,7 +110,8 @@ function Login() {
 
               <div className="form-group">
                 <a
-                  href="/mot-de-passe-oublie"
+                  href="/verificationToken"
+                  onClick={() => handleForgotPassword(email)}
                   style={{
                     color: '#4F5475',
                     fontWeight: 'bold',
