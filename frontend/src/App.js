@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Im
 
 import Login from './pages/login';
 import Signup from './pages/signup';
+import VerificationToken from './pages/verificationToken';
+import ChangerPass from './pages/changerPass';
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
           {/* Définissez vos routes à l'intérieur de Routes */}
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/verificationToken" element={<VerificationToken />} />
+          <Route path="/changerPass/:token" element={<ChangerPass />} />
         </Routes>
       </div>
     </Router>
