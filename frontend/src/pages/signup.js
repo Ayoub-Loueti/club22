@@ -4,15 +4,30 @@ import ooredoo1Image from '../assets/ooredoo1.png';
 import ooredoo3Image from '../assets/ooredoo3.png';
 
 function Signup() {
-  const [username, setUsername] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
+  const handleFirstNameChange = (event) => {
+    setFirstName(event.target.value);
+  };
+
+  const handleLastNameChange = (event) => {
+    setLastName(event.target.value);
+  };
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
   };
 
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
+  };
+
+  const handleConfirmPasswordChange = (event) => {
+    setConfirmPassword(event.target.value);
   };
 
   const handleSubmit = (event) => {
@@ -100,7 +115,7 @@ function Signup() {
           }}
         />
         <div className="signup-gray-rectangle">
-          <div className="form-column">
+          <div className="form-column ">
             <h2
               style={{
                 position: 'absolute',
@@ -115,12 +130,33 @@ function Signup() {
               Inscription
             </h2>
             <form onSubmit={handleSubmit}>
+              <div className="form-group" style={{ display: 'flex' }}>
+                <div style={{ flex: 1, marginRight: '10px' }}>
+                  <h3 className="signup-input-label-lastname">Nom</h3>
+                  <input
+                    type="text"
+                    value={lastName}
+                    onChange={handleLastNameChange}
+                    className="signup-input-field-lastname"
+                  />
+                </div>
+                <div style={{ flex: 1, marginLeft: '10px' }}>
+                  <h3 className="signup-input-label-firstname">Prénom</h3>
+                  <input
+                    type="text"
+                    value={firstName}
+                    onChange={handleFirstNameChange}
+                    className="signup-input-field-firstname"
+                  />
+                </div>
+              </div>
+
               <div className="form-group">
-                <h3 className="signup-input-label">Utilisateur</h3>
+                <h3 className="signup-input-label">Email</h3>
                 <input
-                  type="text"
-                  value={username}
-                  onChange={handleUsernameChange}
+                  type="email"
+                  value={email}
+                  onChange={handleEmailChange}
                   className="signup-input-field"
                 />
               </div>
@@ -130,6 +166,17 @@ function Signup() {
                   type="password"
                   value={password}
                   onChange={handlePasswordChange}
+                  className="signup-input-field"
+                />
+              </div>
+              <div className="form-group">
+                <h3 className="signup-input-label">
+                  Confirmer votre mot de passe
+                </h3>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={handleConfirmPasswordChange}
                   className="signup-input-field"
                 />
               </div>
@@ -147,7 +194,7 @@ function Signup() {
                   fontWeight: 'bold',
                   cursor: 'pointer',
                   position: 'absolute',
-                  top: '75%',
+                  top: '81%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
                   zIndex: '1',
@@ -162,7 +209,7 @@ function Signup() {
                   color: '#4F5475',
                   textAlign: 'center',
                   position: 'absolute',
-                  top: '82%',
+                  top: '85%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
                   zIndex: '1',
@@ -175,7 +222,7 @@ function Signup() {
                 href="https://accounts.google.com/v3/signin/identifier?elo=1&ifkv=ATuJsjyd5xpCjFVDcRa4RIuEAg3FVQPiFlD12ri8U6DCY6uS-Bk0D54d-e3J8aZWZoQA9kLMIf4zGw&theme=glif&flowName=GlifWebSignIn&flowEntry=ServiceLogin&continue=https%3A%2F%2Faccounts.google.com%2FManageAccount%3Fnc%3D1"
                 style={{
                   position: 'absolute',
-                  top: '93%',
+                  top: '94%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
                   zIndex: '1',
@@ -202,7 +249,6 @@ function Signup() {
         </div>
       </div>
       <div className="signup-white-square"></div>{' '}
-      {/* Utilisation de la classe signup-white-square */}
     </div>
   );
 }
