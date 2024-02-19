@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import '../assets/login.css';
+import '../assets/signup.css'; // Importation du fichier CSS modifié
 import ooredoo1Image from '../assets/ooredoo1.png';
 import ooredoo3Image from '../assets/ooredoo3.png';
 
-function Login() {
+function Signup() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -17,23 +17,89 @@ function Login() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Ajoutez ici la logique de connexion
+    // Ajoutez ici la logique d'inscription
   };
 
   return (
-    <div className="login-page">
-      <div className="white-square">
+    <div className="signup-container">
+      <div className="signup-green-square">
+        <h3
+          style={{
+            fontFamily: 'inherit',
+            fontSize: '37px',
+            lineHeight: '1.5',
+            fontWeight: '300px',
+            color: '#fff',
+            textAlign: 'center',
+            position: 'absolute',
+            top: '40%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: '1',
+          }}
+        >
+          DECOUVREZ DES <br /> BONS PLANS
+        </h3>
+        <p
+          style={{
+            fontFamily: 'inherit',
+            fontSize: '17px',
+            lineHeight: '35.1px',
+            color: '#fff',
+            textAlign: 'center',
+            position: 'absolute',
+            top: '60%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: '1',
+          }}
+        >
+          Vous avez déjà un compte ?
+        </p>
+        <button
+          style={{
+            backgroundColor: '#C50F10',
+            color: '#fff',
+            padding: '14px 35px',
+            border: 'none',
+            borderRadius: '14px',
+            boxShadow: '0px 4px 12px 4px rgba(255, 255, 255, 0.5)',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            position: 'absolute',
+            top: '70%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: '1',
+          }}
+          onClick={() => {
+            window.location.href = '/';
+          }}
+        >
+          Se connecter
+        </button>
+
+        <img
+          src={ooredoo3Image}
+          alt="background image"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+        />
         <img
           src={ooredoo1Image}
           alt="logo ooredoo"
           style={{
             width: '160px',
-            top: '10px',
-            left: '-160px',
+            top: '-650px',
+            left: '-240px',
             position: 'relative',
           }}
         />
-        <div className="gray-rectangle">
+        <div className="signup-gray-rectangle">
           <div className="form-column">
             <h2
               style={{
@@ -46,43 +112,28 @@ function Login() {
                 fontSize: '40px',
               }}
             >
-              Connexion
+              Inscription
             </h2>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <h3 className="input-label">Utilisateur</h3>
+                <h3 className="signup-input-label">Utilisateur</h3>
                 <input
                   type="text"
                   value={username}
                   onChange={handleUsernameChange}
-                  className="input-field"
+                  className="signup-input-field"
                 />
               </div>
               <div className="form-group">
-                <h3 className="input-label">Mot de passe</h3>
+                <h3 className="signup-input-label">Mot de passe</h3>
                 <input
                   type="password"
                   value={password}
                   onChange={handlePasswordChange}
-                  className="input-field"
+                  className="signup-input-field"
                 />
               </div>
 
-              <div className="form-group">
-                <a
-                  href="/mot-de-passe-oublie"
-                  style={{
-                    color: '#4F5475',
-                    fontWeight: 'bold',
-                    fontFamily: 'inherit',
-                    fontSize: '12px',
-                    marginLeft: '-100px',
-                    textDecoration: 'underline',
-                  }}
-                >
-                  Mot de passe oublié ?
-                </a>
-              </div>
               <button
                 type="submit"
                 style={{
@@ -102,7 +153,7 @@ function Login() {
                   zIndex: '1',
                 }}
               >
-                Se connecter
+                S'incrire
               </button>
               <p
                 style={{
@@ -150,76 +201,10 @@ function Login() {
           </div>
         </div>
       </div>
-      <div className="green-square">
-        <h3
-          style={{
-            fontFamily: 'inherit',
-            fontSize: '37px',
-            lineHeight: '1.5',
-            fontWeight: '300px',
-            color: '#fff',
-            textAlign: 'center',
-            position: 'absolute',
-            top: '40%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: '1',
-          }}
-        >
-          DECOUVREZ DES <br /> BONS PLANS
-        </h3>
-        <p
-          style={{
-            fontFamily: 'inherit',
-            fontSize: '17px',
-            lineHeight: '35.1px',
-            color: '#fff',
-            textAlign: 'center',
-            position: 'absolute',
-            top: '60%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: '1',
-          }}
-        >
-          Vous n'avez pas de compte ?
-        </p>
-        <button
-          style={{
-            backgroundColor: '#C50F10',
-            color: '#fff',
-            padding: '14px 35px',
-            border: 'none',
-            borderRadius: '14px',
-            boxShadow: '0px 4px 12px 4px rgba(255, 255, 255, 0.5)',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            position: 'absolute',
-            top: '70%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: '1',
-          }}
-          onClick={() => {
-            window.location.href = '/signup';
-          }}
-        >
-          S'inscrire
-        </button>
-
-        <img
-          src={ooredoo3Image}
-          alt="background image"
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-          }}
-        />
-      </div>
+      <div className="signup-white-square"></div>{' '}
+      {/* Utilisation de la classe signup-white-square */}
     </div>
   );
 }
 
-export default Login;
+export default Signup;
