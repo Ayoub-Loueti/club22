@@ -168,7 +168,7 @@ exports.forgotPassword = async (req, res) => {
     );
 
     const template = forgotPasswordEmailTemplate(
-      user.nom_prenom,
+      user.nom,
       user.email,
       API_ENDPOINT,
       token

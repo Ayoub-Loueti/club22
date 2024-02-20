@@ -44,7 +44,7 @@ const signUpConfirmationEmailTemplate = (nom, API_ENDPOINT, email, confirmationC
         <p>Veuillez suivre ce lien pour activer votre compte :</p>
         <a href="${API_ENDPOINT}/account/${confirmationCode}/enable">Je confirme que je souhaite activer mon compte</a>
         <p>Cordialement.</p>
-        <p>Email from Ooredoo E-learning platform</p>
+        <p>Email from Club 22</p>
       </div>
     </body>
   </html>
@@ -95,7 +95,7 @@ const forgotPasswordEmailTemplate = (nom, email, API_ENDPOINT, token) => `
         <p>Votre code de réinitialisation est : ${token}</p>
         <p>Utilisez ce code pour commencer le processus de réinitialisation.</p>
         <p>Cordialement.</p>
-        <p>Email from Ooredoo E-learning platform</p>
+        <p>Email from Club 22</p>
       </div>
     </body>
   </html>
@@ -146,7 +146,6 @@ const resetPasswordConfirmationEmailTemplate = (nom) => `
   </html>
 `;
 
-// export module
 module.exports = {
   signUpConfirmationEmailTemplate,
   forgotPasswordEmailTemplate,
