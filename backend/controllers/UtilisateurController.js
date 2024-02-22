@@ -9,42 +9,52 @@ const Utilisateur = require('../models/UtilisateurModel');
 require("dotenv").config();
 
 exports.signup = async (req, res) => {
-    const { nom, prenom, email, motDePasse, genre, photo, type , etat} = req.body;
-  
-    try {
-      const existingUser = await Utilisateur.findOne({ where: { email: email } });
-  
-      if (existingUser) {
-        res.status(400).json({ error: 'User with this email already exists' });
-      } else {
+  const { nom, prenom, email, motDePasse, genre, photo, type , etat} = req.body;
 
-        const hashedPassword = await bcrypt.hash(motDePasse, 10);
-  
-        const newUser = await Utilisateur.create({
-          nom,
-          prenom,
-          email,
-          motDePasse: hashedPassword,
-          genre,
-          photo,
-          type,
-          etat,
-        });
-  
-        const token = jwt.sign({ userId: newUser.id_utilisateur }, secretKey, {
-          expiresIn: '1h',
-        });
-  
-        res.status(201).json({
-          message: 'User registered successfully',
-          user: newUser,
-          token: token,
-        });
-      }
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+  try {
+    const existingUser = await Utilisateur.findOne({ where: { email: email } });
+
+    if (existingUser) {
+      res.status(400).json({ error: 'User with this email already exists' });
+    } else {
+
+      const hashedPassword = await bcrypt.hash(motDePasse, 10);
+
+      const newUser = await Utilisateur.create({
+        nom,
+        prenom,
+        email,
+        motDePasse: hashedPassword,
+        genre,
+        photo,
+        type,
+        etat,
+      });
+
+      const token = jwt.sign({ userId: newUser.id_utilisateur }, secretKey, {
+        expiresIn: '1h',
+      });
+
+      // Send confirmation email
+      const confirmationTemplate = signUpConfirmationEmailTemplate(newUser.nom,newUser.prenom, API_ENDPOINT,);
+      const confirmationData = {
+        from: FROM_EMAIL,
+        to: newUser.email,
+        subject: "Confirmation de votre inscription",
+        html: confirmationTemplate,
+      };
+      await smtpTransport.sendMail(confirmationData);
+
+      res.status(201).json({
+        message: 'User registered successfully',
+        user: newUser,
+        token: token,
+      });
     }
-  };
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 exports.login = async (req, res) => {
     const { email, motDePasse } = req.body;
@@ -143,6 +153,7 @@ const smtpTransport = nodemailer.createTransport({
 });
 
 const {
+  signUpConfirmationEmailTemplate,
   forgotPasswordEmailTemplate,
   resetPasswordConfirmationEmailTemplate,
 } = require("../template/userAccountEmailTemplates");

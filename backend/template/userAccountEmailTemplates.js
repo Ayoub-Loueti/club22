@@ -1,4 +1,4 @@
-const signUpConfirmationEmailTemplate = (nom, API_ENDPOINT, email, confirmationCode) => `
+const signUpConfirmationEmailTemplate = (nom, prenom , API_ENDPOINT, email, confirmationCode) => `
   <!DOCTYPE html>
   <html lang="en">
     <head>
@@ -40,9 +40,9 @@ const signUpConfirmationEmailTemplate = (nom, API_ENDPOINT, email, confirmationC
       <div class="container">
         <h1>Bonjour ${nom},</h1>
         <p>Merci pour votre inscription.</p>
-        <p>Votre nom d'utilisateur est : ${email}</p>
+        <p>Votre nom d'utilisateur est : ${nom} ${prenom}</p>
         <p>Veuillez suivre ce lien pour activer votre compte :</p>
-        <a href="${API_ENDPOINT}/account/${confirmationCode}/enable">Je confirme que je souhaite activer mon compte</a>
+        <a href="${API_ENDPOINT}">Je confirme que je souhaite activer mon compte</a>
         <p>Cordialement.</p>
         <p>Email from Club 22</p>
       </div>
