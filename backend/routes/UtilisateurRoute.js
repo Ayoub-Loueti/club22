@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const utilisateurController = require('../controllers/UtilisateurController.js');
+const utilisateurController = require('../controllers/utilisateurController.js');
 const authenticate = require('../middleware/authenticate.js');
 
 router.post('/signup', utilisateurController.signup);
