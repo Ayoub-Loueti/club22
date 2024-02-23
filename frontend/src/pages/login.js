@@ -27,38 +27,40 @@ function Login() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/login', {
-        email,
-        motDePasse,
-      });
+        const response = await axios.post('http://localhost:5000/login', {
+            email,
+            motDePasse,
+        });
 
-      const token = response.data.token;
-      localStorage.setItem(
-        'login',
-        JSON.stringify({
-          isAuthenticated: true,
-          token: token,
-        })
-      );
-      alert('Login successful!');
-      navigate('/signup');
+        const token = response.data.token;
+        localStorage.setItem(
+            'login',
+            JSON.stringify({
+                isAuthenticated: true,
+                token: token,
+            })
+        );
+        alert('Login successful!');
+        navigate('/signup');
     } catch (error) {
-      if (error.response) {
-
-        if (error.response.data.error === 'User account is not authorized to log in') {
-          alert('Your account is blocked. Please contact the administrator.');
+        if (error.response) {
+            if (error.response.data.error === 'User account is not authorized to log in') {
+                alert('User account is not authorized to log in.');
+            } else if (error.response.data.error === 'Your account is blocked. Please contact the administrator.') {
+                alert('Your account is blocked. Please contact the administrator.');
+            } else {
+                alert('Invalid email or password.');
+            }
+        } else if (error.request) {
+            alert('Network Error. Please try again later.');
         } else {
-          alert('Invalid email or password.');
+            alert('An error occurred. Please try again later.');
         }
-      } else if (error.request) {
-        alert('Network Error. Please try again later.');
-      } else {
-        alert('An error occurred. Please try again later.');
-      }
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
+
 
   return (
     <div className="login-page">
