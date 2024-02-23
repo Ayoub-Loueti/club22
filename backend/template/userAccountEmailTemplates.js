@@ -1,4 +1,4 @@
-const signUpConfirmationEmailTemplate = (nom, prenom , API_ENDPOINT, idUtil, resetPasswordToken) => `
+const signUpConfirmationEmailTemplate = (nom, prenom ,  idUtil, resetPasswordToken,API_ENDPOINT,) => `
   <!DOCTYPE html>
   <html lang="en">
     <head>
@@ -42,7 +42,7 @@ const signUpConfirmationEmailTemplate = (nom, prenom , API_ENDPOINT, idUtil, res
         <p>Merci pour votre inscription.</p>
         <p>Votre nom d'utilisateur est : ${nom} ${prenom}</p>
         <p>Veuillez suivre ce lien pour activer votre compte :</p>
-        <a href="${API_ENDPOINT}/activate-account/${idUtil}/${resetPasswordToken}">Je confirme que je souhaite activer mon compte</a>
+        <a href="http://localhost:3000/activate-account/${idUtil}/${resetPasswordToken}">Je confirme que je souhaite activer mon compte</a>
         <p>Cordialement.</p>
         <p>Email from Club 22</p>
       </div>
