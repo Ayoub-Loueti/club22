@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const utilisateurController = require('../controllers/utilisateurController.js');
+const utilisateurController = require('../controllers/UtilisateurController.js');
 const authenticate = require('../middleware/authenticate.js');
 
 router.post('/signup', utilisateurController.signup);
-router.get('/activateAccount/:userId/:token', utilisateurController.activateAccount);
+router.get('/activateAccount/:userId/:token',utilisateurController.activateAccount);
 router.post('/resendEmail', utilisateurController.resendActivationEmail);
 
 router.post('/login', utilisateurController.login);

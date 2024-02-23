@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import '../assets/signup.css'; // Importation du fichier CSS modifié
+import '../assets/signup.css';
 import ooredoo1Image from '../assets/ooredoo1.png';
 import ooredoo3Image from '../assets/ooredoo3.png';
+import axios from 'axios';
+import {  useNavigate } from 'react-router-dom';
 
 function Signup() {
   const [firstName, setFirstName] = useState('');
@@ -9,6 +11,7 @@ function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const navigate = useNavigate(); 
 
   const handleFirstNameChange = (event) => {
     setFirstName(event.target.value);
@@ -30,9 +33,28 @@ function Signup() {
     setConfirmPassword(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Ajoutez ici la logique d'inscription
+
+    if (password !== confirmPassword) {
+      alert('Les mots de passe ne correspondent pas.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://localhost:5000/signup', {
+        nom: lastName,
+        prenom: firstName,
+        email: email,
+        motDePasse: password,
+      });
+
+      console.log(response.data); // Afficher la réponse du backend
+        navigate('/');
+    } catch (error) {
+      console.error("Erreur lors de l'inscription:", error.response.data.error);
+      // Afficher une erreur à l'utilisateur ou effectuer une autre action en cas d'erreur
+    }
   };
 
   return (

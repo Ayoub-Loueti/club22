@@ -11,9 +11,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        {/* Utilisez Routes au lieu de div */}
         <Routes>
-          {/* Définissez vos routes à l'intérieur de Routes */}
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/verificationToken" element={<VerificationToken />} />
