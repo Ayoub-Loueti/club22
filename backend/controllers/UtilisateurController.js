@@ -17,7 +17,7 @@ exports.signup = async (req, res) => {
     if (existingUser) {
       res.status(400).json({ error: 'User with this email already exists' });
     } else {
-
+      const token = Math.floor(1000 + Math.random() * 9000);
       const hashedPassword = await bcrypt.hash(motDePasse, 10);
 
       const newUser = await Utilisateur.create({
@@ -29,14 +29,13 @@ exports.signup = async (req, res) => {
         photo,
         type,
         etat,
+        resetPasswordToken: token,
+        resetPasswordExpires: new Date(Date.now() + 3600000), 
       });
 
-      const token = jwt.sign({ userId: newUser.id_utilisateur }, secretKey, {
-        expiresIn: '1h',
-      });
 
       // Send confirmation email
-      const confirmationTemplate = signUpConfirmationEmailTemplate(newUser.nom,newUser.prenom, API_ENDPOINT,);
+      const confirmationTemplate = signUpConfirmationEmailTemplate(newUser.nom,newUser.prenom,newUser.id_utilisateur,newUser.resetPasswordToken, API_ENDPOINT,);
       const confirmationData = {
         from: FROM_EMAIL,
         to: newUser.email,
@@ -48,9 +47,78 @@ exports.signup = async (req, res) => {
       res.status(201).json({
         message: 'User registered successfully',
         user: newUser,
-        token: token,
       });
     }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.activateAccount = async (req, res) => {
+  try {
+    const { token, userId } = req.params;
+
+    const user = await Utilisateur.findOne({
+      where: {
+        resetPasswordToken: token,
+        id_utilisateur: userId,
+        resetPasswordExpires: { [Op.gt]: Date.now() },
+      },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Invalid activation token or user ID, or the token has expired.",
+      });
+    }
+
+    // Update the user's state to 'autorise'
+    await Utilisateur.update(
+      { etat: 'autorise' },
+      { where: { id_utilisateur: userId } }
+    );
+
+    // Clear the reset password token and expiration
+    await Utilisateur.update(
+      {
+        resetPasswordToken: null,
+        resetPasswordExpires: null,
+      },
+      { where: { id_utilisateur: userId } }
+    );
+
+    return res.json({ message: "Account activated successfully." });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+exports.resendActivationEmail = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await Utilisateur.findOne({ where: { email: email } });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const activationToken = Math.floor(1000 + Math.random() * 9000);
+
+    user.resetPasswordToken = activationToken;
+    user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour expiry
+    await user.save();
+
+    const confirmationTemplate = signUpConfirmationEmailTemplate(user.nom, user.prenom, user.id_utilisateur, user.resetPasswordToken, API_ENDPOINT);
+    const confirmationData = {
+      from: FROM_EMAIL,
+      to: user.email,
+      subject: "Confirmation de votre inscription",
+      html: confirmationTemplate,
+    };
+    await smtpTransport.sendMail(confirmationData);
+
+    res.status(200).json({ message: 'Activation email resent successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -66,9 +134,13 @@ exports.login = async (req, res) => {
             return res.status(404).json({ error: 'utilisateur non trouvee' });
         }
 
-        if (user.etat !== 'autorise') {
-            return res.status(403).json({ error: 'User account is not authorized to log in' });
-        }
+        if (user.etat === 'bloque') {
+          return res.status(403).json({ error: 'Your account is blocked. Please contact the administrator.' });
+      }
+
+      if (user.etat === 'attend') {
+          return res.status(403).json({ error: 'User account is not authorized to log in' });
+      }
 
         const passwordMatch = await bcrypt.compare(motDePasse, user.motDePasse);
 
@@ -173,7 +245,7 @@ exports.forgotPassword = async (req, res) => {
     await Utilisateur.update(
       {
         resetPasswordToken: token,
-        resetPasswordExpires: new Date(Date.now() + 3600000), // token expires in 1 hour
+        resetPasswordExpires: new Date(Date.now() + 3600000), 
       },
       { where: { id_utilisateur: user.id_utilisateur } }
     );
