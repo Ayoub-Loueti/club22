@@ -29,7 +29,7 @@ const UtilisateurModel = sequelize.define('Utilisateur', {
         type: DataTypes.ENUM('client', 'employe', 'admin')
     },
     etat:{
-        type: DataTypes.ENUM('autorise','bloque')
+        type: DataTypes.ENUM('attend','autorise','bloque')
     },
     resetPasswordToken: {
         type: DataTypes.STRING,
