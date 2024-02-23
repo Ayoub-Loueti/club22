@@ -1,0 +1,57 @@
+.verificationToken-page {
+  background-color: #1e1e1e;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.container {
+  position: relative;
+}
+
+.whitevt-square {
+  background-color: white;
+  width: 500px;
+  height: 650px;
+}
+
+.greenvt-square {
+  width: 500px;
+  height: 650px;
+
+  position: relative;
+}
+
+.grayvt-rectangle {
+  background-color: #e4e4e4;
+  width: 400px;
+  height: 100px;
+  padding: 60px;
+  border-radius: 10px;
+  position: absolute;
+  left: calc(50% - 290px); /* Adjust to move the rectangle to the left */
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  box-shadow: 0px 4px 12px 4px rgba(0, 0, 0, 0.5);
+}
+
+.inputvt-field {
+  border: none;
+  border-bottom: 1px solid #909090;
+  width: calc(100% + 10px);
+  padding: 5px 0;
+  font-size: 16px;
+  margin-bottom: 20px;
+  outline: none;
+  background-color: #e4e4e4;
+  margin-left: -10px;
+  margin-top: 25px; 
+
+}
+
+.inputvt-field:focus {
+  border-bottom: 2px solid #909090;
+}

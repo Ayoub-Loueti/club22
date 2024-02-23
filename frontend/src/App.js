@@ -6,18 +6,18 @@ import Login from './pages/login';
 import Signup from './pages/signup';
 import VerificationToken from './pages/verificationToken';
 import ChangerPass from './pages/changerPass';
+import VerificationSignup from './pages/verificationSignup';
 
 function App() {
   return (
     <Router>
       <div className="App">
-        {/* Utilisez Routes au lieu de div */}
         <Routes>
-          {/* Définissez vos routes à l'intérieur de Routes */}
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/verificationToken" element={<VerificationToken />} />
           <Route path="/changerPass/:token" element={<ChangerPass />} />
+          <Route path="/activate-account/:userId/:token" element={<VerificationSignup />} />
         </Routes>
       </div>
     </Router>

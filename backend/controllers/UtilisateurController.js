@@ -56,7 +56,7 @@ exports.signup = async (req, res) => {
 
 exports.activateAccount = async (req, res) => {
   try {
-    const { token, userId } = req.params;
+    const { userId,token } = req.params;
 
     const user = await Utilisateur.findOne({
       where: {
@@ -78,7 +78,7 @@ exports.activateAccount = async (req, res) => {
       { where: { id_utilisateur: userId } }
     );
 
-    // Clear the reset password token and expiration
+    /*
     await Utilisateur.update(
       {
         resetPasswordToken: null,
@@ -86,7 +86,7 @@ exports.activateAccount = async (req, res) => {
       },
       { where: { id_utilisateur: userId } }
     );
-
+*/
     return res.json({ message: "Account activated successfully." });
   } catch (error) {
     return res.status(500).json({ error: error.message });
