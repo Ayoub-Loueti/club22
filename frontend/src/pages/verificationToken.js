@@ -5,6 +5,40 @@ import '../assets/verificationToken.css';
 import ooredoo1Image from '../assets/ooredoo1.png';
 import ooredoo3Image from '../assets/ooredoo3.png';
 
+function TokenInput({ length, onChange }) {
+  const [tokens, setTokens] = useState(Array.from({ length }, () => ''));
+
+  const handleChange = (value, index) => {
+    const newTokens = [...tokens];
+    newTokens[index] = value;
+    setTokens(newTokens);
+    onChange(newTokens.join(''));
+  };
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+      {tokens.map((token, index) => (
+        <input
+          key={index}
+          type="text"
+          maxLength="1"
+          value={token}
+          onChange={(e) => handleChange(e.target.value, index)}
+          style={{
+            width: '40px',
+            height: '40px',
+            textAlign: 'center',
+            fontSize: '20px',
+            borderRadius: '5px',
+            border: '1px solid #ccc',
+          }}
+          onFocus={(e) => e.target.select()}
+        />
+      ))}
+    </div>
+  );
+}
+
 function VerificationToken() {
   const [resetToken, setResetToken] = useState('');
   const [loading, setLoading] = useState(false);
@@ -24,19 +58,20 @@ function VerificationToken() {
       );
 
       if (response.data.isValid) {
-        // Token is valid, navigate to the next page
         navigate(`/changerPass/${resetToken}`);
       } else {
-        // Token is invalid, display an alert
         alert('Invalid reset password token. Please try again.');
       }
     } catch (error) {
-      // Handle error
       console.error('Error:', error);
       alert('An error occurred. Please try again later.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const navigateToLogin = () => {
+    navigate('/');
   };
 
   return (
@@ -50,7 +85,9 @@ function VerificationToken() {
             top: '10px',
             left: '-160px',
             position: 'relative',
+            cursor: 'pointer',
           }}
+          onClick={navigateToLogin}
         />
         <div className="grayvt-rectangle">
           <div className="form-column">
@@ -65,18 +102,13 @@ function VerificationToken() {
                 fontSize: '25px',
               }}
             >
-              {' '}
-              JETON DE RÉINITIALISATION{' '}
+              JETON DE RÉINITIALISATION
             </h2>
             <form onSubmit={handleResetTokenSubmit}>
               <div className="form-group">
-                <input
-                  type="text"
-                  className="inputvt-field"
-                  value={resetToken}
-                  onChange={(e) => setResetToken(e.target.value)}
-                  placeholder="Entrez le Token de Réinitialisation du mot de passe"
-                  required
+                <TokenInput
+                  length={4}
+                  onChange={(token) => setResetToken(token)}
                 />
 
                 <button

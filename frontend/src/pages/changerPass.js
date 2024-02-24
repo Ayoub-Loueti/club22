@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import '../assets/changerPass.css';
 import ooredoo1Image from '../assets/ooredoo1.png';
 import ooredoo3Image from '../assets/ooredoo3.png';
 
 function ChangerPass() {
   const { token } = useParams();
+  const navigate = useNavigate(); 
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,7 +27,7 @@ function ChangerPass() {
       });
 
       alert(response.data.message); 
-      // Redirect or perform any other actions upon successful password reset
+      navigate('/');
 
     } catch (error) {
       // Handle error
@@ -40,16 +41,21 @@ function ChangerPass() {
   return (
     <div className="changerPass-page">
       <div className="whitee-square">
+        <div
+        style={{ cursor: 'pointer' }}
+        onClick={() => navigate('/')}
+        >
         <img
-          src={ooredoo1Image}
-          alt="logo ooredoo"
-          style={{
-            width: '160px',
-            top: '10px',
-            left: '-160px',
-            position: 'relative',
-          }}
+        src={ooredoo1Image}
+        alt="logo ooredoo"
+        style={{
+        width: '160px',
+        top: '10px',
+        left: '-160px',
+        position: 'relative',
+        }}
         />
+        </div>
         <div className="grayy-rectangle">
           <div className="form-column">
             <h2
