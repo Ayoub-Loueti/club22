@@ -87,7 +87,7 @@ exports.activateAccount = async (req, res) => {
       { where: { id_utilisateur: userId } }
     );
 */
-    return res.json({ message: "Account activated successfully." });
+    return res.json({ message: "Compte activé avec succès." });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
