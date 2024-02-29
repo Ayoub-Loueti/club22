@@ -1,0 +1,118 @@
+
+
+.authorizedEmployeesTable {
+  width: 90%; /* Adjust the width as needed */
+  margin: 25px auto; /* Center the table on the page */
+  border-collapse: collapse;
+  font-size: 1em; /* Smaller font size for compactness */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.authorizedEmployeesTable thead tr {
+  background-color: #191F43;
+  color: #ffffff;
+  text-align: left;
+}
+
+.authorizedEmployeesTable th,
+.authorizedEmployeesTable td {
+  padding: 10px 15px; /* Equal padding for alignment */
+  text-align: left; /* Ensure text alignment is consistent */
+  font-size: 1em; /* Uniform font size */
+  line-height: 1.5; /* Consistent line height */
+}
+
+.authorizedEmployeesTable th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.authorizedEmployeesTable tbody tr {
+  border-bottom: thin solid #dddddd;
+}
+
+.authorizedEmployeesTable tbody tr:nth-of-type(even) {
+  background-color: #f2f2f2;
+}
+
+.authorizedEmployeesTable tbody tr:last-of-type {
+  border-bottom: 2px solid #191F43;
+}
+
+.authorizedEmployeesTable tbody tr:hover {
+  background-color: #f1f7ff;
+}
+
+.authorizedEmployeesTable img {
+  width: 40px; /* Smaller images */
+  height: auto;
+  border-radius: 50%;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 600px) {
+  .authorizedEmployeesTable {
+    width: 100%;
+  }
+
+  .authorizedEmployeesTable thead {
+    display: none;
+  }
+
+  .authorizedEmployeesTable, .authorizedEmployeesTable tbody, .authorizedEmployeesTable tr, .authorizedEmployeesTable td {
+    display: block;
+    width: 100%;
+  }
+
+  .authorizedEmployeesTable tr {
+    margin-bottom: 15px;
+  }
+
+  .authorizedEmployeesTable td {
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+  }
+
+  .authorizedEmployeesTable td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 50%;
+    padding-left: 15px;
+    font-weight: bold;
+    text-align: left;
+  }
+}
+/* Unique styles for EmployesAutorise component */
+
+.employes-autorise-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 15px; /* Adjust based on your overall layout */
+}
+
+.employes-autorise-title {
+  color: #191F43; /* Feel free to adjust the color */
+  font-size: 24px; /* Adjust size as needed */
+  font-weight: 600; /* Weight for emphasis */
+}
+
+.employes-autorise-search-input {
+  padding: 8px 12px; /* Slightly more horizontal padding */
+  font-size: 16px; /* Comfortable reading size */
+  border: 2px solid #bbb; /* Slightly thicker border for focus */
+  border-radius: 20px; /* More pronounced rounded corners */
+  width: 300px; /* Adjust based on your layout */
+  outline: none; /* Remove outline to focus on the border styling */
+}
+
+.employes-autorise-search-input:focus {
+  border-color: #191F43; /* Highlight color when focused */
+}

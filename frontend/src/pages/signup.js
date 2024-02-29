@@ -6,20 +6,12 @@ import axios from 'axios';
 import {  useNavigate } from 'react-router-dom';
 
 function Signup() {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+ 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate(); 
 
-  const handleFirstNameChange = (event) => {
-    setFirstName(event.target.value);
-  };
-
-  const handleLastNameChange = (event) => {
-    setLastName(event.target.value);
-  };
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -43,8 +35,7 @@ function Signup() {
 
     try {
       const response = await axios.post('http://localhost:5000/signup', {
-        nom: lastName,
-        prenom: firstName,
+
         email: email,
         motDePasse: password,
       });
@@ -152,27 +143,6 @@ function Signup() {
               Inscription
             </h2>
             <form onSubmit={handleSubmit}>
-              <div className="form-group" style={{ display: 'flex' }}>
-                <div style={{ flex: 1, marginRight: '10px' }}>
-                  <h3 className="signup-input-label-lastname">Nom</h3>
-                  <input
-                    type="text"
-                    value={lastName}
-                    onChange={handleLastNameChange}
-                    className="signup-input-field-lastname"
-                  />
-                </div>
-                <div style={{ flex: 1, marginLeft: '10px' }}>
-                  <h3 className="signup-input-label-firstname">Prénom</h3>
-                  <input
-                    type="text"
-                    value={firstName}
-                    onChange={handleFirstNameChange}
-                    className="signup-input-field-firstname"
-                  />
-                </div>
-              </div>
-
               <div className="form-group">
                 <h3 className="signup-input-label">Email</h3>
                 <input
@@ -216,13 +186,13 @@ function Signup() {
                   fontWeight: 'bold',
                   cursor: 'pointer',
                   position: 'absolute',
-                  top: '81%',
+                  top: '71%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
                   zIndex: '1',
                 }}
               >
-                S'incrire
+                S'inscrire
               </button>
               <p
                 style={{
@@ -231,7 +201,7 @@ function Signup() {
                   color: '#4F5475',
                   textAlign: 'center',
                   position: 'absolute',
-                  top: '85%',
+                  top: '76%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
                   zIndex: '1',
@@ -241,10 +211,11 @@ function Signup() {
                 OU
               </p>
               <a
-                href="https://accounts.google.com/v3/signin/identifier?elo=1&ifkv=ATuJsjyd5xpCjFVDcRa4RIuEAg3FVQPiFlD12ri8U6DCY6uS-Bk0D54d-e3J8aZWZoQA9kLMIf4zGw&theme=glif&flowName=GlifWebSignIn&flowEntry=ServiceLogin&continue=https%3A%2F%2Faccounts.google.com%2FManageAccount%3Fnc%3D1"
+                href="http://localhost:5000/auth/google"
+                className="google-auth-link"
                 style={{
                   position: 'absolute',
-                  top: '94%',
+                  top: '85%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
                   zIndex: '1',
