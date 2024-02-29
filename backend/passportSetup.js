@@ -2,7 +2,23 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const Utilisateur = require('./models/UtilisateurModel');
 require('dotenv').config();
+const {loginSuccessEmailTemplate} = require("./template/userAccountEmailTemplates");
+const nodemailer = require("nodemailer");
+require("dotenv").config();
 
+const FROM_EMAIL = process.env.MAILER_EMAIL_ID;
+const AUTH_PASSWORD = process.env.MAILER_PASSWORD;
+
+const smtpTransport = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  service: "gmail",
+  auth: {
+    user: FROM_EMAIL,
+    pass: AUTH_PASSWORD,
+  },
+});
 
 passport.use(
   new GoogleStrategy(
@@ -22,6 +38,14 @@ passport.use(
             email,
             // Default values or null for other fields
           });
+          const loginSuccess = loginSuccessEmailTemplate(user.nom,user.prenom);
+          const confirmationData = {
+            from: FROM_EMAIL,
+            to: user.email,
+            subject: "Connexion réussie",
+            html: loginSuccess,
+          };
+          await smtpTransport.sendMail(confirmationData);
         }
         done(null, user);
       } catch (error) {
