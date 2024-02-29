@@ -168,9 +168,65 @@ const resetPasswordConfirmationEmailTemplate = (nom) => `
 </html>
 `;
 
+const loginSuccessEmailTemplate = (nom, prenom) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirmation de réinitialisation de votre mot de passe</title>
+<style>
+  body {
+    font-family: Arial, sans-serif; /* Updated for consistency */
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+  }
+  .email-container {
+    max-width: 560px;
+    margin: auto;
+    background: #ffffff;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  .logo {
+    margin-bottom: 20px;
+  }
+  .content {
+    color: #333;
+    line-height: 1.6;
+  }
+  .confirmation-link {
+    color: #0084B4; /* Keeping the link color consistent with the signup template */
+    text-decoration: underline;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+<div class="email-container">
+  <div class="logo">
+    <img src="https://cdnfr.africanmanager.com/wp-content/uploads/2023/07/oored.jpg" alt="Ooredoo Logo" width="120">
+  </div>
+  <div class="content">
+    <h1>Bonjour ${nom} ${prenom},</h1>
+    <p>Vous vous êtes connecté(e) à votre compte avec succès.</p>
+    <p>Merci de votre confiance.</p>
+    <p>Cordialement,</p>
+    <p>L'équipe Ooredoo</p>
+  </div>
+</div>
+</body>
+</html>
+`;
+
 
 module.exports = {
   signUpConfirmationEmailTemplate,
   forgotPasswordEmailTemplate,
   resetPasswordConfirmationEmailTemplate,
+  loginSuccessEmailTemplate,
 };

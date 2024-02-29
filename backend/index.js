@@ -10,33 +10,9 @@ const passport = require('passport');
 require('./passportSetup'); // Path to your passport configuration file
 dotenv.config();
 app.use(express.json()); 
-app.use(
-  cors({
-    origin: 'http://localhost:3000', // Adjust this to match your frontend's URL
-    credentials: true, // Allows cookies and credentials to be sent along with the request
-  })
-);
+app.use(cors());
 
 
-// Session configuration
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      secure: process.env.NODE_ENV === 'production', // Only use secure cookies in production
-      httpOnly: true, // Helps mitigate XSS attacks
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours, for example
-    },
-  })
-);
-// Initialize Passport and session handling
-app.use(passport.initialize());
-app.use(passport.session());
-
-const authRoutes = require('./routes/authRoutes');
-app.use(authRoutes);
 
 app.use(utilisateur);
 app.use(admin);

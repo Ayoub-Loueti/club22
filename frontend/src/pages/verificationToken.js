@@ -5,40 +5,6 @@ import '../assets/verificationToken.css';
 import ooredoo1Image from '../assets/ooredoo1.png';
 import ooredoo3Image from '../assets/ooredoo3.png';
 
-function TokenInput({ length, onChange }) {
-  const [tokens, setTokens] = useState(Array.from({ length }, () => ''));
-
-  const handleChange = (value, index) => {
-    const newTokens = [...tokens];
-    newTokens[index] = value;
-    setTokens(newTokens);
-    onChange(newTokens.join(''));
-  };
-
-  return (
-    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-      {tokens.map((token, index) => (
-        <input
-          key={index}
-          type="text"
-          maxLength="1"
-          value={token}
-          onChange={(e) => handleChange(e.target.value, index)}
-          style={{
-            width: '40px',
-            height: '40px',
-            textAlign: 'center',
-            fontSize: '20px',
-            borderRadius: '5px',
-            border: '1px solid #ccc',
-          }}
-          onFocus={(e) => e.target.select()}
-        />
-      ))}
-    </div>
-  );
-}
-
 function VerificationToken() {
   const [resetToken, setResetToken] = useState('');
   const [loading, setLoading] = useState(false);
@@ -85,9 +51,9 @@ function VerificationToken() {
             top: '10px',
             left: '-160px',
             position: 'relative',
-            cursor: 'pointer',
+            cursor: 'pointer', // Add cursor style for better UX
           }}
-          onClick={navigateToLogin}
+          onClick={navigateToLogin} // Add onClick event handler here
         />
         <div className="grayvt-rectangle">
           <div className="form-column">
@@ -106,9 +72,13 @@ function VerificationToken() {
             </h2>
             <form onSubmit={handleResetTokenSubmit}>
               <div className="form-group">
-                <TokenInput
-                  length={4}
-                  onChange={(token) => setResetToken(token)}
+                <input
+                  type="text"
+                  className="inputvt-field"
+                  value={resetToken}
+                  onChange={(e) => setResetToken(e.target.value)}
+                  placeholder="Entrez le Token de Réinitialisation du mot de passe"
+                  required
                 />
 
                 <button

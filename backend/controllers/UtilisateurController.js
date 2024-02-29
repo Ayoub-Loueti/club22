@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const secretKey = 'ayoub';
 const nodemailer = require("nodemailer");
 const { Op } = require("sequelize");
+const passport = require('passport');
 
 const crypto = require("crypto");
 const Utilisateur = require('../models/UtilisateurModel'); 
@@ -160,6 +161,37 @@ exports.login = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
+};
+
+exports.googleAuth = passport.authenticate('google', { scope: ['profile', 'email'] });
+
+exports.googleAuthCallback = (req, res, next) => {
+  passport.authenticate('google', {
+    failureRedirect: 'http://localhost:3000/signup',
+  })(req, res, () => {
+    // Redirect on successful authentication
+    res.redirect('http://localhost:3000/logout'); // Or your desired path
+  });
+};
+
+exports.logout = (req, res) => {
+  console.log('Logging out user');
+  req.logout((err) => {
+    if (err) {
+      console.log('Logout error:', err);
+      return next(err);
+    }
+    console.log('Session destruction started');
+    req.session.destroy((err) => {
+      if (err) {
+        console.log('Session destruction error:', err);
+        return res.status(500).send('Internal Server Error');
+      }
+      console.log('Session destroyed');
+      res.clearCookie('connect.sid'); // Ensure this matches your session cookie's name
+      return res.json({ message: 'You have been logged out' });
+    });
+  });
 };
 
 exports.updateUser = async (req, res) => {
