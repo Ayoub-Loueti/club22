@@ -10,6 +10,8 @@ import VerificationSignup from './pages/verificationSignup';
 import LogoutButton from './pages/logoutButton';
 import EmployesAutorise from './pages/employesAutorise';
 import InsererNom from './pages/insererNom';
+import Load from './pages/load';
+
 function App() {
   return (
     <Router>
@@ -22,6 +24,7 @@ function App() {
           <Route path="/insererNom" element={<InsererNom />} />
           <Route path="/verificationToken" element={<VerificationToken />} />
           <Route path="/changerPass/:token" element={<ChangerPass />} />
+          <Route path="/load" element={<Load />} />
           <Route
             path="/activate-account/:userId/:token"
             element={<VerificationSignup />}

@@ -186,13 +186,24 @@ exports.googleAuth = passport.authenticate('google', {
 });
 
 exports.googleAuthCallback = (req, res, next) => {
-  passport.authenticate('google', {
-    failureRedirect: 'http://localhost:3000/signup',
-  })(req, res, () => {
-    // Redirect on successful authentication
-    res.redirect('http://localhost:3000/logout'); // Or your desired path
-  });
+  passport.authenticate('google', (error, user, info) => {
+    if (error) {
+      return next(error); // Handle error
+    }
+    if (!user) {
+      return res.redirect('http://localhost:3000/signup'); // Handle "no user" scenario
+    }
+
+    // User is found or created successfully, now sign the JWT token with user's information
+    const userToken = jwt.sign({ userId: user.id_utilisateur }, secretKey, {
+      expiresIn: '1h', // Adjust token expiration as needed
+    });
+
+    // Redirect to the /load page with the token as a query parameter
+    res.redirect(`http://localhost:3000/load?token=${userToken}`);
+  })(req, res, next); // Make sure to pass req, res, next to the inner function
 };
+
 
 exports.logout = (req, res) => {
   console.log('Logging out user');
