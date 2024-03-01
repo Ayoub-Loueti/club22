@@ -47,9 +47,6 @@ const signUpConfirmationEmailTemplate = (nom, prenom ,  idUtil, resetPasswordTok
     <h1>Bonjour,</h1>
     <p>Merci pour votre inscription. Pour activer votre compte, veuillez cliquer sur le lien suivant :</p>
     <a href="${API_ENDPOINT}/activate-account/${idUtil}/${resetPasswordToken}" class="confirmation-link">Je confirme que je souhaite activer mon compte</a>
-    <p>Cette demande a été faite avec les informations suivantes :</p>
-    <p>Nom : <strong>${nom}</strong><br>
-       Prénom : <strong>${prenom}</strong><br>
     <p>Si vous n'avez pas demandé cette activation, veuillez ignorer cet e-mail.</p>
     <p>Cordialement,</p>
     <p>L'équipe Ooredoo</p>

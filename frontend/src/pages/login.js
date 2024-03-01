@@ -18,13 +18,20 @@ function Login() {
       alert('Email de réinitialisation du mot de passe envoyé !');
       navigate('/verificationToken');
     } catch (error) {
-    if (error.response && error.response.data.message === 'Utilisateur non trouvé.') {
-        alert('Utilisateur non trouvé. Veuillez vérifier l"adresse e-mail et réessayer.');
+      if (error.response) {
+        if (error.response.data.message === 'Utilisateur non trouvé.') {
+          alert('Utilisateur non trouvé. Veuillez vérifier l"adresse e-mail et réessayer.');
+        } else if (error.response.data.message === 'Les utilisateurs qui se sont inscrits via Google doivent utiliser la réinitialisation de mot de passe de Google.') {
+          alert('Les utilisateurs qui se sont inscrits via Google doivent utiliser la réinitialisation de mot de passe de Google.');
+        } else {
+          alert('Échec de l"envoi de l"email de réinitialisation du mot de passe. Veuillez réessayer.');
+        }
       } else {
-        alert('Échec de l"envoi de l"email de réinitialisation du mot de passe. Veuillez réessayer.');
+        alert('Une erreur est survenue. Veuillez réessayer.');
       }
     }
   };
+  
   
 
   const handleSubmit = async (e) => {

@@ -302,40 +302,40 @@ exports.forgotPassword = async (req, res) => {
     });
 
     if (!user) {
-      throw new Error('Utilisateur non trouvé.');
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
     }
+
+    // Check if user's password is empty, indicating they signed up through Google
+    if (!user.motDePasse || user.motDePasse.trim() === '') {
+      return res.status(400).json({ message: 'Les utilisateurs qui se sont inscrits via Google doivent utiliser la réinitialisation de mot de passe de Google.' });
+    }
+
     console.log(user);
     const token = Math.floor(1000 + Math.random() * 9000);
 
-    await Utilisateur.update(
-      {
-        resetPasswordToken: token,
-        resetPasswordExpires: new Date(Date.now() + 3600000),
-      },
-      { where: { id_utilisateur: user.id_utilisateur } }
-    );
+    await Utilisateur.update({
+      resetPasswordToken: token,
+      resetPasswordExpires: new Date(Date.now() + 3600000), // 1 hour from now
+    }, {
+      where: { id_utilisateur: user.id_utilisateur }
+    });
 
-    const template = forgotPasswordEmailTemplate(
-      user.nom,
-      user.email,
-      API_ENDPOINT,
-      token
-    );
+    const template = forgotPasswordEmailTemplate(user.nom, user.email, API_ENDPOINT, token);
 
     const data = {
       from: FROM_EMAIL,
       to: user.email,
-      subject: 'Reinitialisation de votre mot de passe',
+      subject: 'Réinitialisation de votre mot de passe',
       html: template,
     };
-    // Assuming smtpTransport is properly configured and defined
+
     await smtpTransport.sendMail(data);
 
     return res.json({
       message: "Veuillez vérifier votre e-mail pour plus d'instructions",
     });
   } catch (error) {
-    return res.status(422).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
