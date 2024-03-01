@@ -150,6 +150,7 @@ function Signup() {
                   value={email}
                   onChange={handleEmailChange}
                   className="signup-input-field"
+                  required
                 />
               </div>
               <div className="form-group">
@@ -159,6 +160,7 @@ function Signup() {
                   value={password}
                   onChange={handlePasswordChange}
                   className="signup-input-field"
+                  required
                 />
               </div>
               <div className="form-group">
@@ -170,6 +172,7 @@ function Signup() {
                   value={confirmPassword}
                   onChange={handleConfirmPasswordChange}
                   className="signup-input-field"
+                  required
                 />
               </div>
 

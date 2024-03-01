@@ -21,55 +21,55 @@ function Login() {
     }
   };
 
- const handleSubmit = async (e) => {
-   e.preventDefault();
-   setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-   try {
-     const response = await axios.post('http://localhost:5000/login', {
-       email,
-       motDePasse,
-     });
+    try {
+      const response = await axios.post('http://localhost:5000/login', {
+        email,
+        motDePasse,
+      });
 
-     const token = response.data.token;
-     const shouldUpdateProfile = response.data.shouldUpdateProfile;
-     localStorage.setItem(
-       'login',
-       JSON.stringify({
-         isAuthenticated: true,
-         token: token,
-       })
-     );
-     if (shouldUpdateProfile) {
-       navigate('/insererNom');
-     } else {
-       alert('Login successful!');
-       navigate('/profile');
-     }
-   } catch (error) {
-     if (error.response) {
-       if (
-         error.response.data.error ===
-         'User account is not authorized to log in'
-       ) {
-         alert('User account is not authorized to log in.');
-       } else if (
-         error.response.data.error ===
-         'Your account is blocked. Please contact the administrator.'
-       ) {
-         alert('Your account is blocked. Please contact the administrator.');
-       } else {
-         alert('Invalid email or password.');
-       }
-     } else if (error.request) {
-       alert('Network Error. Please try again later.');
-     } else {
-       alert('An error occurred. Please try again later.');
-     }
-   } finally {
-     setLoading(false);
-   }
- };
+      const token = response.data.token;
+      const shouldUpdateProfile = response.data.shouldUpdateProfile;
+      localStorage.setItem(
+        'login',
+        JSON.stringify({
+          isAuthenticated: true,
+          token: token,
+        })
+      );
+      if (shouldUpdateProfile) {
+        navigate('/insererNom');
+      } else {
+        alert('Login successful!');
+        navigate('/profile');
+      }
+    } catch (error) {
+      if (error.response) {
+        if (
+          error.response.data.error ===
+          'User account is not authorized to log in'
+        ) {
+          alert('User account is not authorized to log in.');
+        } else if (
+          error.response.data.error ===
+          'Your account is blocked. Please contact the administrator.'
+        ) {
+          alert('Your account is blocked. Please contact the administrator.');
+        } else {
+          alert('Invalid email or password.');
+        }
+      } else if (error.request) {
+        alert('Network Error. Please try again later.');
+      } else {
+        alert('An error occurred. Please try again later.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="login-page">
@@ -103,10 +103,11 @@ function Login() {
               <div className="form-group">
                 <h3 className="input-label">Email</h3>
                 <input
-                  type="text"
+                  type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="input-field"
+                  required
                 />
               </div>
               <div className="form-group">
@@ -116,25 +117,35 @@ function Login() {
                   value={motDePasse}
                   onChange={(e) => setMotDePasse(e.target.value)}
                   className="input-field"
+                  required
                 />
               </div>
 
               <div className="form-group">
                 <a
                   href="/verificationToken"
-                  onClick={() => handleForgotPassword(email)}
+                  onClick={(e) => {
+                    if (!email) {
+                      e.preventDefault();
+                      return;
+                    }
+                    handleForgotPassword(email);
+                  }}
                   style={{
-                    color: '#4F5475',
+                    pointerEvents: email ? 'auto' : 'none',
+                    color: email ? '#4F5475' : '#BDBDBB',
                     fontWeight: 'bold',
                     fontFamily: 'inherit',
                     fontSize: '12px',
                     marginLeft: '-100px',
                     textDecoration: 'underline',
+                    cursor: email ? 'pointer' : 'not-allowed',
                   }}
                 >
                   Mot de passe oublié ?
                 </a>
               </div>
+
               <button
                 type="submit"
                 style={{
