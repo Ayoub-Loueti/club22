@@ -15,14 +15,12 @@ function Login() {
   const handleForgotPassword = async (email) => {
     try {
       const response = await axios.post('http://localhost:5000/forgot-password', { email });
-      // Assuming success means the email was sent
       alert('Email de réinitialisation du mot de passe envoyé !');
+      navigate('/verificationToken');
     } catch (error) {
-      // Check if the error response has the specific message 'Utilisateur not found.'
     if (error.response && error.response.data.message === 'Utilisateur non trouvé.') {
         alert('Utilisateur non trouvé. Veuillez vérifier l"adresse e-mail et réessayer.');
       } else {
-        // For all other errors
         alert('Échec de l"envoi de l"email de réinitialisation du mot de passe. Veuillez réessayer.');
       }
     }
