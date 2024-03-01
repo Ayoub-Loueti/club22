@@ -5,25 +5,27 @@ function Load() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const authCompleted = localStorage.getItem('authCompleted');
+    const authCompleted = JSON.parse(localStorage.getItem('login'))?.isAuthenticated;
     
     if (authCompleted) {
-      // If authentication was already completed, navigate to profile directly
       navigate('/profile');
       return;
     }
-
+  
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     
     if (token) {
-      localStorage.setItem('token', token); // Save token to local storage
-      localStorage.setItem('authCompleted', 'true'); // Set authentication completed flag
-      navigate('/profile'); // Redirect to the profile or any other page
+      localStorage.setItem('login', JSON.stringify({
+        isAuthenticated: true,
+        token: token,
+      }));
+      navigate('/profile'); 
     } else {
-      navigate('/'); // If no token found, redirect back to login
+      navigate('/'); 
     }
   }, [navigate]);
+  
 
   return <div>Loading...</div>;
 }
