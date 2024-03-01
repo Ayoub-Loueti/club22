@@ -16,14 +16,14 @@ function Login() {
     try {
       const response = await axios.post('http://localhost:5000/forgot-password', { email });
       // Assuming success means the email was sent
-      alert('Password reset email sent!');
+      alert('Email de réinitialisation du mot de passe envoyé !');
     } catch (error) {
       // Check if the error response has the specific message 'Utilisateur not found.'
     if (error.response && error.response.data.message === 'Utilisateur non trouvé.') {
-        alert('User not found. Please check the email address and try again.');
+        alert('Utilisateur non trouvé. Veuillez vérifier l"adresse e-mail et réessayer.');
       } else {
         // For all other errors
-        alert('Failed to send password reset email. Please try again.');
+        alert('Échec de l"envoi de l"email de réinitialisation du mot de passe. Veuillez réessayer.');
       }
     }
   };
@@ -60,19 +60,19 @@ function Login() {
           error.response.data.error ===
           'User account is not authorized to log in'
         ) {
-          alert('User account is not authorized to log in.');
+          alert('Le compte utilisateur n"est pas autorisé à se connecter.');
         } else if (
           error.response.data.error ===
           'Your account is blocked. Please contact the administrator.'
         ) {
-          alert('Your account is blocked. Please contact the administrator.');
+          alert('Votre compte est bloqué. Veuillez contacter l"administrateur.');
         } else {
-          alert('Invalid email or password.');
+          alert('Email ou mot de passe invalide.');
         }
       } else if (error.request) {
-        alert('Network Error. Please try again later.');
+        alert('Erreur réseau. Veuillez réessayer plus tard.');
       } else {
-        alert('An error occurred. Please try again later.');
+        alert('Une erreur s"est produite. Veuillez réessayer plus tard.');
       }
     } finally {
       setLoading(false);
@@ -134,7 +134,7 @@ function Login() {
     onClick={(e) => {
       e.preventDefault();
       if (!email) {
-        alert('Please enter an email address.');
+        alert('Veuillez entrer une adresse e-mail.');
         return;
       }
       handleForgotPassword(email);

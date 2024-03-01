@@ -1,5 +1,28 @@
 const Utilisateur = require('../models/UtilisateurModel');
 
+exports.getAllUsers = async (req, res) => {
+  try {
+    // Vérifier si l'utilisateur est un administrateur
+    const isAdmin = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: req.userId,
+        type: 'admin',
+      },
+    });
+
+    if (!isAdmin) {
+      return res.status(403).json({
+        error: 'Permission denied. Only administrators can perform this action.',
+      });
+    }
+
+    const utilisateurs = await Utilisateur.findAll();
+    res.status(200).json(utilisateurs);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 exports.updateUserEtat = async (req, res) => {
   const { id } = req.params;
   const userId = req.userId; // Change this based on how you store user IDs

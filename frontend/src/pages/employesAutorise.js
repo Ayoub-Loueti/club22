@@ -55,7 +55,7 @@ const filteredEmployees = employees.filter(
             <th>ID</th>
             <th>Photo</th>
             <th>Nom</th>
-            <th>Prenom</th>
+            <th>Prénom</th>
             <th>Email</th>
             <th>Type</th>
             <th>Etat</th>
@@ -63,7 +63,7 @@ const filteredEmployees = employees.filter(
         </thead>
         <tbody>
           {filteredEmployees.map((employee, index) => (
-            <tr key={employee.id|| index}>
+            <tr key={employee.id || index}>
               <td>{employee.id}</td>
               <td>{employee.photo}</td>
               <td>{employee.nom}</td>

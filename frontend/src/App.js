@@ -11,7 +11,7 @@ import LogoutButton from './pages/logoutButton';
 import EmployesAutorise from './pages/employesAutorise';
 import InsererNom from './pages/insererNom';
 import Load from './pages/load';
-
+import TousLesUtilisateurs from './pages/tousLesUtilisateurs';
 function App() {
   return (
     <Router>
@@ -25,6 +25,8 @@ function App() {
           <Route path="/verificationToken" element={<VerificationToken />} />
           <Route path="/changerPass/:token" element={<ChangerPass />} />
           <Route path="/load" element={<Load />} />
+          <Route path="/tousLesUtilisateurs" element={<TousLesUtilisateurs />} />
+
           <Route
             path="/activate-account/:userId/:token"
             element={<VerificationSignup />}

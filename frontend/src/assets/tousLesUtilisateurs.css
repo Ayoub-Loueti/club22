@@ -1,0 +1,70 @@
+/* Adapté de vos styles fournis pour correspondre aux classes spécifiques de TousLesUtilisateurs */
+
+.tousLesUtilisateurs-container {
+  padding: 20px;
+}
+
+.tousLesUtilisateurs-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.tousLesUtilisateurs-title {
+  color: #191F43;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.tousLesUtilisateurs-search-input {
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 2px solid #bbb;
+  border-radius: 20px;
+  width: 300px;
+  outline: none;
+}
+
+.tousLesUtilisateurs-search-input:focus {
+  border-color: #191F43;
+}
+
+.tousLesUtilisateursTable {
+  width: 100%;
+  margin: 25px auto;
+  border-collapse: collapse;
+  font-size: 1em;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tousLesUtilisateursTable thead tr {
+  background-color: #191F43;
+  color: #ffffff;
+  text-align: left;
+}
+
+.tousLesUtilisateursTable th,
+.tousLesUtilisateursTable td {
+  padding: 10px 15px;
+  text-align: left;
+  font-size: 1em;
+  line-height: 1.5;
+}
+
+.tousLesUtilisateursTable tbody tr {
+  border-bottom: thin solid #dddddd;
+}
+
+.tousLesUtilisateursTable tbody tr:nth-of-type(even) {
+  background-color: #f2f2f2;
+}
+
+.tousLesUtilisateursTable tbody tr:hover {
+  background-color: #f1f7ff;
+}
+
+/* Ajoutez des ajustements responsifs si nécessaire */

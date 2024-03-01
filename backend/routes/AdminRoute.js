@@ -16,4 +16,6 @@ router.get('/autoriseEmp',authenticate, adminController.getAllAuthorizedEmploye)
 
 router.get('/bloqueEmp', authenticate, adminController.getAllBlockedEmploye);
 
+router.get('/allUsers', authenticate, adminController.getAllUsers);
+
 module.exports = router;
