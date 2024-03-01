@@ -14,12 +14,20 @@ function Login() {
 
   const handleForgotPassword = async (email) => {
     try {
-      await axios.post('http://localhost:5000/forgot-password', { email });
+      const response = await axios.post('http://localhost:5000/forgot-password', { email });
+      // Assuming success means the email was sent
       alert('Password reset email sent!');
     } catch (error) {
-      alert('Failed to send password reset email. Please try again.');
+      // Check if the error response has the specific message 'Utilisateur not found.'
+    if (error.response && error.response.data.message === 'Utilisateur non trouvé.') {
+        alert('User not found. Please check the email address and try again.');
+      } else {
+        // For all other errors
+        alert('Failed to send password reset email. Please try again.');
+      }
     }
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -122,29 +130,32 @@ function Login() {
               </div>
 
               <div className="form-group">
-                <a
-                  href="/verificationToken"
-                  onClick={(e) => {
-                    if (!email) {
-                      e.preventDefault();
-                      return;
-                    }
-                    handleForgotPassword(email);
-                  }}
-                  style={{
-                    pointerEvents: email ? 'auto' : 'none',
-                    color: email ? '#4F5475' : '#BDBDBB',
-                    fontWeight: 'bold',
-                    fontFamily: 'inherit',
-                    fontSize: '12px',
-                    marginLeft: '-100px',
-                    textDecoration: 'underline',
-                    cursor: email ? 'pointer' : 'not-allowed',
-                  }}
-                >
-                  Mot de passe oublié ?
-                </a>
-              </div>
+  <button
+    onClick={(e) => {
+      e.preventDefault();
+      if (!email) {
+        alert('Please enter an email address.');
+        return;
+      }
+      handleForgotPassword(email);
+    }}
+    style={{
+      background: 'none',
+      border: 'none',
+      padding: '0',
+      color: email ? '#4F5475' : '#BDBDBB',
+      fontWeight: 'bold',
+      fontFamily: 'inherit',
+      fontSize: '12px',
+      marginLeft: '-100px',
+      textDecoration: 'underline',
+      cursor: email ? 'pointer' : 'not-allowed',
+    }}
+  >
+    Mot de passe oublié ?
+  </button>
+</div>
+
 
               <button
                 type="submit"

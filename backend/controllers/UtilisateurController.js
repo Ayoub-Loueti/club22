@@ -302,7 +302,7 @@ exports.forgotPassword = async (req, res) => {
     });
 
     if (!user) {
-      throw new Error('Utilisateur not found.');
+      throw new Error('Utilisateur non trouvé.');
     }
     console.log(user);
     const token = Math.floor(1000 + Math.random() * 9000);
