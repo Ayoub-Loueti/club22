@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import backgroundImage from '../assets/ooredoo3.png'; // Ensure this path is correct
 
 function VerificationSignup() {
   const { userId, token } = useParams();
@@ -28,22 +29,56 @@ function VerificationSignup() {
   }, [userId, token]);
 
   const handleLoginClick = () => {
-    if (verificationStatus === 'Account activated successfully.') {
+    if (verificationStatus === 'Compte activé avec succès.') {
       navigate('/'); 
     }
   };
 
+  const pageStyles = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh',
+    backgroundImage: `url(${backgroundImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    position: 'relative',
+  };
+
+  const statusMessageStyles = {
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    padding: '20px',
+    borderRadius: '10px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    maxWidth: '600px',
+    textAlign: 'center',
+    margin: '20px',
+    color: '#333',
+  };
+
+  const buttonStyles = {
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    padding: '10px 20px',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    marginTop: '20px',
+    fontSize: '16px',
+  };
+
   return (
-    <div>
-      {verificationStatus === 'Account activated successfully.' && (
-        <>
-          <h1>Great! Your account is activated!</h1>
-          <button onClick={handleLoginClick}>Go to Login</button>
-        </>
-      )}
-      {verificationStatus !== 'Account activated successfully.' && (
-        <h1>Verification Status: {verificationStatus}</h1>
-      )}
+    <div style={pageStyles}>
+      <div style={statusMessageStyles}>
+        <h1>{verificationStatus === 'Compte activé avec succès.' ? 'Votre compte est maintenant actif !' : 'Verification Status'}</h1>
+        <p>{verificationStatus}</p>
+        {verificationStatus === 'Compte activé avec succès.' && (
+          <button style={buttonStyles} onClick={handleLoginClick}>
+            Aller à la connexion
+          </button>
+        )}
+      </div>
     </div>
   );
 }

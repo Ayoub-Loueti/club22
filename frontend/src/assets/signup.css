@@ -1,12 +1,16 @@
 .signup-container {
   background-color: #1e1e1e;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   position: relative;
   align-items: center;
 }
-
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Prevent scrolling caused by overflow */
+}
 .signup-white-square {
   background-color: white;
   width: 500px;

@@ -1,15 +1,16 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const secretKey = 'ayoub';
-const nodemailer = require("nodemailer");
-const { Op } = require("sequelize");
+const nodemailer = require('nodemailer');
+const { Op } = require('sequelize');
+const passport = require('passport');
 
-const crypto = require("crypto");
-const Utilisateur = require('../models/UtilisateurModel'); 
-require("dotenv").config();
+const crypto = require('crypto');
+const Utilisateur = require('../models/UtilisateurModel');
+require('dotenv').config();
 
 exports.signup = async (req, res) => {
-  const { nom, prenom, email, motDePasse, genre, photo, type , etat} = req.body;
+  const { nom, prenom, email, motDePasse, genre, photo, type, etat } = req.body;
 
   try {
     const existingUser = await Utilisateur.findOne({ where: { email: email } });
@@ -30,16 +31,21 @@ exports.signup = async (req, res) => {
         type,
         etat,
         resetPasswordToken: token,
-        resetPasswordExpires: new Date(Date.now() + 3600000), 
+        resetPasswordExpires: new Date(Date.now() + 3600000),
       });
 
-
       // Send confirmation email
-      const confirmationTemplate = signUpConfirmationEmailTemplate(newUser.nom,newUser.prenom,newUser.id_utilisateur,newUser.resetPasswordToken, API_ENDPOINT,);
+      const confirmationTemplate = signUpConfirmationEmailTemplate(
+        newUser.nom,
+        newUser.prenom,
+        newUser.id_utilisateur,
+        newUser.resetPasswordToken,
+        API_ENDPOINT
+      );
       const confirmationData = {
         from: FROM_EMAIL,
         to: newUser.email,
-        subject: "Confirmation de votre inscription",
+        subject: 'Confirmation de votre inscription',
         html: confirmationTemplate,
       };
       await smtpTransport.sendMail(confirmationData);
@@ -56,7 +62,7 @@ exports.signup = async (req, res) => {
 
 exports.activateAccount = async (req, res) => {
   try {
-    const { userId,token } = req.params;
+    const { userId, token } = req.params;
 
     const user = await Utilisateur.findOne({
       where: {
@@ -68,7 +74,8 @@ exports.activateAccount = async (req, res) => {
 
     if (!user) {
       return res.status(400).json({
-        message: "Invalid activation token or user ID, or the token has expired.",
+        message:
+          'Invalid activation token or user ID, or the token has expired.',
       });
     }
 
@@ -87,7 +94,7 @@ exports.activateAccount = async (req, res) => {
       { where: { id_utilisateur: userId } }
     );
 */
-    return res.json({ message: "Account activated successfully." });
+    return res.json({ message: 'Compte activé avec succès.' });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -109,11 +116,17 @@ exports.resendActivationEmail = async (req, res) => {
     user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour expiry
     await user.save();
 
-    const confirmationTemplate = signUpConfirmationEmailTemplate(user.nom, user.prenom, user.id_utilisateur, user.resetPasswordToken, API_ENDPOINT);
+    const confirmationTemplate = signUpConfirmationEmailTemplate(
+      user.nom,
+      user.prenom,
+      user.id_utilisateur,
+      user.resetPasswordToken,
+      API_ENDPOINT
+    );
     const confirmationData = {
       from: FROM_EMAIL,
       to: user.email,
-      subject: "Confirmation de votre inscription",
+      subject: 'Confirmation de votre inscription',
       html: confirmationTemplate,
     };
     await smtpTransport.sendMail(confirmationData);
@@ -125,45 +138,84 @@ exports.resendActivationEmail = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-    const { email, motDePasse } = req.body;
+  const { email, motDePasse } = req.body;
 
-    try {
-        const user = await Utilisateur.findOne({ where: { email: email } });
+  try {
+    const user = await Utilisateur.findOne({ where: { email: email } });
 
-        if (!user) {
-            return res.status(404).json({ error: 'utilisateur non trouvee' });
-        }
-
-        if (user.etat === 'bloque') {
-          return res.status(403).json({ error: 'Your account is blocked. Please contact the administrator.' });
-      }
-
-      if (user.etat === 'attend') {
-          return res.status(403).json({ error: 'User account is not authorized to log in' });
-      }
-
-        const passwordMatch = await bcrypt.compare(motDePasse, user.motDePasse);
-
-        if (!passwordMatch) {
-            return res.status(401).json({ error: 'Incorrect password' });
-        }
-
-        const token = jwt.sign({ userId: user.id_utilisateur }, secretKey, {
-            expiresIn: '1h',
-        });
-
-        res.status(200).json({
-            message: 'Login successful',
-            user: user,
-            token: token,
-        });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    if (!user) {
+      return res.status(404).json({ error: 'utilisateur non trouvee' });
     }
+
+    if (user.etat === 'bloque') {
+      return res.status(403).json({
+        error: 'Your account is blocked. Please contact the administrator.',
+      });
+    }
+
+    if (user.etat === 'attend') {
+      return res
+        .status(403)
+        .json({ error: 'User account is not authorized to log in' });
+    }
+
+    const hasNameAndSurname = user.nom;
+    const passwordMatch = await bcrypt.compare(motDePasse, user.motDePasse);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Incorrect password' });
+    }
+
+    const token = jwt.sign({ userId: user.id_utilisateur }, secretKey, {
+      expiresIn: '1h',
+    });
+
+    res.status(200).json({
+      message: 'Login successful',
+      user: user,
+      token: token,
+      shouldUpdateProfile: !hasNameAndSurname,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.googleAuth = passport.authenticate('google', {
+  scope: ['profile', 'email'],
+});
+
+exports.googleAuthCallback = (req, res, next) => {
+  passport.authenticate('google', {
+    failureRedirect: 'http://localhost:3000/signup',
+  })(req, res, () => {
+    // Redirect on successful authentication
+    res.redirect('http://localhost:3000/logout'); // Or your desired path
+  });
+};
+
+exports.logout = (req, res) => {
+  console.log('Logging out user');
+  req.logout((err) => {
+    if (err) {
+      console.log('Logout error:', err);
+      return next(err);
+    }
+    console.log('Session destruction started');
+    req.session.destroy((err) => {
+      if (err) {
+        console.log('Session destruction error:', err);
+        return res.status(500).send('Internal Server Error');
+      }
+      console.log('Session destroyed');
+      res.clearCookie('connect.sid'); // Ensure this matches your session cookie's name
+      return res.json({ message: 'You have been logged out' });
+    });
+  });
 };
 
 exports.updateUser = async (req, res) => {
-  const userId = req.userId; 
+  const userId = req.userId;
 
   try {
     const userToUpdate = await Utilisateur.findByPk(userId);
@@ -187,8 +239,10 @@ exports.findUser = async (req, res) => {
   const authenticatedUserId = req.userId;
 
   try {
-    if (requestedUserId === authenticatedUserId.toString()) { 
-      return res.status(403).json({ error: "vous pouvez pas recherche ton compte" });
+    if (requestedUserId === authenticatedUserId.toString()) {
+      return res
+        .status(403)
+        .json({ error: 'vous pouvez pas recherche ton compte' });
     }
 
     const user = await Utilisateur.findOne({
@@ -196,7 +250,7 @@ exports.findUser = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).json({ error: "utilisateur non trouvee" });
+      return res.status(404).json({ error: 'utilisateur non trouvee' });
     }
 
     res.status(200).json(user);
@@ -209,15 +263,15 @@ const FROM_EMAIL = process.env.MAILER_EMAIL_ID;
 const AUTH_PASSWORD = process.env.MAILER_PASSWORD;
 
 const API_ENDPOINT =
-  process.env.NODE_ENV === "production"
+  process.env.NODE_ENV === 'production'
     ? process.env.PRODUCTION_API_URL
     : process.env.DEVELOPMENT_API_URL;
 
 const smtpTransport = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: 'smtp.gmail.com',
   port: 465,
   secure: true,
-  service: "gmail",
+  service: 'gmail',
   auth: {
     user: FROM_EMAIL,
     pass: AUTH_PASSWORD,
@@ -228,7 +282,7 @@ const {
   signUpConfirmationEmailTemplate,
   forgotPasswordEmailTemplate,
   resetPasswordConfirmationEmailTemplate,
-} = require("../template/userAccountEmailTemplates");
+} = require('../template/userAccountEmailTemplates');
 
 exports.forgotPassword = async (req, res) => {
   try {
@@ -237,7 +291,7 @@ exports.forgotPassword = async (req, res) => {
     });
 
     if (!user) {
-      throw new Error("Utilisateur not found.");
+      throw new Error('Utilisateur not found.');
     }
     console.log(user);
     const token = Math.floor(1000 + Math.random() * 9000);
@@ -245,7 +299,7 @@ exports.forgotPassword = async (req, res) => {
     await Utilisateur.update(
       {
         resetPasswordToken: token,
-        resetPasswordExpires: new Date(Date.now() + 3600000), 
+        resetPasswordExpires: new Date(Date.now() + 3600000),
       },
       { where: { id_utilisateur: user.id_utilisateur } }
     );
@@ -260,7 +314,7 @@ exports.forgotPassword = async (req, res) => {
     const data = {
       from: FROM_EMAIL,
       to: user.email,
-      subject: "Reinitialisation de votre mot de passe",
+      subject: 'Reinitialisation de votre mot de passe',
       html: template,
     };
     // Assuming smtpTransport is properly configured and defined
@@ -272,7 +326,7 @@ exports.forgotPassword = async (req, res) => {
   } catch (error) {
     return res.status(422).json({ message: error.message });
   }
-}
+};
 
 exports.checkResetToken = async (req, res) => {
   try {
@@ -288,7 +342,7 @@ exports.checkResetToken = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         isValid: false,
-        message: "Password reset token is invalid or has expired.",
+        message: 'Password reset token is invalid or has expired.',
       });
     }
 
@@ -296,7 +350,7 @@ exports.checkResetToken = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ isValid: false, message: error.message });
   }
-}
+};
 
 exports.resetPassword = async (req, res) => {
   try {
@@ -309,7 +363,7 @@ exports.resetPassword = async (req, res) => {
 
     if (!user) {
       return res.status(400).send({
-        message: "Password reset token is invalid or has expired.",
+        message: 'Password reset token is invalid or has expired.',
       });
     }
 
@@ -328,16 +382,16 @@ exports.resetPassword = async (req, res) => {
     const data = {
       to: user.email,
       from: FROM_EMAIL,
-      subject: "Confirmation de réinitialisation du mot de passe",
+      subject: 'Confirmation de réinitialisation du mot de passe',
       html: template,
     };
 
     await smtpTransport.sendMail(data);
 
-    return res.json({ message: "Réinitialisation du mot de passe" });
+    return res.json({ message: 'Réinitialisation du mot de passe' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
-}
+};
 
 module.exports = exports;

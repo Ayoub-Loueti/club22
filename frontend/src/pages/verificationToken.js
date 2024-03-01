@@ -24,19 +24,20 @@ function VerificationToken() {
       );
 
       if (response.data.isValid) {
-        // Token is valid, navigate to the next page
         navigate(`/changerPass/${resetToken}`);
       } else {
-        // Token is invalid, display an alert
         alert('Invalid reset password token. Please try again.');
       }
     } catch (error) {
-      // Handle error
       console.error('Error:', error);
       alert('An error occurred. Please try again later.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const navigateToLogin = () => {
+    navigate('/');
   };
 
   return (
@@ -50,7 +51,9 @@ function VerificationToken() {
             top: '10px',
             left: '-160px',
             position: 'relative',
+            cursor: 'pointer', // Add cursor style for better UX
           }}
+          onClick={navigateToLogin} // Add onClick event handler here
         />
         <div className="grayvt-rectangle">
           <div className="form-column">
@@ -65,8 +68,7 @@ function VerificationToken() {
                 fontSize: '25px',
               }}
             >
-              {' '}
-              JETON DE RÉINITIALISATION{' '}
+              JETON DE RÉINITIALISATION
             </h2>
             <form onSubmit={handleResetTokenSubmit}>
               <div className="form-group">

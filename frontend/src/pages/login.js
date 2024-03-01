@@ -10,7 +10,7 @@ function Login() {
   const [email, setEmail] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleForgotPassword = async (email) => {
     try {
@@ -20,47 +20,56 @@ function Login() {
       alert('Failed to send password reset email. Please try again.');
     }
   };
-  
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+ const handleSubmit = async (e) => {
+   e.preventDefault();
+   setLoading(true);
 
-    try {
-        const response = await axios.post('http://localhost:5000/login', {
-            email,
-            motDePasse,
-        });
+   try {
+     const response = await axios.post('http://localhost:5000/login', {
+       email,
+       motDePasse,
+     });
 
-        const token = response.data.token;
-        localStorage.setItem(
-            'login',
-            JSON.stringify({
-                isAuthenticated: true,
-                token: token,
-            })
-        );
-        alert('Login successful!');
-        navigate('/signup');
-    } catch (error) {
-        if (error.response) {
-            if (error.response.data.error === 'User account is not authorized to log in') {
-                alert('User account is not authorized to log in.');
-            } else if (error.response.data.error === 'Your account is blocked. Please contact the administrator.') {
-                alert('Your account is blocked. Please contact the administrator.');
-            } else {
-                alert('Invalid email or password.');
-            }
-        } else if (error.request) {
-            alert('Network Error. Please try again later.');
-        } else {
-            alert('An error occurred. Please try again later.');
-        }
-    } finally {
-        setLoading(false);
-    }
-};
-
+     const token = response.data.token;
+     const shouldUpdateProfile = response.data.shouldUpdateProfile;
+     localStorage.setItem(
+       'login',
+       JSON.stringify({
+         isAuthenticated: true,
+         token: token,
+       })
+     );
+     if (shouldUpdateProfile) {
+       navigate('/insererNom');
+     } else {
+       alert('Login successful!');
+       navigate('/profile');
+     }
+   } catch (error) {
+     if (error.response) {
+       if (
+         error.response.data.error ===
+         'User account is not authorized to log in'
+       ) {
+         alert('User account is not authorized to log in.');
+       } else if (
+         error.response.data.error ===
+         'Your account is blocked. Please contact the administrator.'
+       ) {
+         alert('Your account is blocked. Please contact the administrator.');
+       } else {
+         alert('Invalid email or password.');
+       }
+     } else if (error.request) {
+       alert('Network Error. Please try again later.');
+     } else {
+       alert('An error occurred. Please try again later.');
+     }
+   } finally {
+     setLoading(false);
+   }
+ };
 
   return (
     <div className="login-page">
@@ -164,7 +173,8 @@ function Login() {
                 OU
               </p>
               <a
-                href="https://accounts.google.com/v3/signin/identifier?elo=1&ifkv=ATuJsjyd5xpCjFVDcRa4RIuEAg3FVQPiFlD12ri8U6DCY6uS-Bk0D54d-e3J8aZWZoQA9kLMIf4zGw&theme=glif&flowName=GlifWebSignIn&flowEntry=ServiceLogin&continue=https%3A%2F%2Faccounts.google.com%2FManageAccount%3Fnc%3D1"
+                href="http://localhost:5000/auth/google"
+                className="google-auth-link"
                 style={{
                   position: 'absolute',
                   top: '93%',
