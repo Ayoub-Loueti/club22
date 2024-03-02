@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../assets/signup.css';
 import ooredoo1Image from '../assets/ooredoo1.png';
 import ooredoo3Image from '../assets/ooredoo3.png';
@@ -11,6 +11,8 @@ function Signup() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showConfirmationMessage, setShowConfirmationMessage] = useState(false);
+  const [resendDisabled, setResendDisabled] = useState(false); // New state for managing resend button disabled state
+  const [countdown, setCountdown] = useState(30); 
   const navigate = useNavigate(); 
 
 
@@ -41,7 +43,8 @@ function Signup() {
         motDePasse: password,
       });
 
-      console.log(response.data); // Afficher la réponse du backend
+      console.log(response.data); 
+      alert ('Email de verification envoyé. Veuillez vérifier votre boite email.')// Afficher la réponse du backend
       setShowConfirmationMessage(true);
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -54,14 +57,28 @@ function Signup() {
     }
   };
 
+  useEffect(() => {
+    let interval;
+    if (resendDisabled && countdown > 0) {
+      interval = setInterval(() => {
+        setCountdown((currentCountdown) => currentCountdown - 1);
+      }, 1000);
+    } else if (countdown === 0) {
+      setResendDisabled(false);
+      setCountdown(30); // Reset countdown
+    }
+    return () => clearInterval(interval);
+  }, [resendDisabled, countdown]);
+
   const handleResendEmail = async () => {
+    setResendDisabled(true); // Disable the button immediately when clicked
     try {
       await axios.post('http://localhost:5000/resendEmail', {
         email: email,
       });
       alert('Email de verification renvoyé. Veuillez vérifier votre boite email.');
     } catch (error) {
-      console.error("Erreur lors du renvoi de l'email:", error.response.data.error);
+      console.error("Erreur lors du renvoi de l'email:", error.response?.data?.error || error.message);
     }
   };
 
@@ -274,21 +291,13 @@ function Signup() {
   }}>
     <p style={{ margin: '0 auto', width: '80%' }}>
        activer votre compte.
-      <a
-        href="#resend"
-        onClick={(e) => {
-          e.preventDefault(); // Prevent the default anchor action
-          handleResendEmail();
-        }}
-        style={{
-          color: '#007bff',  // Bootstrap primary link color
-          fontWeight: 'bold',
-          textDecoration: 'underline',
-          marginLeft: '5px',  // Space out the link from the text
-        }}
-      >
-        renvoyer l'email.
-      </a>
+       <button
+              onClick={handleResendEmail}
+              disabled={resendDisabled}
+              style={{ /* Your button styles */ }}
+            >
+              {resendDisabled ? `Renvoyer l'email (${countdown})` : 'Renvoyer l\'email'}
+            </button>
     </p>
   </div>
 )}
