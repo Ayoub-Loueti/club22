@@ -1,0 +1,92 @@
+/* Définition des variables de couleur pour une meilleure cohérence et facilité de maintenance */
+:root {
+  --primary-color: #191f43; /* Bleu foncé */
+  --secondary-color: #879eb9; /* Bleu clair */
+  --background-color: #f5f5f5; /* Gris clair */
+  --text-primary: #ffffff; /* Blanc */
+  --text-secondary: #000000; /* Noir */
+}
+
+.profile-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ajout d'ombre pour un effet de profondeur */
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.profile-picture {
+  width: 200px;
+  height: 200px;
+  background-color: var(--primary-color); /* Utilisation de la variable de couleur */
+  border-radius: 50%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* Assure que les images débordantes sont rognées */
+}
+
+.profile-header h1 {
+  color: var(--primary-color);
+  margin-bottom: 5px;
+}
+
+.profile-header p {
+  color: var(--secondary-color);
+}
+
+.profile-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat h3 {
+  color: var(--primary-color);
+}
+
+.profile-bio, .profile-info {
+  background-color: var(--background-color);
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Légère ombre pour du relief */
+  transition: all 0.3s ease; /* Transition douce pour les effets de survol */
+}
+
+.profile-info {
+  background-color: var(--secondary-color);
+  color: var(--text-primary); /* Assure une bonne lisibilité sur fond clair */
+}
+
+.info-item:not(:last-child) {
+  margin-bottom: 10px;
+}
+
+.info-label {
+  font-weight: bold;
+  color: var(--text-secondary); /* Contraste pour les labels */
+}
+
+.info-value {
+  margin-left: 10px;
+}
+
+/* Hover effects pour bio et info pour un feedback interactif */
+.profile-bio:hover, .profile-info:hover {
+  transform: translateY(-5px); /* Légère remontée pour un effet dynamique */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.separator {
+  height: 50px; /* Ajustement selon le besoin */
+}
