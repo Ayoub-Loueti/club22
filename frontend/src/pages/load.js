@@ -8,7 +8,7 @@ function Load() {
     const authCompleted = JSON.parse(localStorage.getItem('login'))?.isAuthenticated;
     
     if (authCompleted) {
-      navigate('/profile');
+      navigate('/profil');
       return;
     }
   
@@ -20,7 +20,7 @@ function Load() {
         isAuthenticated: true,
         token: token,
       }));
-      navigate('/profile'); 
+      navigate('/profil'); 
     } else {
       navigate('/'); 
     }
