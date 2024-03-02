@@ -414,4 +414,45 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
+exports.resendForgotPasswordEmail = async (req, res) => {
+  // Extract the email from URL parameters instead of the body
+  const { email } = req.params;
+
+  try {
+    const user = await Utilisateur.findOne({
+      where: { email: email },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+    }
+
+    const token = Math.floor(1000 + Math.random() * 9000);
+
+    await Utilisateur.update({
+      resetPasswordToken: token,
+      resetPasswordExpires: new Date(Date.now() + 3600000), // 1 hour from now
+    }, {
+      where: { id_utilisateur: user.id_utilisateur }
+    });
+
+    const template = forgotPasswordEmailTemplate(user.nom, user.email, API_ENDPOINT, token);
+    const data = {
+      from: FROM_EMAIL,
+      to: user.email,
+      subject: 'Réinitialisation de votre mot de passe - Renvoi',
+      html: template,
+    };
+
+    await smtpTransport.sendMail(data);
+
+    return res.json({
+      message: "E-mail de réinitialisation du mot de passe renvoyé avec succès. Veuillez vérifier votre e-mail pour plus d'instructions",
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+
 module.exports = exports;

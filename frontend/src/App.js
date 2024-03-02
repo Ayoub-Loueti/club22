@@ -22,7 +22,7 @@ function App() {
           <Route path="/logout" element={<LogoutButton />} />
           <Route path="/employesAutorise" element={<EmployesAutorise />} />
           <Route path="/insererNom" element={<InsererNom />} />
-          <Route path="/verificationToken" element={<VerificationToken />} />
+          <Route path="/verificationToken/:email" element={<VerificationToken />} />
           <Route path="/changerPass/:token" element={<ChangerPass />} />
           <Route path="/load" element={<Load />} />
           <Route path="/tousLesUtilisateurs" element={<TousLesUtilisateurs />} />

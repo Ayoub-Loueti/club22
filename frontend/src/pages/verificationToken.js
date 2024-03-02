@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom'; // Import useParams
 import '../assets/verificationToken.css';
 import ooredoo1Image from '../assets/ooredoo1.png';
 import ooredoo3Image from '../assets/ooredoo3.png';
@@ -8,8 +8,25 @@ import ooredoo3Image from '../assets/ooredoo3.png';
 function VerificationToken() {
   const [resetToken, setResetToken] = useState('');
   const [loading, setLoading] = useState(false);
+  // Use useParams to get the email from the URL
+  const { email } = useParams(); 
+  const [resendDisabled, setResendDisabled] = useState(false);
+  const [countdown, setCountdown] = useState(30);
   const navigate = useNavigate();
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    let interval;
+    if (resendDisabled && countdown !== 0) {
+      interval = setInterval(() => {
+        setCountdown((currentCountdown) => currentCountdown - 1);
+      }, 1000);
+    } else if (countdown === 0) {
+      setResendDisabled(false);
+      setCountdown(30);
+    }
+    return () => clearInterval(interval);
+  }, [resendDisabled, countdown]);
 
   const handleResetTokenSubmit = async (e) => {
     e.preventDefault();
@@ -26,13 +43,24 @@ function VerificationToken() {
       if (response.data.isValid) {
         navigate(`/changerPass/${resetToken}`);
       } else {
-        alert('Invalid reset password token. Please try again.');
+        setError('Invalid reset password token. Please try again.');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('An error occurred. Please try again later.');
+      setError('An error occurred. Please try again later.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendEmail = async () => {
+    setResendDisabled(true);
+    try {
+      await axios.post(`http://localhost:5000/resend-forgot-password-email/${email}`);
+      alert('Reset email has been resent. Please check your inbox.');
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while resending the email. Please try again later.');
     }
   };
 
@@ -51,9 +79,9 @@ function VerificationToken() {
             top: '10px',
             left: '-160px',
             position: 'relative',
-            cursor: 'pointer', // Add cursor style for better UX
+            cursor: 'pointer',
           }}
-          onClick={navigateToLogin} // Add onClick event handler here
+          onClick={navigateToLogin}
         />
         <div className="grayvt-rectangle">
           <div className="form-column">
@@ -80,7 +108,6 @@ function VerificationToken() {
                   placeholder="Entrez le Token de Réinitialisation du mot de passe"
                   required
                 />
-
                 <button
                   type="submit"
                   style={{
@@ -103,9 +130,26 @@ function VerificationToken() {
                 >
                   OK
                 </button>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {error && <p style={{ color: 'red', marginTop: '20px' }}>{error}</p>}
               </div>
             </form>
+            <button
+              disabled={resendDisabled}
+              onClick={handleResendEmail}
+              style={{
+                marginTop: '20px',
+                backgroundColor: '#191F43',
+                color: '#fff',
+                padding: '10px 30px',
+                border: 'none',
+                borderRadius: '14px',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+              }}
+            >
+              {resendDisabled ? `Resend Email (${countdown})` : 'Resend Email'}
+            </button>
           </div>
         </div>
       </div>

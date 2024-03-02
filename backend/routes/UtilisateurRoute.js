@@ -17,9 +17,8 @@ router.put('/updateCompte', authenticate, utilisateurController.updateUser);
 router.get('/rechercher/:id', authenticate, utilisateurController.findUser);
 
 router.post('/forgot-password', utilisateurController.forgotPassword);
-
 router.post('/check-reset-token', utilisateurController.checkResetToken);
-
 router.post('/reset-password/:token', utilisateurController.resetPassword);
+router.post('/resend-forgot-password-email/:email', utilisateurController.resendForgotPasswordEmail);
 
 module.exports = router;
