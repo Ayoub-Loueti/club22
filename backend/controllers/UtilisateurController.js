@@ -107,33 +107,42 @@ exports.resendActivationEmail = async (req, res) => {
     const user = await Utilisateur.findOne({ where: { email: email } });
 
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    const activationToken = Math.floor(1000 + Math.random() * 9000);
+    if (user.etat === 'autorise') {
+      return res.status(400).json({ message: 'User account is already activated.' });
+    }
 
-    user.resetPasswordToken = activationToken;
-    user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour expiry
-    await user.save();
+    const token = Math.floor(1000 + Math.random() * 9000);
+
+    await Utilisateur.update({
+      resetPasswordToken: token,
+      resetPasswordExpires: new Date(Date.now() + 3600000), // 1 hour from now
+    }, {
+      where: { id_utilisateur: user.id_utilisateur }
+    });
 
     const confirmationTemplate = signUpConfirmationEmailTemplate(
       user.nom,
       user.prenom,
       user.id_utilisateur,
-      user.resetPasswordToken,
-      API_ENDPOINT
+      token,
+      API_ENDPOINT // Make sure this endpoint points to where the user can confirm their email
     );
+
     const confirmationData = {
       from: FROM_EMAIL,
       to: user.email,
       subject: 'Confirmation de votre inscription',
       html: confirmationTemplate,
     };
+
     await smtpTransport.sendMail(confirmationData);
 
-    res.status(200).json({ message: 'Activation email resent successfully' });
+    return res.status(200).json({ message: 'Activation email resent successfully.' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 

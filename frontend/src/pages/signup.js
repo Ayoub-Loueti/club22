@@ -10,6 +10,7 @@ function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showConfirmationMessage, setShowConfirmationMessage] = useState(false);
   const navigate = useNavigate(); 
 
 
@@ -41,10 +42,26 @@ function Signup() {
       });
 
       console.log(response.data); // Afficher la réponse du backend
-        navigate('/');
+      setShowConfirmationMessage(true);
     } catch (error) {
-      console.error("Erreur lors de l'inscription:", error.response.data.error);
-      // Afficher une erreur à l'utilisateur ou effectuer une autre action en cas d'erreur
+      if (error.response && error.response.status === 400) {
+        // If the user already exists, show the alert message
+        alert('Un utilisateur avec cet e-mail existe déjà.');
+      } else {
+        console.error("Erreur lors de l'inscription:", error.response?.data?.error || error.message);
+      }
+      // Optionally handle other error statuses or show a generic error message
+    }
+  };
+
+  const handleResendEmail = async () => {
+    try {
+      await axios.post('http://localhost:5000/resendEmail', {
+        email: email,
+      });
+      alert('Email de verification renvoyé. Veuillez vérifier votre boite email.');
+    } catch (error) {
+      console.error("Erreur lors du renvoi de l'email:", error.response.data.error);
     }
   };
 
@@ -240,6 +257,42 @@ function Signup() {
                   ></path>
                 </svg>
               </a>
+              {showConfirmationMessage && (
+  <div style={{
+    textAlign: 'center',
+    marginTop: '40px',
+    backgroundColor: '#f8f9fa',  // Light grey background for subtle contrast
+    padding: '30px 40px',
+    borderRadius: '15px',
+    boxShadow: '0 10px 20px rgba(0, 0, 0, 0.12)',
+    color: '#343a40',  // Dark grey text for readability
+    fontSize: '1rem',  // 16px font size for readability
+    lineHeight: '1.5',
+    width: '200px',  // Use a percentage to control width
+    margin: '150px auto',  // Center the container
+    border: '1px solid #ced4da'  // Light grey border to define the box edges
+  }}>
+    <p style={{ margin: '0 auto', width: '80%' }}>
+       activer votre compte.
+      <a
+        href="#resend"
+        onClick={(e) => {
+          e.preventDefault(); // Prevent the default anchor action
+          handleResendEmail();
+        }}
+        style={{
+          color: '#007bff',  // Bootstrap primary link color
+          fontWeight: 'bold',
+          textDecoration: 'underline',
+          marginLeft: '5px',  // Space out the link from the text
+        }}
+      >
+        renvoyer l'email.
+      </a>
+    </p>
+  </div>
+)}
+
             </form>
           </div>
         </div>
