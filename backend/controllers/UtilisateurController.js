@@ -454,5 +454,20 @@ exports.resendForgotPasswordEmail = async (req, res) => {
   }
 };
 
-
+exports.getUserProfile = async (req, res) => {
+  try {
+    const user = await Utilisateur.findByPk(req.userId, {
+      attributes: { exclude: ['motDePasse'] }, // Exclure le mot de passe pour des raisons de sécurité
+    });
+    if (user) {
+      res
+        .status(200)
+        .json({ message: 'User profile retrieved successfully', user });
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 module.exports = exports;

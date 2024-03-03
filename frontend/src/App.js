@@ -12,6 +12,7 @@ import EmployesAutorise from './pages/employesAutorise';
 import InsererNom from './pages/insererNom';
 import Load from './pages/load';
 import TousLesUtilisateurs from './pages/tousLesUtilisateurs';
+import Profil from './pages/profil';
 function App() {
   return (
     <Router>
@@ -22,10 +23,17 @@ function App() {
           <Route path="/logout" element={<LogoutButton />} />
           <Route path="/employesAutorise" element={<EmployesAutorise />} />
           <Route path="/insererNom" element={<InsererNom />} />
-          <Route path="/verificationToken/:email" element={<VerificationToken />} />
+          <Route
+            path="/verificationToken/:email"
+            element={<VerificationToken />}
+          />
           <Route path="/changerPass/:token" element={<ChangerPass />} />
           <Route path="/load" element={<Load />} />
-          <Route path="/tousLesUtilisateurs" element={<TousLesUtilisateurs />} />
+          <Route
+            path="/tousLesUtilisateurs"
+            element={<TousLesUtilisateurs />}
+          />
+          <Route path="/profil" element={<Profil />} />
 
           <Route
             path="/activate-account/:userId/:token"

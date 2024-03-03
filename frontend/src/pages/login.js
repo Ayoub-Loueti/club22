@@ -57,7 +57,7 @@ function Login() {
         navigate('/insererNom');
       } else {
         alert('Login successful!');
-        navigate('/profile');
+        navigate('/profil');
       }
     } catch (error) {
       if (error.response) {

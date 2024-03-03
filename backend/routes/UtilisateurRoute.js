@@ -20,5 +20,6 @@ router.post('/forgot-password', utilisateurController.forgotPassword);
 router.post('/check-reset-token', utilisateurController.checkResetToken);
 router.post('/reset-password/:token', utilisateurController.resetPassword);
 router.post('/resend-forgot-password-email/:email', utilisateurController.resendForgotPasswordEmail);
+router.get('/profil', authenticate, utilisateurController.getUserProfile);
 
 module.exports = router;

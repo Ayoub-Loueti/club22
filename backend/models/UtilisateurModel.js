@@ -1,47 +1,55 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
-const UtilisateurModel = sequelize.define('Utilisateur', {
+const UtilisateurModel = sequelize.define(
+  'Utilisateur',
+  {
     id_utilisateur: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
     nom: {
-        type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     prenom: {
-        type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     email: {
-        type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     motDePasse: {
-        type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     photo: {
-        type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     genre: {
-        type: DataTypes.ENUM('homme', 'femme')
+      type: DataTypes.ENUM('homme', 'femme', 'inconnu'),
     },
     type: {
-        type: DataTypes.ENUM('client', 'employe', 'admin')
+      type: DataTypes.ENUM('client', 'employe', 'admin'),
     },
-    etat:{
-        type: DataTypes.ENUM('attend','autorise','bloque')
+    etat: {
+      type: DataTypes.ENUM('attend', 'autorise', 'bloque'),
     },
     resetPasswordToken: {
-        type: DataTypes.STRING,
-      },
-    
-      resetPasswordExpires: {
-        type: DataTypes.DATE,
-        defaultValue: null,
-      },
-}, {
+      type: DataTypes.STRING,
+    },
+
+    resetPasswordExpires: {
+      type: DataTypes.DATE,
+      defaultValue: null,
+    },
+    description: {
+      type: DataTypes.TEXT,
+      defaultValue: 'Profil en cours de personnalisation!',
+    },
+  },
+  {
     tableName: 'utilisateur',
-    timestamps: false
-});
+    timestamps: false,
+  }
+);
 
 module.exports = UtilisateurModel;
