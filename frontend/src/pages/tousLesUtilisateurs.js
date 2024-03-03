@@ -68,7 +68,11 @@ function TousLesUtilisateurs() {
           {filteredUsers.map((utilisateur, index) => (
             <tr key={index}>
               <td>{utilisateur.id_utilisateur}</td>
-              <td>{utilisateur.photo}</td>
+              <td><img
+  src={utilisateur.photo ? `http://localhost:5000/${utilisateur.photo}` : "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"}
+  alt="Profil"
+  className="profile-picture"
+/></td>
               <td>{utilisateur.nom}</td>
               <td>{utilisateur.prenom}</td>
               <td>{utilisateur.email}</td>

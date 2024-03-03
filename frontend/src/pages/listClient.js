@@ -99,7 +99,11 @@ function ListClient() {
         <tbody>
           {filteredClients.map((client) => (
             <tr key={client.id_utilisateur}>
-              <td>{client.photo}</td>
+              <td><img
+  src={client.photo ? `http://localhost:5000/${client.photo}` : "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"}
+  alt="Profil"
+  className="profile-picture"
+/></td>
               <td>{client.nom}</td>
               <td>{client.prenom}</td>
               <td>{client.email}</td>

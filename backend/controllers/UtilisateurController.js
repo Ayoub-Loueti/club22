@@ -314,6 +314,11 @@ exports.forgotPassword = async (req, res) => {
       return res.status(404).json({ message: 'Utilisateur non trouvé.' });
     }
 
+    // Check if the user's account status is 'autorise'
+    if (user.etat !== 'autorise') {
+      return res.status(403).json({ message: 'Votre compte doit être autorisé pour réinitialiser le mot de passe.' });
+    }
+
     // Check if user's password is empty, indicating they signed up through Google
     if (!user.motDePasse || user.motDePasse.trim() === '') {
       return res.status(400).json({ message: 'Les utilisateurs qui se sont inscrits via Google doivent utiliser la réinitialisation de mot de passe de Google.' });
@@ -347,6 +352,7 @@ exports.forgotPassword = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 exports.checkResetToken = async (req, res) => {
   try {

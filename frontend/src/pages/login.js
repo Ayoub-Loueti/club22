@@ -12,25 +12,32 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleForgotPassword = async (email) => {
-    try {
-      const response = await axios.post('http://localhost:5000/forgot-password', { email });
-      alert('Email de réinitialisation du mot de passe envoyé !');
-      navigate(`/verificationToken/${email}`);
-    } catch (error) {
-      if (error.response) {
-        if (error.response.data.message === 'Utilisateur non trouvé.') {
+const handleForgotPassword = async (email) => {
+  try {
+    const response = await axios.post('http://localhost:5000/forgot-password', { email });
+    alert('Email de réinitialisation du mot de passe envoyé !');
+    navigate(`/verificationToken/${email}`);
+  } catch (error) {
+    if (error.response) {
+      switch (error.response.data.message) {
+        case 'Utilisateur non trouvé.':
           alert('Utilisateur non trouvé. Veuillez vérifier l"adresse e-mail et réessayer.');
-        } else if (error.response.data.message === 'Les utilisateurs qui se sont inscrits via Google doivent utiliser la réinitialisation de mot de passe de Google.') {
+          break;
+        case 'Les utilisateurs qui se sont inscrits via Google doivent utiliser la réinitialisation de mot de passe de Google.':
           alert('Les utilisateurs qui se sont inscrits via Google doivent utiliser la réinitialisation de mot de passe de Google.');
-        } else {
+          break;
+        case 'Votre compte doit être autorisé pour réinitialiser le mot de passe.':
+          alert('Votre compte doit être autorisé pour réinitialiser le mot de passe. Veuillez contacter l"administrateur.');
+          break;
+        default:
           alert('Échec de l"envoi de l"email de réinitialisation du mot de passe. Veuillez réessayer.');
-        }
-      } else {
-        alert('Une erreur est survenue. Veuillez réessayer.');
       }
+    } else {
+      alert('Une erreur est survenue. Veuillez réessayer.');
     }
-  };
+  }
+};
+
   
   
 
