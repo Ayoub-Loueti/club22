@@ -13,6 +13,9 @@ import InsererNom from './pages/insererNom';
 import Load from './pages/load';
 import TousLesUtilisateurs from './pages/tousLesUtilisateurs';
 import Profil from './pages/profil';
+import ListClient from "./pages/listClient";
+import ListEmploye from "./pages/listEmploye";
+
 function App() {
   return (
     <Router>
@@ -23,6 +26,8 @@ function App() {
           <Route path="/logout" element={<LogoutButton />} />
           <Route path="/employesAutorise" element={<EmployesAutorise />} />
           <Route path="/insererNom" element={<InsererNom />} />
+          <Route path="/listClient" element={<ListClient />} />
+          <Route path="/listEmploye" element={<ListEmploye />} />
           <Route
             path="/verificationToken/:email"
             element={<VerificationToken />}
