@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../assets/tousLesUtilisateurs.css';
-
+import '../components/navbar';
 function TousLesUtilisateurs() {
   const [utilisateurs, setUtilisateurs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -68,11 +68,17 @@ function TousLesUtilisateurs() {
           {filteredUsers.map((utilisateur, index) => (
             <tr key={index}>
               <td>{utilisateur.id_utilisateur}</td>
-              <td><img
-  src={utilisateur.photo ? `http://localhost:5000/${utilisateur.photo}` : "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"}
-  alt="Profil"
-  className="profile-picture"
-/></td>
+              <td>
+                <img
+                  src={
+                    utilisateur.photo
+                      ? `http://localhost:5000/${utilisateur.photo}`
+                      : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+                  }
+                  alt="Profil"
+                  className="profile-picture"
+                />
+              </td>
               <td>{utilisateur.nom}</td>
               <td>{utilisateur.prenom}</td>
               <td>{utilisateur.email}</td>

@@ -1,0 +1,133 @@
+/* Styles pour la navbar verticale */
+.navbar {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 120px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: #191f43;
+  overflow: hidden;
+    
+
+}
+
+
+.navbar-inner {
+  width: 63%;
+  background-color: #879eb9;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+}
+
+.navbar-extension {
+  width: 30px;
+  height: 100%;
+  background-color: #ffff;
+  position: absolute;
+  right: -3px;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+}
+
+.navbar-logo {
+  height: 30px;
+  width: 27px;
+  position: absolute;
+  top: 5px;
+  left: 11px;
+}
+
+/* Styles pour la navbar horizontale */
+.navbar-horizontal {
+  display: flex;
+  flex-direction: row;
+  height: 50px;
+  margin-left: 110px; /* Ajustez pour correspondre exactement à la largeur de votre navbar verticale */
+  width: calc(
+    100% - 110px
+  ); /* Assurez-vous que la largeur tient compte de la marge à gauche */
+  background-color: transparent;
+  align-items: center;
+  top: 0;
+  z-index: 1000;
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centrer horizontalement les éléments enfants */
+  margin-left: auto; /* Mettre à auto pour déplacer la barre de recherche à droite */
+  margin-right: auto; /* Mettre à auto pour déplacer la barre de recherche à gauche */
+}
+
+.search-input {
+  color: white; /* Change la couleur du texte en blanc */
+  background-color: #879eb9;
+  border-radius: 20px; /* Arrondi des bords de l'input */
+  padding: 5px 10px; /* Espacement interne pour le texte */
+  width: 250px; /* Largeur de la barre de recherche */
+  outline: none; /* Supprime l'outline par défaut au focus */
+}
+/* Styles pour l'icône de recherche */
+.search-iconn {
+  color: #191f43; /* Couleur de l'icône de recherche */
+  font-size: 22px; /* Taille de l'icône */
+  background-color: transparent; /* Fond transparent */
+  border: none; /* Pas de bordure */
+  cursor: pointer; /* Curseur de type pointer */
+  padding: 0; /* Aucun espacement interne */
+  margin-left: -32px; /* Ajustement horizontal de la position */
+  margin-top: 1px; /* Ajustement vertical de la position */
+}
+
+.icon-containerr {
+  display: flex;
+  gap: 22px; /* Espacement entre les icônes */
+  padding-right: 20px; /* Espacement à droite */
+  color: #191f43;
+  font-size: 24px; /* Taille des icônes */
+}
+
+.navbar-iconn {
+  cursor: pointer; /* Change le curseur pour indiquer la cliquabilité */
+}
+#search-input-navbar::placeholder {
+  color: white; /* Définit la couleur du placeholder en blanc uniquement pour cet input */
+  opacity: 1; /* Assure que la couleur du placeholder est pleinement visible */
+}
+.vertical-icon {
+  color: white; /* Définit la couleur des icônes en blanc */
+  font-size: 24px; /* Taille des icônes */
+  margin: 10px 0; /* Espacement vertical entre les icônes */
+  cursor: pointer; /* Indique que les icônes sont cliquables */
+}
+.icon-containerrr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white; /* Assure que les icônes sont en blanc */
+  padding-left: 7px;
+}
+
+.navbar-iconnn {
+  margin: 20px 0; /* Espacement entre les icônes */
+  color: white; /* S'assure que les icônes sont blanches */
+  font-size: 23px;
+    cursor: pointer; /* Indique que les icônes sont cliquables */
+
+}
+
+/* Styles pour l'icône d'utilisateur */
+.inner-user {
+  color: #191f43; /* Couleur de l'icône */
+  font-size: 23px; /* Taille de l'icône */
+  margin: 20px 20px 20px 0; /* Espacement autour de l'icône avec une marge droite de 10px */
+  cursor: pointer; /* Curseur de type pointer */
+
+}
