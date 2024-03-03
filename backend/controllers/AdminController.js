@@ -120,7 +120,8 @@ exports.updateUserEtatAutorise = async (req, res) => {
   }
 };
 
-exports.getAllAuthorizedUsers = async (req, res) => {
+
+exports.getAllClients = async (req, res) => {
   try {
     const isAdmin = await Utilisateur.findOne({
       where: {
@@ -140,7 +141,6 @@ exports.getAllAuthorizedUsers = async (req, res) => {
 
     const authorizedUsers = await Utilisateur.findAll({
       where: {
-        etat: 'autorise',
         type: 'client',
       },
     });
@@ -151,7 +151,7 @@ exports.getAllAuthorizedUsers = async (req, res) => {
   }
 };
 
-exports.getAllBlockedUsers = async (req, res) => {
+/* exports.getAllBlockedUsers = async (req, res) => {
   try {
     const isAdmin = await Utilisateur.findOne({
       where: {
@@ -180,9 +180,9 @@ exports.getAllBlockedUsers = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}; */
 
-exports.getAllAuthorizedEmploye = async (req, res) => {
+exports.getAllEmploye = async (req, res) => {
   try {
     const isAdmin = await Utilisateur.findOne({
       where: {
@@ -202,7 +202,6 @@ exports.getAllAuthorizedEmploye = async (req, res) => {
 
     const authorizedUsers = await Utilisateur.findAll({
       where: {
-        etat: 'autorise',
         type: 'employe',
       },
     });
@@ -213,7 +212,7 @@ exports.getAllAuthorizedEmploye = async (req, res) => {
   }
 };
 
-exports.getAllBlockedEmploye = async (req, res) => {
+/* exports.getAllBlockedEmploye = async (req, res) => {
   try {
     const isAdmin = await Utilisateur.findOne({
       where: {
@@ -242,6 +241,6 @@ exports.getAllBlockedEmploye = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}; */
 
 module.exports = exports;

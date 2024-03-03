@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../assets/tousLesUtilisateurs.css'
+import { useNavigate } from 'react-router-dom';
+import '../assets/tousLesUtilisateurs.css';
+
 function TousLesUtilisateurs() {
   const [utilisateurs, setUtilisateurs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-
+  const navigate = useNavigate();
   const token = localStorage.getItem('login');
 
   useEffect(() => {
@@ -35,18 +37,22 @@ function TousLesUtilisateurs() {
 
   return (
     <div className="tousLesUtilisateurs-container">
-      <div className="tousLesUtilisateurs-title-container">
-        <h1 className="tousLesUtilisateurs-title">Tous les Utilisateurs</h1>
+      <div className="tousLesUtilisateurs-header">
+        <h1>Tous les Utilisateurs</h1>
+        <div className="navigation-text">
+          <span onClick={() => navigate('/listClient')}>Client</span>
+          <span onClick={() => navigate('/listEmploye')}>Employé</span>
+        </div>
         <input
           type="text"
-          className="tousLesUtilisateurs-search-input"
+          className="search-input"
           placeholder="Rechercher..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
-      <table className="tousLesUtilisateursTable">
+      <table className="utilisateurs-table">
         <thead>
           <tr>
             <th>ID</th>
