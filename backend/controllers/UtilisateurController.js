@@ -470,4 +470,17 @@ exports.getUserProfile = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// Add to utilisateurController.js
+exports.updateUserPhoto = async (req, res, filePath) => {
+  const userId = req.userId; // Make sure you have the user's ID available, e.g., from a JWT token
+
+  try {
+    await Utilisateur.update({ photo: filePath }, { where: { id_utilisateur: userId } });
+    res.status(200).json({ message: 'Profile picture updated successfully', filePath });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = exports;

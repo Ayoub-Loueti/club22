@@ -36,6 +36,7 @@ app.use(passport.session());
 
 app.use(utilisateur);
 app.use(admin);
+app.use('/uploads', express.static('uploads'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

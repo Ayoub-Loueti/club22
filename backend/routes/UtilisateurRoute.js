@@ -22,4 +22,24 @@ router.post('/reset-password/:token', utilisateurController.resetPassword);
 router.post('/resend-forgot-password-email/:email', utilisateurController.resendForgotPasswordEmail);
 router.get('/profil', authenticate, utilisateurController.getUserProfile);
 
+const upload = require('../middleware/multerConfig');
+
+// Update user profile picture route
+router.post('/updateProfilePicture', authenticate, (req, res) => {
+  upload(req, res, (err) => {
+    if(err){
+      res.status(400).json({ error: err });
+    } else {
+      if(req.file == undefined){
+        res.status(400).json({ error: 'No file selected' });
+      } else {
+        // Here, you can now save the file path to the user's record in the database
+        // Assuming you have a function updateUserPhoto in your controller
+        const filePath = req.file.path;
+        utilisateurController.updateUserPhoto(req, res, filePath);
+      }
+    }
+  });
+});
+
 module.exports = router;

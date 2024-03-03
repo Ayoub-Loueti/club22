@@ -69,19 +69,42 @@ function Profil() {
     }
   };
 
-
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('photo', file);
+  
+    try {
+      const response = await axios.post('http://localhost:5000/updateProfilePicture', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${JSON.parse(token).token}`,
+        },
+      });
+  
+      if (response.status === 200) {
+        // If the upload is successful, reload the page to reflect the changes
+        window.location.reload();
+      } else {
+        // Handle any errors or unsuccessful upload attempts here
+        console.error("Failed to upload the image");
+      }
+    } catch (error) {
+      console.error("Error during the image upload", error);
+    }
+  };
+  
+  
   return (
     <div className="profile-container">
       <div className="profile-header">
-        {utilisateur.photo ? (
-          <img
-            src={utilisateur.photo}
-            alt="Profil"
-            className="profile-picture"
-          />
-        ) : (
-          <div className="profile-picture"></div>
-        )}
+      <img
+  src={utilisateur.photo ? `http://localhost:5000/${utilisateur.photo}` : "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"}
+  alt="Profil"
+  className="profile-picture"
+/>
+
+        <input type="file" onChange={handleFileChange} />
         <h1>{`${utilisateur.nom} ${utilisateur.prenom}`}</h1>
         <p>{utilisateur.email}</p>{' '}
       </div>
