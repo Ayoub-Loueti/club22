@@ -9,10 +9,7 @@
   top: 0;
   background-color: #191f43;
   overflow: hidden;
-    
-
 }
-
 
 .navbar-inner {
   width: 63%;
@@ -47,13 +44,13 @@
   display: flex;
   height: 40px; /* Hauteur réduite comme précédemment mentionné */
   margin-left: 600px; /* Réduisez cette valeur pour diminuer l'espace à gauche */
-  width: calc(100% - 150px); /* Ajustez la largeur en conséquence pour maintenir la cohérence */
+  width: calc(
+    100% - 150px
+  ); /* Ajustez la largeur en conséquence pour maintenir la cohérence */
   background-color: transparent;
   align-items: center;
   z-index: 1000;
 }
-
-
 
 .searchh-formm {
   display: flex;
@@ -63,8 +60,7 @@
 }
 
 .searchh-inputt {
-  color: white; /* Change la couleur du texte en blanc */
-  background-color: #879eb9;
+  color: #191f43; /* Change la couleur du texte en blanc */
   border-radius: 20px; /* Arrondi des bords de l'input */
   padding: 5px 10px; /* Espacement interne pour le texte */
   width: 250px; /* Largeur de la barre de recherche */
@@ -94,7 +90,7 @@
   cursor: pointer; /* Change le curseur pour indiquer la cliquabilité */
 }
 #search-input-navbar::placeholder {
-  color: white; /* Définit la couleur du placeholder en blanc uniquement pour cet input */
+  color: #191f43; /* Définit la couleur du placeholder en blanc uniquement pour cet input */
   opacity: 1; /* Assure que la couleur du placeholder est pleinement visible */
 }
 .vertical-icon {
@@ -116,8 +112,7 @@
   margin: 20px 0; /* Espacement entre les icônes */
   color: white; /* S'assure que les icônes sont blanches */
   font-size: 23px;
-    cursor: pointer; /* Indique que les icônes sont cliquables */
-
+  cursor: pointer; /* Indique que les icônes sont cliquables */
 }
 
 /* Styles pour l'icône d'utilisateur */
@@ -126,5 +121,4 @@
   font-size: 23px; /* Taille de l'icône */
   margin: 20px 20px 20px 0; /* Espacement autour de l'icône avec une marge droite de 10px */
   cursor: pointer; /* Curseur de type pointer */
-
 }
