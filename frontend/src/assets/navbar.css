@@ -36,36 +36,33 @@
 
 .navbar-logo {
   height: 30px;
-  width: 27px;
+  width: 30px;
   position: absolute;
-  top: 5px;
-  left: 11px;
+  top: 15px;
+  left: 10px;
 }
 
 /* Styles pour la navbar horizontale */
 .navbar-horizontal {
   display: flex;
-  flex-direction: row;
-  height: 50px;
-  margin-left: 110px; /* Ajustez pour correspondre exactement à la largeur de votre navbar verticale */
-  width: calc(
-    100% - 110px
-  ); /* Assurez-vous que la largeur tient compte de la marge à gauche */
+  height: 40px; /* Hauteur réduite comme précédemment mentionné */
+  margin-left: 600px; /* Réduisez cette valeur pour diminuer l'espace à gauche */
+  width: 60% ; /* Ajustez la largeur en conséquence pour maintenir la cohérence */
   background-color: transparent;
   align-items: center;
-  top: 0;
   z-index: 1000;
 }
 
-.search-form {
+
+
+.searchh-formm {
   display: flex;
   align-items: center;
   justify-content: center; /* Centrer horizontalement les éléments enfants */
-  margin-left: auto; /* Mettre à auto pour déplacer la barre de recherche à droite */
   margin-right: auto; /* Mettre à auto pour déplacer la barre de recherche à gauche */
 }
 
-.search-input {
+.searchh-inputt {
   color: white; /* Change la couleur du texte en blanc */
   background-color: #879eb9;
   border-radius: 20px; /* Arrondi des bords de l'input */
@@ -88,7 +85,7 @@
 .icon-containerr {
   display: flex;
   gap: 22px; /* Espacement entre les icônes */
-  padding-right: 20px; /* Espacement à droite */
+  padding-right: 50px; /* Espacement à droite */
   color: #191f43;
   font-size: 24px; /* Taille des icônes */
 }

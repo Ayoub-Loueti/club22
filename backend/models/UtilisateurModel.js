@@ -31,7 +31,7 @@ const UtilisateurModel = sequelize.define(
       type: DataTypes.ENUM('client', 'employe', 'admin'),
     },
     etat: {
-      type: DataTypes.ENUM('attend', 'autorise', 'bloque'),
+      type: DataTypes.ENUM('En attente', 'autorise', 'bloque'),
     },
     resetPasswordToken: {
       type: DataTypes.STRING,
@@ -42,7 +42,7 @@ const UtilisateurModel = sequelize.define(
       defaultValue: null,
     },
     description: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING,
       defaultValue: 'Profil en cours de personnalisation!',
     },
   },

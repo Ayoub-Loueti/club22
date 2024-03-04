@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import axios from 'axios';
 import '../assets/profil.css';
 import { FaEdit } from 'react-icons/fa';
-import '../components/navbar'
+import '../components/navbar';
 import Navbar from '../components/navbar';
+import NavbarHaut from '../components/navbarHaut';
 function Profil() {
   const token = localStorage.getItem('login');
   const [utilisateur, setUtilisateur] = useState([]);
@@ -19,6 +20,7 @@ function Profil() {
     genre: '',
     description: '',
   });
+const fileInputRef = useRef(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -47,58 +49,84 @@ function Profil() {
     fetchUserData();
   }, [token]);
 
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setEditValues({ ...editValues, [name]: value });
-  };
+ const handleEditChange = (e) => {
+   const { name, value } = e.target;
+
+   if (name === 'description' && value.length > 50) return;
+
+   // Limite la longueur du nom et du prénom à 11 caractères
+   if ((name === 'nom' || name === 'prenom') && value.length > 15) return;
+
+   setEditValues({ ...editValues, [name]: value });
+ };
+
 
   const toggleEdit = (field) => {
     setEditing({ ...editing, [field]: !editing[field] });
   };
 
-  const handleUpdate = async (field) => {
-    try {
-      await axios.put(
-        'http://localhost:5000/updateCompte',
-        { [field]: editValues[field] },
-        { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } }
-      );
-      setUtilisateur({ ...utilisateur, [field]: editValues[field] });
-      toggleEdit(field);
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour de l'utilisateur", error);
-    }
-  };
+const handleUpdate = async (field) => {
+  // Vérifie et applique la limite de caractères avant de procéder à la mise à jour
+  if (field === 'description' && editValues[field].length > 50) {
+    console.error('La description ne peut pas dépasser 30 caractères');
+    return;
+  }
+
+  if (
+    (field === 'nom' || field === 'prenom') &&
+    editValues[field].length > 15
+  ) {
+    console.error('Le nom et le prénom ne peuvent pas dépasser 11 caractères');
+    return;
+  }
+
+  try {
+    await axios.put(
+      'http://localhost:5000/updateCompte',
+      { [field]: editValues[field] },
+      { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } }
+    );
+    setUtilisateur({ ...utilisateur, [field]: editValues[field] });
+    toggleEdit(field);
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour de l'utilisateur", error);
+  }
+};
+
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append('photo', file);
-  
+
     try {
-      const response = await axios.post('http://localhost:5000/updateProfilePicture', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${JSON.parse(token).token}`,
-        },
-      });
-  
+      const response = await axios.post(
+        'http://localhost:5000/updateProfilePicture',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${JSON.parse(token).token}`,
+          },
+        }
+      );
+
       if (response.status === 200) {
         // If the upload is successful, reload the page to reflect the changes
         window.location.reload();
       } else {
         // Handle any errors or unsuccessful upload attempts here
-        console.error("Failed to upload the image");
+        console.error('Failed to upload the image');
       }
     } catch (error) {
-      console.error("Error during the image upload", error);
+      console.error('Error during the image upload', error);
     }
   };
-  
-  
+
   return (
     <>
       <Navbar />
+      <NavbarHaut />
       <div className="profile-container">
         <div className="profile-header">
           <img
@@ -108,26 +136,21 @@ function Profil() {
                 : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
             }
             alt="Profil"
-            className="profile-picture"
+            className="profile-picturee"
           />
-          <input type="file" onChange={handleFileChange} />
-          <h1>{`${utilisateur.nom} ${utilisateur.prenom}`}</h1>
-          <p>{utilisateur.email}</p>{' '}
+          <FaEdit
+            className="edit-profile-picture-icon"
+            onClick={() => fileInputRef.current.click()}
+          />
+          <input
+            type="file"
+            onChange={handleFileChange}
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+          />
+          <h1>{`${utilisateur.prenom} ${utilisateur.nom} `}</h1>
         </div>
-        <div className="profile-stats">
-          <div className="stat">
-            <h3>Followers</h3>
-            <p>1000</p>
-          </div>
-          <div className="stat">
-            <h3>Following</h3>
-            <p>500</p>
-          </div>
-          <div className="stat">
-            <h3>Posts</h3>
-            <p>500</p>
-          </div>
-        </div>
+
         <div className="profile-bio">
           <h2>Description</h2>
           {editing.description ? (
@@ -221,3 +244,19 @@ function Profil() {
 }
 
 export default Profil;
+/*
+<div className="profile-stats">
+          <div className="stat">
+            <h3>Followers</h3>
+            <p>1000</p>
+          </div>
+          <div className="stat">
+            <h3>Following</h3>
+            <p>500</p>
+          </div>
+          <div className="stat">
+            <h3>Posts</h3>
+            <p>500</p>
+          </div>
+        </div> 
+*/

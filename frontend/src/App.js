@@ -15,6 +15,7 @@ import Profil from './pages/profil';
 import ListClient from "./pages/listClient";
 import ListEmploye from "./pages/listEmploye";
 import Navbar from './components/navbar';
+import NavbarHaut from './components/navbarHaut';
 function App() {
   return (
     <Router>
@@ -39,6 +40,7 @@ function App() {
           />
           <Route path="/profil" element={<Profil />} />
           <Route path="/navbar" element={<Navbar />} />
+          <Route path="/navbarHaut" element={<NavbarHaut />} />
 
           <Route
             path="/activate-account/:userId/:token"

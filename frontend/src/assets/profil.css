@@ -1,4 +1,3 @@
-/* Définition des variables de couleur pour une meilleure cohérence et facilité de maintenance */
 :root {
   --primary-color: #191f43; /* Bleu foncé */
   --secondary-color: #879eb9; /* Bleu clair */
@@ -8,29 +7,45 @@
 }
 
 .profile-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ajout d'ombre pour un effet de profondeur */
+  max-width: 400px; /* Taille réduite pour le conteneur */
+  margin: 0px; /* Ajustez selon l'espacement souhaité autour du conteneur */
+  padding: 20px; /* Vous pouvez ajuster ceci selon vos besoins */
+  background-color: var(--secondary-color);
+  position: relative;
+    float: right; /* Ajouté pour aligner le conteneur à gauche */
+  margin-right: 20px; /* Ajustez cette valeur pour éloigner le conteneur du bord gauche */
+  height: 92vh; /* Fait en sorte que le conteneur occupe toute la hauteur de la fenêtre de visualisation */
+border-radius: 10px;
 }
 
 .profile-header {
-  text-align: center;
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
 }
 
-.profile-picture {
-  width: 200px;
-  height: 200px;
-  background-color: var(
-    --primary-color
-  ); /* Utilisation de la variable de couleur */
+.profile-picturee {
+  width: 150px; /* Réduction de la taille de l'image de profil */
+  height: 150px;
+  border: 2px solid var(--primary-color); /* Bordure de couleur primaire ajoutée */
   border-radius: 50%;
-  margin: 0 auto;
+  object-fit: cover; /* Assurez-vous que l'image couvre bien l'espace */
+}
+
+.edit-profile-picture-icon {
+  position: absolute;
+  cursor: pointer;
+  right: calc(
+    100% - 170px
+  ); /* Exemple d'ajustement, à modifier selon vos besoins */
+  bottom: calc(100% - 170px);
+  top: auto;
+  color: #191f43; /* Couleur de l'icône */
+  padding: 5px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  overflow: hidden; /* Assure que les images débordantes sont rognées */
+  align-items: center;
 }
 
 .profile-header h1 {
@@ -39,12 +54,17 @@
 }
 
 .profile-header p {
-  color: var(--secondary-color);
+  color: var(--text-primary);
 }
 
 .profile-stats {
   display: flex;
   justify-content: space-around;
+  text-align: center;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #ffffff; /* Arrière-plan blanc pour détacher du fond */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
 
@@ -64,6 +84,8 @@
   margin-bottom: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Légère ombre pour du relief */
   transition: all 0.3s ease; /* Transition douce pour les effets de survol */
+    overflow-wrap: break-word; /* Assure que le texte se casse pour éviter le débordement */
+
 }
 
 .profile-info {
@@ -89,13 +111,14 @@
 .info-label {
   font-weight: bold;
   color: var(--text-secondary);
-  min-width: 100px; /* Assure un alignement uniforme pour tous les labels */
+  min-width: 100px; 
 }
 
 .info-value {
   flex-grow: 1; /* Permet à l'info-value de prendre l'espace restant */
   text-align: left; /* Alignement du texte à gauche */
   margin-left: 10px;
+  word-break: break-all;
 }
 
 /* Hover effects pour bio et info pour un feedback interactif */
@@ -150,4 +173,22 @@
   cursor: pointer;
   color: #191f43; /* Couleur de l'icône d'édition */
   transition: color 0.3s; /* Transition de couleur douce */
+}
+
+input[type='file'] {
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px; /* Espacement ajouté au-dessus du bouton */
+}
+
+input[type='file']::file-selector-button {
+  padding: 10px 15px;
+  border-radius: 5px;
+  background-color: var(--primary-color);
+  color: var(--text-primary);
+  border: none;
+  transition: background-color 0.3s;
+}
+input[type='file']::file-selector-button:hover {
+  background-color: darken(var(--primary-color), 10%);
 }

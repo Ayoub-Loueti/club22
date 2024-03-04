@@ -9,7 +9,7 @@ function VerificationToken() {
   const [resetToken, setResetToken] = useState('');
   const [loading, setLoading] = useState(false);
   // Use useParams to get the email from the URL
-  const { email } = useParams(); 
+  const { email } = useParams();
   const [resendDisabled, setResendDisabled] = useState(false);
   const [countdown, setCountdown] = useState(30);
   const navigate = useNavigate();
@@ -56,11 +56,15 @@ function VerificationToken() {
   const handleResendEmail = async () => {
     setResendDisabled(true);
     try {
-      await axios.post(`http://localhost:5000/resend-forgot-password-email/${email}`);
+      await axios.post(
+        `http://localhost:5000/resend-forgot-password-email/${email}`
+      );
       alert('Reset email has been resent. Please check your inbox.');
     } catch (error) {
       console.error('Error:', error);
-      alert('An error occurred while resending the email. Please try again later.');
+      alert(
+        'An error occurred while resending the email. Please try again later.'
+      );
     }
   };
 
@@ -108,47 +112,28 @@ function VerificationToken() {
                   placeholder="Entrez le Token de Réinitialisation du mot de passe"
                   required
                 />
-                <button
-                  type="submit"
-                  style={{
-                    backgroundColor: '#191F43',
-                    color: '#fff',
-                    padding: '14px 55px',
-                    border: 'none',
-                    borderRadius: '14px',
-                    boxShadow: '0px 4px 12px 4px rgba(43, 52, 103, 0.5)',
-                    fontSize: '14px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    position: 'absolute',
-                    top: '80%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    zIndex: '1',
-                  }}
-                  disabled={loading}
-                >
-                  OK
-                </button>
-                {error && <p style={{ color: 'red', marginTop: '20px' }}>{error}</p>}
+                <div className="verification-buttons-container">
+                  <button
+                    type="submit"
+                    className="verification-ok-button"
+                    disabled={loading}
+                  >
+                    OK
+                  </button>
+                  {error && (
+                    <p style={{ color: 'red', marginTop: '20px' }}>{error}</p>
+                  )}
+                </div>
               </div>
             </form>
             <button
               disabled={resendDisabled}
               onClick={handleResendEmail}
-              style={{
-                marginTop: '20px',
-                backgroundColor: '#191F43',
-                color: '#fff',
-                padding: '10px 30px',
-                border: 'none',
-                borderRadius: '14px',
-                fontSize: '14px',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-              }}
+              className="verification-resend-email-button"
             >
-              {resendDisabled ? `Resend Email (${countdown})` : 'Resend Email'}
+              {resendDisabled
+                ? `Renvoyer l'email (${countdown})`
+                : "Renvoyer l'email"}{' '}
             </button>
           </div>
         </div>

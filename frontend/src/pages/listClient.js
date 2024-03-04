@@ -41,11 +41,15 @@ function ListClient() {
   const handleBlockUnblock = async (id, etat) => {
     const endpoint = etat === 'autorise' ? '/block/' : '/unblock/';
     try {
-      await axios.put(`http://localhost:5000${endpoint}${id}`, {}, {
-        headers: {
-          Authorization: `Bearer ${JSON.parse(token).token}`,
-        },
-      });
+      await axios.put(
+        `http://localhost:5000${endpoint}${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(token).token}`,
+          },
+        }
+      );
       fetchClients(); // Refresh the list after the operation
     } catch (error) {
       console.error('Error updating user state:', error);
@@ -64,23 +68,38 @@ function ListClient() {
   return (
     <div className="list-client-container">
       <div className="list-client-header">
-        <h1>Liste des Clients</h1>
+        <h1>LISTE DES CLIENTS</h1>
         <div className="search-filter-container">
           <input
             type="text"
-            className="search-input"
+            className="list-client-search-input"
             placeholder="Rechercher..."
             value={searchTerm}
             onChange={handleSearchTermChange}
           />
           <button onClick={() => handleFilterChange('')}>Tous</button>
-          <button onClick={() => handleFilterChange('autorise')}>Autorisé</button>
-          <button onClick={() => handleFilterChange('attend')}>En attente</button>
+          <button onClick={() => handleFilterChange('autorise')}>
+            Autorisé
+          </button>
+          <button onClick={() => handleFilterChange('En attente')}>
+            En attente
+          </button>
           <button onClick={() => handleFilterChange('bloque')}>Bloqué</button>
         </div>
-        <div className="navigate-container">
-          <span className="navigate-employe" onClick={() => navigate('/listEmploye')}>Les Employé</span>
-          <span className="navigate-employe" onClick={() => navigate('/tousLesUtilisateurs')}>Tous Les Utilisateurs</span>
+        <div className="navigaate-container">
+          <button
+            className="list-client-navigate-button"
+            onClick={() => navigate('/listEmploye')}
+          >
+            Les Employés
+          </button>
+          <button
+            className="list-client-navigate-button"
+            onClick={() => navigate('/tousLesUtilisateurs')}
+          >
+            {' '}
+            Tous Les Utilisateurs
+          </button>
         </div>
       </div>
 
@@ -99,21 +118,29 @@ function ListClient() {
         <tbody>
           {filteredClients.map((client) => (
             <tr key={client.id_utilisateur}>
-              <td><img
-  src={client.photo ? `http://localhost:5000/${client.photo}` : "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"}
-  alt="Profil"
-  className="profile-picture"
-/></td>
-              <td>{client.nom}</td>
-              <td>{client.prenom}</td>
+              <td>
+                <img
+                  src={
+                    client.photo
+                      ? `http://localhost:5000/${client.photo}`
+                      : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+                  }
+                  alt="Profil"
+                  className="profile-picture"
+                />
+              </td>
+              <td>{client.nom.charAt(0).toUpperCase() + client.nom.slice(1)} </td>
+              <td>{client.prenom.charAt(0).toUpperCase() + client.prenom.slice(1)}{' '}</td>
               <td>{client.email}</td>
               <td>{client.genre}</td>
               <td>{client.etat}</td>
               <td>
-                {client.etat !== 'attend' && (
+                {client.etat !== 'En attente' && (
                   <button
                     className={client.etat === 'bloque' ? 'unblock' : ''}
-                    onClick={() => handleBlockUnblock(client.id_utilisateur, client.etat)}
+                    onClick={() =>
+                      handleBlockUnblock(client.id_utilisateur, client.etat)
+                    }
                   >
                     {client.etat === 'autorise' ? 'Block' : 'Unblock'}
                   </button>

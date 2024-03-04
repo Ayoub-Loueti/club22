@@ -7,18 +7,15 @@
   position: relative;
 }
 
-.container {
-  position: relative;
-}
 
 .whitevt-square {
   background-color: white;
-  width: 500px;
+  width: 650px;
   height: 650px;
 }
 
 .greenvt-square {
-  width: 500px;
+  width: 650px;
   height: 650px;
 
   position: relative;
@@ -26,8 +23,8 @@
 
 .grayvt-rectangle {
   background-color: #e4e4e4;
-  width: 400px;
-  height: 100px;
+  width: 450px;
+  height: 130px;
   padding: 60px;
   border-radius: 10px;
   position: absolute;
@@ -54,4 +51,56 @@
 
 .inputvt-field:focus {
   border-bottom: 2px solid #909090;
+}
+
+.verification-buttons-container {
+  display: flex;
+  flex-direction: row; /* Boutons côte à côte */
+  justify-content: space-around; /* Distribue l'espace autour des boutons */
+  gap: 10px; /* Espacement entre les boutons */
+  padding: 4px 0; /* Ajoute de l'espace au-dessus et en dessous du conteneur des boutons */
+}
+
+
+.verification-ok-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 20%; /* Ajustez la largeur selon vos besoins */
+}
+.verification-resend-email-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 40%; /* Ajustez la largeur selon vos besoins */
+}
+
+.verification-ok-button {
+  background-color: #191F43;
+  color: white;
+}
+
+.verification-ok-button:hover {
+  background-color: #163172; /* Plus sombre au survol */
+}
+
+.verification-resend-email-button {
+  background-color: #4CAF50; /* Vert pour le bouton actif */
+  color: white;
+}
+
+.verification-resend-email-button:disabled {
+  background-color: #ccc; /* Gris lorsque désactivé */
+  color: #666;
+  cursor: not-allowed;
+}
+
+.verification-resend-email-button:not(:disabled):hover {
+  background-color: #45a049; /* Un peu plus foncé au survol */
 }

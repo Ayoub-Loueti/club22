@@ -38,14 +38,14 @@ function TousLesUtilisateurs() {
   return (
     <div className="tousLesUtilisateurs-container">
       <div className="tousLesUtilisateurs-header">
-        <h1>Tous les Utilisateurs</h1>
-        <div className="navigation-text">
-          <span onClick={() => navigate('/listClient')}>Client</span>
-          <span onClick={() => navigate('/listEmploye')}>Employé</span>
+        <h1>TOUS LES UTILISATEURS</h1>
+        <div className="navigation-buttons">
+          <button onClick={() => navigate('/listClient')}>Client</button>
+          <button onClick={() => navigate('/listEmploye')}>Employé</button>
         </div>
         <input
           type="text"
-          className="search-input"
+          className="tousLesUtilisateurs-search-inpuut"
           placeholder="Rechercher..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -79,8 +79,14 @@ function TousLesUtilisateurs() {
                   className="profile-picture"
                 />
               </td>
-              <td>{utilisateur.nom}</td>
-              <td>{utilisateur.prenom}</td>
+              <td>
+                {utilisateur.nom.charAt(0).toUpperCase() +
+                  utilisateur.nom.slice(1)}
+              </td>
+              <td>
+                {utilisateur.prenom.charAt(0).toUpperCase() +
+                  utilisateur.prenom.slice(1)}
+              </td>
               <td>{utilisateur.email}</td>
               <td>{utilisateur.type}</td>
               <td>{utilisateur.etat}</td>
