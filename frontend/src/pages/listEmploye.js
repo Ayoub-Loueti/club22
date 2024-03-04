@@ -59,7 +59,35 @@ function ListEmploye() {
           Employe.email.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : Employes;
+   const getBadgeStyle = (etat) => {
+     let backgroundColor;
+     switch (
+       etat.toLowerCase() // Utilisation de toLowerCase pour une comparaison insensible à la casse
+     ) {
+       case 'autorise':
+         backgroundColor = '#34c38f';
+         break;
+       case 'en attente':
+         backgroundColor = '#ffecb3';
+         break;
+       case 'bloque':
+         backgroundColor = '#f8d7da';
+         break;
+       default:
+         backgroundColor = '#adb5bd';
+     }
 
+     return {
+       backgroundColor,
+       color: '#000',
+       padding: '0.25em 0.6em',
+       borderRadius: '50rem',
+       fontSize: '0.90rem',
+       minWidth: '75px',
+       textAlign: 'center',
+       display: 'inline-block', // Assure que le badge prend en compte la largeur et le padding
+     };
+   };
   return (
     <div className="list-Employe-container">
       <div className="list-Employe-header">
@@ -124,11 +152,24 @@ function ListEmploye() {
                   className="profile-picture"
                 />
               </td>
-              <td> {Employe.nom.charAt(0).toUpperCase() + Employe.nom.slice(1)}</td>
-              <td>{Employe.prenom.charAt(0).toUpperCase() + Employe.prenom.slice(1)} </td>
+              <td>
+                {' '}
+                {Employe.nom.charAt(0).toUpperCase() + Employe.nom.slice(1)}
+              </td>
+              <td>
+                {Employe.prenom.charAt(0).toUpperCase() +
+                  Employe.prenom.slice(1)}{' '}
+              </td>
               <td>{Employe.email}</td>
-              <td>{Employe.genre}</td>
-              <td>{Employe.etat}</td>
+              <td>
+                {' '}
+                {Employe.genre.charAt(0).toUpperCase() + Employe.genre.slice(1)}
+              </td>
+              <td>
+                <span style={getBadgeStyle(Employe.etat)}>
+                  {Employe.etat.charAt(0).toUpperCase() + Employe.etat.slice(1)}
+                </span>
+              </td>{' '}
               <td>
                 {Employe.etat !== 'En attente' && (
                   <button
@@ -137,7 +178,7 @@ function ListEmploye() {
                       handleBlockUnblock(Employe.id_utilisateur, Employe.etat)
                     }
                   >
-                    {Employe.etat === 'autorise' ? 'Block' : 'Unblock'}
+                    {Employe.etat === 'autorise' ? 'Bloquer' : 'Débloquer'}
                   </button>
                 )}
               </td>

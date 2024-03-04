@@ -16,6 +16,7 @@
   margin-right: 20px; /* Ajustez cette valeur pour éloigner le conteneur du bord gauche */
   height: 92vh; /* Fait en sorte que le conteneur occupe toute la hauteur de la fenêtre de visualisation */
 border-radius: 10px;
+ margin-top: 30px; /* hedhi mta3 thabt lfou9 */
 }
 
 .profile-header {
@@ -51,6 +52,7 @@ border-radius: 10px;
 .profile-header h1 {
   color: var(--primary-color);
   margin-bottom: 5px;
+    text-transform: capitalize; 
 }
 
 .profile-header p {
@@ -82,12 +84,15 @@ border-radius: 10px;
   padding: 20px;
   border-radius: 10px;
   margin-bottom: 20px;
+  
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Légère ombre pour du relief */
   transition: all 0.3s ease; /* Transition douce pour les effets de survol */
     overflow-wrap: break-word; /* Assure que le texte se casse pour éviter le débordement */
 
 }
-
+.capital{
+    text-transform: capitalize; 
+}
 .profile-info {
   display: flex;
   flex-direction: column;

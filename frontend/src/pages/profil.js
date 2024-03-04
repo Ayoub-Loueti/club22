@@ -176,63 +176,68 @@ const handleUpdate = async (field) => {
             <span className="info-label">Email:</span>
             <span className="info-value">{utilisateur.email}</span>
           </div>
-          <div className="info-item">
-            <span className="info-label">Nom:</span>
-            {editing.nom ? (
-              <input
-                type="text"
-                name="nom"
-                value={editValues.nom}
-                onChange={handleEditChange}
-                onBlur={() => handleUpdate('nom')}
-                className="edit-input"
+          <div className='capital'>
+            <div className="info-item">
+              <span className="info-label">Nom:</span>
+              {editing.nom ? (
+                <input
+                  type="text"
+                  name="nom"
+                  value={editValues.nom}
+                  onChange={handleEditChange}
+                  onBlur={() => handleUpdate('nom')}
+                  className="edit-input"
+                />
+              ) : (
+                <span className="info-value">{utilisateur.nom}</span>
+              )}
+              <FaEdit onClick={() => toggleEdit('nom')} className="edit-icon" />
+            </div>
+            <div className="info-item">
+              <span className="info-label">Prénom:</span>
+              {editing.prenom ? (
+                <input
+                  type="text"
+                  name="prenom"
+                  value={editValues.prenom}
+                  onChange={handleEditChange}
+                  onBlur={() => handleUpdate('prenom')}
+                  className="edit-input"
+                />
+              ) : (
+                <span className="info-value">{utilisateur.prenom}</span>
+              )}
+              <FaEdit
+                onClick={() => toggleEdit('prenom')}
+                className="edit-icon"
               />
-            ) : (
-              <span className="info-value">{utilisateur.nom}</span>
-            )}
-            <FaEdit onClick={() => toggleEdit('nom')} className="edit-icon" />
-          </div>
-          <div className="info-item">
-            <span className="info-label">Prénom:</span>
-            {editing.prenom ? (
-              <input
-                type="text"
-                name="prenom"
-                value={editValues.prenom}
-                onChange={handleEditChange}
-                onBlur={() => handleUpdate('prenom')}
-                className="edit-input"
+            </div>
+            <div className="info-item">
+              <span className="info-label">Genre:</span>
+              {editing.genre ? (
+                <select
+                  name="genre"
+                  value={editValues.genre}
+                  onChange={handleEditChange}
+                  onBlur={() => handleUpdate('genre')}
+                  className="edit-input"
+                >
+                  <option value="homme">Homme</option>
+                  <option value="femme">Femme</option>
+                </select>
+              ) : (
+                <span className="info-value">{utilisateur.genre}</span>
+              )}
+              <FaEdit
+                onClick={() => toggleEdit('genre')}
+                className="edit-icon"
               />
-            ) : (
-              <span className="info-value">{utilisateur.prenom}</span>
-            )}
-            <FaEdit
-              onClick={() => toggleEdit('prenom')}
-              className="edit-icon"
-            />
-          </div>
-          <div className="info-item">
-            <span className="info-label">Genre:</span>
-            {editing.genre ? (
-              <select
-                name="genre"
-                value={editValues.genre}
-                onChange={handleEditChange}
-                onBlur={() => handleUpdate('genre')}
-                className="edit-input"
-              >
-                <option value="homme">Homme</option>
-                <option value="femme">Femme</option>
-              </select>
-            ) : (
-              <span className="info-value">{utilisateur.genre}</span>
-            )}
-            <FaEdit onClick={() => toggleEdit('genre')} className="edit-icon" />
-          </div>
+            </div>
 
-          <div className="info-item">
-            <span className="info-label">Vous êtes:</span>
-            <span className="info-value">{utilisateur.type}</span>
+            <div className="info-item">
+              <span className="info-label">Vous êtes:</span>
+              <span className="info-value">{utilisateur.type}</span>
+            </div>
           </div>
           {/* Ajoutez d'autres informations ici */}
         </div>
