@@ -47,7 +47,7 @@
   display: flex;
   height: 40px; /* Hauteur réduite comme précédemment mentionné */
   margin-left: 600px; /* Réduisez cette valeur pour diminuer l'espace à gauche */
-  width: 60% ; /* Ajustez la largeur en conséquence pour maintenir la cohérence */
+  width: calc(100% - 150px); /* Ajustez la largeur en conséquence pour maintenir la cohérence */
   background-color: transparent;
   align-items: center;
   z-index: 1000;
@@ -85,7 +85,7 @@
 .icon-containerr {
   display: flex;
   gap: 22px; /* Espacement entre les icônes */
-  padding-right: 50px; /* Espacement à droite */
+  padding-right: 500px; /* Espacement à droite */
   color: #191f43;
   font-size: 24px; /* Taille des icônes */
 }
