@@ -78,13 +78,7 @@
   margin-top: 1px; /* Ajustement vertical de la position */
 }
 
-.icon-containerr {
-  display: flex;
-  gap: 22px; /* Espacement entre les icônes */
-  padding-right: 500px; /* Espacement à droite */
-  color: #191f43;
-  font-size: 24px; /* Taille des icônes */
-}
+
 
 .navbar-iconn {
   cursor: pointer; /* Change le curseur pour indiquer la cliquabilité */
@@ -114,20 +108,73 @@
   font-size: 23px;
   cursor: pointer; /* Indique que les icônes sont cliquables */
 }
-
+.icon-containerr {
+  display: flex;
+  gap: 22px; /* Espacement entre les icônes */
+  padding-right: 500px; /* Espacement à droite */
+  color: #191f43;
+  font-size: 33px; /* Taille des icônes */
+  margin-top: auto;
+}
 /* Styles pour l'icône d'utilisateur */
 .inner-user {
   color: #191f43; /* Couleur de l'icône */
-  font-size: 23px; /* Taille de l'icône */
+  font-size: 34px; /* Taille de l'icône */
   margin: 20px 20px 20px 0; /* Espacement autour de l'icône avec une marge droite de 10px */
   cursor: pointer; /* Curseur de type pointer */
+  
 }
 .user-photo {
-  width: 30px; /* Réduction de la taille de la photo de profil */
-  height: 30px; /* Garde la photo de profil circulaire */
+    font-size: 34px; /* Taille de l'icône */
+
+  width: 35px; /* Réduction de la taille de la photo de profil */
+  height: 35px; /* Garde la photo de profil circulaire */
   border-radius: 50%; /* Rend l'image complètement ronde */
   object-fit: cover; /* Assure que l'image couvre bien l'espace sans être déformée */
 }
 body {
   overflow-x: hidden;
+}
+.user-info {
+  position: fixed;
+  top: 50px;
+  right: 10px;
+  background-color: white;
+  padding: 20px; /* Augmenté pour plus d'espace interne */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 5px;
+  z-index: 1001;
+  width: 200px; /* Largeur spécifiée pour augmenter la taille du conteneur */
+  display: flex;
+  flex-direction: column; /* Organise les enfants verticalement */
+  align-items: start; /* Aligner les éléments à gauche */
+}
+
+.user-info .user-actions {
+  display: flex;
+  flex-direction: column; /* Affiche chaque action sur une nouvelle ligne */
+}
+
+.user-info .user-actions a,
+.user-info .user-actions .logout-link {
+  color: #191f43; /* Couleur des liens */
+  padding: 8px 0; /* Ajoute de l'espace vertical pour une meilleure séparation */
+  text-decoration: none; /* Supprime le soulignement par défaut */
+  font-size: 16px; /* Augmente la taille de la police pour une meilleure lisibilité */
+  width: 100%; /* Utilise toute la largeur disponible pour faciliter le clic */
+  text-align: left; /* Assure que le texte est aligné à gauche */
+}
+
+.user-actions a:hover,
+.user-actions .logout-link:hover {
+  background-color: #f2f2f2; /* Effet de survol pour améliorer l'interaction */
+  border-radius: 4px; /* Arrondit les coins lors du survol */
+}
+.logout-button {
+  color: #191f43;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px 0;
+  font-size: 16px;
 }

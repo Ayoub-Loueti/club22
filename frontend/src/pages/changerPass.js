@@ -4,7 +4,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import '../assets/changerPass.css';
 import ooredoo1Image from '../assets/ooredoo1.png';
 import ooredoo3Image from '../assets/ooredoo3.png';
-
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 function ChangerPass() {
   const { token } = useParams();
   const navigate = useNavigate(); 
@@ -12,31 +13,37 @@ function ChangerPass() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const MySwal = withReactContent(Swal);
 
-  const handleResetPasswordSubmit = async (e) => {
-    e.preventDefault();
-    if (newPassword !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-    setLoading(true);
+ const handleResetPasswordSubmit = async (e) => {
+   e.preventDefault();
+   if (newPassword !== confirmPassword) {
+     MySwal.fire('Erreur', 'Les mots de passe ne correspondent pas', 'error');
+     return;
+   }
+   setLoading(true);
 
-    try {
-      const response = await axios.post(`http://localhost:5000/reset-password/${token}`, {
-        newPassword: newPassword
-      });
+   try {
+     await axios.post(`http://localhost:5000/reset-password/${token}`, {
+       newPassword: newPassword,
+     });
 
-      alert(response.data.message); 
-      navigate('/');
-
-    } catch (error) {
-      // Handle error
-      console.error('Error:', error);
-      alert('An error occurred. Please try again later.');
-    } finally {
-      setLoading(false);
-    }
-  };
+     MySwal.fire(
+       'Succès',
+       'Votre mot de passe a été changé avec succès',
+       'success'
+     ).then(() => navigate('/'));
+   } catch (error) {
+     console.error('Error:', error);
+     MySwal.fire(
+       'Erreur',
+       'Une erreur est survenue. Veuillez réessayer plus tard.',
+       'error'
+     );
+   } finally {
+     setLoading(false);
+   }
+ };
 
   return (
     <div className="changerPass-page">

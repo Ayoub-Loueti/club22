@@ -5,7 +5,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../assets/login.css';
 import ooredoo1Image from '../assets/ooredoo1.png';
 import ooredoo3Image from '../assets/ooredoo3.png';
-
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 function Login() {
   const [email, setEmail] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
@@ -14,109 +15,109 @@ function Login() {
   const [countdown, setCountdown] = useState(30); 
   const [showConfirmationMessage, setShowConfirmationMessage] = useState(false);
   const navigate = useNavigate();
+  const MySwal = withReactContent(Swal);
 
-const handleForgotPassword = async (email) => {
-  try {
-    const response = await axios.post('http://localhost:5000/forgot-password', { email });
-    alert('Email de réinitialisation du mot de passe envoyé !');
-    navigate(`/verificationToken/${email}`);
-  } catch (error) {
-    if (error.response) {
-      switch (error.response.data.message) {
-        case 'Utilisateur non trouvé.':
-          alert('Utilisateur non trouvé. Veuillez vérifier l"adresse e-mail et réessayer.');
-          break;
-        case 'Les utilisateurs qui se sont inscrits via Google doivent utiliser la réinitialisation de mot de passe de Google.':
-          alert('Les utilisateurs qui se sont inscrits via Google doivent utiliser la réinitialisation de mot de passe de Google.');
-          break;
-        case 'Votre compte doit être autorisé pour réinitialiser le mot de passe.':
-          alert('Votre compte doit être autorisé pour réinitialiser le mot de passe. Veuillez contacter l"administrateur.');
-          break;
-        default:
-          alert('Échec de l"envoi de l"email de réinitialisation du mot de passe. Veuillez réessayer.');
-      }
-    } else {
-      alert('Une erreur est survenue. Veuillez réessayer.');
+  const handleForgotPassword = async () => {
+    if (!email) {
+      MySwal.fire(
+        'Attention',
+        'Veuillez entrer une adresse e-mail.',
+        'warning'
+      );
+      return;
     }
-  }
-};
+    try {
+      await axios.post('http://localhost:5000/forgot-password', { email });
+      MySwal.fire(
+        'Succès',
+        'Email de réinitialisation du mot de passe envoyé.',
+        'success'
+      );
+      navigate(`/verificationToken/${email}`);
+    } catch (error) {
+      let message = 'Une erreur est survenue. Veuillez réessayer.';
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        message = error.response.data.message;
+      }
+      MySwal.fire('Erreur', message, 'error');
+    }
+  };
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       const response = await axios.post('http://localhost:5000/login', {
         email,
         motDePasse,
       });
-
-      const token = response.data.token;
-      const shouldUpdateProfile = response.data.shouldUpdateProfile;
       localStorage.setItem(
         'login',
-        JSON.stringify({
-          isAuthenticated: true,
-          token: token,
-        })
+        JSON.stringify({ isAuthenticated: true, token: response.data.token })
       );
-      if (shouldUpdateProfile) {
-        navigate('/insererNom');
-      } else {
-        alert('Login successful!');
-        navigate('/profil');
-      }
+      navigate('/profil');
     } catch (error) {
-      if (error.response) {
-        if (
-          error.response.data.error ===
-          'User account is not authorized to log in'
-        ) {
-          alert('Le compte utilisateur n"est pas autorisé à se connecter.');
-          setShowConfirmationMessage(true);
-        } else if (
-          error.response.data.error ===
-          'Your account is blocked. Please contact the administrator.'
-        ) {
-          alert('Votre compte est bloqué. Veuillez contacter l"administrateur.');
-        } else {
-          alert('Email ou mot de passe invalide.');
-        }
-      } else if (error.request) {
-        alert('Erreur réseau. Veuillez réessayer plus tard.');
-      } else {
-        alert('Une erreur s"est produite. Veuillez réessayer plus tard.');
-      }
-    } finally {
       setLoading(false);
+      if (
+        error.response &&
+        error.response.data.error === 'User account is not authorized to log in'
+      ) {
+        MySwal.fire({
+          title: 'Compte non autorisé',
+          text: "Votre compte doit être activé. Voulez-vous renvoyer l'email d'activation ?",
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Oui, renvoyer',
+          cancelButtonText: 'Non, merci',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            handleResendEmail();
+          }
+        });
+      } else {
+        MySwal.fire(
+          'Erreur de connexion',
+          'Veuillez vérifier vos informations et essayer de nouveau.',
+          'error'
+        );
+      }
     }
   };
 
-  useEffect(() => {
-    let interval;
-    if (resendDisabled && countdown > 0) {
-      interval = setInterval(() => {
-        setCountdown((currentCountdown) => currentCountdown - 1);
-      }, 1000);
-    } else if (countdown === 0) {
-      setResendDisabled(false);
-      setCountdown(30); // Reset countdown
-    }
-    return () => clearInterval(interval);
-  }, [resendDisabled, countdown]);
 
-  const handleResendEmail = async () => {
-    setResendDisabled(true); // Disable the button immediately when clicked
-    try {
-      await axios.post('http://localhost:5000/resendEmail', {
-        email: email,
-      });
-      alert('Email de verification renvoyé. Veuillez vérifier votre boite email.');
-    } catch (error) {
-      console.error("Erreur lors du renvoi de l'email:", error.response?.data?.error || error.message);
-    }
-  };
+ useEffect(() => {
+   let interval;
+   if (resendDisabled && countdown > 0) {
+     interval = setInterval(() => {
+       setCountdown((currentCountdown) => currentCountdown - 1);
+     }, 1000);
+   } else if (countdown === 0) {
+     setResendDisabled(false);
+     setCountdown(30);
+   }
+   return () => clearInterval(interval);
+ }, [resendDisabled, countdown]);
+
+ const handleResendEmail = async () => {
+   setResendDisabled(true);
+   try {
+     await axios.post('http://localhost:5000/resendEmail', { email });
+     MySwal.fire(
+       'Email envoyé',
+       'Veuillez vérifier votre boîte de réception',
+       'success'
+     );
+   } catch (error) {
+     console.error("Erreur lors du renvoi de l'email:", error);
+     MySwal.fire('Erreur', "Impossible de renvoyer l'email", 'error');
+   }
+ };
+
 
   return (
     <div className="login-page">
@@ -261,26 +262,12 @@ const handleForgotPassword = async (email) => {
                 </svg>
               </a>
               {showConfirmationMessage && (
-  <div style={{
-    textAlign: 'center',
-    marginTop: '40px',
-    backgroundColor: '#f8f9fa',  // Light grey background for subtle contrast
-    padding: '30px 40px',
-    borderRadius: '15px',
-    boxShadow: '0 10px 20px rgba(0, 0, 0, 0.12)',
-    color: '#343a40',  // Dark grey text for readability
-    fontSize: '1rem',  // 16px font size for readability
-    lineHeight: '1.5',
-    width: '200px',  // Use a percentage to control width
-    margin: '150px auto',  // Center the container
-    border: '1px solid #ced4da'  // Light grey border to define the box edges
-  }}>
-    <p style={{ margin: '0 auto', width: '80%' }}>
+  <div className="activation-message-container">
+    <p>
        activer votre compte.
        <button
               onClick={handleResendEmail}
               disabled={resendDisabled}
-              style={{ /* Your button styles */ }}
             >
               {resendDisabled ? `Renvoyer l'email (${countdown})` : 'Renvoyer l\'email'}
             </button>

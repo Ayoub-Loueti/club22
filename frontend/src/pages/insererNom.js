@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/ooredoo3.png'; // Make sure this path matches your file structure
+import Swal from 'sweetalert2';
 
 function InsererNom() {
   const [nom, setNom] = useState('');
@@ -51,31 +52,33 @@ function InsererNom() {
     fontSize: '16px',
   };
 
-  const handleUpdateUser = async (e) => {
-    e.preventDefault();
-    const token = JSON.parse(localStorage.getItem('login')).token;
+const handleUpdateUser = async (e) => {
+  e.preventDefault();
+  const token = JSON.parse(localStorage.getItem('login')).token;
 
-    try {
-      await axios.put(
-        'http://localhost:5000/updateCompte',
-        {
-          nom,
-          prenom,
-          genre,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  try {
+    await axios.put(
+      'http://localhost:5000/updateCompte',
+      { nom, prenom, genre },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
-      alert('Profile updated successfully!');
+    Swal.fire({
+      icon: 'success',
+      title: 'Profile updated successfully!',
+      showConfirmButton: false,
+      timer: 1500,
+    }).then(() => {
       navigate('/profile');
-    } catch (error) {
-      alert('Failed to update profile. Please try again.');
-    }
-  };
+    });
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'Failed to update profile. Please try again.',
+    });
+  }
+};
 
   return (
     <div style={pageStyles}>

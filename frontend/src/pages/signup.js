@@ -3,6 +3,8 @@ import '../assets/signup.css';
 import ooredoo1Image from '../assets/ooredoo1.png';
 import ooredoo3Image from '../assets/ooredoo3.png';
 import axios from 'axios';
+import Swal from 'sweetalert2';
+
 import {  useNavigate } from 'react-router-dom';
 
 function Signup() {
@@ -26,33 +28,42 @@ function Signup() {
     setConfirmPassword(event.target.value);
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+ const handleSubmit = async (event) => {
+   event.preventDefault();
 
-    if (password !== confirmPassword) {
-      alert('Les mots de passe ne correspondent pas.');
-      return;
-    }
+   if (password !== confirmPassword) {
+     Swal.fire('Erreur', 'Les mots de passe ne correspondent pas.', 'error');
+     return;
+   }
 
-    try {
-      const response = await axios.post('http://localhost:5000/signup', {
+   try {
+     await axios.post('http://localhost:5000/signup', {
+       email,
+       motDePasse: password,
+     });
+     Swal.fire(
+       'Succès',
+       'Email de vérification envoyé. Veuillez vérifier votre boite email.',
+       'success'
+     );
+navigate("/")
+   } catch (error) {
+     if (error.response && error.response.status === 400) {
+       Swal.fire(
+         'Erreur',
+         'Un utilisateur avec cet e-mail existe déjà.',
+         'error'
+       );
+     } else {
+       Swal.fire(
+         'Erreur',
+         "Erreur lors de l'inscription. Veuillez réessayer.",
+         'error'
+       );
+     }
+   }
+ };
 
-        email: email,
-        motDePasse: password,
-      });
-
-      console.log(response.data); 
-      alert ('Email de verification envoyé. Veuillez vérifier votre boite email.')// Afficher la réponse du backend
-    } catch (error) {
-      if (error.response && error.response.status === 400) {
-        // If the user already exists, show the alert message
-        alert('Un utilisateur avec cet e-mail existe déjà.');
-      } else {
-        console.error("Erreur lors de l'inscription:", error.response?.data?.error || error.message);
-      }
-      // Optionally handle other error statuses or show a generic error message
-    }
-  };
 
 
 
