@@ -162,7 +162,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    if (user.etat === 'attend') {
+    if (user.etat === 'En attente') {
       return res
         .status(403)
         .json({ error: 'User account is not authorized to log in' });
