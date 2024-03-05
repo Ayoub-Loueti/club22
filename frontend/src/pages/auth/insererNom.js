@@ -1,43 +1,48 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import backgroundImage from '../assets/ooredoo3.png'; // Make sure this path matches your file structure
+import backgroundImage from '../../assets/ooredoo3.png';
 import Swal from 'sweetalert2';
-import '../assets/insererNom.css'
+import '../../assets/insererNom.css';
+
 function InsererNom() {
   const [nom, setNom] = useState('');
   const [prenom, setPrenom] = useState('');
   const [genre, setGenre] = useState('');
   const navigate = useNavigate();
 
+  const handleUpdateUser = async (e) => {
+    e.preventDefault();
+    const token = JSON.parse(localStorage.getItem('login')).token;
 
-const handleUpdateUser = async (e) => {
-  e.preventDefault();
-  const token = JSON.parse(localStorage.getItem('login')).token;
+    try {
+      const response = await axios.patch(
+        'http://localhost:5000/updateNameSurnameGenre', // Assurez-vous que cette URL correspond à votre configuration de route
+        { nom, prenom, genre },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-  try {
-    await axios.put(
-      'http://localhost:5000/updateCompte',
-      { nom, prenom, genre },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    Swal.fire({
-      icon: 'success',
-      title: 'Profile updated successfully!',
-      showConfirmButton: false,
-      timer: 1500,
-    }).then(() => {
-      navigate('/profile');
-    });
-  } catch (error) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Oops...',
-      text: 'Failed to update profile. Please try again.',
-    });
-  }
-};
+      // Utilisez la réponse de l'API pour décider quelle alerte afficher
+      if (response.data.message) {
+        Swal.fire({
+          icon: 'success',
+          title: response.data.message, // Utilisez le message de réussite de l'API
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(() => {
+          navigate('/profile'); // Redirigez vers le profil ou toute autre page souhaitée
+        });
+      }
+    } catch (error) {
+      // Gérez les différents messages d'erreur retournés par votre API
+      const errorMessage = error.response && error.response.data.message ? error.response.data.message : 'Failed to update profile. Please try again.';
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: errorMessage,
+      });
+    }
+  };
 
   return (
     <div className="page">

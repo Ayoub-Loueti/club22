@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import backgroundImage from '../assets/ooredoo3.png'; // Ensure this path is correct
+import backgroundImage from '../../assets/ooredoo3.png'; // Ensure this path is correct
 
 function VerificationSignup() {
   const { userId, token } = useParams();

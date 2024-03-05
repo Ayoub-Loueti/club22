@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import '../assets/signup.css';
-import ooredoo1Image from '../assets/ooredoo1.png';
-import ooredoo3Image from '../assets/ooredoo3.png';
+import '../../assets/signup.css';
+import ooredoo1Image from '../../assets/ooredoo1.png';
+import ooredoo3Image from '../../assets/ooredoo3.png';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom'; // Import useParams
-import '../assets/verificationToken.css';
-import ooredoo1Image from '../assets/ooredoo1.png';
-import ooredoo3Image from '../assets/ooredoo3.png';
+import '../../assets/verificationToken.css';
+import ooredoo1Image from '../../assets/ooredoo1.png';
+import ooredoo3Image from '../../assets/ooredoo3.png';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 function VerificationToken() {

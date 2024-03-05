@@ -14,6 +14,7 @@ router.get('/auth/google/callback', utilisateurController.googleAuthCallback);
 router.get('/auth/logout', utilisateurController.logout);
 
 router.put('/updateCompte', authenticate, utilisateurController.updateUser);
+router.patch('/updateNameSurnameGenre', authenticate, utilisateurController.updateNameSurnameGenre);
 router.get('/rechercher/:id', authenticate, utilisateurController.findUser);
 
 router.post('/forgot-password', utilisateurController.forgotPassword);

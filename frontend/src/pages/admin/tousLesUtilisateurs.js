@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../assets/tousLesUtilisateurs.css';
-import '../components/navbar';
+import '../../assets/tousLesUtilisateurs.css';
+import '../../components/navbar';
 
 function TousLesUtilisateurs() {
   const [utilisateurs, setUtilisateurs] = useState([]);

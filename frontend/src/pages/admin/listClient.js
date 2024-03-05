@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../assets/listClient.css'; // Assuming this is the correct path to your CSS file
+import '../../assets/listClient.css'; // Assuming this is the correct path to your CSS file
 
 function ListClient() {
   const [clients, setClients] = useState([]);

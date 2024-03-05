@@ -1,33 +1,44 @@
 import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Importez Routes
-import Login from './pages/login';
-import Signup from './pages/signup';
-import VerificationToken from './pages/verificationToken';
-import ChangerPass from './pages/changerPass';
-import VerificationSignup from './pages/verificationSignup';
+import Login from './pages/auth/login';
+import Signup from './pages/auth/signup';
+import VerificationToken from './pages/auth/verificationToken';
+import ChangerPass from './pages/auth/changerPass';
+import VerificationSignup from './pages/auth/verificationSignup';
 import LogoutButton from './pages/logoutButton';
-import EmployesAutorise from './pages/employesAutorise';
-import InsererNom from './pages/insererNom';
-import Load from './pages/load';
-import TousLesUtilisateurs from './pages/tousLesUtilisateurs';
+import InsererNom from './pages/auth/insererNom';
+import Load from './pages/auth/load';
+import TousLesUtilisateurs from './pages/admin/tousLesUtilisateurs';
 import Profil from './pages/profil';
-import ListClient from "./pages/listClient";
-import ListEmploye from "./pages/listEmploye";
+import ListClient from "./pages/admin/listClient";
+import ListEmploye from "./pages/admin/listEmploye";
 import Navbar from './components/navbar';
 import NavbarHaut from './components/navbarHaut';
+import ProtectedRoute from './components/ProtectedRoute';
+import PublicRoute from './components/PublicRoute';
 function App() {
   return (
+    <React.StrictMode>
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/logout" element={<LogoutButton />} />
-          <Route path="/employesAutorise" element={<EmployesAutorise />} />
-          <Route path="/insererNom" element={<InsererNom />} />
-          <Route path="/listClient" element={<ListClient />} />
-          <Route path="/listEmploye" element={<ListEmploye />} />
+        <Route path="/" element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        } />
+
+        <Route path="/signup" element={
+          <PublicRoute>
+            <Signup />
+          </PublicRoute>
+        } />
+
+          <Route path="/logout" element={<ProtectedRoute> <LogoutButton /> </ProtectedRoute>} />
+          <Route path="/insererNom" element={<ProtectedRoute><InsererNom /></ProtectedRoute>} />
+          <Route path="/listClient" element={<ProtectedRoute><ListClient /></ProtectedRoute>} />
+          <Route path="/listEmploye" element={<ProtectedRoute><ListEmploye /></ProtectedRoute>} />
           <Route
             path="/verificationToken/:email"
             element={<VerificationToken />}
@@ -36,11 +47,11 @@ function App() {
           <Route path="/load" element={<Load />} />
           <Route
             path="/tousLesUtilisateurs"
-            element={<TousLesUtilisateurs />}
+            element={<ProtectedRoute><TousLesUtilisateurs /></ProtectedRoute>}
           />
-          <Route path="/profil" element={<Profil />} />
-          <Route path="/navbar" element={<Navbar />} />
-          <Route path="/navbarHaut" element={<NavbarHaut />} />
+          <Route path="/profil" element={<ProtectedRoute><Profil /></ProtectedRoute>} />
+          <Route path="/navbar" element={<ProtectedRoute><Navbar /></ProtectedRoute>} />
+          <Route path="/navbarHaut" element={<ProtectedRoute><NavbarHaut /></ProtectedRoute>} />
 
           <Route
             path="/activate-account/:userId/:token"
@@ -49,6 +60,7 @@ function App() {
         </Routes>
       </div>
     </Router>
+    </React.StrictMode>
   );
 }
 

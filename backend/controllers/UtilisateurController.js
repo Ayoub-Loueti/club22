@@ -176,7 +176,7 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign({ userId: user.id_utilisateur }, secretKey, {
-      expiresIn: '1h',
+      expiresIn: '24h',
     });
 
     res.status(200).json({
@@ -205,7 +205,7 @@ exports.googleAuthCallback = (req, res, next) => {
 
     // User is found or created successfully, now sign the JWT token with user's information
     const userToken = jwt.sign({ userId: user.id_utilisateur }, secretKey, {
-      expiresIn: '1h', // Adjust token expiration as needed
+      expiresIn: '24h', // Adjust token expiration as needed
     });
 
     // Redirect to the /load page with the token as a query parameter
@@ -253,6 +253,31 @@ exports.updateUser = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+exports.updateNameSurnameGenre = async (req, res) => {
+  const { nom, prenom, genre } = req.body;
+  const userId = req.userId; // Assurez-vous d'avoir l'ID de l'utilisateur, par exemple, depuis un token JWT
+
+  try {
+    const user = await Utilisateur.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+    }
+
+    // Vérifier si le nom et le prénom sont vides
+    if (!user.nom.trim() && !user.prenom.trim()) {
+      await Utilisateur.update({ nom, prenom, genre }, { where: { id_utilisateur: userId } });
+      res.status(200).json({ message: 'Nom, prénom et genre mis à jour avec succès.' });
+    } else {
+      // Nom ou prénom n'est pas vide
+      res.status(400).json({ message: 'Le nom et le prénom doivent être vides pour permettre la mise à jour.' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 exports.findUser = async (req, res) => {
   const requestedUserId = req.params.id;
@@ -488,5 +513,6 @@ exports.updateUserPhoto = async (req, res, filePath) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 module.exports = exports;

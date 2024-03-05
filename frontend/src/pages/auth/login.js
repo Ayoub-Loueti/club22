@@ -2,9 +2,9 @@ import React, { useState , useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 
-import '../assets/login.css';
-import ooredoo1Image from '../assets/ooredoo1.png';
-import ooredoo3Image from '../assets/ooredoo3.png';
+import '../../assets/login.css';
+import ooredoo1Image from '../../assets/ooredoo1.png';
+import ooredoo3Image from '../../assets/ooredoo3.png';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 function Login() {
