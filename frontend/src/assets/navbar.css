@@ -1,7 +1,8 @@
 /* Styles pour la navbar verticale */
 .navbar {
   display: flex;
-  flex-direction: row;
+  flex-direction: column; /* Align items vertically */
+  justify-content: start; /* Adjust as needed based on your design */
   height: 100vh;
   width: 120px;
   position: fixed;
@@ -9,8 +10,22 @@
   top: 0;
   background-color: #191f43;
   overflow: hidden;
+  transform: translateX(-120px); /* Hide off-screen */
+  transition: transform 0.3s ease; /* Smooth transition */
 }
 
+/* Show navbar */
+.navbar.visible {
+  transform: translateX(0);
+}
+.navbar-toggle {
+  position: fixed;
+  left: 0;
+  top: 15px;
+  z-index: 2000; /* Ensure it's above other content */
+  cursor: pointer;
+  padding: 10px;
+}
 .navbar-inner {
   width: 63%;
   background-color: #879eb9;
@@ -96,17 +111,25 @@
 .icon-containerrr {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: white; /* Assure que les icônes sont en blanc */
-  padding-left: 7px;
+  align-items: flex-start; /* Alignement à gauche */
+  justify-content: center; /* Centrage vertical */
+  height: 100%; /* Prend toute la hauteur disponible */
+}
+
+
+.icon-containerrr .navbar-iconnn {
+  margin-bottom: 15px; /* Ajoute un espacement en bas de chaque icône */
+}
+
+.icon-containerrr .navbar-iconnn:last-child {
+  margin-bottom: 0; /* Supprime la marge en bas de la dernière icône */
 }
 
 .navbar-iconnn {
-  margin: 20px 0; /* Espacement entre les icônes */
-  color: white; /* S'assure que les icônes sont blanches */
-  font-size: 23px;
-  cursor: pointer; /* Indique que les icônes sont cliquables */
+  margin: 30px 30; /* Adjust as necessary for spacing */
+  color: white; /* Ensure visibility against the navbar background */
+  font-size: 23px; /* Adjust size as needed */
+  cursor: pointer;
 }
 .icon-containerr {
   display: flex;
