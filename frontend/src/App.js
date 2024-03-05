@@ -7,6 +7,7 @@ import VerificationToken from './pages/verificationToken';
 import ChangerPass from './pages/changerPass';
 import VerificationSignup from './pages/verificationSignup';
 import LogoutButton from './pages/logoutButton';
+import EmployesAutorise from './pages/employesAutorise';
 import InsererNom from './pages/insererNom';
 import Load from './pages/load';
 import TousLesUtilisateurs from './pages/tousLesUtilisateurs';
@@ -23,6 +24,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/logout" element={<LogoutButton />} />
+          <Route path="/employesAutorise" element={<EmployesAutorise />} />
           <Route path="/insererNom" element={<InsererNom />} />
           <Route path="/listClient" element={<ListClient />} />
           <Route path="/listEmploye" element={<ListEmploye />} />
