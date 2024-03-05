@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../assets/tousLesUtilisateurs.css';
 import '../components/navbar';
+
 function TousLesUtilisateurs() {
   const [utilisateurs, setUtilisateurs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -34,6 +35,35 @@ function TousLesUtilisateurs() {
       utilisateur.prenom.toLowerCase().includes(searchTerm.toLowerCase()) ||
       utilisateur.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+   const getBadgeStyle = (etat) => {
+     let backgroundColor;
+     switch (
+       etat.toLowerCase() // Utilisation de toLowerCase pour une comparaison insensible à la casse
+     ) {
+       case 'autorise':
+         backgroundColor = '#34c38f'; 
+         break;
+       case 'en attente':
+         backgroundColor = '#ffecb3';
+         break;
+       case 'bloque':
+         backgroundColor = '#f8d7da';
+         break;
+       default:
+         backgroundColor = '#adb5bd'; 
+     }
+
+     return {
+       backgroundColor,
+       color: '#000', 
+       padding: '0.25em 0.6em',
+       borderRadius: '50rem',
+       fontSize: '0.90rem',
+       minWidth: '75px', 
+       textAlign: 'center', 
+       display: 'inline-block', // Assure que le badge prend en compte la largeur et le padding
+     };
+   };
 
   return (
     <div className="tousLesUtilisateurs-container">
@@ -88,8 +118,17 @@ function TousLesUtilisateurs() {
                   utilisateur.prenom.slice(1)}
               </td>
               <td>{utilisateur.email}</td>
-              <td>{utilisateur.type}</td>
-              <td>{utilisateur.etat}</td>
+              <td>
+                {' '}
+                {utilisateur.type.charAt(0).toUpperCase() +
+                  utilisateur.type.slice(1)}
+              </td>
+              <td>
+                <span style={getBadgeStyle(utilisateur.etat)}>
+                  {utilisateur.etat.charAt(0).toUpperCase() +
+                    utilisateur.etat.slice(1)}
+                </span>
+              </td>
             </tr>
           ))}
         </tbody>

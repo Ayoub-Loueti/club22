@@ -64,7 +64,35 @@ function ListClient() {
           client.email.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : clients;
+   const getBadgeStyle = (etat) => {
+     let backgroundColor;
+     switch (
+       etat.toLowerCase() // Utilisation de toLowerCase pour une comparaison insensible à la casse
+     ) {
+       case 'autorise':
+         backgroundColor = '#34c38f';
+         break;
+       case 'en attente':
+         backgroundColor = '#ffecb3';
+         break;
+       case 'bloque':
+         backgroundColor = '#f8d7da';
+         break;
+       default:
+         backgroundColor = '#adb5bd';
+     }
 
+     return {
+       backgroundColor,
+       color: '#000',
+       padding: '0.25em 0.6em',
+       borderRadius: '50rem',
+       fontSize: '0.90rem',
+       minWidth: '75px',
+       textAlign: 'center',
+       display: 'inline-block', // Assure que le badge prend en compte la largeur et le padding
+     };
+   };
   return (
     <div className="list-client-container">
       <div className="list-client-header">
@@ -97,7 +125,7 @@ function ListClient() {
             className="list-client-navigate-button"
             onClick={() => navigate('/tousLesUtilisateurs')}
           >
-            {' '}
+            
             Tous Les Utilisateurs
           </button>
         </div>
@@ -129,11 +157,22 @@ function ListClient() {
                   className="profile-picture"
                 />
               </td>
-              <td>{client.nom.charAt(0).toUpperCase() + client.nom.slice(1)} </td>
-              <td>{client.prenom.charAt(0).toUpperCase() + client.prenom.slice(1)}{' '}</td>
+              <td>
+                {client.nom.charAt(0).toUpperCase() + client.nom.slice(1)}
+              </td>
+              <td>
+                {client.prenom.charAt(0).toUpperCase() + client.prenom.slice(1)}
+              </td>
               <td>{client.email}</td>
-              <td>{client.genre}</td>
-              <td>{client.etat}</td>
+              <td>
+                
+                {client.genre.charAt(0).toUpperCase() + client.genre.slice(1)}
+              </td>
+              <td>
+                <span style={getBadgeStyle(client.etat)}>
+                  {client.etat.charAt(0).toUpperCase() + client.etat.slice(1)}
+                </span>
+              </td>
               <td>
                 {client.etat !== 'En attente' && (
                   <button
@@ -142,7 +181,7 @@ function ListClient() {
                       handleBlockUnblock(client.id_utilisateur, client.etat)
                     }
                   >
-                    {client.etat === 'autorise' ? 'Block' : 'Unblock'}
+                    {client.etat === 'autorise' ? 'Bloquer' : 'Débloquer'}
                   </button>
                 )}
               </td>
