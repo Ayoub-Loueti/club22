@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -10,6 +10,9 @@ function Login() {
   const [email, setEmail] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resendDisabled, setResendDisabled] = useState(false); // New state for managing resend button disabled state
+  const [countdown, setCountdown] = useState(30); 
+  const [showConfirmationMessage, setShowConfirmationMessage] = useState(false);
   const navigate = useNavigate();
 
 const handleForgotPassword = async (email) => {
@@ -38,8 +41,6 @@ const handleForgotPassword = async (email) => {
   }
 };
 
-  
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,6 +74,7 @@ const handleForgotPassword = async (email) => {
           'User account is not authorized to log in'
         ) {
           alert('Le compte utilisateur n"est pas autorisé à se connecter.');
+          setShowConfirmationMessage(true);
         } else if (
           error.response.data.error ===
           'Your account is blocked. Please contact the administrator.'
@@ -88,6 +90,31 @@ const handleForgotPassword = async (email) => {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    let interval;
+    if (resendDisabled && countdown > 0) {
+      interval = setInterval(() => {
+        setCountdown((currentCountdown) => currentCountdown - 1);
+      }, 1000);
+    } else if (countdown === 0) {
+      setResendDisabled(false);
+      setCountdown(30); // Reset countdown
+    }
+    return () => clearInterval(interval);
+  }, [resendDisabled, countdown]);
+
+  const handleResendEmail = async () => {
+    setResendDisabled(true); // Disable the button immediately when clicked
+    try {
+      await axios.post('http://localhost:5000/resendEmail', {
+        email: email,
+      });
+      alert('Email de verification renvoyé. Veuillez vérifier votre boite email.');
+    } catch (error) {
+      console.error("Erreur lors du renvoi de l'email:", error.response?.data?.error || error.message);
     }
   };
 
@@ -233,6 +260,33 @@ const handleForgotPassword = async (email) => {
                   ></path>
                 </svg>
               </a>
+              {showConfirmationMessage && (
+  <div style={{
+    textAlign: 'center',
+    marginTop: '40px',
+    backgroundColor: '#f8f9fa',  // Light grey background for subtle contrast
+    padding: '30px 40px',
+    borderRadius: '15px',
+    boxShadow: '0 10px 20px rgba(0, 0, 0, 0.12)',
+    color: '#343a40',  // Dark grey text for readability
+    fontSize: '1rem',  // 16px font size for readability
+    lineHeight: '1.5',
+    width: '200px',  // Use a percentage to control width
+    margin: '150px auto',  // Center the container
+    border: '1px solid #ced4da'  // Light grey border to define the box edges
+  }}>
+    <p style={{ margin: '0 auto', width: '80%' }}>
+       activer votre compte.
+       <button
+              onClick={handleResendEmail}
+              disabled={resendDisabled}
+              style={{ /* Your button styles */ }}
+            >
+              {resendDisabled ? `Renvoyer l'email (${countdown})` : 'Renvoyer l\'email'}
+            </button>
+    </p>
+  </div>
+)}
             </form>
           </div>
         </div>
