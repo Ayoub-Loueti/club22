@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Assurez-vous d'importer axios
+import axios from 'axios'; 
+import { useNavigate } from 'react-router-dom'; 
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBell,
@@ -11,7 +13,7 @@ import '../assets/navbar.css';
 function NavbarHaut() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
-
+const navigate = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem('login');
     if (token) {
@@ -33,16 +35,35 @@ function NavbarHaut() {
       fetchUserData();
     }
   }, []);
-
+  const handleLogout = async () => {
+    try {
+      localStorage.removeItem('login'); // Supprimez le token stocké pour la déconnexion
+      await axios.get('http://localhost:5000/auth/logout', {
+        withCredentials: true,
+      });
+      navigate('/'); 
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
   const toggleDropdown = () => setShowDropdown(!showDropdown);
 
-  const DropdownMenu = () => (
-    <div className="dropdown-menu">
-      <a href="/profil">Profil</a>
-      <a href="/settings">Paramètres</a>
-      <a href="/logout">Déconnexion</a>
-    </div>
-  );
+  // Alternative au menu déroulant
+ const UserInfo = () => (
+   <div className="user-info">
+     {userInfo && (
+       <>
+         <div className="user-actions">
+           <a href="/profil">Profil</a>
+           <button onClick={handleLogout} className="logout-button">
+             Déconnexion
+           </button>
+         </div>
+       </>
+     )}
+   </div>
+ );
+
 
   return (
     <div className="navbar-horizontal">
@@ -72,7 +93,7 @@ function NavbarHaut() {
               className="navbar-iconn user-photo"
               onClick={toggleDropdown}
             />
-            {showDropdown && <DropdownMenu />}
+            {showDropdown && <UserInfo />}
           </>
         ) : (
           <>
@@ -81,7 +102,6 @@ function NavbarHaut() {
               className="navbar-iconn"
               onClick={toggleDropdown}
             />
-            {showDropdown && <DropdownMenu />}
           </>
         )}
       </div>

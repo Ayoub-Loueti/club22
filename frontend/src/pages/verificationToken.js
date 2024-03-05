@@ -4,7 +4,8 @@ import { useNavigate, useParams } from 'react-router-dom'; // Import useParams
 import '../assets/verificationToken.css';
 import ooredoo1Image from '../assets/ooredoo1.png';
 import ooredoo3Image from '../assets/ooredoo3.png';
-
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 function VerificationToken() {
   const [resetToken, setResetToken] = useState('');
   const [loading, setLoading] = useState(false);
@@ -14,6 +15,7 @@ function VerificationToken() {
   const [countdown, setCountdown] = useState(30);
   const navigate = useNavigate();
   const [error, setError] = useState('');
+  const MySwal = withReactContent(Swal);
 
   useEffect(() => {
     let interval;
@@ -35,19 +37,25 @@ function VerificationToken() {
     try {
       const response = await axios.post(
         'http://localhost:5000/check-reset-token',
-        {
-          resetPasswordToken: resetToken,
-        }
+        { resetPasswordToken: resetToken }
       );
 
       if (response.data.isValid) {
         navigate(`/changerPass/${resetToken}`);
       } else {
-        setError('Invalid reset password token. Please try again.');
+        MySwal.fire(
+          'Erreur',
+          'Jeton de réinitialisation invalide. Veuillez réessayer.',
+          'error'
+        );
       }
     } catch (error) {
       console.error('Error:', error);
-      setError('An error occurred. Please try again later.');
+      MySwal.fire(
+        'Erreur',
+        "Une erreur s'est produite. Veuillez réessayer plus tard.",
+        'error'
+      );
     } finally {
       setLoading(false);
     }
@@ -59,11 +67,17 @@ function VerificationToken() {
       await axios.post(
         `http://localhost:5000/resend-forgot-password-email/${email}`
       );
-      alert('Reset email has been resent. Please check your inbox.');
+      MySwal.fire(
+        'Succès',
+        "L'email de réinitialisation a été renvoyé. Veuillez vérifier votre boîte de réception.",
+        'success'
+      );
     } catch (error) {
       console.error('Error:', error);
-      alert(
-        'An error occurred while resending the email. Please try again later.'
+      MySwal.fire(
+        'Erreur',
+        "Une erreur est survenue lors du renvoi de l'email. Veuillez réessayer plus tard.",
+        'error'
       );
     }
   };
