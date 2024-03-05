@@ -6,11 +6,12 @@
   position: relative;
   align-items: center;
 }
+/*
 body, html {
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Prevent scrolling caused by overflow */
-}
+  overflow: hidden; 
+}*/
 .signup-white-square {
   background-color: white;
   width: 500px;

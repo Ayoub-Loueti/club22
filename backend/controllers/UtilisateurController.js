@@ -107,33 +107,42 @@ exports.resendActivationEmail = async (req, res) => {
     const user = await Utilisateur.findOne({ where: { email: email } });
 
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    const activationToken = Math.floor(1000 + Math.random() * 9000);
+    if (user.etat === 'autorise') {
+      return res.status(400).json({ message: 'User account is already activated.' });
+    }
 
-    user.resetPasswordToken = activationToken;
-    user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour expiry
-    await user.save();
+    const token = Math.floor(1000 + Math.random() * 9000);
+
+    await Utilisateur.update({
+      resetPasswordToken: token,
+      resetPasswordExpires: new Date(Date.now() + 3600000), // 1 hour from now
+    }, {
+      where: { id_utilisateur: user.id_utilisateur }
+    });
 
     const confirmationTemplate = signUpConfirmationEmailTemplate(
       user.nom,
       user.prenom,
       user.id_utilisateur,
-      user.resetPasswordToken,
-      API_ENDPOINT
+      token,
+      API_ENDPOINT // Make sure this endpoint points to where the user can confirm their email
     );
+
     const confirmationData = {
       from: FROM_EMAIL,
       to: user.email,
       subject: 'Confirmation de votre inscription',
       html: confirmationTemplate,
     };
+
     await smtpTransport.sendMail(confirmationData);
 
-    res.status(200).json({ message: 'Activation email resent successfully' });
+    return res.status(200).json({ message: 'Activation email resent successfully.' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -153,7 +162,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    if (user.etat === 'attend') {
+    if (user.etat === 'En attente') {
       return res
         .status(403)
         .json({ error: 'User account is not authorized to log in' });
@@ -167,7 +176,7 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign({ userId: user.id_utilisateur }, secretKey, {
-      expiresIn: '1h',
+      expiresIn: '24h',
     });
 
     res.status(200).json({
@@ -186,13 +195,24 @@ exports.googleAuth = passport.authenticate('google', {
 });
 
 exports.googleAuthCallback = (req, res, next) => {
-  passport.authenticate('google', {
-    failureRedirect: 'http://localhost:3000/signup',
-  })(req, res, () => {
-    // Redirect on successful authentication
-    res.redirect('http://localhost:3000/logout'); // Or your desired path
-  });
+  passport.authenticate('google', (error, user, info) => {
+    if (error) {
+      return next(error); // Handle error
+    }
+    if (!user) {
+      return res.redirect('http://localhost:3000/signup'); // Handle "no user" scenario
+    }
+
+    // User is found or created successfully, now sign the JWT token with user's information
+    const userToken = jwt.sign({ userId: user.id_utilisateur }, secretKey, {
+      expiresIn: '24h', // Adjust token expiration as needed
+    });
+
+    // Redirect to the /load page with the token as a query parameter
+    res.redirect(`http://localhost:3000/load?token=${userToken}`);
+  })(req, res, next); // Make sure to pass req, res, next to the inner function
 };
+
 
 exports.logout = (req, res) => {
   console.log('Logging out user');
@@ -233,6 +253,31 @@ exports.updateUser = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+exports.updateNameSurnameGenre = async (req, res) => {
+  const { nom, prenom, genre } = req.body;
+  const userId = req.userId; // Assurez-vous d'avoir l'ID de l'utilisateur, par exemple, depuis un token JWT
+
+  try {
+    const user = await Utilisateur.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+    }
+
+    // Vérifier si le nom et le prénom sont vides
+    if (!user.nom.trim() && !user.prenom.trim()) {
+      await Utilisateur.update({ nom, prenom, genre }, { where: { id_utilisateur: userId } });
+      res.status(200).json({ message: 'Nom, prénom et genre mis à jour avec succès.' });
+    } else {
+      // Nom ou prénom n'est pas vide
+      res.status(400).json({ message: 'Le nom et le prénom doivent être vides pour permettre la mise à jour.' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 exports.findUser = async (req, res) => {
   const requestedUserId = req.params.id;
@@ -291,42 +336,48 @@ exports.forgotPassword = async (req, res) => {
     });
 
     if (!user) {
-      throw new Error('Utilisateur not found.');
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
     }
+
+    // Check if the user's account status is 'autorise'
+    if (user.etat !== 'autorise') {
+      return res.status(403).json({ message: 'Votre compte doit être autorisé pour réinitialiser le mot de passe.' });
+    }
+
+    // Check if user's password is empty, indicating they signed up through Google
+    if (!user.motDePasse || user.motDePasse.trim() === '') {
+      return res.status(400).json({ message: 'Les utilisateurs qui se sont inscrits via Google doivent utiliser la réinitialisation de mot de passe de Google.' });
+    }
+
     console.log(user);
     const token = Math.floor(1000 + Math.random() * 9000);
 
-    await Utilisateur.update(
-      {
-        resetPasswordToken: token,
-        resetPasswordExpires: new Date(Date.now() + 3600000),
-      },
-      { where: { id_utilisateur: user.id_utilisateur } }
-    );
+    await Utilisateur.update({
+      resetPasswordToken: token,
+      resetPasswordExpires: new Date(Date.now() + 3600000), // 1 hour from now
+    }, {
+      where: { id_utilisateur: user.id_utilisateur }
+    });
 
-    const template = forgotPasswordEmailTemplate(
-      user.nom,
-      user.email,
-      API_ENDPOINT,
-      token
-    );
+    const template = forgotPasswordEmailTemplate(user.nom, user.email, API_ENDPOINT, token);
 
     const data = {
       from: FROM_EMAIL,
       to: user.email,
-      subject: 'Reinitialisation de votre mot de passe',
+      subject: 'Réinitialisation de votre mot de passe',
       html: template,
     };
-    // Assuming smtpTransport is properly configured and defined
+
     await smtpTransport.sendMail(data);
 
     return res.json({
       message: "Veuillez vérifier votre e-mail pour plus d'instructions",
     });
   } catch (error) {
-    return res.status(422).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
+
 
 exports.checkResetToken = async (req, res) => {
   try {
@@ -393,5 +444,75 @@ exports.resetPassword = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+exports.resendForgotPasswordEmail = async (req, res) => {
+  // Extract the email from URL parameters instead of the body
+  const { email } = req.params;
+
+  try {
+    const user = await Utilisateur.findOne({
+      where: { email: email },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+    }
+
+    const token = Math.floor(1000 + Math.random() * 9000);
+
+    await Utilisateur.update({
+      resetPasswordToken: token,
+      resetPasswordExpires: new Date(Date.now() + 3600000), // 1 hour from now
+    }, {
+      where: { id_utilisateur: user.id_utilisateur }
+    });
+
+    const template = forgotPasswordEmailTemplate(user.nom, user.email, API_ENDPOINT, token);
+    const data = {
+      from: FROM_EMAIL,
+      to: user.email,
+      subject: 'Réinitialisation de votre mot de passe - Renvoi',
+      html: template,
+    };
+
+    await smtpTransport.sendMail(data);
+
+    return res.json({
+      message: "E-mail de réinitialisation du mot de passe renvoyé avec succès. Veuillez vérifier votre e-mail pour plus d'instructions",
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getUserProfile = async (req, res) => {
+  try {
+    const user = await Utilisateur.findByPk(req.userId, {
+      attributes: { exclude: ['motDePasse'] }, // Exclure le mot de passe pour des raisons de sécurité
+    });
+    if (user) {
+      res
+        .status(200)
+        .json({ message: 'User profile retrieved successfully', user });
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Add to utilisateurController.js
+exports.updateUserPhoto = async (req, res, filePath) => {
+  const userId = req.userId; // Make sure you have the user's ID available, e.g., from a JWT token
+
+  try {
+    await Utilisateur.update({ photo: filePath }, { where: { id_utilisateur: userId } });
+    res.status(200).json({ message: 'Profile picture updated successfully', filePath });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 module.exports = exports;

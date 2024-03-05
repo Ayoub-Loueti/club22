@@ -7,18 +7,15 @@
   position: relative;
 }
 
-.container {
-  position: relative;
-}
 
 .whitee-square {
   background-color: white;
-  width: 500px;
+  width: 650px;
   height: 650px;
 }
 
 .greenn-square {
-  width: 500px;
+  width: 650px;
   height: 650px;
 
   position: relative;
@@ -26,7 +23,7 @@
 
 .grayy-rectangle {
   background-color: #e4e4e4;
-  width: 400px;
+  width: 450px;
   height: 100px;
   padding: 80px;
   border-radius: 10px;

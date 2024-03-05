@@ -1,0 +1,180 @@
+/* Styles pour la navbar verticale */
+.navbar {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 120px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: #191f43;
+  overflow: hidden;
+}
+
+.navbar-inner {
+  width: 63%;
+  background-color: #879eb9;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+}
+
+.navbar-extension {
+  width: 30px;
+  height: 100%;
+  background-color: #ffff;
+  position: absolute;
+  right: -3px;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+}
+
+.navbar-logo {
+  height: 30px;
+  width: 30px;
+  position: absolute;
+  top: 15px;
+  left: 10px;
+}
+
+/* Styles pour la navbar horizontale */
+.navbar-horizontal {
+  display: flex;
+  height: 40px; /* Hauteur réduite comme précédemment mentionné */
+  margin-left: 600px; /* Réduisez cette valeur pour diminuer l'espace à gauche */
+  width: calc(
+    100% - 150px
+  ); /* Ajustez la largeur en conséquence pour maintenir la cohérence */
+  background-color: transparent;
+  align-items: center;
+  z-index: 1000;
+}
+
+.searchh-formm {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centrer horizontalement les éléments enfants */
+  margin-right: auto; /* Mettre à auto pour déplacer la barre de recherche à gauche */
+}
+
+.searchh-inputt {
+  color: #191f43; /* Change la couleur du texte en blanc */
+  border-radius: 20px; /* Arrondi des bords de l'input */
+  padding: 5px 10px; /* Espacement interne pour le texte */
+  width: 250px; /* Largeur de la barre de recherche */
+  outline: none; /* Supprime l'outline par défaut au focus */
+}
+/* Styles pour l'icône de recherche */
+.search-iconn {
+  color: #191f43; /* Couleur de l'icône de recherche */
+  font-size: 22px; /* Taille de l'icône */
+  background-color: transparent; /* Fond transparent */
+  border: none; /* Pas de bordure */
+  cursor: pointer; /* Curseur de type pointer */
+  padding: 0; /* Aucun espacement interne */
+  margin-left: -32px; /* Ajustement horizontal de la position */
+  margin-top: 1px; /* Ajustement vertical de la position */
+}
+
+
+
+.navbar-iconn {
+  cursor: pointer; /* Change le curseur pour indiquer la cliquabilité */
+}
+#search-input-navbar::placeholder {
+  color: #191f43; /* Définit la couleur du placeholder en blanc uniquement pour cet input */
+  opacity: 1; /* Assure que la couleur du placeholder est pleinement visible */
+}
+.vertical-icon {
+  color: white; /* Définit la couleur des icônes en blanc */
+  font-size: 24px; /* Taille des icônes */
+  margin: 10px 0; /* Espacement vertical entre les icônes */
+  cursor: pointer; /* Indique que les icônes sont cliquables */
+}
+.icon-containerrr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white; /* Assure que les icônes sont en blanc */
+  padding-left: 7px;
+}
+
+.navbar-iconnn {
+  margin: 20px 0; /* Espacement entre les icônes */
+  color: white; /* S'assure que les icônes sont blanches */
+  font-size: 23px;
+  cursor: pointer; /* Indique que les icônes sont cliquables */
+}
+.icon-containerr {
+  display: flex;
+  gap: 22px; /* Espacement entre les icônes */
+  padding-right: 500px; /* Espacement à droite */
+  color: #191f43;
+  font-size: 33px; /* Taille des icônes */
+  margin-top: auto;
+}
+/* Styles pour l'icône d'utilisateur */
+.inner-user {
+  color: #191f43; /* Couleur de l'icône */
+  font-size: 34px; /* Taille de l'icône */
+  margin: 20px 20px 20px 0; /* Espacement autour de l'icône avec une marge droite de 10px */
+  cursor: pointer; /* Curseur de type pointer */
+  
+}
+.user-photo {
+    font-size: 34px; /* Taille de l'icône */
+
+  width: 35px; /* Réduction de la taille de la photo de profil */
+  height: 35px; /* Garde la photo de profil circulaire */
+  border-radius: 50%; /* Rend l'image complètement ronde */
+  object-fit: cover; /* Assure que l'image couvre bien l'espace sans être déformée */
+}
+body {
+  overflow-x: hidden;
+}
+.user-info {
+  position: fixed;
+  top: 50px;
+  right: 10px;
+  background-color: white;
+  padding: 20px; /* Augmenté pour plus d'espace interne */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 5px;
+  z-index: 1001;
+  width: 200px; /* Largeur spécifiée pour augmenter la taille du conteneur */
+  display: flex;
+  flex-direction: column; /* Organise les enfants verticalement */
+  align-items: start; /* Aligner les éléments à gauche */
+}
+
+.user-info .user-actions {
+  display: flex;
+  flex-direction: column; /* Affiche chaque action sur une nouvelle ligne */
+}
+
+.user-info .user-actions a,
+.user-info .user-actions .logout-link {
+  color: #191f43; /* Couleur des liens */
+  padding: 8px 0; /* Ajoute de l'espace vertical pour une meilleure séparation */
+  text-decoration: none; /* Supprime le soulignement par défaut */
+  font-size: 16px; /* Augmente la taille de la police pour une meilleure lisibilité */
+  width: 100%; /* Utilise toute la largeur disponible pour faciliter le clic */
+  text-align: left; /* Assure que le texte est aligné à gauche */
+}
+
+.user-actions a:hover,
+.user-actions .logout-link:hover {
+  background-color: #f2f2f2; /* Effet de survol pour améliorer l'interaction */
+  border-radius: 4px; /* Arrondit les coins lors du survol */
+}
+.logout-button {
+  color: #191f43;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px 0;
+  font-size: 16px;
+}

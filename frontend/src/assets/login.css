@@ -66,5 +66,44 @@
   border-bottom: 2px solid #909090; 
 }
 
-/*checkbox*/
+.activation-message-container {
+  text-align: center;
+  margin-top: 40px;
+  background-color: #f8f9fa; /* Fond gris clair pour un contraste subtil */
+  padding: 30px 40px;
+  border-radius: 15px; /* Bords arrondis */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12); /* Ombre pour un effet de profondeur */
+  color: #343a40; /* Texte gris foncé pour une bonne lisibilité */
+  font-size: 1rem; /* Taille de police pour la lisibilité */
+  line-height: 1.5;
+  width: 80%; /* Largeur relative pour une meilleure responsivité */
+  max-width: 500px; /* Largeur maximale pour éviter un aspect étiré sur grands écrans */
+  margin: 40px auto; /* Centrage vertical et espace */
+  border: 1px solid #ced4da; /* Bordure gris clair pour définir les bords */
+}
+
+.activation-message-container p {
+  margin: 0 auto;
+  width: 80%;
+}
+
+.activation-message-container button {
+  background: none;
+  border: 2px solid #4CAF50; /* Bordure solide pour le bouton */
+  padding: 5px 15px;
+  color: #4CAF50; /* Couleur du texte correspondant à la bordure */
+  font-weight: bold;
+  margin-top: 15px; /* Espace au-dessus du bouton */
+  cursor: pointer; /* Indicateur de clic */
+  border-radius: 5px; /* Bords arrondis du bouton */
+}
+
+.activation-message-container button:disabled {
+  color: #BDBDBB; /* Gris pour le texte désactivé */
+  border-color: #BDBDBB; /* Bordure grise pour bouton désactivé */
+}
+
+.activation-message-container button:hover:not(:disabled) {
+  background-color: #e8f5e9; /* Légère couleur de fond au survol */
+}
 
