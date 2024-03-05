@@ -153,38 +153,47 @@ exports.login = async (req, res) => {
     const user = await Utilisateur.findOne({ where: { email: email } });
 
     if (!user) {
-      return res.status(404).json({ error: 'utilisateur non trouvee' });
+      return res.status(404).json({ error: 'Utilisateur non trouvé.' });
     }
 
     if (user.etat === 'bloque') {
       return res.status(403).json({
-        error: 'Your account is blocked. Please contact the administrator.',
+        error: 'Votre compte est bloqué. Veuillez contacter l’administrateur.',
       });
     }
 
     if (user.etat === 'En attente') {
-      return res
-        .status(403)
-        .json({ error: 'User account is not authorized to log in' });
+      return res.status(403).json({ error: 'Le compte utilisateur n’est pas autorisé à se connecter.' });
     }
 
-    const hasNameAndSurname = user.nom;
+    const now = new Date();
+    if (user.lockUntil && user.lockUntil > now) {
+      return res.status(403).json({ error: 'Votre compte est temporairement bloqué. Veuillez réessayer plus tard.' });
+    }
+
     const passwordMatch = await bcrypt.compare(motDePasse, user.motDePasse);
 
-    if (!passwordMatch) {
-      return res.status(401).json({ error: 'Incorrect password' });
+    if (passwordMatch) {
+      await Utilisateur.update({ loginAttempts: 0, lockUntil: null }, { where: { email: email } });
+
+      const token = jwt.sign({ userId: user.id_utilisateur }, secretKey, { expiresIn: '24h' });
+
+      return res.status(200).json({
+        message: 'Connexion réussie',
+        token: token,
+        shouldUpdateProfile: !user.nom || !user.prenom, // Simplified logic
+      });
+    } else {
+      let updates = { loginAttempts: user.loginAttempts + 1 };
+      if (updates.loginAttempts >= 3) {
+        updates.loginAttempts = 0; // reset attempts
+        updates.lockUntil = new Date(now.getTime() + 30 * 60 * 1000); // lock account for 30 minutes
+      }
+
+      await Utilisateur.update(updates, { where: { email: email } });
+
+      return res.status(401).json({ error: 'Mot de passe incorrect.' });
     }
-
-    const token = jwt.sign({ userId: user.id_utilisateur }, secretKey, {
-      expiresIn: '24h',
-    });
-
-    res.status(200).json({
-      message: 'Login successful',
-      user: user,
-      token: token,
-      shouldUpdateProfile: !hasNameAndSurname,
-    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

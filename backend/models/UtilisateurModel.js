@@ -45,6 +45,14 @@ const UtilisateurModel = sequelize.define(
       type: DataTypes.STRING,
       defaultValue: 'Profil en cours de personnalisation!',
     },
+    loginAttempts: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    lockUntil: {
+      type: DataTypes.TIME,
+      defaultValue: null,
+    },
   },
   {
     tableName: 'utilisateur',

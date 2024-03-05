@@ -56,38 +56,60 @@ function Login() {
         email,
         motDePasse,
       });
-      localStorage.setItem(
-        'login',
-        JSON.stringify({ isAuthenticated: true, token: response.data.token })
-      );
-      navigate('/profil');
+      localStorage.setItem('login', JSON.stringify({ isAuthenticated: true, token: response.data.token }));
+      setLoading(false);
+      navigate('/profil'); // Adjust the route as needed
     } catch (error) {
       setLoading(false);
-      if (
-        error.response &&
-        error.response.data.error === 'User account is not authorized to log in'
-      ) {
-        MySwal.fire({
-          title: 'Compte non autorisé',
-          text: "Votre compte doit être activé. Voulez-vous renvoyer l'email d'activation ?",
-          icon: 'question',
-          showCancelButton: true,
-          confirmButtonText: 'Oui, renvoyer',
-          cancelButtonText: 'Non, merci',
-        }).then((result) => {
-          if (result.isConfirmed) {
-            handleResendEmail();
-          }
-        });
+      if (error.response) {
+        // Account is temporarily locked
+        if (error.response.data.error.includes('temporairement bloqué')) {
+          Swal.fire({
+            title: 'Compte Temporairement Bloqué',
+            text: 'Votre compte est temporairement bloqué. Veuillez réessayer plus tard.',
+            icon: 'warning',
+            confirmButtonText: 'Ok',
+          });
+        } 
+        // Account is blocked
+        else if (error.response.data.error.includes('bloqué')) {
+          Swal.fire({
+            title: 'Compte Bloqué',
+            text: 'Votre compte est bloqué. Veuillez contacter l’administrateur.',
+            icon: 'error',
+            confirmButtonText: 'Ok',
+          });
+        }
+        // Account is not authorized to log in
+        else if (error.response.data.error.includes('n’est pas autorisé')) {
+          Swal.fire({
+            title: 'Compte Non Autorisé',
+            text: 'Le compte utilisateur n’est pas autorisé à se connecter.',
+            icon: 'error',
+            confirmButtonText: 'Ok',
+          });
+        }
+        // Incorrect password or other login errors
+        else {
+          Swal.fire({
+            title: 'Échec de la connexion',
+            text: error.response.data.error || 'Une erreur est survenue. Veuillez réessayer.',
+            icon: 'error',
+            confirmButtonText: 'Réessayer',
+          });
+        }
       } else {
-        MySwal.fire(
-          'Erreur de connexion',
-          'Veuillez vérifier vos informations et essayer de nouveau.',
-          'error'
-        );
+        // Handle errors without a response (like network issues)
+        Swal.fire({
+          title: 'Erreur Réseau',
+          text: 'Veuillez vérifier votre connexion Internet et réessayer.',
+          icon: 'error',
+          confirmButtonText: 'Ok',
+        });
       }
     }
   };
+  
 
 
  useEffect(() => {

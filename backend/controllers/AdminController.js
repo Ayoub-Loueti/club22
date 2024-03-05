@@ -100,7 +100,7 @@ exports.updateUserEtatAutorise = async (req, res) => {
 
     // If the user is an administrator, proceed with updating the user's etat
     const updatedUser = await Utilisateur.update(
-      { etat: 'autorise' },
+      { etat: 'autorise' , loginAttempts:0},
       {
         where: { id_utilisateur: id, etat: 'bloque' },
       }
