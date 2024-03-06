@@ -2,8 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faSearch, faUserCircle } from '@fortawesome/free-solid-svg-icons';
-import '../assets/navbar.css';
+import {
+  faBell,
+  faSearch,
+  faUserCircle,
+} from '@fortawesome/free-solid-svg-icons';
+import '../navbar/navbar.css';
 
 function NavbarHaut() {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -14,19 +18,25 @@ function NavbarHaut() {
   useEffect(() => {
     const token = localStorage.getItem('login');
     const storedUserId = JSON.parse(localStorage.getItem('userId')); // Rename for clarity
-    setUserId(storedUserId); 
+    setUserId(storedUserId);
 
     if (token && storedUserId) {
       const fetchUserData = async () => {
         try {
-          const response = await axios.get(`http://localhost:5000/profil/${storedUserId}`, {
-            headers: {
-              Authorization: `Bearer ${JSON.parse(token).token}`,
-            },
-          });
+          const response = await axios.get(
+            `http://localhost:5000/profil/${storedUserId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${JSON.parse(token).token}`,
+              },
+            }
+          );
           setUserInfo(response.data.user);
         } catch (error) {
-          console.error("Erreur lors de la récupération des données de l'utilisateur", error);
+          console.error(
+            "Erreur lors de la récupération des données de l'utilisateur",
+            error
+          );
         }
       };
       fetchUserData();
@@ -54,7 +64,9 @@ function NavbarHaut() {
       {userInfo && (
         <>
           <div className="user-actions">
-            <Link to={`/profil/${userId}`} className="dropdown-item">Profil</Link>
+            <Link to={`/profil/${userId}`} className="dropdown-item">
+              Profil
+            </Link>
             <button onClick={handleLogout} className="logout-button">
               Déconnexion
             </button>

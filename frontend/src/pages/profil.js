@@ -3,8 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { FaEdit } from 'react-icons/fa';
-import Navbar from '../components/navbar';
-import NavbarHaut from '../components/navbarHaut';
+import Navbar from '../components/navbar/navbar';
+import NavbarHaut from '../components/navbar/navbarHaut';
 import '../assets/profil.css';
 
 function Profil() {

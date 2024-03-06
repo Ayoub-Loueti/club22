@@ -32,6 +32,7 @@ exports.signup = async (req, res) => {
         etat,
         resetPasswordToken: token,
         resetPasswordExpires: new Date(Date.now() + 3600000),
+        lockUntil:0,
       });
 
       // Send confirmation email
