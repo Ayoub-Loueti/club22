@@ -49,7 +49,7 @@ function App() {
             path="/tousLesUtilisateurs"
             element={<ProtectedRoute><TousLesUtilisateurs /></ProtectedRoute>}
           />
-          <Route path="/profil" element={<ProtectedRoute><Profil /></ProtectedRoute>} />
+          <Route path="/profil/:id" element={<ProtectedRoute><Profil /></ProtectedRoute>} />
           <Route path="/navbar" element={<ProtectedRoute><Navbar /></ProtectedRoute>} />
           <Route path="/navbarHaut" element={<ProtectedRoute><NavbarHaut /></ProtectedRoute>} />
 

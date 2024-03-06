@@ -180,6 +180,7 @@ exports.login = async (req, res) => {
 
       return res.status(200).json({
         message: 'Connexion réussie',
+        user: user,
         token: token,
         shouldUpdateProfile: !user.nom || !user.prenom, // Simplified logic
       });
@@ -218,7 +219,7 @@ exports.googleAuthCallback = (req, res, next) => {
     });
 
     // Redirect to the /load page with the token as a query parameter
-    res.redirect(`http://localhost:3000/load?token=${userToken}`);
+    res.redirect(`http://localhost:3000/load?token=${userToken}&userId=${user.id_utilisateur}`);
   })(req, res, next); // Make sure to pass req, res, next to the inner function
 };
 
@@ -495,14 +496,15 @@ exports.resendForgotPasswordEmail = async (req, res) => {
 };
 
 exports.getUserProfile = async (req, res) => {
+  const userId = req.params.id; // Get the user ID from the request parameters
+
   try {
-    const user = await Utilisateur.findByPk(req.userId, {
-      attributes: { exclude: ['motDePasse'] }, // Exclure le mot de passe pour des raisons de sécurité
+    const user = await Utilisateur.findByPk(userId, {
+      attributes: { exclude: ['motDePasse'] }, // Exclude the password for security reasons
     });
+
     if (user) {
-      res
-        .status(200)
-        .json({ message: 'User profile retrieved successfully', user });
+      res.status(200).json({ message: 'User profile retrieved successfully', user });
     } else {
       res.status(404).json({ error: 'User not found' });
     }
@@ -510,6 +512,8 @@ exports.getUserProfile = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
 
 // Add to utilisateurController.js
 exports.updateUserPhoto = async (req, res, filePath) => {

@@ -1,13 +1,20 @@
-import React, { useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../assets/profil.css';
+import Swal from 'sweetalert2';
 import { FaEdit } from 'react-icons/fa';
-import '../components/navbar';
 import Navbar from '../components/navbar';
 import NavbarHaut from '../components/navbarHaut';
+import '../assets/profil.css';
+
 function Profil() {
-  const token = localStorage.getItem('login');
-  const [utilisateur, setUtilisateur] = useState([]);
+  const { id } = useParams(); // Get user ID from URL
+  const navigate = useNavigate();
+  const token = JSON.parse(localStorage.getItem('login'))?.token; // Properly parse token
+  const userId = JSON.parse(localStorage.getItem('userId')); // Assuming 'userId' is stored correctly
+  const isOwnProfile = userId?.toString() === id; // Safely check for equality
+  
+  const [utilisateur, setUtilisateur] = useState({});
   const [editing, setEditing] = useState({
     nom: false,
     prenom: false,
@@ -20,15 +27,16 @@ function Profil() {
     genre: '',
     description: '',
   });
-const fileInputRef = useRef(null);
+
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (token) {
+      if (token && id) {
         try {
-          const response = await axios.get('http://localhost:5000/profil', {
+          const response = await axios.get(`http://localhost:5000/profil/${id}`, {
             headers: {
-              Authorization: `Bearer ${JSON.parse(token).token}`,
+              Authorization: `Bearer ${token}`,
             },
           });
           setUtilisateur(response.data.user);
@@ -39,15 +47,13 @@ const fileInputRef = useRef(null);
             description: response.data.user.description,
           });
         } catch (error) {
-          console.error(
-            "Erreur lors de la récupération des données de l'utilisateur",
-            error
-          );
+          console.error("Erreur lors de la récupération des données de l'utilisateur", error);
+          Swal.fire('Erreur', 'Impossible de récupérer les données de l’utilisateur.', 'error');
         }
       }
     };
     fetchUserData();
-  }, [token]);
+  }, [token, id]);
 
  const handleEditChange = (e) => {
    const { name, value } = e.target;
@@ -138,10 +144,12 @@ const handleUpdate = async (field) => {
             alt="Profil"
             className="profile-picturee"
           />
-          <FaEdit
-            className="edit-profile-picture-icon"
-            onClick={() => fileInputRef.current.click()}
-          />
+            {isOwnProfile && (
+            <>
+              <FaEdit className="edit-profile-picture-icon" onClick={() => fileInputRef.current.click()} />
+              <input type="file" onChange={handleFileChange} ref={fileInputRef} style={{ display: 'none' }} />
+            </>
+          )}
           <input
             type="file"
             onChange={handleFileChange}
@@ -166,10 +174,10 @@ const handleUpdate = async (field) => {
               {utilisateur.description}
             </p>
           )}
-          <FaEdit
+          {isOwnProfile && <FaEdit
             onClick={() => toggleEdit('description')}
             className="edit-icon-desc"
-          />
+          />}
         </div>
         <div className="profile-info">
           <div className="info-item">
@@ -191,7 +199,7 @@ const handleUpdate = async (field) => {
               ) : (
                 <span className="info-value">{utilisateur.nom}</span>
               )}
-              <FaEdit onClick={() => toggleEdit('nom')} className="edit-icon" />
+              { isOwnProfile && <FaEdit onClick={() => toggleEdit('nom')} className="edit-icon" />}
             </div>
             <div className="info-item">
               <span className="info-label">Prénom:</span>
@@ -207,10 +215,7 @@ const handleUpdate = async (field) => {
               ) : (
                 <span className="info-value">{utilisateur.prenom}</span>
               )}
-              <FaEdit
-                onClick={() => toggleEdit('prenom')}
-                className="edit-icon"
-              />
+             {isOwnProfile && <FaEdit onClick={() => toggleEdit('prenom')} className="edit-icon" />}
             </div>
             <div className="info-item">
               <span className="info-label">Genre:</span>
@@ -228,10 +233,10 @@ const handleUpdate = async (field) => {
               ) : (
                 <span className="info-value">{utilisateur.genre}</span>
               )}
-              <FaEdit
+              { isOwnProfile && <FaEdit
                 onClick={() => toggleEdit('genre')}
                 className="edit-icon"
-              />
+              />}
             </div>
 
             <div className="info-item">

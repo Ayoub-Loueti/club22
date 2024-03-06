@@ -1,33 +1,46 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 function Load() {
+  const [loading, setLoading] = useState(true);
+  const location = useLocation();
   const navigate = useNavigate();
+  const MySwal = withReactContent(Swal);
 
   useEffect(() => {
-    const authCompleted = JSON.parse(localStorage.getItem('login'))?.isAuthenticated;
-    
-    if (authCompleted) {
-      navigate('/profil');
-      return;
-    }
-  
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
-    
-    if (token) {
-      localStorage.setItem('login', JSON.stringify({
-        isAuthenticated: true,
-        token: token,
-      }));
-      navigate('/profil'); 
-    } else {
-      navigate('/'); 
-    }
-  }, [navigate]);
-  
+    const fetchData = async () => {
+      try {
+        const params = new URLSearchParams(location.search);
+        const token = params.get('token');
+        const userId = params.get('userId');
+        console.log('Token:', token);
+        console.log('UserId:', userId);
+        if (token && userId) {
+          localStorage.setItem('login', JSON.stringify({ isAuthenticated: true, token }));
+          localStorage.setItem('userId', JSON.stringify(userId)); // Save userId to localStorage
+          setLoading(false);
+          navigate(`/profil/${userId}`); // Redirect to the profile page
+        } else {
+          setLoading(false);
+          MySwal.fire('Error', 'Token or userId not found.', 'error');
+        }
+      } catch (error) {
+        setLoading(false);
+        MySwal.fire('Error', 'An error occurred.', 'error');
+      }
+    };
 
-  return <div>Loading...</div>;
+    fetchData();
+  }, [location.search, navigate, MySwal]);
+
+  return (
+    <div>
+      {loading && <p>Loading...</p>}
+    </div>
+  );
 }
 
 export default Load;
