@@ -11,21 +11,19 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 function Navbar() {
-  const [isVisible, setIsVisible] = useState(false);
+const [isVisible, setIsVisible] = useState(true);
   // Function to toggle visibility
-  const toggleNavbar = () => {
-    setIsVisible(!isVisible);
-  };
+const toggleNavbar = () => {
+  setIsVisible(!isVisible);
+};
+
 
   return (
     <div>
-      {/* Toggle Button */}
       <div className="navbar-toggle" onClick={toggleNavbar}>
-        <FontAwesomeIcon icon={faBars} />
+        <FontAwesomeIcon icon={faBars} style={{ fontSize: '27px' }} />{' '}
       </div>
-
-      {/* Navbar */}
-      <nav className={`navbar ${isVisible ? 'visible' : ''}`}>
+      <nav className={`navbar ${!isVisible ? '' : 'visible'}`}>
         <img src={logo} alt="Logo" className="navbar-logo" />
         <div className="icon-containerrr">
           <FontAwesomeIcon icon={faHouse} className="navbar-iconnn" />
@@ -37,9 +35,7 @@ function Navbar() {
           <FontAwesomeIcon icon={faUser} className="inner-user" />
         </div>
 
-        <div className="navbar-extension">
-          {/* Optional extension content if necessary */}
-        </div>
+        <div className="navbar-extension"></div>
       </nav>
     </div>
   );

@@ -10,22 +10,29 @@
   top: 0;
   background-color: #191f43;
   overflow: hidden;
-  transform: translateX(-120px); /* Hide off-screen */
-  transition: transform 0.3s ease; /* Smooth transition */
+   transform: translateX(0); /* Affiche par défaut */
+  transition: transform 0.3s ease;
 }
-
+.navbar:not(.visible) {
+  transform: translateX(-120px); /* Cache hors écran */
+}
 /* Show navbar */
 .navbar.visible {
   transform: translateX(0);
 }
 .navbar-toggle {
   position: fixed;
-  left: 0;
-  top: 15px;
-  z-index: 2000; /* Ensure it's above other content */
+  left: 10px; 
+  z-index: 2000;
   cursor: pointer;
   padding: 10px;
+  margin-left: 41px;
+  color: #191f43;
+  opacity: 0.7; 
+  top: 6px;
+  
 }
+
 .navbar-inner {
   width: 63%;
   background-color: #879eb9;
@@ -47,10 +54,10 @@
 }
 
 .navbar-logo {
-  height: 30px;
-  width: 30px;
+  height: 33px;
+  width: 33px;
   position: absolute;
-  top: 15px;
+  top:10px;
   left: 10px;
 }
 
@@ -112,8 +119,10 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start; /* Alignement à gauche */
-  justify-content: center; /* Centrage vertical */
   height: 100%; /* Prend toute la hauteur disponible */
+   padding-left: 10px; /* Déplace toutes les icônes un peu plus à droite */
+  padding-top: 180px; /* Espacement optionnel en haut */
+  padding-bottom: 10px; /* Espacement optionnel en bas */
 }
 
 
@@ -126,11 +135,14 @@
 }
 
 .navbar-iconnn {
-  margin: 30px 30; /* Adjust as necessary for spacing */
-  color: white; /* Ensure visibility against the navbar background */
-  font-size: 23px; /* Adjust size as needed */
+  width: 25px; /* Définit une largeur fixe pour toutes les icônes */
+  height: 25px; /* Définit une hauteur fixe pour toutes les icônes */
+  margin-bottom: 15px; /* Espacement vertical uniforme */
+  color: white; /* Assure la visibilité contre l'arrière-plan du navbar */
+  font-size: 23px; 
   cursor: pointer;
 }
+
 .icon-containerr {
   display: flex;
   gap: 22px; /* Espacement entre les icônes */
@@ -142,8 +154,10 @@
 /* Styles pour l'icône d'utilisateur */
 .inner-user {
   color: #191f43; /* Couleur de l'icône */
-  font-size: 34px; /* Taille de l'icône */
+  font-size: 24px; /* Taille de l'icône */
   margin: 20px 20px 20px 0; /* Espacement autour de l'icône avec une marge droite de 10px */
+margin-top:50px;
+
   cursor: pointer; /* Curseur de type pointer */
   
 }
