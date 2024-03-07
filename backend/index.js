@@ -3,6 +3,7 @@ const mydb = require('./config/db');
 const app = express();
 const utilisateur = require('./routes/UtilisateurRoute');
 const admin = require('./routes/AdminRoute');
+const post = require('./routes/PostRoute');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const session = require('express-session');
@@ -36,6 +37,7 @@ app.use(passport.session());
 
 app.use(utilisateur);
 app.use(admin);
+app.use(post);
 app.use('/uploads', express.static('uploads'));
 
 const PORT = process.env.PORT || 5000;
