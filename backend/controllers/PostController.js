@@ -74,9 +74,7 @@ exports.deletePost = async (req, res) => {
 
 exports.getAllPosts = async (req, res) => {
     try {
-        const posts = await Post.findAll({
-            where: { etat: 'accepter' }
-        });
+        const posts = await Post.findAll();
 
         if (!posts.length) {
             return res.status(404).json({ message: 'No posts found' });
@@ -136,10 +134,6 @@ exports.getPostByIdWithDetails = async (req, res) => {
             return res.status(404).json({ message: 'Post not found' });
         }
 
-        if (post.etat !== 'accepter') {
-            return res.status(403).json({ message: 'Post is not in an accepted state' });
-        }
-
         // Manually fetch comments for the post
         const comments = await Commentaire.findAll({
             where: { id_post: postId },
@@ -173,14 +167,15 @@ exports.getPostByIdWithDetails = async (req, res) => {
 };
 
 exports.getAllPostsByUserWithDetails = async (req, res) => {
-    const userId = req.params.userId;
+    const userId = req.params.userId; // Capture the user ID from the request parameters
 
     try {
+        // Fetch all posts created by the specified user
        const posts = await Post.findAll({
-            where: { id_utilisateur: userId , etat: 'accepter'},
+            where: { id_utilisateur: userId },
             include: [{
                 model: Utilisateur,
-                as: 'utilisateur',
+                as: 'utilisateur', // Adjust if using a different alias
                 attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
             }]
         });

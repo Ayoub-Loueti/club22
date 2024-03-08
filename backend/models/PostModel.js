@@ -31,10 +31,7 @@ const PostModel = sequelize.define(
     },
     type: {
       type: DataTypes.ENUM('camping', 'voyage', 'autre'),
-    },
-    etat: {
-        type: DataTypes.ENUM('en attente', 'accepter', 'refuser'),
-      },
+    }
   },
   {
     tableName: 'post',
