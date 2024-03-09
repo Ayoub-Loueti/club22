@@ -73,51 +73,116 @@ exports.deletePost = async (req, res) => {
 //affichage 
 
 exports.getAllPosts = async (req, res) => {
+  const userId = req.userId; // Ensure you have access to the userId, typically set from the auth middleware
+
+  try {
+    const posts = await Post.findAll({
+      include: [
+        {
+          model: Utilisateur,
+          as: 'utilisateur',
+          attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+        },
+      ],
+    });
+
+    if (!posts.length) {
+      return res.status(404).json({ message: 'No posts found' });
+    }
+
+    const postsWithDetails = await Promise.all(
+      posts.map(async (post) => {
+        const postJson = post.toJSON();
+
+        // Additional query to check if the current user has liked the post
+        const likeStatus = await Likes.findOne({
+          where: {
+            id_post: post.id_post,
+            id_utilisateur: userId,
+          },
+        });
+
+        // Add a new property to postJson indicating if the current user has liked the post
+        postJson.isLikedByCurrentUser = !!likeStatus;
+
+        // Fetch comments for the post
+        const comments = await Commentaire.findAll({
+          where: { id_post: post.id_post },
+          include: [
+            {
+              model: Utilisateur,
+              as: 'utilisateur',
+              attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+            },
+          ],
+        });
+        postJson.commentaires = comments;
+
+        // Fetch likes for the post
+        const likes = await Likes.findAll({
+          where: { id_post: post.id_post },
+          include: [
+            {
+              model: Utilisateur,
+              as: 'utilisateur',
+              attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+            },
+          ],
+        });
+        postJson.likesCount = likes.length; // Add likes count
+        postJson.likes = likes; // This includes detailed likes info, adjust as needed
+
+        return postJson;
+      })
+    );
+
+    return res.status(200).json(postsWithDetails);
+  } catch (error) {
+    console.error('Error fetching all posts with details:', error);
+    return res
+      .status(500)
+      .json({ message: 'Error fetching posts', error: error.message });
+  }
+};
+// Fetch likes count for a post
+exports.getLikesCount = async (req, res) => {
+    const postId = req.params.postId; // Extract the post ID from the path
+
     try {
-        const posts = await Post.findAll();
+        const likesCount = await Likes.count({
+            where: {
+                id_post: postId
+            }
+        });
 
-        if (!posts.length) {
-            return res.status(404).json({ message: 'No posts found' });
-        }
-
-        const postsWithDetails = await Promise.all(posts.map(async (post) => {
-            const postJson = post.toJSON();
-
-            const user = await Utilisateur.findByPk(post.id_utilisateur, {
-                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-            });
-            postJson.utilisateur = user;
-
-            const comments = await Commentaire.findAll({
-                where: { id_post: post.id_post },
-                include: [{
-                    model: Utilisateur,
-                    as: 'utilisateur', 
-                    attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-                }],
-            });
-            postJson.commentaires = comments;
-
-            // Fetch likes for the post
-            const likes = await Likes.findAll({
-                where: { id_post: post.id_post },
-                include: [{
-                    model: Utilisateur,
-                    as: 'utilisateur', 
-                    attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-                }],
-            });
-            postJson.likes = likes;
-
-            return postJson;
-        }));
-
-        return res.status(200).json(postsWithDetails);
+        return res.status(200).json({ likesCount });
     } catch (error) {
-        console.error('Error fetching all posts with details:', error);
-        return res.status(500).json({ message: 'Error fetching posts', error: error.message });
+        console.error('Error fetching likes count:', error);
+        return res.status(500).json({ message: 'Error fetching likes count', error: error.message });
     }
 };
+
+// Fetch comments for a post
+exports.getComments = async (req, res) => {
+    const postId = req.params.postId; // Extract the post ID from the path
+
+    try {
+        const comments = await Commentaire.findAll({
+            where: { id_post: postId },
+            include: [{
+                model: Utilisateur,
+                as: 'utilisateur',
+                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+            }],
+        });
+
+        return res.status(200).json({ comments });
+    } catch (error) {
+        console.error('Error fetching comments:', error);
+        return res.status(500).json({ message: 'Error fetching comments', error: error.message });
+    }
+};
+
 
 exports.getPostByIdWithDetails = async (req, res) => {
     const postId = req.params.id; 

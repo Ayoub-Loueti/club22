@@ -16,4 +16,11 @@ router.get('/posts', authenticate, postController.getAllPosts);
 router.get('/getPostById/:id', postController.getPostByIdWithDetails);
 router.get('/getAllPostsByUser/:userId', postController.getAllPostsByUserWithDetails);
 
+router.get(
+  '/post/:postId/likesCount',
+  authenticate,
+  postController.getLikesCount
+);
+router.get('/post/:postId/comment', authenticate, postController.getComments);
+
 module.exports = router;

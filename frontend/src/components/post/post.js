@@ -5,15 +5,16 @@ import ShareIcon from '../../img/share.png';
 import HeartIcon from '../../img/like.png';
 import NotLikeIcon from '../../img/notlike.png';
 import axios from 'axios';
-
+import CommentForm from '../comments/commentForm';
 const Post = ({ data }) => {
   const token = JSON.parse(localStorage.getItem('login'))?.token;
   // Gestion locale de l'état de "like"
-  const [liked, setLiked] = useState(data.liked);
-  const [likes, setLikes] = useState(data.likes);
+  const [liked, setLiked] = useState(data.isLikedByCurrentUser);
+  const [likes, setLikes] = useState(data.likesCount || 0);
   const [userInfo, setUserInfo] = useState(null);
-  const [userId, setUserId] = useState(null); // Add this line
-
+  const [userId, setUserId] = useState(null); 
+  const [comments, setComments] = useState([]);
+ const [showCommentForm, setShowCommentForm] = useState(false);
   useEffect(() => {
     const token = localStorage.getItem('login');
     const storedUserId = JSON.parse(localStorage.getItem('userId')); // Rename for clarity
@@ -41,26 +42,65 @@ const Post = ({ data }) => {
       fetchUserData();
     }
   }, []);
-  const handleLike = async () => {
+useEffect(() => {
+  const fetchLikesCount = async () => {
     try {
-      await axios.post(
-        `http://localhost:5000/post/${data.id_post}/toggle-like`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      const response = await axios.get(
+        `http://localhost:5000/post/${data.id_post}/likesCount`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      // Toggle like status optimistically
-      if (liked) {
-        setLikes(likes - 1);
-      } else {
-        setLikes(likes + 1);
-      }
-      setLiked(!liked);
+      setLikes(response.data.likesCount);
     } catch (error) {
-      console.error("Error toggling the post's like", error);
+      console.error("Error fetching post's likes count:", error);
     }
   };
+
+  fetchLikesCount();
+}, [liked]);
+
+useEffect(() => {
+  const fetchComments = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/post/${data.id_post}/comment`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setComments(response.data.comments);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
+  };
+
+  fetchComments();
+}, []);
+
+ const handleLike = async () => {
+   const newLikedStatus = !liked;
+   setLiked(newLikedStatus);
+   // Optimistically update the likes count
+   setLikes(likes + (newLikedStatus ? 1 : -1));
+
+   try {
+     await axios.post(
+       `http://localhost:5000/post/${data.id_post}/toggle-like`,
+       {},
+       {
+         headers: { Authorization: `Bearer ${token}` },
+       }
+     );
+     // If the backend sends back the updated count, you can update it here
+     // Otherwise, the optimistic update remains
+   } catch (error) {
+     console.error("Error toggling the post's like", error);
+     // Revert back to original state if there's an error
+     setLiked(!newLikedStatus);
+     setLikes(likes - (newLikedStatus ? 1 : -1));
+   }
+ };
+  
+ const toggleCommentForm = () => {
+   setShowCommentForm(!showCommentForm);
+ };
 
   return (
     <div className="Post">
@@ -74,7 +114,7 @@ const Post = ({ data }) => {
           alt="Profil"
           className="userPhoto"
         />
-        <span className="userName">{`${data.utilisateur.nom} ${data.utilisateur.prenom}`}</span>
+        <span className="userName">{`${data.utilisateur.prenom} ${data.utilisateur.nom}`}</span>
       </div>
       <div className="postContent">{data.contenu}</div>
       <div className="postReact">
@@ -83,12 +123,18 @@ const Post = ({ data }) => {
           alt="like"
           onClick={handleLike}
         />
-        <img src={CommentIcon} alt="comment" />
+        <img src={CommentIcon} alt="comment" onClick={toggleCommentForm} />
         <img src={ShareIcon} alt="share" />
       </div>
       <span style={{ color: 'var(--gray)', fontSize: '12px' }}>
-        {likes.nbr_likes} likes
+        {likes} likes
       </span>
+      {showCommentForm && <CommentForm postId={data.id_post} />}
+      <div className="comments">
+        {comments.map((comment, index) => (
+          <div key={comment.id || index}>{comment.cmntr}</div>
+        ))}
+      </div>
     </div>
   );
 };
