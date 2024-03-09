@@ -10,10 +10,12 @@ import '../assets/profil.css';
 function Profil() {
   const { id } = useParams(); // Get user ID from URL
   const navigate = useNavigate();
-  const token = JSON.parse(localStorage.getItem('login'))?.token; // Properly parse token
-  const userId = JSON.parse(localStorage.getItem('userId')); // Assuming 'userId' is stored correctly
+  // Assuming 'login' is a JSON string that contains the token
+  const storedData = JSON.parse(localStorage.getItem('login')); 
+  const token = storedData?.token; // Retrieve the token without JSON.parse on the token itself
+  const userId = JSON.parse(localStorage.getItem('userId')); // Assuming 'userId' is stored directly
   const isOwnProfile = userId?.toString() === id; // Safely check for equality
-  
+
   const [utilisateur, setUtilisateur] = useState({});
   const [editing, setEditing] = useState({
     nom: false,
@@ -36,7 +38,7 @@ function Profil() {
         try {
           const response = await axios.get(`http://localhost:5000/profil/${id}`, {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${token}`, // Use token directly
             },
           });
           setUtilisateur(response.data.user);
@@ -53,58 +55,47 @@ function Profil() {
       }
     };
     fetchUserData();
-  }, [token, id]);
+  }, [token, id]); // Dependency array
 
  const handleEditChange = (e) => {
    const { name, value } = e.target;
 
    if (name === 'description' && value.length > 50) return;
-
-   // Limite la longueur du nom et du prénom à 11 caractères
    if ((name === 'nom' || name === 'prenom') && value.length > 15) return;
 
    setEditValues({ ...editValues, [name]: value });
  };
 
-
   const toggleEdit = (field) => {
     setEditing({ ...editing, [field]: !editing[field] });
   };
 
-const handleUpdate = async (field) => {
-  // Vérifie et applique la limite de caractères avant de procéder à la mise à jour
-  if (field === 'description' && editValues[field].length > 50) {
-    console.error('La description ne peut pas dépasser 30 caractères');
-    return;
-  }
-
-  if (
-    (field === 'nom' || field === 'prenom') &&
-    editValues[field].length > 15
-  ) {
-    console.error('Le nom et le prénom ne peuvent pas dépasser 11 caractères');
-    return;
-  }
-
-  try {
-    await axios.put(
-      'http://localhost:5000/updateCompte',
-      { [field]: editValues[field] },
-      { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } }
-    );
-    setUtilisateur({ ...utilisateur, [field]: editValues[field] });
-    toggleEdit(field);
-  } catch (error) {
-    console.error("Erreur lors de la mise à jour de l'utilisateur", error);
-  }
-};
-
+  const handleUpdate = async (field) => {
+    if (field === 'description' && editValues[field].length > 50) {
+      console.error('La description ne peut pas dépasser 30 caractères');
+      return;
+    }
+    if ((field === 'nom' || field === 'prenom') && editValues[field].length > 15) {
+      console.error('Le nom et le prénom ne peuvent pas dépasser 11 caractères');
+      return;
+    }
+    try {
+      await axios.put(
+        'http://localhost:5000/updateCompte',
+        { [field]: editValues[field] },
+        { headers: { Authorization: `Bearer ${token}` } } // Corrected usage of token
+      );
+      setUtilisateur({ ...utilisateur, [field]: editValues[field] });
+      toggleEdit(field);
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de l'utilisateur", error);
+    }
+  };
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append('photo', file);
-
     try {
       const response = await axios.post(
         'http://localhost:5000/updateProfilePicture',
@@ -112,16 +103,13 @@ const handleUpdate = async (field) => {
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${JSON.parse(token).token}`,
+            Authorization: `Bearer ${token}`, // Corrected usage of token
           },
         }
       );
-
       if (response.status === 200) {
-        // If the upload is successful, reload the page to reflect the changes
-        window.location.reload();
+        window.location.reload(); // Reload the page to reflect the changes
       } else {
-        // Handle any errors or unsuccessful upload attempts here
         console.error('Failed to upload the image');
       }
     } catch (error) {
