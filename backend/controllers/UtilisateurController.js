@@ -4,6 +4,8 @@ const secretKey = 'ayoub';
 const nodemailer = require('nodemailer');
 const { Op } = require('sequelize');
 const passport = require('passport');
+const { Sequelize } = require('sequelize'); 
+const { sequelize } = require('../config/db'); // Ensure this import is correct
 
 const crypto = require('crypto');
 const Utilisateur = require('../models/UtilisateurModel');
@@ -525,6 +527,38 @@ exports.updateUserPhoto = async (req, res, filePath) => {
     res.status(200).json({ message: 'Profile picture updated successfully', filePath });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getRandomUsers = async (req, res) => {
+  try {
+      let whereCondition = {};
+      
+      // Check if the user is authenticated (req.userId is set by your authentication middleware)
+      if (req.userId) {
+          // Exclude the current user from the results
+          whereCondition = { id_utilisateur: { [Sequelize.Op.ne]: req.userId } };
+      }
+
+      const users = await Utilisateur.findAll({
+          where: whereCondition,
+          limit: 100 // Adjust the sample size as needed
+      });
+
+      // Shuffle the array to get random elements
+      const shuffledUsers = users.sort(() => 0.5 - Math.random());
+      
+      // Slice the first 7 elements from the shuffled array
+      const randomUsers = shuffledUsers.slice(0, 7);
+
+      if (randomUsers.length === 0) {
+          return res.status(404).json({ message: 'No users found' });
+      }
+
+      return res.status(200).json(randomUsers);
+  } catch (error) {
+      console.error('Error fetching random users:', error);
+      return res.status(500).json({ message: 'Error fetching users', error: error.message });
   }
 };
 
