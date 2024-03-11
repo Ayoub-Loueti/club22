@@ -7,6 +7,7 @@ import { UilLocationPoint } from '@iconscout/react-unicons';
 import { UilSchedule } from '@iconscout/react-unicons';
 import { UilTimes } from '@iconscout/react-unicons';
 import '../navbar/navbar.css';
+import Swal from 'sweetalert2';
 import axios from 'axios';
 
 const PostShare = () => {
@@ -45,59 +46,75 @@ useEffect(() => {
   }
 }, []);
 const onImageChange = (event) => {
-    if (event.target.files && event.target.files[0]) {
-      let img = event.target.files[0];
-      setImage({
-        image: URL.createObjectURL(img), // Preview URL for the frontend
-        file: img, // Keep the File object for submission
-      });
-    }
-  };
+  if (event.target.files) {
+    const files = Array.from(event.target.files).map(file =>
+      ({
+        image: URL.createObjectURL(file),
+        file: file,
+      })
+    );
+
+    setImage(files); // Set state with an array of files
+  }
+};
+
+
 const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
+  if (!contenu.trim()) {
+    // Afficher un message indiquant que le message ne peut pas être vide
+    Swal.fire({
+      icon: 'warning',
+      title: 'Oops...',
+      text: 'Veuillez saisir du contenu avant de partager.',
+    });
+    return;
+  }
+ 
+  if (contenu.length > 400) {
+    // Afficher un message indiquant que la limite de caractères a été dépassée
+    Swal.fire({
+      icon: 'warning',
+      title: 'Oops...',
+      text: 'Vous ne pouvez saisir que jusqu\'à 400 caractères.',
+    });
+    return;
+  }
+  const formData = new FormData();
+  formData.append('contenu', contenu);
 
-    if (image) {
-      // Utiliser FormData pour envoyer le contenu et l'image
-      const formData = new FormData();
-      formData.append('contenu', contenu);
-      formData.append('image', image.file); // Utilisez le fichier d'image réel
+  // Append all selected files to formData
+  if (image && image.length) {
+      image.forEach(img => {
+          formData.append('photos', img.file); // Use 'photos' as the name
+      });
+  }
 
-      try {
-        await axios.post('http://localhost:5000/createPost', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        // Réinitialiser le formulaire après l'envoi
-            window.location.reload();
-
-        setContenu('');
-        setImage(null);
-        
-      } catch (error) {
-        console.error('Erreur lors de l\'envoi du post avec une image', error);
-      }
-    } else {
-      // Envoyer uniquement le contenu comme JSON si aucune image n'est sélectionnée
-      try {
-        await axios.post('http://localhost:5000/createPost', { contenu }, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        // Réinitialiser le formulaire après l'envoi
-            window.location.reload();
-
-        setContenu('');
-        
-      } catch (error) {
-        console.error('Erreur lors de l\'envoi du post sans image', error);
-      }
-    }
-    
+  const config = {
+      headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+      },
   };
+
+  try {
+      const response = await axios.post('http://localhost:5000/createPost', formData, config);
+      
+      console.log(response.data.message);
+      window.location.reload();
+
+      setContenu('');
+      setImage(null);
+  } catch (error) {
+      console.error('Error submitting the post: ', error.response ? error.response.data : error.message);
+  }
+};
+
+
+const cancelImage = (index) => {
+  setImage(image.filter((file, i) => i !== index));
+};
+
 
 
   return (
@@ -147,23 +164,29 @@ const handleSubmit = async (e) => {
             Shedule
           </div>
           <button className="postShare-button" onClick={handleSubmit}>
-            Share
+            Partager
           </button>
           <div style={{ display: 'none' }}>
             <input
               type="file"
               name="myImage"
+              multiple 
               ref={imageRef}
               onChange={onImageChange}
             />
           </div>
         </div>
-        {image && (
-          <div className="previewImage">
-            <UilTimes onClick={() => setImage(null)} />
-            <img src={image.image} alt="" />
-          </div>
-        )}
+        {image && image.map((file, index) => (
+  <div key={index} className="previewImage">
+    <UilTimes onClick={() => cancelImage(index)} />
+    {file.file.type.startsWith('image') ? (
+      <img src={file.image} alt="" />
+    ) : (
+      <video className="previewVideo" controls src={file.image} />
+    )}
+  </div>
+))}
+
       </div>
     </div>
   );

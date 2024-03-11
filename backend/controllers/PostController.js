@@ -2,23 +2,43 @@ const Post  = require('../models/PostModel');
 const Likes = require('../models/LikesModel'); 
 const Utilisateur = require('../models/UtilisateurModel');
 const Commentaire = require('../models/CommentairesModel');
+const Image = require('../models/ImageModel');
+const multiImageUpload = require('../middleware/multiImageUpload');
 
-exports.createPost = async (req, res) => {
-    const { contenu, type } = req.body; 
-    const id_utilisateur = req.userId; 
+exports.createPost = (req, res) => {
+  multiImageUpload(req, res, async (error) => {
+    if (error) {
+      res.status(500).json({ message: error.message });
+    } else {
+      // Using req.userId set by your authentication middleware
+      const id_utilisateur = req.userId; // Ensure your authentication middleware sets this
+      const { contenu, type } = req.body;
 
-    try {
+      try {
         const newPost = await Post.create({
-            contenu,
-            type,
-            id_utilisateur, 
-            date_post: new Date() 
+          contenu,
+          type,
+          date_post: new Date(),
+          id_utilisateur, // Use the authenticated user's ID
         });
 
-        return res.status(201).json(newPost);
-    } catch (error) {
-        return res.status(500).json({ message: 'Error lors creation post', error });
+        // Save file information for all uploaded files
+        if (req.files && req.files.length > 0) {
+          await Promise.all(req.files.map(file => {
+            const pathImage = file.path; // Path where the file is saved
+            return Image.create({
+              pathImage,
+              id_post: newPost.id_post,
+            });
+          }));
+        }
+
+        res.status(201).json({ message: "Post created successfully", post: newPost });
+      } catch (err) {
+        res.status(500).json({ message: "Error creating post", error: err.message });
+      }
     }
+  });
 };
 
 exports.updatePost = async (req, res) => {
@@ -104,6 +124,13 @@ exports.getAllPosts = async (req, res) => {
 
         // Add a new property to postJson indicating if the current user has liked the post
         postJson.isLikedByCurrentUser = !!likeStatus;
+
+        const images = await Image.findAll({
+            where: {
+              id_post: post.id_post,
+            },
+          });
+          postJson.lesImages = images;
 
         // Fetch comments for the post
         const comments = await Commentaire.findAll({
