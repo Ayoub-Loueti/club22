@@ -1,4 +1,4 @@
-import React, { useState ,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import './post.css';
 import CommentIcon from '../../img/comment.png';
 import ShareIcon from '../../img/share.png';
@@ -6,18 +6,26 @@ import HeartIcon from '../../img/like.png';
 import NotLikeIcon from '../../img/notlike.png';
 import axios from 'axios';
 import CommentForm from '../comments/commentForm';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import Swal from 'sweetalert2';
+
+
+
 const Post = ({ data }) => {
   const token = JSON.parse(localStorage.getItem('login'))?.token;
-  // Gestion locale de l'état de "like"
   const [liked, setLiked] = useState(data.isLikedByCurrentUser);
   const [likes, setLikes] = useState(data.likesCount || 0);
   const [userInfo, setUserInfo] = useState(null);
-  const [userId, setUserId] = useState(null); 
+  const [userId, setUserId] = useState(null);
   const [comments, setComments] = useState([]);
- const [showCommentForm, setShowCommentForm] = useState(false);
+  const [showCommentForm, setShowCommentForm] = useState(false);
+const [isEditing, setIsEditing] = useState(false);
+const [editContent, setEditContent] = useState(data.contenu);
+
   useEffect(() => {
     const token = localStorage.getItem('login');
-    const storedUserId = JSON.parse(localStorage.getItem('userId')); // Rename for clarity
+    const storedUserId = JSON.parse(localStorage.getItem('userId'));
     setUserId(storedUserId);
 
     if (token && storedUserId) {
@@ -42,68 +50,156 @@ const Post = ({ data }) => {
       fetchUserData();
     }
   }, []);
-useEffect(() => {
-  const fetchLikesCount = async () => {
+
+  useEffect(() => {
+    const fetchLikesCount = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/post/${data.id_post}/likesCount`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setLikes(response.data.likesCount);
+      } catch (error) {
+        console.error("Error fetching post's likes count:", error);
+      }
+    };
+
+    fetchLikesCount();
+  }, [liked]);
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/post/${data.id_post}/comment`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setComments(response.data.comments);
+      } catch (error) {
+        console.error('Error fetching comments:', error);
+      }
+    };
+
+    fetchComments();
+  }, []);
+
+  const handleLike = async () => {
+    const newLikedStatus = !liked;
+    setLiked(newLikedStatus);
+    setLikes(likes + (newLikedStatus ? 1 : -1));
+
     try {
-      const response = await axios.get(
-        `http://localhost:5000/post/${data.id_post}/likesCount`,
-        { headers: { Authorization: `Bearer ${token}` } }
+      await axios.post(
+        `http://localhost:5000/post/${data.id_post}/toggle-like`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
-      setLikes(response.data.likesCount);
     } catch (error) {
-      console.error("Error fetching post's likes count:", error);
+      console.error("Error toggling the post's like", error);
+      setLiked(!newLikedStatus);
+      setLikes(likes - (newLikedStatus ? 1 : -1));
     }
   };
 
-  fetchLikesCount();
-}, [liked]);
-
-useEffect(() => {
-  const fetchComments = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:5000/post/${data.id_post}/comment`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setComments(response.data.comments);
-    } catch (error) {
-      console.error('Error fetching comments:', error);
-    }
+  const toggleCommentForm = () => {
+    setShowCommentForm(!showCommentForm);
   };
+const handleDeletePost = () => {
+  // Demande de confirmation à l'utilisateur
+  Swal.fire({
+    title: 'Êtes-vous sûr?',
+    text: 'Vous ne pourrez pas revenir en arrière!',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Oui, supprimez-le!',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // L'utilisateur a confirmé la suppression, appelez deletePost
+      deletePost();
+    }
+    // Sinon, si l'utilisateur annule, rien ne se passe
+  });
+};
 
-  fetchComments();
-}, []);
+// Fonction asynchrone séparée pour effectuer la suppression
+const deletePost = async () => {
+  try {
+    await axios.delete(`http://localhost:5000/posts/${data.id_post}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    Swal.fire('Supprimé!', 'Votre post a été supprimé.', 'success');
+window.location.reload();  } catch (error) {
+    console.error('Error deleting the post:', error);
+    Swal.fire(
+      'Erreur!',
+      'Une erreur est survenue lors de la suppression du post.',
+      'error'
+    );
+  }
+};
 
- const handleLike = async () => {
-   const newLikedStatus = !liked;
-   setLiked(newLikedStatus);
-   // Optimistically update the likes count
-   setLikes(likes + (newLikedStatus ? 1 : -1));
+const toggleEditForm = () => {
+  setIsEditing(!isEditing);
+};
+const handleSaveEdit = async () => {
+  // Vérifier si le contenu a été modifié
+  if (editContent !== data.contenu) {
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/posts/${data.id_post}`,
+        {
+          contenu: editContent,
+          // Ajoutez d'autres champs ici si nécessaire
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log(response.data);
+      // Sortir du mode édition après la mise à jour
+      setIsEditing(false);
+      // Optionnellement, vous pouvez choisir de ne pas recharger la page
+      // et plutôt mettre à jour l'état local pour refléter les changements
+       window.location.reload(); // Considérez une approche plus réactive sans recharger
+    } catch (error) {
+      console.error('Error updating the post:', error);
+    }
+  } else {
+    // Aucune modification n'a été détectée
+    // Ici, vous pouvez choisir de fermer simplement le mode d'édition
+    // ou d'informer l'utilisateur qu'aucune modification n'a été détectée.
+    setIsEditing(false);
+    console.log("Aucune modification détectée, enregistrement annulé.");
+    // Optionnel : Afficher une notification ou une alerte à l'utilisateur
+  }
+};
 
-   try {
-     await axios.post(
-       `http://localhost:5000/post/${data.id_post}/toggle-like`,
-       {},
-       {
-         headers: { Authorization: `Bearer ${token}` },
-       }
-     );
-     // If the backend sends back the updated count, you can update it here
-     // Otherwise, the optimistic update remains
-   } catch (error) {
-     console.error("Error toggling the post's like", error);
-     // Revert back to original state if there's an error
-     setLiked(!newLikedStatus);
-     setLikes(likes - (newLikedStatus ? 1 : -1));
-   }
- };
-  
- const toggleCommentForm = () => {
-   setShowCommentForm(!showCommentForm);
- };
+
+
 
   return (
     <div className="Post">
+      {userInfo && userInfo.id_utilisateur.toString() === userId.toString() && (
+        <div className="postManagementButtons">
+          {!isEditing ? (
+            <>
+              <button onClick={toggleEditForm} className="iconButton">
+                <FontAwesomeIcon icon={faEdit} /> {/* Icône Modifier */}
+              </button>
+              <button onClick={handleDeletePost} className="iconButton">
+                <FontAwesomeIcon icon={faTrashAlt} /> {/* Icône Supprimer */}
+              </button>
+            </>
+          ) : (
+            <button onClick={handleSaveEdit}>Enregistrer</button> // Vous pourriez aussi vouloir une icône pour "Enregistrer"
+          )}
+        </div>
+      )}
+
       <div className="postHeader">
         <img
           src={
@@ -116,23 +212,53 @@ useEffect(() => {
         />
         <span className="userName">{`${data.utilisateur.prenom} ${data.utilisateur.nom}`}</span>
       </div>
-      <div className="postContent">{data.contenu}</div>
+      <div className="postContent">
+        {!isEditing ? (
+          <span>{data.contenu}</span>
+        ) : (
+          <textarea
+            value={editContent}
+            onChange={(e) => setEditContent(e.target.value)}
+          />
+        )}
+      </div>
       <div className="postReact">
         <img
           src={liked ? HeartIcon : NotLikeIcon}
           alt="like"
+          className="reactionIcon"
           onClick={handleLike}
         />
-        <img src={CommentIcon} alt="comment" onClick={toggleCommentForm} />
-        <img src={ShareIcon} alt="share" />
+        <img
+          src={CommentIcon}
+          alt="comment"
+          className="reactionIcon"
+          onClick={toggleCommentForm}
+        />
+
+        <img src={ShareIcon} alt="share" className="reactionIcon" />
       </div>
-      <span style={{ color: 'var(--gray)', fontSize: '12px' }}>
-        {likes} likes
-      </span>
+      <span className="likesCount">{likes} likes</span>
       {showCommentForm && <CommentForm postId={data.id_post} />}
       <div className="comments">
         {comments.map((comment, index) => (
-          <div key={comment.id || index}>{comment.cmntr}</div>
+          <div key={index} className="comment">
+            <img
+              src={
+                comment.utilisateur.photo
+                  ? `http://localhost:5000/${comment.utilisateur.photo}`
+                  : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+              }
+              alt="Profil"
+              className="commentUserPhoto"
+            />
+            <div className="commentDetails">
+              <span className="userNameComment">{`${comment.utilisateur.prenom} ${comment.utilisateur.nom}`}</span>
+              <div className="commentContent">
+                <p className="commentText">{comment.cmntr}</p>
+              </div>
+            </div>
+          </div>
         ))}
       </div>
     </div>

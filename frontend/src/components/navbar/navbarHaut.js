@@ -64,9 +64,13 @@ function NavbarHaut() {
       {userInfo && (
         <>
           <div className="user-actions">
+            <Link to={`/home`} className="dropdown-item">
+              Acceuil
+            </Link>
             <Link to={`/profil/${userId}`} className="dropdown-item">
               Profil
             </Link>
+
             <button onClick={handleLogout} className="logout-button">
               Déconnexion
             </button>

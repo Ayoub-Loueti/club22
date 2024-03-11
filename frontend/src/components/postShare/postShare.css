@@ -61,6 +61,17 @@
   padding: 0.5rem 1rem; /* Spécifiez la taille du bouton */
   transition: all 0.3s ease;
 }
+.postShare-buttonn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--buttonBg);
+  padding: 0.5rem 0.5rem; /* Spécifiez la taille du bouton */
+  transition: all 0.3s ease;
+}
 
 .postShare-button:hover {
   background: var(--orange);
@@ -90,4 +101,9 @@
   font-size: 16px; /* Ou toute autre taille spécifique */
   margin-bottom: 1rem; /* Ajuste selon les besoins pour l'espacement */
   
+}
+.previewVideo {
+  max-width: 200px; /* Adjust based on your layout */
+  max-height: 150px; /* Adjust based on your layout */
+  object-fit: cover; /* This will ensure the aspect ratio is maintained while fitting the designated size */
 }

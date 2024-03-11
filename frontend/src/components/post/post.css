@@ -19,8 +19,8 @@
 }
 
 .postHeader .userPhoto {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     object-fit: cover;
 }
@@ -62,4 +62,70 @@
   font-size: 16px; /* Ajuste la taille de la police */
   font-family: 'Helvetica Neue', sans-serif; /* Change la famille de polices */
   margin-left: 10px; /* Ajoute un peu d'espace entre l'image et le nom */
+}
+/* comments css*/
+.comment {
+    display: flex;
+    align-items: center; /* Alignement vertical au centre */
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: transparent;
+}
+
+.commentUserPhoto {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0; /* Empêche la photo de l'utilisateur de réduire */
+}
+
+.commentDetails {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Permet au nom d'utilisateur et au contenu de s'étendre */
+}
+
+.userNameComment {
+    font-weight: bold;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    color: #37474F;
+    margin-bottom: 0.25rem; /* Espacement inférieur réduit */
+    text-align: left;
+}
+
+.commentContent {
+    padding: 0.25rem 1rem 0.25rem 1rem; /* Réduction du rembourrage et ajout d'espace à droite */
+    background-color: #CFD8DC;
+    border-radius: 25px; /* Augmentation du rayon de la bordure */
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    word-wrap: break-word; /* Permet au texte de se couper correctement s'il est trop long */
+}
+
+.commentText {
+    font-size: 12px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: #37474F;
+}
+.commentContentt {
+    padding: 0.25rem 1rem 0.25rem 1rem; /* Réduction du rembourrage et ajout d'espace à droite */
+    background-color: #CFD8DC;
+    border-radius: 25px; /* Augmentation du rayon de la bordure */
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+    word-wrap: break-word; /* Permet au texte de se couper correctement s'il est trop long */
+}
+.likesCount{
+    text-align: left;
+}
+.iconButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #646464; /* Gris moyen */
+}
+
+.iconButton:hover {
+  color: #000000; /* Noir pour un effet survol */
 }
