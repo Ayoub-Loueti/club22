@@ -129,3 +129,27 @@
 .iconButton:hover {
   color: #000000; /* Noir pour un effet survol */
 }
+
+.navigationButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px; /* Adjust the size of arrows */
+    color: #646464; /* Adjust the color of arrows */
+  }
+  
+  /* You might want to adjust the .postImages and .postImage styles for better positioning */
+  .postImages {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the image and buttons */
+    gap: 10px; /* Adjust the gap between images as needed */
+    margin-top: 15px; /* Space above the image section */
+  }
+  
+  .postImage {
+    max-width: 90%; /* Adjust based on your preference */
+    height: auto;
+    border-radius: 8px; /* Optional: for rounded corners */
+  }  
+  

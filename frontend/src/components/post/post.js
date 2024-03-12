@@ -22,6 +22,10 @@ const Post = ({ data }) => {
   const [showCommentForm, setShowCommentForm] = useState(false);
 const [isEditing, setIsEditing] = useState(false);
 const [editContent, setEditContent] = useState(data.contenu);
+const [editingCommentId, setEditingCommentId] = useState(null);
+const [editCommentContent, setEditCommentContent] = useState("");
+const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
 
   useEffect(() => {
     const token = localStorage.getItem('login');
@@ -178,27 +182,73 @@ const handleSaveEdit = async () => {
   }
 };
 
+const handleDeleteComment = async (commentId) => {
+  try {
+    await axios.delete(`http://localhost:5000/deleteComment/${commentId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    // Remove the comment from the comments state or refresh the comments list
+    Swal.fire('Deleted!', 'Your comment has been deleted.', 'success');
+    // Optionally refresh comments list or remove the deleted comment from state
+  } catch (error) {
+    console.error('Error deleting the comment:', error);
+    Swal.fire('Error!', 'An error occurred while deleting the comment.', 'error');
+  }
+};
 
+const handleEditComment = (commentId, currentContent) => {
+  setEditingCommentId(commentId);
+  setEditCommentContent(currentContent);
+};
+
+const handleSaveEditComment = async () => {
+  try {
+    await axios.put(
+      `http://localhost:5000/modifyComment/${editingCommentId}`,
+      { newContent: editCommentContent },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    // Exit editing mode
+    setEditingCommentId(null);
+    setEditCommentContent("");
+    // Refresh comments list to show updated comment
+  } catch (error) {
+    console.error("Error updating the comment:", error);
+    // Handle error (e.g., show error message)
+  }
+};
+
+const showNextImage = () => {
+  setCurrentImageIndex((prevIndex) =>
+    prevIndex === data.lesImages.length - 1 ? 0 : prevIndex + 1
+  );
+};
+
+const showPreviousImage = () => {
+  setCurrentImageIndex((prevIndex) =>
+    prevIndex === 0 ? data.lesImages.length - 1 : prevIndex - 1
+  );
+};
 
 
   return (
     <div className="Post">
-      {userInfo && userInfo.id_utilisateur.toString() === userId.toString() && (
-        <div className="postManagementButtons">
-          {!isEditing ? (
-            <>
-              <button onClick={toggleEditForm} className="iconButton">
-                <FontAwesomeIcon icon={faEdit} /> {/* Icône Modifier */}
-              </button>
-              <button onClick={handleDeletePost} className="iconButton">
-                <FontAwesomeIcon icon={faTrashAlt} /> {/* Icône Supprimer */}
-              </button>
-            </>
-          ) : (
-            <button onClick={handleSaveEdit}>Enregistrer</button> // Vous pourriez aussi vouloir une icône pour "Enregistrer"
-          )}
-        </div>
+       {userInfo && data.utilisateur.id_utilisateur.toString() === userId.toString() && (
+    <div className="postManagementButtons">
+      {!isEditing ? (
+        <>
+          <button onClick={toggleEditForm} className="iconButton">
+            <FontAwesomeIcon icon={faEdit} /> {/* Icon Edit */}
+          </button>
+          <button onClick={handleDeletePost} className="iconButton">
+            <FontAwesomeIcon icon={faTrashAlt} /> {/* Icon Delete */}
+          </button>
+        </>
+      ) : (
+        <button onClick={handleSaveEdit}>Save</button> // You might also want an icon for "Save"
       )}
+    </div>
+  )}
 
       <div className="postHeader">
         <img
@@ -222,6 +272,21 @@ const handleSaveEdit = async () => {
           />
         )}
       </div>
+      <div className="postImages">
+  {data.lesImages && data.lesImages.length > 0 && (
+    <>
+      <button onClick={showPreviousImage} className="navigationButton">&#9664;</button> {/* Left arrow */}
+      <img
+        src={`http://localhost:5000/${data.lesImages[currentImageIndex].pathImage}`}
+        alt="Post"
+        className="postImage"
+      />
+      <button onClick={showNextImage} className="navigationButton">&#9654;</button> {/* Right arrow */}
+    </>
+  )}
+</div>
+
+
       <div className="postReact">
         <img
           src={liked ? HeartIcon : NotLikeIcon}
@@ -240,29 +305,50 @@ const handleSaveEdit = async () => {
       </div>
       <span className="likesCount">{likes} likes</span>
       {showCommentForm && <CommentForm postId={data.id_post} />}
-      <div className="comments">
-        {comments.map((comment, index) => (
-          <div key={index} className="comment">
-            <img
-              src={
-                comment.utilisateur.photo
-                  ? `http://localhost:5000/${comment.utilisateur.photo}`
-                  : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
-              }
-              alt="Profil"
-              className="commentUserPhoto"
-            />
-            <div className="commentDetails">
-              <span className="userNameComment">{`${comment.utilisateur.prenom} ${comment.utilisateur.nom}`}</span>
-              <div className="commentContent">
+    <div className="comments">
+      {comments.map((comment, index) => (
+        <div key={index} className="comment">
+          <img
+            src={
+              comment.utilisateur.photo
+                ? `http://localhost:5000/${comment.utilisateur.photo}`
+                : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+            }
+            alt="Profile"
+            className="commentUserPhoto"
+          />
+          <div className="commentDetails">
+            <span className="userNameComment">{`${comment.utilisateur.prenom} ${comment.utilisateur.nom}`}</span>
+            <div className="commentContent">
+              {editingCommentId === comment.id_cmntr ? (
+                <textarea
+                  value={editCommentContent}
+                  onChange={(e) => setEditCommentContent(e.target.value)}
+                />
+              ) : (
                 <p className="commentText">{comment.cmntr}</p>
-              </div>
+              )}
             </div>
+            {comment.utilisateur.id_utilisateur.toString() === userId.toString() && (
+              editingCommentId === comment.id_cmntr ? (
+                <button onClick={handleSaveEditComment}>Save</button>
+              ) : (
+                <div className="commentActions">
+                  <button className="iconButton" onClick={() => handleEditComment(comment.id_cmntr, comment.cmntr)}>
+                    <FontAwesomeIcon icon={faEdit} /> {/* Edit Icon */}
+                  </button>
+                  <button className="iconButton" onClick={() => handleDeleteComment(comment.id_cmntr)}>
+                    <FontAwesomeIcon icon={faTrashAlt} /> {/* Delete Icon */}
+                  </button>
+                </div>
+              )
+            )}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
-  );
+  </div>
+);
 };
 
 export default Post;
