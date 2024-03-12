@@ -4,13 +4,32 @@ import axios from 'axios';
 import './navbar.css';
 import logo from '../../assets/ooredoo2.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHouse, faUserGroup, faCalendar, faUser, faBars } from '@fortawesome/free-solid-svg-icons';
+import {
+  faHouse,
+  faUserGroup,
+  faCalendar,
+  faUser,
+  faBars,
+} from '@fortawesome/free-solid-svg-icons';
 
 function Navbar() {
   const [isVisible, setIsVisible] = useState(true);
   const [randomUsers, setRandomUsers] = useState([]);
-  const navigate = useNavigate();
+  const [navbarExtensionColor, setNavbarExtensionColor] = useState('#f3f3f3'); // Couleur par défaut
 
+  const navigate = useNavigate();
+  // Logique pour définir la couleur en fonction de la page(navbar extension pour profil et home)
+  useEffect(() => {
+    // Vérifiez la page actuelle ou tout autre critère
+    const currentPage = window.location.pathname;
+
+    // Si la page est la page d'accueil, définissez la couleur spécifique
+    if (currentPage.toLowerCase() === '/home') {
+      setNavbarExtensionColor('#f3f3f3'); // Couleur spécifique pour la page d'accueil
+    } else {
+      setNavbarExtensionColor('white'); // Couleur spécifique pour les autres pages
+    }
+  }, []);
   // Function to toggle visibility
   const toggleNavbar = () => {
     setIsVisible(!isVisible);
@@ -19,9 +38,15 @@ function Navbar() {
   useEffect(() => {
     const fetchRandomUsers = async () => {
       try {
-        const storedToken = localStorage.getItem('login') ? JSON.parse(localStorage.getItem('login')).token : null;
-        const headers = storedToken ? { Authorization: `Bearer ${storedToken}` } : {};
-        const response = await axios.get('http://localhost:5000/randomUsers', { headers });
+        const storedToken = localStorage.getItem('login')
+          ? JSON.parse(localStorage.getItem('login')).token
+          : null;
+        const headers = storedToken
+          ? { Authorization: `Bearer ${storedToken}` }
+          : {};
+        const response = await axios.get('http://localhost:5000/randomUsers', {
+          headers,
+        });
         setRandomUsers(response.data);
       } catch (error) {
         console.error('Error fetching random users:', error);
@@ -31,7 +56,7 @@ function Navbar() {
 
     fetchRandomUsers();
   }, []);
-  
+
   return (
     <div>
       <div className="navbar-toggle" onClick={toggleNavbar}>
@@ -44,7 +69,7 @@ function Navbar() {
           <FontAwesomeIcon
             icon={faHouse}
             className="navbar-iconnn"
-            onClick={() => navigate('/home')}
+            onClick={() => navigate('/Home')}
           />
           <FontAwesomeIcon
             icon={faUser}
@@ -71,7 +96,10 @@ function Navbar() {
           ))}
         </div>
 
-        <div className="navbar-extension"></div>
+        <div
+          className="navbar-extension"
+          style={{ backgroundColor: navbarExtensionColor }}
+        ></div>
       </nav>
     </div>
   );

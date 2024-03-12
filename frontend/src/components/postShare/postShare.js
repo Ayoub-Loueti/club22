@@ -1,11 +1,12 @@
 import React, { useState, useRef,useEffect } from 'react';
-import ProfileImage from '../../img/profileImg.jpg';
 import './postShare.css';
-import { UilScenery } from '@iconscout/react-unicons';
-import { UilPlayCircle } from '@iconscout/react-unicons';
-import { UilLocationPoint } from '@iconscout/react-unicons';
-import { UilSchedule } from '@iconscout/react-unicons';
-import { UilTimes } from '@iconscout/react-unicons';
+import {
+  UilScenery,
+  UilPlayCircle,
+  UilLocationPoint,
+  UilSchedule,
+  UilTimes,
+} from '@iconscout/react-unicons';
 import '../navbar/navbar.css';
 import Swal from 'sweetalert2';
 import axios from 'axios';
@@ -127,18 +128,19 @@ const cancelImage = (index) => {
               : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
           }
           alt="Profil"
-          
+          className="profile-image-pub"
         />
       ) : (
         <img
           src="https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
           alt="Profil par défaut"
+          className="profile-image-pub"
         />
       )}
       <div>
         <input
           type="text"
-          placeholder="What's happening"
+          placeholder="À quoi penses-tu?"
           value={contenu}
           onChange={(e) => setContenu(e.target.value)}
         />
@@ -170,23 +172,23 @@ const cancelImage = (index) => {
             <input
               type="file"
               name="myImage"
-              multiple 
+              multiple
               ref={imageRef}
               onChange={onImageChange}
             />
           </div>
         </div>
-        {image && image.map((file, index) => (
-  <div key={index} className="previewImage">
-    <UilTimes onClick={() => cancelImage(index)} />
-    {file.file.type.startsWith('image') ? (
-      <img src={file.image} alt="" />
-    ) : (
-      <video className="previewVideo" controls src={file.image} />
-    )}
-  </div>
-))}
-
+        {image &&
+          image.map((file, index) => (
+            <div key={index} className="previewImage">
+              <UilTimes onClick={() => cancelImage(index)} />
+              {file.file.type.startsWith('image') ? (
+                <img src={file.image} alt="" />
+              ) : (
+                <video className="previewVideo" controls src={file.image} />
+              )}
+            </div>
+          ))}
       </div>
     </div>
   );

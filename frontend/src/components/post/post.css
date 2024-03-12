@@ -216,3 +216,21 @@
   justify-content: flex-end;
   gap: 10px; /* Espacement entre les icônes */
 }
+.userLink {
+  text-decoration: none; /* Supprimez le soulignement par défaut */
+  color: #37474f; /* Couleur du texte par défaut */
+  transition: color 0.3s; /* Animation de transition pour une couleur de texte */
+}
+
+.userLink:hover {
+  color: #ff5722; /* Couleur du texte lors du survol */
+}
+.userNameLink {
+  text-decoration: none; /* Supprimez le soulignement par défaut */
+  color: #37474f; /* Couleur du texte par défaut */
+  transition: color 0.3s; /* Animation de transition pour une couleur de texte */
+}
+
+.userNameLink:hover {
+  color: #ff5722; /* Couleur du texte lors du survol */
+}
