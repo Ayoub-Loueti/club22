@@ -1,60 +1,71 @@
 /* CSS global pour le post */
 .Post {
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-    background-color: var(--cardColor); /* Ajustez selon votre thème */
-    border-radius: 1rem;
-    gap: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-     overflow-wrap: break-word;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  background-color: var(--cardColor); /* Ajustez selon votre thème */
+  border-radius: 1rem;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-wrap: break-word;
 }
 
 /* Mise en page et style pour l'en-tête du post, incluant le nom de l'utilisateur et sa photo */
 .postHeader {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem; /* Espace entre l'en-tête et le contenu du post */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .postHeader .userPhoto {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.userDetails {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
+.postManagementButtons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
 .postHeader .userName {
-    font-weight: bold;
-    font-size: 14px; /* Taille de la police pour le nom de l'utilisateur */
-    font-family: Arial, sans-serif; /* Famille de polices pour le nom */
+  font-weight: bold;
+  font-size: 14px; /* Taille de la police pour le nom de l'utilisateur */
+  font-family: Arial, sans-serif; /* Famille de polices pour le nom */
 }
 
 /* Style pour le contenu du post */
 .postContent {
-    font-weight: bold;
-    font-size: 16px; /* Taille de la police pour le contenu */
-    font-family: 'Helvetica Neue', sans-serif; /* Famille de polices pour le contenu */
-    margin-bottom: 1rem; /* Espace entre le contenu et les réactions */
+  font-weight: bold;
+  font-size: 16px; /* Taille de la police pour le contenu */
+  font-family: 'Helvetica Neue', sans-serif; /* Famille de polices pour le contenu */
+  margin-bottom: 1rem; /* Espace entre le contenu et les réactions */
 }
 
 /* Réglages pour les icônes de réactions */
 .postReact {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .postReact img {
-    cursor: pointer;
-    width: 24px;
-    height: 24px;
-    transition: transform 0.2s;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  transition: transform 0.2s;
 }
 
 .postReact img:hover {
-    transform: scale(1.2);
+  transform: scale(1.2);
 }
 
 .postHeader .userName {
@@ -65,59 +76,60 @@
 }
 /* comments css*/
 .comment {
-    display: flex;
-    align-items: center; /* Alignement vertical au centre */
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-    background-color: transparent;
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  background-color: transparent;
 }
 
 .commentUserPhoto {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0; /* Empêche la photo de l'utilisateur de réduire */
+  margin-top: 25px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0; /* Empêche la photo de l'utilisateur de réduire */
 }
 
 .commentDetails {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1; /* Permet au nom d'utilisateur et au contenu de s'étendre */
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Permet au nom d'utilisateur et au contenu de s'étendre */
 }
 
 .userNameComment {
-    font-weight: bold;
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-    color: #37474F;
-    margin-bottom: 0.25rem; /* Espacement inférieur réduit */
-    text-align: left;
+  font-weight: bold;
+  font-size: 13px;
+  font-family: Arial, sans-serif;
+  color: #37474f;
+  margin-bottom: 0.25rem; /* Espacement inférieur réduit */
+  text-align: left;
+  margin-left: 17px;
 }
 
 .commentContent {
-    padding: 0.25rem 1rem 0.25rem 1rem; /* Réduction du rembourrage et ajout d'espace à droite */
-    background-color: #CFD8DC;
-    border-radius: 25px; /* Augmentation du rayon de la bordure */
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
-    text-align: left;
-    word-wrap: break-word; /* Permet au texte de se couper correctement s'il est trop long */
+  padding: 0.25rem 1rem 0.25rem 1rem; /* Réduction du rembourrage et ajout d'espace à droite */
+  background-color: #cfd8dc;
+  border-radius: 25px; /* Augmentation du rayon de la bordure */
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  word-wrap: break-word; /* Permet au texte de se couper correctement s'il est trop long */
 }
 
 .commentText {
-    font-size: 12px;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    color: #37474F;
+  font-size: 12px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: #37474f;
 }
 .commentContentt {
-    padding: 0.25rem 1rem 0.25rem 1rem; /* Réduction du rembourrage et ajout d'espace à droite */
-    background-color: #CFD8DC;
-    border-radius: 25px; /* Augmentation du rayon de la bordure */
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
-    word-wrap: break-word; /* Permet au texte de se couper correctement s'il est trop long */
+  padding: 0.25rem 1rem 0.25rem 1rem; /* Réduction du rembourrage et ajout d'espace à droite */
+  background-color: #cfd8dc;
+  border-radius: 25px; /* Augmentation du rayon de la bordure */
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+  word-wrap: break-word; /* Permet au texte de se couper correctement s'il est trop long */
 }
-.likesCount{
-    text-align: left;
+.likesCount {
+  text-align: left;
 }
 .iconButton {
   background: none;
@@ -131,25 +143,94 @@
 }
 
 .navigationButton {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 24px; /* Adjust the size of arrows */
-    color: #646464; /* Adjust the color of arrows */
-  }
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px; /* Adjust the size of arrows */
+  color: #646464; /* Adjust the color of arrows */
+}
+
+/* You might want to adjust the .postImages and .postImage styles for better positioning */
+.postImages {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the image and buttons */
+  gap: 10px; /* Adjust the gap between images as needed */
+  margin-top: 15px; /* Space above the image section */
+}
+
+.postImage {
+  width: 100%; /* Ajuste la largeur à 100% de son conteneur */
+  height: 300px; /* Hauteur fixe pour toutes les images */
+  object-fit: cover; /* Couvre la zone du conteneur sans perdre le ratio */
+  border-radius: 8px; /* Coins arrondis pour l'esthétique */
+    object-fit: contain; /* Assure que toute l'image est visible */
+
+}
+
+
+.editContent {
+  width: 90%; /* Utilisation de toute la largeur disponible */
+  padding: 10px; /* Espacement interne pour le confort de saisie */
+  background-color: #f9f9f9; /* Fond légèrement différent pour indiquer la zone d'édition */
+  border: 1px solid #f0f0f0; /* Bordure discrète pour définir la zone d'édition sans être intrusive */
+  border-radius: 8px; /* Coins légèrement arrondis pour un look moderne */
+  font-size: 14px; /* Taille de police lisible */
+  line-height: 1.6; /* Hauteur de ligne pour la lisibilité */
+  font-family: 'Helvetica Neue', Arial, sans-serif; /* Police propre et moderne */
+  resize: none; /* Désactivation du redimensionnement */
+  transition: background-color 0.2s, border-color 0.2s; /* Transition douce pour l'interaction */
+}
+.commentEdit {
+  width: calc(100% - 10px); /* Ajustez la largeur pour être légèrement inférieure à celle du commentaire original */
+  padding: 0.5rem 1rem; /* Utilisez le même padding que celui du commentaire original pour la cohérence */
+  margin-left: 10px; /* Décale légèrement à droite */
+  margin-bottom: 0.25rem; /* Assure un petit espace en dessous */
+  font-size: 12px; /* Correspond à la taille de la police du commentaire original */
+  font-family: Verdana, Geneva, Tahoma, sans-serif; /* Utilise la même famille de polices */
+  border-radius: 25px; /* Conserve les bordures arrondies du commentaire original */
+  background-color: #cfd8dc; /* Fond blanc pour indiquer l'état d'édition */
+  box-sizing: border-box; /* S'assure que la largeur et la hauteur incluent le padding et la bordure */
+  resize: none; /* Empêche le redimensionnement pour les éléments textarea */
   
-  /* You might want to adjust the .postImages and .postImage styles for better positioning */
-  .postImages {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Center the image and buttons */
-    gap: 10px; /* Adjust the gap between images as needed */
-    margin-top: 15px; /* Space above the image section */
-  }
-  
-  .postImage {
-    max-width: 90%; /* Adjust based on your preference */
-    height: auto;
-    border-radius: 8px; /* Optional: for rounded corners */
-  }  
-  
+}
+
+.commentEdit:focus {
+  outline: 2px solid #4d90fe; /* Indique le focus avec une bordure bleue */
+}
+
+
+
+.editContent:focus {
+  box-shadow: inset 0 0 0 2px #4d90fe; /* Bleu clair pour le focus */
+  background-color: #ffffff; /* Plus clair pour indiquer l'édition */
+}
+
+/* Pour le bouton de sauvegarde, utilisez une icône de sauvegarde (vous pouvez utiliser FontAwesome ou une bibliothèque similaire) */
+.saveIconn {
+  font-size: 1.2rem; /* Ajustez selon vos icônes */
+  color: #4d90fe; /* Couleur bleue pour une action positive */
+}
+.commentActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px; /* Espacement entre les icônes */
+}
+.userLink {
+  text-decoration: none; /* Supprimez le soulignement par défaut */
+  color: #37474f; /* Couleur du texte par défaut */
+  transition: color 0.3s; /* Animation de transition pour une couleur de texte */
+}
+
+.userLink:hover {
+  color: #ff5722; /* Couleur du texte lors du survol */
+}
+.userNameLink {
+  text-decoration: none; /* Supprimez le soulignement par défaut */
+  color: #37474f; /* Couleur du texte par défaut */
+  transition: color 0.3s; /* Animation de transition pour une couleur de texte */
+}
+
+.userNameLink:hover {
+  color: #ff5722; /* Couleur du texte lors du survol */
+}

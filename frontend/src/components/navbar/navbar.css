@@ -33,6 +33,10 @@
 }
 
 .navbar-inner {
+  display: flex;
+  flex-direction: column; /* Organise les éléments enfants verticalement */
+  align-items: center; /* Centre les éléments enfants horizontalement */
+  justify-content: start; /* Alignement vertical au début */
   width: 63%;
   background-color: #879eb9;
   height: 100%;
@@ -40,12 +44,14 @@
   right: 0;
   border-top-left-radius: 30px;
   border-bottom-left-radius: 30px;
+  overflow-y: auto; /* Permet le défilement si la liste est longue */
 }
+
 
 .navbar-extension {
   width: 30px;
   height: 100%;
-  background-color: #ffff;
+  background-color: #f3f3f3;
   position: absolute;
   right: -3px;
   border-top-left-radius: 30px;
@@ -150,6 +156,7 @@
   font-size: 33px; /* Taille des icônes */
   margin-top: auto;
 }
+
 /* Styles pour l'icône d'utilisateur */
 .inner-user {
   color: #191f43; /* Couleur de l'icône */
@@ -163,11 +170,30 @@ margin-top:50px;
 .user-photo {
     font-size: 34px; /* Taille de l'icône */
 
-  width: 35px; /* Réduction de la taille de la photo de profil */
-  height: 35px; /* Garde la photo de profil circulaire */
+  width: 37px; /* Réduction de la taille de la photo de profil */
+  height: 37px; /* Garde la photo de profil circulaire */
   border-radius: 50%; /* Rend l'image complètement ronde */
   object-fit: cover; /* Assure que l'image couvre bien l'espace sans être déformée */
 }
+.user-photo:hover {
+  /* Facultatif : Style de survol pour indiquer qu'il est cliquable */
+  opacity: 0.6;
+}
+.user-photoo {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 5px 0;
+  margin-right: 23px;
+  cursor: pointer; /* Rend les utilisateurs cliquables */
+}
+
+.user-photoo:hover {
+  /* Facultatif : Style de survol pour indiquer qu'il est cliquable */
+  opacity: 0.6;
+}
+
 body {
   overflow-x: hidden;
 }

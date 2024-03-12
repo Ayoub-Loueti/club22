@@ -64,7 +64,7 @@ function NavbarHaut() {
       {userInfo && (
         <>
           <div className="user-actions">
-            <Link to={`/home`} className="dropdown-item">
+            <Link to={`/Home`} className="dropdown-item">
               Acceuil
             </Link>
             <Link to={`/profil/${userId}`} className="dropdown-item">
