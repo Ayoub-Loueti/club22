@@ -273,13 +273,18 @@ exports.getAllPostsByUserWithDetails = async (req, res) => {
         });
 
         if (!posts.length) {
-            return res.status(404).json({ message: 'No posts found for this user' });
+            return res.status(201).json({ message: 'No posts found for this user' });
         }
 
         // Manually fetch and aggregate comments and likes for each post
         const postsWithDetails = await Promise.all(posts.map(async (post) => {
             const postJson = post.toJSON();
-            
+            const images = await Image.findAll({
+                where: {
+                  id_post: post.id_post,
+                },
+              });
+              postJson.lesImages = images;
             // Fetch comments for the post
             const comments = await Commentaire.findAll({
                 where: { id_post: post.id_post },
