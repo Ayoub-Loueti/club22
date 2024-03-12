@@ -7,10 +7,8 @@ import NotLikeIcon from '../../img/notlike.png';
 import axios from 'axios';
 import CommentForm from '../comments/commentForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrashAlt,faSave} from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
-
-
 
 const Post = ({ data }) => {
   const token = JSON.parse(localStorage.getItem('login'))?.token;
@@ -183,16 +181,44 @@ const handleSaveEdit = async () => {
 };
 
 const handleDeleteComment = async (commentId) => {
+  // Afficher la boîte de dialogue de confirmation SweetAlert
+  Swal.fire({
+    title: 'Êtes-vous sûr?',
+    text: 'Vous ne pourrez pas revenir en arrière!',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Oui, supprimez-le!',
+    cancelButtonText: 'Annuler',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // L'utilisateur a confirmé la suppression
+      performCommentDeletion(commentId);
+    }
+  });
+};
+
+// Extraire la logique de suppression dans une fonction séparée
+const performCommentDeletion = async (commentId) => {
   try {
     await axios.delete(`http://localhost:5000/deleteComment/${commentId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    // Remove the comment from the comments state or refresh the comments list
-    Swal.fire('Deleted!', 'Your comment has been deleted.', 'success');
-    // Optionally refresh comments list or remove the deleted comment from state
+    // Notifier l'utilisateur de la suppression réussie
+    Swal.fire('Supprimé!', 'Votre commentaire a été supprimé.', 'success');
+    // Optionnellement rafraîchir la liste des commentaires ou retirer le commentaire supprimé de l'état
+    // Par exemple, vous pouvez filtrer le commentaire supprimé de la manière suivante :
+    setComments((prevComments) =>
+      prevComments.filter((comment) => comment.id_cmntr !== commentId)
+    );
   } catch (error) {
-    console.error('Error deleting the comment:', error);
-    Swal.fire('Error!', 'An error occurred while deleting the comment.', 'error');
+    console.error('Erreur lors de la suppression du commentaire :', error);
+    Swal.fire(
+      'Erreur!',
+      "Une erreur s'est produite lors de la suppression du commentaire.",
+      'error'
+    );
   }
 };
 
@@ -230,27 +256,10 @@ const showPreviousImage = () => {
   );
 };
 
-
-  return (
-    <div className="Post">
-       {userInfo && data.utilisateur.id_utilisateur.toString() === userId.toString() && (
-    <div className="postManagementButtons">
-      {!isEditing ? (
-        <>
-          <button onClick={toggleEditForm} className="iconButton">
-            <FontAwesomeIcon icon={faEdit} /> {/* Icon Edit */}
-          </button>
-          <button onClick={handleDeletePost} className="iconButton">
-            <FontAwesomeIcon icon={faTrashAlt} /> {/* Icon Delete */}
-          </button>
-        </>
-      ) : (
-        <button onClick={handleSaveEdit}>Save</button> // You might also want an icon for "Save"
-      )}
-    </div>
-  )}
-
-      <div className="postHeader">
+return (
+  <div className="Post">
+    <div className="postHeader">
+      <div className="userDetails">
         <img
           src={
             data.utilisateur.photo
@@ -262,49 +271,72 @@ const showPreviousImage = () => {
         />
         <span className="userName">{`${data.utilisateur.prenom} ${data.utilisateur.nom}`}</span>
       </div>
-      <div className="postContent">
-        {!isEditing ? (
-          <span>{data.contenu}</span>
-        ) : (
-          <textarea
-            value={editContent}
-            onChange={(e) => setEditContent(e.target.value)}
-          />
+      {userInfo &&
+        data.utilisateur.id_utilisateur.toString() === userId.toString() && (
+          <div className="postManagementButtons">
+            {!isEditing ? (
+              <>
+                <button onClick={toggleEditForm} className="iconButton">
+                  <FontAwesomeIcon icon={faEdit} />
+                </button>
+                <button onClick={handleDeletePost} className="iconButton">
+                  <FontAwesomeIcon icon={faTrashAlt} />
+                </button>
+              </>
+            ) : (
+              <button onClick={handleSaveEdit} className="iconButton">
+                <FontAwesomeIcon icon={faSave} className="saveIconn" />
+              </button>
+            )}
+          </div>
         )}
-      </div>
-      <div className="postImages">
-  {data.lesImages && data.lesImages.length > 0 && (
-    <>
-      <button onClick={showPreviousImage} className="navigationButton">&#9664;</button> {/* Left arrow */}
+    </div>
+    <div className="postContent">
+      {!isEditing ? (
+        <span>{data.contenu}</span>
+      ) : (
+        <textarea
+          className="editContent"
+          value={editContent}
+          onChange={(e) => setEditContent(e.target.value)}
+        />
+      )}
+    </div>
+    <div className="postImages">
+      {data.lesImages && data.lesImages.length > 0 && (
+        <>
+          <button onClick={showPreviousImage} className="navigationButton">
+            &#9664; {/* Left arrow */}
+          </button>
+          <img
+            src={`http://localhost:5000/${data.lesImages[currentImageIndex].pathImage}`}
+            alt="Post"
+            className="postImage"
+          />
+          <button onClick={showNextImage} className="navigationButton">
+            &#9654; {/* Right arrow */}
+          </button>
+        </>
+      )}
+    </div>
+
+    <div className="postReact">
       <img
-        src={`http://localhost:5000/${data.lesImages[currentImageIndex].pathImage}`}
-        alt="Post"
-        className="postImage"
+        src={liked ? HeartIcon : NotLikeIcon}
+        alt="like"
+        className="reactionIcon"
+        onClick={handleLike}
       />
-      <button onClick={showNextImage} className="navigationButton">&#9654;</button> {/* Right arrow */}
-    </>
-  )}
-</div>
-
-
-      <div className="postReact">
-        <img
-          src={liked ? HeartIcon : NotLikeIcon}
-          alt="like"
-          className="reactionIcon"
-          onClick={handleLike}
-        />
-        <img
-          src={CommentIcon}
-          alt="comment"
-          className="reactionIcon"
-          onClick={toggleCommentForm}
-        />
-
-        <img src={ShareIcon} alt="share" className="reactionIcon" />
-      </div>
-      <span className="likesCount">{likes} likes</span>
-      {showCommentForm && <CommentForm postId={data.id_post} />}
+      <img
+        src={CommentIcon}
+        alt="comment"
+        className="reactionIcon"
+        onClick={toggleCommentForm}
+      />
+      <img src={ShareIcon} alt="share" className="reactionIcon" />
+    </div>
+    <span className="likesCount">{likes} likes</span>
+    {showCommentForm && <CommentForm postId={data.id_post} />}
     <div className="comments">
       {comments.map((comment, index) => (
         <div key={index} className="comment">
@@ -322,6 +354,7 @@ const showPreviousImage = () => {
             <div className="commentContent">
               {editingCommentId === comment.id_cmntr ? (
                 <textarea
+                  className="commentEdit"
                   value={editCommentContent}
                   onChange={(e) => setEditCommentContent(e.target.value)}
                 />
@@ -329,26 +362,37 @@ const showPreviousImage = () => {
                 <p className="commentText">{comment.cmntr}</p>
               )}
             </div>
-            {comment.utilisateur.id_utilisateur.toString() === userId.toString() && (
-              editingCommentId === comment.id_cmntr ? (
-                <button onClick={handleSaveEditComment}>Save</button>
+            {comment.utilisateur.id_utilisateur.toString() ===
+              userId.toString() &&
+              (editingCommentId === comment.id_cmntr ? (
+                <button onClick={handleSaveEditComment} className="iconButton">
+                  <FontAwesomeIcon icon={faSave} />
+                </button>
               ) : (
                 <div className="commentActions">
-                  <button className="iconButton" onClick={() => handleEditComment(comment.id_cmntr, comment.cmntr)}>
-                    <FontAwesomeIcon icon={faEdit} /> {/* Edit Icon */}
+                  <button
+                    className="iconButton"
+                    onClick={() =>
+                      handleEditComment(comment.id_cmntr, comment.cmntr)
+                    }
+                  >
+                    <FontAwesomeIcon icon={faEdit} />
                   </button>
-                  <button className="iconButton" onClick={() => handleDeleteComment(comment.id_cmntr)}>
-                    <FontAwesomeIcon icon={faTrashAlt} /> {/* Delete Icon */}
+                  <button
+                    className="iconButton"
+                    onClick={() => handleDeleteComment(comment.id_cmntr)}
+                  >
+                    <FontAwesomeIcon icon={faTrashAlt} />
                   </button>
                 </div>
-              )
-            )}
+              ))}
           </div>
         </div>
       ))}
     </div>
   </div>
 );
+
 };
 
 export default Post;

@@ -41,24 +41,35 @@ function Navbar() {
       <nav className={`navbar ${!isVisible ? '' : 'visible'}`}>
         <img src={logo} alt="Logo" className="navbar-logo" />
         <div className="icon-containerrr">
-          <FontAwesomeIcon icon={faHouse} className="navbar-iconnn" />
-          <FontAwesomeIcon icon={faUserGroup} className="navbar-iconnn" />
+          <FontAwesomeIcon
+            icon={faHouse}
+            className="navbar-iconnn"
+            onClick={() => navigate('/home')}
+          />
+          <FontAwesomeIcon
+            icon={faUser}
+            className="navbar-iconnn"
+            onClick={() => navigate('/profil/:id')}
+          />
           <FontAwesomeIcon icon={faCalendar} className="navbar-iconnn" />
         </div>
 
         <div className="navbar-inner">
-          <FontAwesomeIcon icon={faUser} className="inner-user" />
+          <FontAwesomeIcon icon={faUserGroup} className="inner-user" />
           {randomUsers.map((user, index) => (
             <img
               key={index}
-              src={user.photo ? `http://localhost:5000/${user.photo}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'}
+              src={
+                user.photo
+                  ? `http://localhost:5000/${user.photo}`
+                  : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+              }
               alt="User"
-              className="user-photo"
+              className="user-photoo"
               onClick={() => navigate(`/profil/${user.id_utilisateur}`)}
             />
           ))}
         </div>
-
 
         <div className="navbar-extension"></div>
       </nav>

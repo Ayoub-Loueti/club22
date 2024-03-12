@@ -49,7 +49,7 @@ const CommentForm = ({ postId }) => {
       <div
         style={{ display: 'flex', alignItems: 'center', position: 'relative' }}
       >
-        <textarea
+        <input
           value={commentText}
           onChange={handleInputChange}
           placeholder="Ecrire un commentaire..."
