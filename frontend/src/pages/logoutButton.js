@@ -12,6 +12,7 @@ function LogoutButton() {
         withCredentials: true,
       });
       localStorage.removeItem('login');
+      localStorage.removeItem('userId');
       setIsAuthenticated(false);
       navigate('/');
     } catch (error) {

@@ -1,6 +1,6 @@
 import React, { useState , useEffect } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import {useNavigate } from 'react-router-dom';
 
 import '../../assets/login.css';
 import ooredoo1Image from '../../assets/ooredoo1.png';
@@ -56,9 +56,15 @@ function Login() {
         email,
         motDePasse,
       });
-      localStorage.setItem('login', JSON.stringify({ isAuthenticated: true, token: response.data.token }));
+      const { token, user,shouldUpdateProfile} = response.data;
+      localStorage.setItem('login', JSON.stringify({ isAuthenticated: true, token }));
+      localStorage.setItem('userId', JSON.stringify(user.id_utilisateur)); // Store user ID upon login
+  
       setLoading(false);
-      navigate('/profil'); // Adjust the route as needed
+      if (shouldUpdateProfile){
+navigate ('/insererNom')
+      }else 
+     { navigate(`/profil/${user.id_utilisateur}`); }
     } catch (error) {
       setLoading(false);
       if (error.response) {

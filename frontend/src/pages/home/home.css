@@ -1,0 +1,37 @@
+.Home {
+  display: grid;
+  place-items: center; /* Centre à la fois horizontalement et verticalement */
+  gap: 1rem;
+  margin: 0 auto;
+  overflow: hidden;
+  color: var(--black);
+  background: #f3f3f3;
+  padding: 1rem;
+  min-height: 100vh;
+  
+}
+
+:root {
+  --yellow: #191f43;
+  --orange: #879eb9;
+  --black: #242d49;
+  --gray: rgba(36, 45, 73, 0.65);
+  --profileShadow: 0px 4px 17px 2px rgba(0, 0, 0, 0.25);
+  --hrColor: #cfcdcd;
+  --cardColor: rgba(255, 255, 255, 0.64);
+  --buttonBg: linear-gradient(98.63deg, #191f43 0%, #879eb9 100%);
+  --inputColor: rgba(40, 52, 62, 0.07);
+  --photo: #4cb256;
+  --video: #4a4eb7;
+  --location: #ef5757;
+  --shedule: #e1ae4a;
+}
+/* .homeBlur {
+  position: absolute;
+  width: 22rem;
+  height: 14rem;
+  border-radius: 50%;
+  background: #a6ddf0;  Exemple de couleur, ajustez selon votre design 
+  filter: blur(72px);
+}
+*/

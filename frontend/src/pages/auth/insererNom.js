@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import backgroundImage from '../../assets/ooredoo3.png';
 import Swal from 'sweetalert2';
+import backgroundImage from '../../assets/ooredoo3.png';
 import '../../assets/insererNom.css';
 
 function InsererNom() {
@@ -30,7 +30,8 @@ function InsererNom() {
           showConfirmButton: false,
           timer: 1500,
         }).then(() => {
-          navigate('/profile'); // Redirigez vers le profil ou toute autre page souhaitée
+          const userId = JSON.parse(localStorage.getItem('userId'));
+          navigate(`/profil/${userId}`); // Redirigez vers le profil de l'utilisateur
         });
       }
     } catch (error) {

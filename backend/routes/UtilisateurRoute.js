@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const utilisateurController = require('../controllers/UtilisateurController.js');
 const authenticate = require('../middleware/authenticate.js');
+const optionalAuthenticate = require('../middleware/optionalAuthenticate.js');
 
 router.post('/signup', utilisateurController.signup);
 router.get('/activateAccount/:userId/:token',utilisateurController.activateAccount);
@@ -21,7 +22,8 @@ router.post('/forgot-password', utilisateurController.forgotPassword);
 router.post('/check-reset-token', utilisateurController.checkResetToken);
 router.post('/reset-password/:token', utilisateurController.resetPassword);
 router.post('/resend-forgot-password-email/:email', utilisateurController.resendForgotPasswordEmail);
-router.get('/profil', authenticate, utilisateurController.getUserProfile);
+router.get('/profil/:id', authenticate, utilisateurController.getUserProfile);
+router.get('/randomUsers', optionalAuthenticate, utilisateurController.getRandomUsers);
 
 const upload = require('../middleware/multerConfig');
 

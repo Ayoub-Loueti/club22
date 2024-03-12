@@ -1,4 +1,3 @@
-/* Styles pour la navbar verticale */
 .navbar {
   display: flex;
   flex-direction: column; /* Align items vertically */

@@ -4,6 +4,8 @@ const secretKey = 'ayoub';
 const nodemailer = require('nodemailer');
 const { Op } = require('sequelize');
 const passport = require('passport');
+const { Sequelize } = require('sequelize'); 
+const { sequelize } = require('../config/db'); // Ensure this import is correct
 
 const crypto = require('crypto');
 const Utilisateur = require('../models/UtilisateurModel');
@@ -32,6 +34,7 @@ exports.signup = async (req, res) => {
         etat,
         resetPasswordToken: token,
         resetPasswordExpires: new Date(Date.now() + 3600000),
+        lockUntil:0,
       });
 
       // Send confirmation email
@@ -180,6 +183,7 @@ exports.login = async (req, res) => {
 
       return res.status(200).json({
         message: 'Connexion réussie',
+        user: user,
         token: token,
         shouldUpdateProfile: !user.nom || !user.prenom, // Simplified logic
       });
@@ -218,7 +222,7 @@ exports.googleAuthCallback = (req, res, next) => {
     });
 
     // Redirect to the /load page with the token as a query parameter
-    res.redirect(`http://localhost:3000/load?token=${userToken}`);
+    res.redirect(`http://localhost:3000/load?token=${userToken}&userId=${user.id_utilisateur}`);
   })(req, res, next); // Make sure to pass req, res, next to the inner function
 };
 
@@ -495,14 +499,15 @@ exports.resendForgotPasswordEmail = async (req, res) => {
 };
 
 exports.getUserProfile = async (req, res) => {
+  const userId = req.params.id; // Get the user ID from the request parameters
+
   try {
-    const user = await Utilisateur.findByPk(req.userId, {
-      attributes: { exclude: ['motDePasse'] }, // Exclure le mot de passe pour des raisons de sécurité
+    const user = await Utilisateur.findByPk(userId, {
+      attributes: { exclude: ['motDePasse'] }, // Exclude the password for security reasons
     });
+
     if (user) {
-      res
-        .status(200)
-        .json({ message: 'User profile retrieved successfully', user });
+      res.status(200).json({ message: 'User profile retrieved successfully', user });
     } else {
       res.status(404).json({ error: 'User not found' });
     }
@@ -510,6 +515,8 @@ exports.getUserProfile = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
 
 // Add to utilisateurController.js
 exports.updateUserPhoto = async (req, res, filePath) => {
@@ -520,6 +527,38 @@ exports.updateUserPhoto = async (req, res, filePath) => {
     res.status(200).json({ message: 'Profile picture updated successfully', filePath });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getRandomUsers = async (req, res) => {
+  try {
+      let whereCondition = {};
+      
+      // Check if the user is authenticated (req.userId is set by your authentication middleware)
+      if (req.userId) {
+          // Exclude the current user from the results
+          whereCondition = { id_utilisateur: { [Sequelize.Op.ne]: req.userId } };
+      }
+
+      const users = await Utilisateur.findAll({
+          where: whereCondition,
+          limit: 100 // Adjust the sample size as needed
+      });
+
+      // Shuffle the array to get random elements
+      const shuffledUsers = users.sort(() => 0.5 - Math.random());
+      
+      // Slice the first 7 elements from the shuffled array
+      const randomUsers = shuffledUsers.slice(0, 7);
+
+      if (randomUsers.length === 0) {
+          return res.status(404).json({ message: 'No users found' });
+      }
+
+      return res.status(200).json(randomUsers);
+  } catch (error) {
+      console.error('Error fetching random users:', error);
+      return res.status(500).json({ message: 'Error fetching users', error: error.message });
   }
 };
 

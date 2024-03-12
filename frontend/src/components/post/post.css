@@ -1,0 +1,65 @@
+/* CSS global pour le post */
+.Post {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    background-color: var(--cardColor); /* Ajustez selon votre thème */
+    border-radius: 1rem;
+    gap: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+     overflow-wrap: break-word;
+}
+
+/* Mise en page et style pour l'en-tête du post, incluant le nom de l'utilisateur et sa photo */
+.postHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem; /* Espace entre l'en-tête et le contenu du post */
+}
+
+.postHeader .userPhoto {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.postHeader .userName {
+    font-weight: bold;
+    font-size: 14px; /* Taille de la police pour le nom de l'utilisateur */
+    font-family: Arial, sans-serif; /* Famille de polices pour le nom */
+}
+
+/* Style pour le contenu du post */
+.postContent {
+    font-weight: bold;
+    font-size: 16px; /* Taille de la police pour le contenu */
+    font-family: 'Helvetica Neue', sans-serif; /* Famille de polices pour le contenu */
+    margin-bottom: 1rem; /* Espace entre le contenu et les réactions */
+}
+
+/* Réglages pour les icônes de réactions */
+.postReact {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.postReact img {
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    transition: transform 0.2s;
+}
+
+.postReact img:hover {
+    transform: scale(1.2);
+}
+
+.postHeader .userName {
+  font-weight: bold; /* Rend le texte en gras */
+  font-size: 16px; /* Ajuste la taille de la police */
+  font-family: 'Helvetica Neue', sans-serif; /* Change la famille de polices */
+  margin-left: 10px; /* Ajoute un peu d'espace entre l'image et le nom */
+}
