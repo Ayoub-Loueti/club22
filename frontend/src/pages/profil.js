@@ -7,6 +7,7 @@ import Navbar from '../components/navbar/navbar';
 import NavbarHaut from '../components/navbar/navbarHaut';
 import '../assets/profil.css';
 
+import PostProfile from '../components/postProfil/postProfil';
 function Profil() {
   const { id } = useParams(); // Get user ID from URL
   const navigate = useNavigate();
@@ -132,10 +133,18 @@ function Profil() {
             alt="Profil"
             className="profile-picturee"
           />
-            {isOwnProfile && (
+          {isOwnProfile && (
             <>
-              <FaEdit className="edit-profile-picture-icon" onClick={() => fileInputRef.current.click()} />
-              <input type="file" onChange={handleFileChange} ref={fileInputRef} style={{ display: 'none' }} />
+              <FaEdit
+                className="edit-profile-picture-icon"
+                onClick={() => fileInputRef.current.click()}
+              />
+              <input
+                type="file"
+                onChange={handleFileChange}
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+              />
             </>
           )}
           <input
@@ -162,17 +171,19 @@ function Profil() {
               {utilisateur.description}
             </p>
           )}
-          {isOwnProfile && <FaEdit
-            onClick={() => toggleEdit('description')}
-            className="edit-icon-desc"
-          />}
+          {isOwnProfile && (
+            <FaEdit
+              onClick={() => toggleEdit('description')}
+              className="edit-icon-desc"
+            />
+          )}
         </div>
         <div className="profile-info">
           <div className="info-item">
             <span className="info-label">Email:</span>
             <span className="info-value">{utilisateur.email}</span>
           </div>
-          <div className='capital'>
+          <div className="capital">
             <div className="info-item">
               <span className="info-label">Nom:</span>
               {editing.nom ? (
@@ -187,7 +198,12 @@ function Profil() {
               ) : (
                 <span className="info-value">{utilisateur.nom}</span>
               )}
-              { isOwnProfile && <FaEdit onClick={() => toggleEdit('nom')} className="edit-icon" />}
+              {isOwnProfile && (
+                <FaEdit
+                  onClick={() => toggleEdit('nom')}
+                  className="edit-icon"
+                />
+              )}
             </div>
             <div className="info-item">
               <span className="info-label">Prénom:</span>
@@ -203,7 +219,12 @@ function Profil() {
               ) : (
                 <span className="info-value">{utilisateur.prenom}</span>
               )}
-             {isOwnProfile && <FaEdit onClick={() => toggleEdit('prenom')} className="edit-icon" />}
+              {isOwnProfile && (
+                <FaEdit
+                  onClick={() => toggleEdit('prenom')}
+                  className="edit-icon"
+                />
+              )}
             </div>
             <div className="info-item">
               <span className="info-label">Genre:</span>
@@ -221,10 +242,12 @@ function Profil() {
               ) : (
                 <span className="info-value">{utilisateur.genre}</span>
               )}
-              { isOwnProfile && <FaEdit
-                onClick={() => toggleEdit('genre')}
-                className="edit-icon"
-              />}
+              {isOwnProfile && (
+                <FaEdit
+                  onClick={() => toggleEdit('genre')}
+                  className="edit-icon"
+                />
+              )}
             </div>
 
             <div className="info-item">
@@ -237,6 +260,7 @@ function Profil() {
         {/* Ajout d'un séparateur */}
         <div className="separator"></div>
       </div>
+      <PostProfile />
     </>
   );
 }
