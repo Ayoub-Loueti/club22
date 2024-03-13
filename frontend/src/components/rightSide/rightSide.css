@@ -1,13 +1,13 @@
 .RightSide {
-  position: absolute;
+  position: fixed;
   top: 0;
   right: 0;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  align-items: flex-end; /* Align content to the right */
+ gap: 20px;  align-items: flex-end; /* Align content to the right */
   margin-right: 120px; /* Adjust as needed */
   margin-top: 60px; /* Adjust as needed */
+    padding: 20px; 
 }
 
 .navIcons {
@@ -26,8 +26,25 @@
 
 .r-button {
   height: 3rem;
-  width: 70%;
+  width: 65%;
   align-self: center;
-    margin-top: 0px; /* Adjust as needed */
-
+  margin: 0;
+  background: white;
+  border-radius: 0.5rem;
+  color:  #879eb9 ; 
+; /* White text color for high contrast */
+  font-weight: bold; /* Emphasize the button text */
+  transition: all 0.3s ease;
+   padding: 0.5rem 0.5rem; 
+     border: 1px solid #879eb9; 
 }
+
+.r-button:hover {
+  background: linear-gradient(98.63deg, #879eb9 0%, #191f43 100%); 
+; /* Darker lavender on hover for a subtle shift */
+  color: white; /* Light grey for text to maintain contrast and soften the look */
+  border: 1px solid #879eb9; 
+}
+
+
+
