@@ -1,8 +1,10 @@
-.PostSide{
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    /* height: 100vh;*/
-    overflow: auto;
-    
+.PostProfile {
+  /* Add styles to adjust the size */
+  width: 80%; /* Adjust the width as needed */
+  margin: 0 auto; /* Center the component horizontally */
+
+  /* Add styles to move the component to the right */
+  margin-left: auto; /* Automatically push the component to the right */
 }
+
+/* Optionally, you can also style the no-posts-message */
