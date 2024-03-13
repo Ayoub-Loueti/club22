@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import PostSide from '../../components/postSide/postSide';
+import RightSide from '../../components/rightSide/rightSide';
 import './home.css';
 import Navbar from '../../components/navbar/navbar';
 import NavbarHaut from '../../components/navbar/navbarHaut';
-
 const Home = () => {
   useEffect(() => {
     // Appliquer la couleur de fond à la page Home lors du montage
@@ -21,6 +21,7 @@ const Home = () => {
 
       <div className="Home">
         <PostSide />
+        <RightSide />
       </div>
     </div>
   );
