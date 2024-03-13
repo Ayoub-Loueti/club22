@@ -234,3 +234,15 @@
 .userNameLink:hover {
   color: #ff5722; /* Couleur du texte lors du survol */
 }
+.likesCount {
+  cursor: pointer;
+  color: #007bff; /* Couleur bleue pour indiquer qu'il est cliquable, ajustez selon votre design */
+  text-decoration: underline; /* Souligner pour montrer qu'il est interactif */
+  display: inline-block;
+  margin-bottom: 8px; /* Ajuster selon le besoin */
+  transition: color 0.3s ease; /* Transition douce pour le survol */
+}
+
+.likesCount:hover {
+  color: #0056b3; /* Couleur plus foncée au survol */
+}

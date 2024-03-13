@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrashAlt,faSave} from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
 import { NavLink } from 'react-router-dom';
-
+import LikesModal from '../likesModal/likesModal';
 const Post = (props) => {
     const { data, onPostDeleted, onPostUpdated } = props;
 
@@ -270,6 +270,11 @@ const reloadComments = async () => {
     console.error('Error fetching comments:', error);
   }
 };
+const [isLikesModalOpen, setIsLikesModalOpen] = useState(false);
+const showLikesModal = () => {
+  setIsLikesModalOpen(true);
+};
+
   return (
     <div className="Post">
       <div className="postHeader">
@@ -340,7 +345,6 @@ const reloadComments = async () => {
           </>
         )}
       </div>
-
       <div className="postReact">
         <img
           src={liked ? HeartIcon : NotLikeIcon}
@@ -356,7 +360,18 @@ const reloadComments = async () => {
         />
         <img src={ShareIcon} alt="share" className="reactionIcon" />
       </div>
-      <span className="likesCount">{likes} J'aime</span>
+      <div
+        className="likesCount"
+        onClick={showLikesModal}
+        title="Voir qui a aimé ce post"
+      >
+        {likes} J'aime
+      </div>
+      <LikesModal
+        isOpen={isLikesModalOpen}
+        onRequestClose={() => setIsLikesModalOpen(false)}
+        likes={data.likes} // Assurez-vous que data.likes contient les informations nécessaires
+      />{' '}
       {showCommentForm && (
         <CommentForm
           postId={data.id_post}

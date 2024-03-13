@@ -1,0 +1,81 @@
+/* Styles spécifiques pour le modal des likes */
+.likes-modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 400px;
+  width: 90%; /* Adaptatif à la taille de l'écran */
+  background: #f9f9f9; /* Un fond légèrement gris pour un look doux */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  outline: none; /* Supprime le contour lors de la sélection du modal */
+}
+
+.likes-modal-header {
+  color: #333; /* Couleur de texte foncée pour un contraste élevé */
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center; /* Centre le titre dans le modal */
+}
+
+.likes-modal-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px; /* Hauteur maximale avant de faire défiler */
+  overflow-y: auto; /* Permet le défilement si le contenu dépasse max-height */
+}
+
+.likes-modal-list-item {
+  display: flex; /* Affichage en flex pour aligner la photo et le nom */
+  align-items: center; /* Centre les éléments verticalement */
+  padding: 10px;
+  border-bottom: 1px solid #ddd; /* Une bordure plus claire pour séparer les éléments */
+}
+
+.likes-modal-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ff5a5f; /* Couleur de fond du bouton fermer */
+  color: #fff; /* Texte blanc pour le bouton fermer */
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.likes-modal-user-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover; /* Assure que la photo couvre tout le cercle */
+  margin-right: 15px;
+}
+
+.likes-modal-user-link {
+  text-decoration: none;
+  color: #0077b6; /* Une teinte de bleu un peu différente */
+  font-weight: 500; /* Rend le texte légèrement plus épais */
+}
+
+.likes-modal-user-link:hover {
+  color: #005f99; /* Un bleu plus foncé au survol */
+}
+
+.likes-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7); /* Un fond plus foncé pour plus de contraste */
+  z-index: 1000; /* S'assure que l'overlay est au-dessus de tout autre contenu */
+}
