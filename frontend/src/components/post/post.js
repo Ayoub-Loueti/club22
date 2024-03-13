@@ -87,22 +87,44 @@ const Post = (props) => {
     fetchComments();
   }, []);
 
- const handleLike = async () => {
+const handleLike = async () => {
   const newLikedStatus = !liked;
   try {
     await axios.post(
       `http://localhost:5000/post/${data.id_post}/toggle-like`,
-      {}, // Corps de la requête si nécessaire
-      { headers: { Authorization: `Bearer ${token}` } }
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
     );
-    // Si la requête est réussie, mettre à jour l'état local pour refléter le changement
     setLiked(newLikedStatus);
-    setLikes(prev => prev + (newLikedStatus ? 1 : -1));
+
+    // Mettre à jour le nombre de likes est correct, mais nous devons aussi mettre à jour la liste des likes
+    if (newLikedStatus) {
+      // Ajouter l'utilisateur actuel à la liste des likes si le post est liké
+      const newUserLike = {
+        utilisateur: {
+          id_utilisateur: userId, // Assurez-vous que userId est défini correctement dans votre état
+          nom: userInfo.nom,
+          prenom: userInfo.prenom,
+          photo: userInfo.photo,
+        },
+      };
+      onPostUpdated({ ...data, likes: [...data.likes, newUserLike] });
+    } else {
+      // Retirer l'utilisateur actuel de la liste des likes si le post est unliké
+      const filteredLikes = data.likes.filter(
+        (like) => like.utilisateur.id_utilisateur !== userId
+      );
+      onPostUpdated({ ...data, likes: filteredLikes });
+    }
+    setLikes((prev) => prev + (newLikedStatus ? 1 : -1));
   } catch (error) {
     console.error("Error toggling the post's like", error);
-    // En cas d'erreur, vous pourriez choisir de ne pas changer l'état ou d'afficher une erreur
   }
 };
+
+
 
 
   const toggleCommentForm = () => {
@@ -367,11 +389,13 @@ const showLikesModal = () => {
       >
         {likes} J'aime
       </div>
+
       <LikesModal
         isOpen={isLikesModalOpen}
         onRequestClose={() => setIsLikesModalOpen(false)}
-        likes={data.likes} // Assurez-vous que data.likes contient les informations nécessaires
-      />{' '}
+        likes={data.likes}
+      />
+
       {showCommentForm && (
         <CommentForm
           postId={data.id_post}

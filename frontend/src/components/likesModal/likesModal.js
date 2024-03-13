@@ -11,7 +11,6 @@ const LikesModal = ({ isOpen, onRequestClose, likes }) => {
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      contentLabel="Liste des Likes"
       className="likes-modal-content"
       overlayClassName="likes-modal-overlay"
     >
@@ -35,7 +34,7 @@ const LikesModal = ({ isOpen, onRequestClose, likes }) => {
               to={`/profil/${like.utilisateur.id_utilisateur}`}
               className="likes-modal-user-link"
             >
-              {like.utilisateur.nom} {like.utilisateur.prenom}
+              {like.utilisateur.prenom} {like.utilisateur.nom}
             </NavLink>
           </li>
         ))}
