@@ -1,25 +1,37 @@
 import React from 'react';
-import { MantineThemeProvider } from './mantineThemeProvider'; // Path to your custom provider
-import { Modal } from '@mantine/core';
+import Modal from 'react-modal';
 import PostShare from '../postShare/postShare';
-import { useMantineTheme } from './mantineThemeProvider';
+
+
+// This line is important for accessibility reasons.
+// It binds your app and allows the screen readers to correctly announce the modal content.
+Modal.setAppElement('#root');
 
 function ShareModal({ modalOpened, setModalOpened }) {
-  const theme = useMantineTheme();
+  const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+      // Add more styles as needed
+    },
+    overlay: {
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      backdropFilter: 'blur(3px)',
+    },
+  };
 
   return (
     <Modal
-      overlayColor={
-        theme.colorScheme === 'dark'
-          ? theme.colors.dark[9]
-          : theme.colors.gray[2]
-      }
-      overlayOpacity={0.55}
-      overlayBlur={3}
-      size="55%"
-      opened={modalOpened}
-      onClose={() => setModalOpened(false)}
+      isOpen={modalOpened}
+      onRequestClose={() => setModalOpened(false)}
+      style={customStyles}
+      contentLabel="Share Modal" // This is important for accessibility reasons
     >
+      {/* Modal content goes here */}
       <PostShare />
     </Modal>
   );

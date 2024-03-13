@@ -5,7 +5,7 @@ import Noti from '../../img/noti.png';
 import Comment from '../../img/comment.png';
 import { UilSetting } from '@iconscout/react-unicons';
 import TrendCard from '../trendCard/trendCard';
-
+import ShareModal from '../shareModal/shareModal';
 const RightSide = () => {
   const [modalOpened, setModalOpened] = useState(false);
   return (
@@ -18,11 +18,17 @@ const RightSide = () => {
       </div>
 
       <TrendCard />
+      <ShareModal modalOpened={modalOpened} setModalOpened={setModalOpened} />
 
-      <button className="button r-button" onClick={() => setModalOpened(true)}>
-        Share
+      <button
+        className="r-button" // Ensure you have this class styled as needed
+        onClick={() => {
+          console.log('Opening modal...');
+          setModalOpened(true);
+        }}
+      >
+        Partager
       </button>
-      
     </div>
   );
 };
