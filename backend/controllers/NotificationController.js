@@ -7,7 +7,7 @@ exports.getNotificationsForUser = async (req, res) => {
 
     try {
         const notifications = await Notification.findAll({
-            where: { id_own_post: userId, isRead: false },
+            where: { id_own_post: userId },
             include: [
                 {
                     model: Utilisateur,
