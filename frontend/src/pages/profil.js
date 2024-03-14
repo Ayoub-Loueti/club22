@@ -8,6 +8,8 @@ import NavbarHaut from '../components/navbar/navbarHaut';
 import '../assets/profil.css';
 
 import PostProfile from '../components/postProfil/postProfil';
+import PostSavedModal from '../components/PostSavedModal/PostSavedModal'; // Adjust the import path as needed
+
 function Profil() {
   const { id } = useParams(); // Get user ID from URL
   const navigate = useNavigate();
@@ -16,6 +18,7 @@ function Profil() {
   const token = storedData?.token; // Retrieve the token without JSON.parse on the token itself
   const userId = JSON.parse(localStorage.getItem('userId')); // Assuming 'userId' is stored directly
   const isOwnProfile = userId?.toString() === id; // Safely check for equality
+  const [modalOpened, setModalOpened] = useState(false); // State to control the modal
 
   const [utilisateur, setUtilisateur] = useState({});
   const [editing, setEditing] = useState({
@@ -122,6 +125,13 @@ function Profil() {
     <>
       <Navbar />
       <NavbarHaut />
+      <button
+          className="open-saved-posts-btn" // Style this button as needed
+          onClick={() => setModalOpened(true)}
+        >
+          View Saved Posts
+        </button>
+        <PostSavedModal modalOpened={modalOpened} setModalOpened={setModalOpened} />
       <div className="profile-container">
         <div className="profile-header">
           <img
@@ -261,6 +271,7 @@ function Profil() {
         <div className="separator"></div>
       </div>
       <PostProfile />
+      
     </>
   );
 }

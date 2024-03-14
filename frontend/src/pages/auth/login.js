@@ -58,7 +58,7 @@ function Login() {
       });
       const { token, user,shouldUpdateProfile} = response.data;
       localStorage.setItem('login', JSON.stringify({ isAuthenticated: true, token }));
-      localStorage.setItem('userId', JSON.stringify(user.id_utilisateur)); // Store user ID upon login
+      localStorage.setItem('userId', JSON.stringify(user.id_utilisateur.toString())); // Store user ID upon login
   
       setLoading(false);
       if (shouldUpdateProfile){

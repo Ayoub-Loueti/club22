@@ -16,11 +16,12 @@ router.get('/posts', authenticate, postController.getAllPosts);
 router.get('/getPostById/:id', postController.getPostByIdWithDetails);
 router.get('/getAllPostsByUser/:userId', postController.getAllPostsByUserWithDetails);
 
-router.get(
-  '/post/:postId/likesCount',
-  authenticate,
-  postController.getLikesCount
-);
+router.get('/post/:postId/likesCount',authenticate,postController.getLikesCount);
 router.get('/post/:postId/comment', authenticate, postController.getComments);
+
+router.post('/posts/:id_post/enregistrement', authenticate, postController.createEnregistrement);
+router.get('/enregistrements', authenticate, postController.getEnregistrementsByUser);
+router.delete('/posts/:id_post/enregistrement', authenticate, postController.deleteEnregistrement);
+router.get('/posts/:id_post/is-saved', authenticate, postController.checkIfPostIsSaved);
 
 module.exports = router;

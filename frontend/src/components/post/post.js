@@ -7,7 +7,7 @@ import NotLikeIcon from '../../img/notlike.png';
 import axios from 'axios';
 import CommentForm from '../comments/commentForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrashAlt,faSave} from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrashAlt,faSave,faBookmark,faTimesCircle} from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
 import { NavLink } from 'react-router-dom';
 import LikesModal from '../likesModal/likesModal';
@@ -26,6 +26,7 @@ const Post = (props) => {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editCommentContent, setEditCommentContent] = useState('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isPostSaved, setIsPostSaved] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('login');
@@ -87,6 +88,21 @@ const Post = (props) => {
     fetchComments();
   }, []);
 
+  useEffect(() => {
+    // Assuming this endpoint checks if a post is saved and returns { isSaved: true/false }
+    const checkIfPostIsSaved = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/posts/${data.id_post}/is-saved`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setIsPostSaved(response.data.isSaved);
+      } catch (error) {
+        console.error('Error checking if post is saved:', error);
+      }
+    };
+    checkIfPostIsSaved();
+  }, [data.id_post, token]);
+
 const handleLike = async () => {
   const newLikedStatus = !liked;
   try {
@@ -123,9 +139,6 @@ const handleLike = async () => {
     console.error("Error toggling the post's like", error);
   }
 };
-
-
-
 
   const toggleCommentForm = () => {
     setShowCommentForm(!showCommentForm);
@@ -297,6 +310,25 @@ const showLikesModal = () => {
   setIsLikesModalOpen(true);
 };
 
+const handleToggleSave = async () => {
+  try {
+    if (isPostSaved) {
+      // Unsave post
+      await axios.delete(`http://localhost:5000/posts/${data.id_post}/enregistrement`, { headers: { Authorization: `Bearer ${token}` } });
+      setIsPostSaved(false);
+      Swal.fire('Removed!', 'The post has been removed from saved posts.', 'success');
+    } else {
+      // Save post
+      await axios.post(`http://localhost:5000/posts/${data.id_post}/enregistrement`, {}, { headers: { Authorization: `Bearer ${token}` } });
+      setIsPostSaved(true);
+      Swal.fire('Saved!', 'The post has been saved.', 'success');
+    }
+  } catch (error) {
+    console.error('Error toggling post save:', error);
+    Swal.fire('Error!', 'There was a problem saving or unsaving the post.', 'error');
+  }
+};
+
   return (
     <div className="Post">
       <div className="postHeader">
@@ -338,6 +370,10 @@ const showLikesModal = () => {
               )}
             </div>
           )}
+<button className="savePostButton" onClick={handleToggleSave}>
+  <FontAwesomeIcon icon={isPostSaved ? faTimesCircle : faBookmark} />
+</button>
+
       </div>
       <div className="postContent">
         {!isEditing ? (

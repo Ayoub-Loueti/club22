@@ -4,6 +4,7 @@ const Utilisateur = require('../models/UtilisateurModel');
 const Commentaire = require('../models/CommentairesModel');
 const Notification = require('../models/NotificationModel');
 const Image = require('../models/ImageModel');
+const Enregistrement = require('../models/EnregistrementModel');
 const multiImageUpload = require('../middleware/multiImageUpload');
 
 exports.createPost = (req, res) => {
@@ -505,6 +506,183 @@ exports.deleteComment = async (req, res) => {
     } catch (error) {
         console.error('Error deleting comment and notification:', error);
         return res.status(500).json({ message: 'Error deleting comment and notification', error: error.message });
+    }
+};
+
+// save posts
+
+exports.createEnregistrement = async (req, res) => {
+    const id_utilisateur = req.userId; // Obtained from authentication middleware
+    const id_post = req.params.id_post; // Obtained from URL path
+  
+    try {
+      // Check if the post exists
+      const postExists = await Post.findByPk(id_post);
+      if (!postExists) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+  
+      // Check if the enregistrement already exists for this user and post
+      const existingEnregistrement = await Enregistrement.findOne({
+        where: {
+          id_utilisateur: id_utilisateur,
+          id_post: id_post
+        }
+      });
+  
+      if (existingEnregistrement) {
+        // Enregistrement already exists, so inform the user
+        return res.status(409).json({ message: 'Post already saved' });
+      }
+  
+      // Since the enregistrement doesn't exist, create it
+      const newEnregistrement = await Enregistrement.create({
+        id_utilisateur,
+        id_post
+      });
+  
+      return res.status(201).json({ message: 'Enregistrement created successfully', enregistrement: newEnregistrement });
+    } catch (error) {
+      console.error('Error creating enregistrement:', error);
+      return res.status(500).json({ message: 'Error creating enregistrement', error: error.message });
+    }
+  };
+  
+
+  exports.getEnregistrementsByUser = async (req, res) => {
+    const userId = req.userId; // Assuming userId is set by your authentication middleware
+  
+    try {
+      // First, find all enregistrements for the current user
+      const enregistrements = await Enregistrement.findAll({
+        where: {
+          id_utilisateur: userId,
+        },
+        include: [
+          {
+            model: Post,
+            as: 'post',
+            include: [
+              {
+                model: Utilisateur,
+                as: 'utilisateur',
+                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+              }
+            ]
+          }
+        ]
+      });
+  
+      if (!enregistrements.length) {
+        return res.status(404).json({ message: 'No saved posts found' });
+      }
+  
+      // Transform enregistrements to include post details similarly to getAllPosts
+      const postsWithDetails = await Promise.all(
+        enregistrements.map(async (enregistrement) => {
+          const post = enregistrement.post;
+          const postJson = post.toJSON();
+  
+          // Check if the current user has liked the post
+          const likeStatus = await Likes.findOne({
+            where: {
+              id_post: post.id_post,
+              id_utilisateur: userId,
+            },
+          });
+          postJson.isLikedByCurrentUser = !!likeStatus;
+  
+          // Fetch images for the post
+          const images = await Image.findAll({
+            where: { id_post: post.id_post },
+          });
+          postJson.lesImages = images;
+  
+          // Fetch comments for the post
+          const comments = await Commentaire.findAll({
+            where: { id_post: post.id_post },
+            include: [
+              {
+                model: Utilisateur,
+                as: 'utilisateur',
+                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+              },
+            ],
+          });
+          postJson.commentaires = comments;
+  
+          // Fetch likes for the post
+          const likes = await Likes.findAll({
+            where: { id_post: post.id_post },
+            include: [
+              {
+                model: Utilisateur,
+                as: 'utilisateur',
+                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+              },
+            ],
+          });
+          postJson.likesCount = likes.length;
+          postJson.likes = likes;
+  
+          return postJson;
+        })
+      );
+  
+      return res.status(200).json(postsWithDetails);
+    } catch (error) {
+      console.error('Error fetching saved posts:', error);
+      return res.status(500).json({ message: 'Error fetching saved posts', error: error.message });
+    }
+  };
+  
+  exports.deleteEnregistrement = async (req, res) => {
+    const userId = req.userId; // Assuming userId is set by your authentication middleware
+    const { id_post } = req.params; // Assuming the post ID is passed in the URL
+
+    try {
+        // First, find the enregistrement to ensure it exists and belongs to the current user
+        const enregistrement = await Enregistrement.findOne({
+            where: {
+                id_utilisateur: userId,
+                id_post: id_post
+            }
+        });
+
+        if (!enregistrement) {
+            return res.status(404).json({ message: 'Saved post not found or not owned by the user' });
+        }
+
+        // Delete the enregistrement
+        await enregistrement.destroy();
+
+        return res.status(200).json({ message: 'Post unsaved successfully' });
+    } catch (error) {
+        console.error('Error deleting saved post:', error);
+        return res.status(500).json({ message: 'Error deleting saved post', error: error.message });
+    }
+};
+
+exports.checkIfPostIsSaved = async (req, res) => {
+    const userId = req.userId; // Assuming userId is set by your authentication middleware
+    const { id_post } = req.params; // Assuming the post ID is passed in the URL
+
+    try {
+        // Check if there is an enregistrement for the current user and post
+        const savedPost = await Enregistrement.findOne({
+            where: {
+                id_utilisateur: userId,
+                id_post: id_post
+            }
+        });
+
+        // If the post is saved by the user, return 1, else return 0
+        const isSaved = savedPost ? 1 : 0;
+
+        return res.status(200).json({ isSaved });
+    } catch (error) {
+        console.error('Error checking if post is saved:', error);
+        return res.status(500).json({ message: 'Error checking if post is saved', error: error.message });
     }
 };
 
