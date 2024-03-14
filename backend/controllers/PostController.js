@@ -2,6 +2,7 @@ const Post  = require('../models/PostModel');
 const Likes = require('../models/LikesModel'); 
 const Utilisateur = require('../models/UtilisateurModel');
 const Commentaire = require('../models/CommentairesModel');
+const Notification = require('../models/NotificationModel');
 const Image = require('../models/ImageModel');
 const multiImageUpload = require('../middleware/multiImageUpload');
 
@@ -326,7 +327,11 @@ exports.toggleLikePost = async (req, res) => {
     const id_utilisateur = req.userId; // Extract user ID set by your authentication middleware
 
     try {
-        // Check if the user has already liked this post
+        const post = await Post.findByPk(postId);
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
         const existingLike = await Likes.findOne({
             where: {
                 id_post: postId,
@@ -334,27 +339,60 @@ exports.toggleLikePost = async (req, res) => {
             }
         });
 
-        const post = await Post.findByPk(postId);
-        if (!post) {
-            return res.status(404).json({ message: 'Post not found' });
-        }
-
         if (existingLike) {
-            // If a like exists, unlike the post
+            // If a like exists, unlike the post and remove notification
             await existingLike.destroy();
             await post.decrement('nbr_likes');
+
+            // Find and destroy the like notification
+            const likeNotification = await Notification.findOne({
+                where: {
+                    id_post: postId,
+                    id_utilisateur: id_utilisateur,
+                    id_like : existingLike.id_like,
+                }
+            });
+            if (likeNotification) {
+                await likeNotification.destroy();
+
+                // Decrement the notification count for the post owner
+                const postOwner = await Utilisateur.findByPk(post.id_utilisateur);
+                if (postOwner) {
+                    await postOwner.decrement('nbr_notifs', { by: 1 });
+                }
+            }
+
             return res.status(200).json({ message: 'Post unliked successfully' });
         } else {
-            // If no like exists, like the post, including the current date and time for date_like
-            await Likes.create({
+            // If no like exists, like the post and create notification
+            const like = await Likes.create({
                 id_post: postId,
                 id_utilisateur: id_utilisateur,
-                date_like: new Date() // Set the current date and time
+                date_like: new Date()
             });
             await post.increment('nbr_likes');
+
+            // Create a like notification
+            await Notification.create({
+                id_post: postId,
+                id_utilisateur: id_utilisateur,
+                id_own_post: post.id_utilisateur,
+                type: 'like',
+                isRead: false,
+                date_notif: new Date(),
+                id_like: like.id_like,
+            });
+
+            // Increment the notification count for the post owner
+            const postOwner = await Utilisateur.findByPk(post.id_utilisateur);
+            if (postOwner) {
+                await postOwner.increment('nbr_notifs', { by: 1 });
+            }
+
             return res.status(200).json({ message: 'Post liked successfully' });
         }
     } catch (error) {
+        console.error('Error toggling post like:', error);
         return res.status(500).json({ message: 'Error toggling post like', error });
     }
 };
@@ -365,7 +403,6 @@ exports.createComment = async (req, res) => {
     const id_utilisateur = req.userId; // Extract user ID set by your authentication middleware
 
     try {
-        // Optional: Check if the post exists before allowing a comment to be created
         const postExists = await Post.findByPk(postId);
         if (!postExists) {
             return res.status(404).json({ message: 'Post not found' });
@@ -375,9 +412,25 @@ exports.createComment = async (req, res) => {
             cmntr: cmntr,
             id_post: postId,
             id_utilisateur: id_utilisateur,
-            date_cmntr: new Date() // Set the comment date to now
+            date_cmntr: new Date() 
         });
 
+        const postOwnerId = postExists.id_utilisateur;
+        if (id_utilisateur !== postOwnerId) {
+        await Notification.create({
+            id_post: postId,
+            id_utilisateur: id_utilisateur, // The one who created the comment
+            id_own_post: postOwnerId, // The owner of the post
+            type: 'comment',
+            isRead: false,
+            date_notif: new Date() ,
+            id_cmntr : newComment.id_cmntr,
+        });
+        const postOwner = await Utilisateur.findByPk(postOwnerId);
+        if (postOwner) {
+            await postOwner.increment('nbr_notifs', { by: 1 });
+        }
+    }
         return res.status(201).json(newComment);
     } catch (error) {
         console.error('Error creating comment:', error);
@@ -417,7 +470,12 @@ exports.deleteComment = async (req, res) => {
     const userId = req.userId; // User ID from the request, typically set after authentication
 
     try {
-        const comment = await Commentaire.findByPk(id_cmntr);
+        const comment = await Commentaire.findByPk(id_cmntr, {
+            include: [{
+                model: Post,
+                as: 'post', // Make sure this alias matches how you've set it up in associations
+            }]
+        });
 
         if (!comment) {
             return res.status(404).json({ message: 'Comment not found' });
@@ -427,12 +485,26 @@ exports.deleteComment = async (req, res) => {
             return res.status(403).json({ message: 'User not authorized to delete this comment' });
         }
 
+        // Find and delete the associated notification
+        const notification = await Notification.findOne({ where: { id_cmntr: id_cmntr } });
+        if (notification) {
+            await notification.destroy();
+        }
+
         await comment.destroy();
 
-        return res.status(200).json({ message: 'Comment deleted successfully' });
+        // If the comment is associated with a post, decrement the notification count for the post owner
+        if (comment.post && comment.post.id_utilisateur) {
+            const postOwner = await Utilisateur.findByPk(comment.post.id_utilisateur);
+            if (postOwner) {
+                await postOwner.decrement('nbr_notifs', { by: 1 });
+            }
+        }
+
+        return res.status(200).json({ message: 'Comment and associated notification deleted successfully' });
     } catch (error) {
-        console.error('Error deleting comment:', error);
-        return res.status(500).json({ message: 'Error deleting comment', error: error.message });
+        console.error('Error deleting comment and notification:', error);
+        return res.status(500).json({ message: 'Error deleting comment and notification', error: error.message });
     }
 };
 

@@ -53,6 +53,9 @@ const UtilisateurModel = sequelize.define(
       type: DataTypes.TIME,
       defaultValue: null,
     },
+    nbr_notifs: {
+      type: DataTypes.INTEGER,
+    }
   },
   {
     tableName: 'utilisateur',

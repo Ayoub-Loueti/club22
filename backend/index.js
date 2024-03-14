@@ -4,6 +4,7 @@ const app = express();
 const utilisateur = require('./routes/UtilisateurRoute');
 const admin = require('./routes/AdminRoute');
 const post = require('./routes/PostRoute');
+const notif = require('./routes/NotificationRoute');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const session = require('express-session');
@@ -38,6 +39,7 @@ app.use(passport.session());
 app.use(utilisateur);
 app.use(admin);
 app.use(post);
+app.use(notif);
 app.use('/uploads', express.static('uploads'));
 
 const PORT = process.env.PORT || 5000;
