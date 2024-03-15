@@ -147,13 +147,13 @@
   font-size: 23px; 
   cursor: pointer;
 }
-
+/* notif icon*/
 .icon-containerr {
   display: flex;
   gap: 22px; /* Espacement entre les icônes */
   padding-right: 500px; /* Espacement à droite */
   color: #191f43;
-  font-size: 33px; /* Taille des icônes */
+  font-size: 34px; /* Taille des icônes */
   margin-top: auto;
 }
 
@@ -175,6 +175,7 @@ margin-top:50px;
   border-radius: 50%; /* Rend l'image complètement ronde */
   object-fit: cover; /* Assure que l'image couvre bien l'espace sans être déformée */
 }
+
 .user-photo:hover {
   /* Facultatif : Style de survol pour indiquer qu'il est cliquable */
   opacity: 0.6;
@@ -197,81 +198,135 @@ margin-top:50px;
 body {
   overflow-x: hidden;
 }
+/* Styles généraux pour le menu déroulant */
 .user-info {
-  position: fixed;
-  top: 50px;
-  right: 10px;
-  background-color: white;
-  padding: 20px; /* Augmenté pour plus d'espace interne */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  border-radius: 5px;
+  position: absolute;
+  top: 50px; /* Adjusted for better positioning */
+  right: 20px;
+  background-color: #ffffff;
+  padding: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
   z-index: 1001;
-  width: 200px; /* Largeur spécifiée pour augmenter la taille du conteneur */
   display: flex;
-  flex-direction: column; /* Organise les enfants verticalement */
-  align-items: start; /* Aligner les éléments à gauche */
+  flex-direction: column;
+  align-items: start;
+  transition: all 0.3s ease;
+  opacity: 0.95;
+  border: 1px solid #e2e8f0; /* Light grey border for subtle definition */
+  max-width: 200px; /* Restrict maximum width */
 }
 
-.user-info .user-actions {
-  display: flex;
-  flex-direction: column; /* Affiche chaque action sur une nouvelle ligne */
+.user-info:hover {
+  opacity: 1; /* Full opacity on hover */
+  transform: translateY(-2px); /* Slight lift effect */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow for lifted effect */
 }
-
-.user-info .user-actions a,
-.user-info .user-actions .logout-link {
-  color: #191f43; /* Couleur des liens */
-  padding: 8px 0; /* Ajoute de l'espace vertical pour une meilleure séparation */
-  text-decoration: none; /* Supprime le soulignement par défaut */
-  font-size: 16px; /* Augmente la taille de la police pour une meilleure lisibilité */
-  width: 100%; /* Utilise toute la largeur disponible pour faciliter le clic */
-  text-align: left; /* Assure que le texte est aligné à gauche */
-}
-
-.user-actions a:hover,
-.user-actions .logout-link:hover {
-  background-color: #f2f2f2; /* Effet de survol pour améliorer l'interaction */
-  border-radius: 4px; /* Arrondit les coins lors du survol */
-}
-.logout-button {
-  color: #191f43;
-  background-color: transparent;
+/* Styles pour les actions de l'utilisateur */
+.user-actions a, .user-actions button {
+  color: #4a5568; /* Darker text for better readability */
+  background-color: #ffffff; /* Background to match the dropdown */
+  padding: 12px 20px; /* Larger padding for a roomier feel */
+  font-size: 15px; /* Slightly larger font size */
   border: none;
   cursor: pointer;
-  padding: 8px 0;
-  font-size: 16px;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: background-color 0.2s, color 0.2s;
 }
+
+.user-actions a:hover, .user-actions button:hover {
+  background-color: #edf2f7; /* Lighter grey for hover background */
+  color: #2d3748; /* Slightly darker text on hover for contrast */
+}
+
+/* Icons color now uses primary color scheme for consistency */
+.acceuil-icon, .profil-icon, .logout-icon {
+  margin-right: 8px; /* Ensures spacing between icon and text */
+  color: #4299e1; /* Bright blue for a pop of color */
+}
+
+/* Improved logout button for distinction */
+.logout-button {
+  color: #e53e3e; /* Red color for logout to indicate a distinct action */
+}
+
+/* Additional hover effects for icons within the dropdown for visual feedback */
+.user-actions i:hover {
+  transform: scale(1.1); /* Slightly enlarge icons on hover */
+  transition: transform 0.2s;
+}
+
+/* Add this for a subtle entrance animation for the dropdown */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.user-info {
+  animation: slideDown 0.3s ease forwards;
+}
+
+
+
+
+/* Notifications Count Badge */
+.notifications-count {
+  position: absolute;
+  background-color: #ed1c24;
+  color: #ffffff;
+  border-radius: 50%;
+  padding: 0 6px;
+  font-size: 11px;
+  height: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Dropdown Menu for Notifications */
 .notifications-dropdown {
   position: absolute;
   right: 0;
-  top: 50px;
-  background-color: #fff;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  border-radius: 5px;
-  width: 500px; /* Adjusted width */
-  z-index: 1001;
+  margin-right: 15px;
+  top: 45px;
+  background-color: #ffffff;
+  width: 400px; /* Adjust based on your content width */
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 5;
+  border-radius: 15px;
   overflow: hidden;
+    cursor: pointer;
+    text-align:left ;
+
 }
 
 .notification-item {
   display: flex;
   align-items: center;
-  padding: 10px;
-  border-bottom: 1px solid #f1f1f1;
-  cursor: pointer;
-  background-color: #fafafa; /* Background color for unseen notifications */
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
 }
 
-.notification-item:last-child {
-  border-bottom: none;
+.notification-item:hover {
+  background-color: #f8f8f8; /* Light gray background on hover */
 }
 
 .notification-item.unseen {
-  background-color: #eef2ff; /* Different background for unseen notifications */
+  background-color: #edf2fa; /* Slightly different color for unseen notifications */
 }
 
 .notification-user-photo {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   object-fit: cover;
   margin-right: 10px;
@@ -279,28 +334,43 @@ body {
 
 .notification-text {
   flex: 1;
+  font-size: 14px;
 }
 
 .notification-text strong {
-  display: block;
+  font-weight: 600;
 }
 
-/* Add hover effect */
-.notification-item:hover {
-  background-color: #f0f0f0;
+.notification-icon-Comment {
+  margin-right: 10px;
+  color: green; /* Couleur des icônes pour un aspect plus subtil */
+  font-size: 16px; /* Taille des icônes */
+}
+.notification-icon-jaime {
+  margin-right: 10px;
+  color: #ed1c24; /* Couleur des icônes pour un aspect plus subtil */
+  font-size: 16px; /* Taille des icônes */
+}
+.notification-delete-icon {
+  margin-left: auto; /* Pushes the icon to the right */
+  color: #cb2431; /* A standard delete color, adjust as needed */
+  cursor: pointer; /* Indicates the icon is clickable */
+  padding: 5px; /* Easier to click */
+  font-size: 14px; /* Adjust icon size as needed */
+  display: flex; /* Centers the icon */
+  align-items: center; /* Centers vertically in case your notification item has variable height */
+  justify-content: center; /* Centers horizontally */
+  border-radius: 50%; /* Optional: makes the hover background circle */
+  transition: background-color 0.2s, color 0.2s; /* Smooth transition for hover effects */
 }
 
-.notifications-count {
-  position: absolute;
-  top: -5px;
-  right: -10;
-  background-color: #ff0000;
-  color: #ffffff;
-  border-radius: 50%;
-  padding: 0 5px;
-  font-size: 12px;
-  height: 20px;
+.notification-delete-icon:hover {
+  color: #ffffff; /* Change color on hover */
+  background-color: #cb2431; /* Add a background color on hover */
+}
+
+.notification-item {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: space-between; /* Ensures space between the notification text and delete icon */
 }

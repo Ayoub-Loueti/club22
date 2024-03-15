@@ -13,6 +13,7 @@ function PostSavedModal({ modalOpened, setModalOpened }) {
         right: 'auto',
         bottom: 'auto',
         marginRight: '-50%',
+        borderRadius: '10px',
         transform: 'translate(-50%, -50%)',
         maxHeight: '80vh', // Example max height
         overflow: 'auto', // Enable scrolling

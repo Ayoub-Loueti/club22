@@ -56,7 +56,7 @@ const CommentForm = ({ postId, onCommentSubmitted }) => {
           style={{ width: '60%', minHeight: '30px', marginRight: '10px' }}
         />
         <button type="submit" className="postShare-button">
-          Submit
+          Commenter
         </button>
       </div>
       {showError && (

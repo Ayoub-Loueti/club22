@@ -139,13 +139,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 4px; /* Adjust padding as needed */
   border-radius: 4px; /* Optional: for rounded corners */
   transition: transform 0.2s, color 0.2s; /* Smooth transition for hover effects */
 }
 
 .iconButton svg {
-  font-size: 1.25rem; /* Makes icons slightly larger */
+  font-size: 1.11rem; /* Makes icons slightly larger */
   color: #ed1c24; /* Example color: Blue */
 }
 
@@ -242,18 +241,17 @@
 .userNameLink:hover {
   color: #ed1c24; /* Couleur du texte lors du survol */
 }
-.likesCount {
+.likesCount span {
   cursor: pointer;
   color: #879eb9; /* Couleur bleue pour indiquer qu'il est cliquable, ajustez selon votre design */
   text-decoration: underline; /* Souligner pour montrer qu'il est interactif */
-  display: inline-block;
-  margin-bottom: 8px; /* Ajuster selon le besoin */
   transition: color 0.3s ease; /* Transition douce pour le survol */
 }
 
-.likesCount:hover {
+.likesCount span:hover {
   color: #ed1c24; /* Couleur plus foncée au survol */
 }
+
 
 .savePostButton {
   background: none;

@@ -13,6 +13,8 @@ import {
   faSave,
   faBookmark,
   faTimesCircle,
+  faPen,
+  faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { faBookmark as farBookmark } from '@fortawesome/free-regular-svg-icons'; // Importing the regular (outline) bookmark icon
 
@@ -20,7 +22,7 @@ import Swal from 'sweetalert2';
 import { NavLink } from 'react-router-dom';
 import LikesModal from '../likesModal/likesModal';
 const Post = (props) => {
-  const { data, onPostDeleted, onPostUpdated } = props;
+  const { data, onPostDeleted, onPostUpdated, isModalView } = props;
 
   const token = JSON.parse(localStorage.getItem('login'))?.token;
   const [liked, setLiked] = useState(data.isLikedByCurrentUser);
@@ -331,7 +333,8 @@ const Post = (props) => {
           'Supprimée !',
           'La publication a été supprimée des publications enregistrées.',
           'success'
-        );
+        ); 
+        
       } else {
         // Save post
         await axios.post(
@@ -346,6 +349,7 @@ const Post = (props) => {
           'success'
         );
       }
+      
     } catch (error) {
       console.error(
         "Erreur lors de la bascule de l'enregistrement de la publication :",
@@ -405,10 +409,10 @@ const Post = (props) => {
               {!isEditing ? (
                 <>
                   <button onClick={toggleEditForm} className="iconButton">
-                    <FontAwesomeIcon icon={faEdit} />
+                    <FontAwesomeIcon icon={faPen} />
                   </button>
                   <button onClick={handleDeletePost} className="iconButton">
-                    <FontAwesomeIcon icon={faTrashAlt} />
+                    <FontAwesomeIcon icon={faTrash} className="fa-solid" />
                   </button>
                 </>
               ) : (
@@ -469,12 +473,10 @@ const Post = (props) => {
         />
         <img src={ShareIcon} alt="share" className="reactionIcon" />
       </div>
-      <div
-        className="likesCount"
-        onClick={showLikesModal}
-        title="Voir qui a aimé ce post"
-      >
-        {likes} J'aime
+      <div className="likesCount">
+        <span onClick={showLikesModal} title="Voir qui a aimé ce post">
+          {likes} J'aime
+        </span>
       </div>
 
       <LikesModal
@@ -541,13 +543,13 @@ const Post = (props) => {
                         handleEditComment(comment.id_cmntr, comment.cmntr)
                       }
                     >
-                      <FontAwesomeIcon icon={faEdit} />
+                      <FontAwesomeIcon icon={faPen} />
                     </button>
                     <button
                       className="iconButton"
                       onClick={() => handleDeleteComment(comment.id_cmntr)}
                     >
-                      <FontAwesomeIcon icon={faTrashAlt} />
+                      <FontAwesomeIcon icon={faTrash} className="fa-solid" />
                     </button>
                   </div>
                 ))}
