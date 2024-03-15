@@ -197,3 +197,39 @@ input[type='file']::file-selector-button {
 input[type='file']::file-selector-button:hover {
   background-color: darken(var(--primary-color), 10%);
 }
+.view-saved-posts-container {
+  display: flex;
+  justify-content: center; /* Center the button horizontally */
+  margin: 20px 0; /* Add some margin around */
+}
+
+.open-saved-posts-btn {
+  background-color: var(--primary-color); /* Use your primary color */
+  color: var(--text-primary);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 20px; /* Rounded corners */
+  display: flex;
+  align-items: center; /* Align icon and text */
+  gap: 10px; /* Space between icon and text */
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s; /* Smooth transition for hover */
+  text-decoration: none; /* Remove underline from icons or text */
+  font-size: 16px; /* Adjust based on your preference */
+}
+
+.open-saved-posts-btn:hover {
+ background-color: darken(var(--primary-color), 10%); /* Darken or adjust the color as needed */
+  outline: none; /* Remove default focus outline */
+  box-shadow: 0 0 0 2px #191f43; /* Optional: add a custom focus shadow for accessibility */
+  color: #191f43;
+}
+.open-saved-posts-btn:hover .saved-posts-icon {
+  color: #191f43; /* Change the icon color on hover */
+}
+
+
+.saved-posts-icon {
+  color: var(--text-primary); /* Icon color */
+  font-size: 20px; /* Icon size */
+}

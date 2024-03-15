@@ -105,6 +105,7 @@
   margin-bottom: 0.25rem; /* Espacement inférieur réduit */
   text-align: left;
   margin-left: 17px;
+  
 }
 
 .commentContent {
@@ -135,11 +136,21 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: #646464; /* Gris moyen */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px; /* Adjust padding as needed */
+  border-radius: 4px; /* Optional: for rounded corners */
+  transition: transform 0.2s, color 0.2s; /* Smooth transition for hover effects */
+}
+
+.iconButton svg {
+  font-size: 1.25rem; /* Makes icons slightly larger */
+  color: #ed1c24; /* Example color: Blue */
 }
 
 .iconButton:hover {
-  color: #000000; /* Noir pour un effet survol */
+  transform: scale(1.1); /* Slightly enlarge buttons on hover */
 }
 
 .navigationButton {
@@ -164,10 +175,8 @@
   height: 300px; /* Hauteur fixe pour toutes les images */
   object-fit: cover; /* Couvre la zone du conteneur sans perdre le ratio */
   border-radius: 8px; /* Coins arrondis pour l'esthétique */
-    object-fit: contain; /* Assure que toute l'image est visible */
-
+  object-fit: contain; /* Assure que toute l'image est visible */
 }
-
 
 .editContent {
   width: 90%; /* Utilisation de toute la largeur disponible */
@@ -182,7 +191,9 @@
   transition: background-color 0.2s, border-color 0.2s; /* Transition douce pour l'interaction */
 }
 .commentEdit {
-  width: calc(100% - 10px); /* Ajustez la largeur pour être légèrement inférieure à celle du commentaire original */
+  width: calc(
+    100% - 10px
+  ); /* Ajustez la largeur pour être légèrement inférieure à celle du commentaire original */
   padding: 0.5rem 1rem; /* Utilisez le même padding que celui du commentaire original pour la cohérence */
   margin-left: 10px; /* Décale légèrement à droite */
   margin-bottom: 0.25rem; /* Assure un petit espace en dessous */
@@ -192,14 +203,11 @@
   background-color: #cfd8dc; /* Fond blanc pour indiquer l'état d'édition */
   box-sizing: border-box; /* S'assure que la largeur et la hauteur incluent le padding et la bordure */
   resize: none; /* Empêche le redimensionnement pour les éléments textarea */
-  
 }
 
 .commentEdit:focus {
   outline: 2px solid #4d90fe; /* Indique le focus avec une bordure bleue */
 }
-
-
 
 .editContent:focus {
   box-shadow: inset 0 0 0 2px #4d90fe; /* Bleu clair pour le focus */
@@ -223,7 +231,7 @@
 }
 
 .userLink:hover {
-  color: #ff5722; /* Couleur du texte lors du survol */
+  color: #ed1c24; /* Couleur du texte lors du survol */
 }
 .userNameLink {
   text-decoration: none; /* Supprimez le soulignement par défaut */
@@ -232,11 +240,11 @@
 }
 
 .userNameLink:hover {
-  color: #ff5722; /* Couleur du texte lors du survol */
+  color: #ed1c24; /* Couleur du texte lors du survol */
 }
 .likesCount {
   cursor: pointer;
-  color: #007bff; /* Couleur bleue pour indiquer qu'il est cliquable, ajustez selon votre design */
+  color: #879eb9; /* Couleur bleue pour indiquer qu'il est cliquable, ajustez selon votre design */
   text-decoration: underline; /* Souligner pour montrer qu'il est interactif */
   display: inline-block;
   margin-bottom: 8px; /* Ajuster selon le besoin */
@@ -244,7 +252,7 @@
 }
 
 .likesCount:hover {
-  color: #0056b3; /* Couleur plus foncée au survol */
+  color: #ed1c24; /* Couleur plus foncée au survol */
 }
 
 .savePostButton {
@@ -252,7 +260,7 @@
   border: none;
   cursor: pointer;
   font-size: 1rem; /* Adjust size as needed */
-  color: #191F43; /* Choose a color that fits your theme */
+  color: #191f43; /* Choose a color that fits your theme */
 }
 
 .savePostButton:hover {

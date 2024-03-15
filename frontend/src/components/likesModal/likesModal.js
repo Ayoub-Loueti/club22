@@ -6,7 +6,9 @@ import { NavLink } from 'react-router-dom'; // Assurez-vous d'importer NavLink d
 const LikesModal = ({ isOpen, onRequestClose, likes }) => {
       const defaultPhotoUrl =
         'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg';
-
+const capitalizeFirstLetter = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
   return (
     <Modal
       isOpen={isOpen}
@@ -34,7 +36,9 @@ const LikesModal = ({ isOpen, onRequestClose, likes }) => {
               to={`/profil/${like.utilisateur.id_utilisateur}`}
               className="likes-modal-user-link"
             >
-              {like.utilisateur.prenom} {like.utilisateur.nom}
+              {`${capitalizeFirstLetter(
+                like.utilisateur.prenom
+              )} ${capitalizeFirstLetter(like.utilisateur.nom)}`}
             </NavLink>
           </li>
         ))}

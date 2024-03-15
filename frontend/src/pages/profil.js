@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { FaEdit } from 'react-icons/fa';
+import { FaEdit ,FaBookmark} from 'react-icons/fa';
 import Navbar from '../components/navbar/navbar';
 import NavbarHaut from '../components/navbar/navbarHaut';
 import '../assets/profil.css';
@@ -125,13 +125,20 @@ function Profil() {
     <>
       <Navbar />
       <NavbarHaut />
-      <button
-          className="open-saved-posts-btn" // Style this button as needed
+      <div className="view-saved-posts-container">
+        <button
+          className="open-saved-posts-btn"
           onClick={() => setModalOpened(true)}
         >
-          View Saved Posts
+          <FaBookmark className="saved-posts-icon" />
+          <span>ENREGISTREMENTS</span>
         </button>
-        <PostSavedModal modalOpened={modalOpened} setModalOpened={setModalOpened} />
+      </div>
+
+      <PostSavedModal
+        modalOpened={modalOpened}
+        setModalOpened={setModalOpened}
+      />
       <div className="profile-container">
         <div className="profile-header">
           <img
@@ -271,7 +278,6 @@ function Profil() {
         <div className="separator"></div>
       </div>
       <PostProfile />
-      
     </>
   );
 }
