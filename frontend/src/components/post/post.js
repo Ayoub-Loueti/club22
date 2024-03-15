@@ -551,10 +551,12 @@ const Post = (props) => {
                     >
                       <FontAwesomeIcon icon={faTrash} className="fa-solid" />
                     </button>
+                    
                   </div>
                 ))}
             </div>
           </div>
+          
         ))}
       </div>
     </div>

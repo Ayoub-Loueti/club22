@@ -6,6 +6,7 @@ const Notification = require('../models/NotificationModel');
 const Image = require('../models/ImageModel');
 const Enregistrement = require('../models/EnregistrementModel');
 const multiImageUpload = require('../middleware/multiImageUpload');
+const Reponse = require('../models/ReponseModel');
 
 exports.createPost = (req, res) => {
   multiImageUpload(req, res, async (error) => {
@@ -685,5 +686,94 @@ exports.checkIfPostIsSaved = async (req, res) => {
         return res.status(500).json({ message: 'Error checking if post is saved', error: error.message });
     }
 };
+exports.createReponse = async (req, res) => {
+  const { contenu } = req.body;
+  const { id_cmntr } = req.params; // Assuming you're passing the comment ID in the route
+  const id_utilisateur = req.userId; // Set by your authentication middleware
 
+  try {
+    // Ensure the comment exists
+    const commentaire = await Commentaire.findByPk(id_cmntr, {
+      include: [
+        {
+          model: Post,
+          as: 'post',
+        },
+      ],
+    });
+    if (!commentaire) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
+    // Create the response
+    const newReponse = await Reponse.create({
+      contenu,
+      id_cmntr,
+      id_utilisateur,
+    });
+
+    const postOwnerId = commentaire.post.id_utilisateur;
+    const commentOwnerId = commentaire.id_utilisateur;
+
+    // No notification if user replies to their own comment on their own post
+    if (id_utilisateur === postOwnerId && id_utilisateur === commentOwnerId) {
+      // No operation needed
+    } else {
+      // Notify comment owner if the commenter is not the responder
+      if (id_utilisateur !== commentOwnerId) {
+        await Notification.create({
+          id_post: commentaire.id_post,
+          type: 'reponse',
+          depuis: 'commentaire',
+          id_utilisateur,
+          id_own_post: postOwnerId,
+          id_own_cmntr: commentOwnerId,
+          isRead: false,
+          date_notif: new Date(),
+          id_reponse: newReponse.id_reponse,
+        });
+
+        // Increment notification count for the comment owner
+        await Utilisateur.increment('nbr_notifs', {
+          by: 1,
+          where: { id_utilisateur: commentOwnerId },
+        });
+      }
+
+      // Notify post owner if the responder is not the post owner
+      // and it's a different notification than for the comment owner
+      if (id_utilisateur !== postOwnerId && commentOwnerId !== postOwnerId) {
+        await Notification.create({
+          id_post: commentaire.id_post,
+          type: 'reponse',
+          depuis: 'post',
+          id_utilisateur,
+          id_own_post: postOwnerId,
+          id_own_cmntr: 0, // No specific comment owner for post notifications
+          isRead: false,
+          date_notif: new Date(),
+          id_reponse: newReponse.id_reponse,
+        });
+
+        // Increment notification count for the post owner
+        await Utilisateur.increment('nbr_notifs', {
+          by: 1,
+          where: { id_utilisateur: postOwnerId },
+        });
+      }
+    }
+
+    res
+      .status(201)
+      .json({ message: 'Response created successfully', reponse: newReponse });
+  } catch (error) {
+    console.error('Error creating response and notifications:', error);
+    res
+      .status(500)
+      .json({
+        message: 'Error creating response and notifications',
+        error: error.message,
+      });
+  }
+};
 module.exports = exports;

@@ -2,32 +2,48 @@ const Notification = require('../models/NotificationModel');
 const Utilisateur = require('../models/UtilisateurModel');
 const Post = require('../models/PostModel');
 
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 exports.getNotificationsForUser = async (req, res) => {
-    const userId = req.userId; // Assuming this is set from your authentication middleware
+  const userId = req.userId; // Assuming this is set from your authentication middleware
 
-    try {
-        const notifications = await Notification.findAll({
-            where: { id_own_post: userId },
-            include: [
-                {
-                    model: Utilisateur,
-                    as: 'utilisateur',
-                    attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-                },
-                {
-                    model: Post,
-                    as: 'post',
-                    attributes: ['id_post', 'contenu'],
-                }
-            ],
-            order: [['date_notif', 'DESC']]
-        });
+  try {
+    // Fetch all potential notifications for the user
+    const notifications = await Notification.findAll({
+      where: {
+        [Sequelize.Op.or]: [{ id_own_cmntr: userId }, { id_own_post: userId }],
+      },
+      include: [
+        {
+          model: Utilisateur,
+          as: 'utilisateur',
+          attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+        },
+        {
+          model: Post,
+          as: 'post',
+          attributes: ['id_post', 'contenu'],
+        },
+      ],
+      order: [['date_notif', 'DESC']],
+    });
 
-        res.status(200).json(notifications);
-    } catch (error) {
-        console.error('Error fetching notifications:', error);
-        res.status(500).json({ message: 'Error fetching notifications', error });
-    }
+    // Filter out notifications based on the new condition
+    const filteredNotifications = notifications.filter(
+      (notification) =>
+        !(
+          notification.id_own_cmntr > 0 &&
+          notification.id_own_cmntr !== userId &&
+          notification.id_own_post === userId
+        )
+    );
+
+    // Return the filtered notifications
+    res.status(200).json(filteredNotifications);
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    res.status(500).json({ message: 'Error fetching notifications', error });
+  }
 };
 
 exports.updateNotificationStatus = async (req, res) => {
