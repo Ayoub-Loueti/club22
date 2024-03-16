@@ -2,47 +2,42 @@ const Notification = require('../models/NotificationModel');
 const Utilisateur = require('../models/UtilisateurModel');
 const Post = require('../models/PostModel');
 
-const Sequelize = require('sequelize');
-const Op = Sequelize.Op;
 exports.getNotificationsForUser = async (req, res) => {
-  const userId = req.userId; // Assuming this is set from your authentication middleware
+  const userId = req.userId; // Assuming req.userId holds the ID of the currently authenticated user
 
   try {
-    // Fetch all potential notifications for the user
-    const notifications = await Notification.findAll({
-      where: {
-        [Sequelize.Op.or]: [{ id_own_cmntr: userId }, { id_own_post: userId }],
-      },
-      include: [
-        {
-          model: Utilisateur,
-          as: 'utilisateur',
-          attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-        },
-        {
-          model: Post,
-          as: 'post',
-          attributes: ['id_post', 'contenu'],
-        },
-      ],
-      order: [['date_notif', 'DESC']],
-    });
+      // Fetch all notifications for the user, including relevant details from related models if necessary
+      const notifications = await Notification.findAll({
+          where: { id_notifier: userId },
+          include: [
+              {
+                  model: Post,
+                  as: 'post',
+                  include: [
+                      {
+                          model: Utilisateur,
+                          as: 'utilisateur',
+                          attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+                      }
+                  ]
+              },
+              {
+                  model: Utilisateur,
+                  as: 'utilisateur', // Assuming there's a relation that allows fetching the user who triggered the notification
+                  attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+              }
+          ],
+          order: [['date_notif', 'DESC']] // Order by notification date, descending
+      });
 
-    // Filter out notifications based on the new condition
-    const filteredNotifications = notifications.filter(
-      (notification) =>
-        !(
-          notification.id_own_cmntr > 0 &&
-          notification.id_own_cmntr !== userId &&
-          notification.id_own_post === userId
-        )
-    );
+      if (!notifications.length) {
+          return res.status(404).json({ message: 'No notifications found' });
+      }
 
-    // Return the filtered notifications
-    res.status(200).json(filteredNotifications);
+      return res.status(200).json(notifications);
   } catch (error) {
-    console.error('Error fetching notifications:', error);
-    res.status(500).json({ message: 'Error fetching notifications', error });
+      console.error('Error fetching notifications for user:', error);
+      return res.status(500).json({ message: 'Error fetching notifications', error: error.message });
   }
 };
 

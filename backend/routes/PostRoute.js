@@ -23,10 +23,8 @@ router.post('/posts/:id_post/enregistrement', authenticate, postController.creat
 router.get('/enregistrements', authenticate, postController.getEnregistrementsByUser);
 router.delete('/posts/:id_post/enregistrement', authenticate, postController.deleteEnregistrement);
 router.get('/posts/:id_post/is-saved', authenticate, postController.checkIfPostIsSaved);
-router.post(
-  '/comments/:id_cmntr/responses',
-  authenticate,
-  postController.createReponse
-);
+router.post('/comments/:id_cmntr/responses',authenticate,postController.createReponse);
+router.delete('/replies/:id_reponse', authenticate, postController.deleteReply);
+router.put('/replies/:id_reponse', authenticate, postController.updateReply);
 
 module.exports = router;

@@ -19,12 +19,9 @@ const NotificationModel = sequelize.define(
         key: 'id_post',
       },
     },
-    type: {
-      type: DataTypes.ENUM('like', 'comment', 'reponse'),
+    notifier: {
+      type: DataTypes.STRING,
       allowNull: false,
-    },
-    depuis: {
-      type: DataTypes.ENUM('post', 'commentaire'),
     },
     id_reponse: {
       type: DataTypes.INTEGER,
@@ -60,8 +57,12 @@ const NotificationModel = sequelize.define(
     id_like: {
       type: DataTypes.INTEGER,
     },
-    id_own_cmntr: {
+    id_notifier: {
       type: DataTypes.INTEGER,
+    },
+    type: {
+      type: DataTypes.ENUM('like', 'comment'),
+      allowNull: false,
     },
   },
   {

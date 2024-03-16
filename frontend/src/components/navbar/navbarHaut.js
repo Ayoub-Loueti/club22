@@ -115,18 +115,7 @@ function NavbarHaut() {
               </strong>
               <span>
                 {' '}
-                {notification.type === 'comment' &&
-                notification.depuis === 'post'
-                  ? ' a commenté votre publication'
-                  : notification.type === 'reponse' &&
-                    notification.depuis === 'commentaire'
-                  ? ' a répondu à votre commentaire'
-                  : notification.type === 'reponse' &&
-                    notification.depuis === 'post'
-                  ? ' a répondu à un commentaire de votre publication'
-                  : notification.type === 'like'
-                  ? ' a aimé votre publication'
-                  : ''}{' '}
+                {notification.notifier }{' '}
               </span>
             </div>
             <div
