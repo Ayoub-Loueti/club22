@@ -238,7 +238,11 @@ exports.getPostByIdWithDetails = async (req, res) => {
                 attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
             }],
         });
-
+        const images = await Image.findAll({
+          where: {
+            id_post: post.id_post,
+          },
+        });
         // Manually fetch likes for the post
         const likes = await Likes.findAll({
             where: { id_post: postId },
@@ -253,7 +257,7 @@ exports.getPostByIdWithDetails = async (req, res) => {
         const postWithDetails = post.toJSON();
         postWithDetails.commentaires = comments;
         postWithDetails.likes = likes;
-
+        postWithDetails.lesImages = images;
         return res.status(200).json(postWithDetails);
     } catch (error) {
         console.error('Error fetching post by ID with details:', error);
@@ -364,7 +368,7 @@ exports.toggleLikePost = async (req, res) => {
 
               // Decrement the notification count for the post owner if greater than zero
               const postOwner = await Utilisateur.findByPk(post.id_utilisateur);
-              if (postOwner && postOwner.nbr_notifs > 0) {
+              if (postOwner && postOwner.nbr_notifs > 0 && isRead === 0) {
                   await postOwner.decrement('nbr_notifs', { by: 1 });
               }
           }
@@ -519,7 +523,7 @@ exports.deleteComment = async (req, res) => {
       // If the comment is associated with a post, check the notification count before decrementing for the post owner
       if (comment.post && comment.post.id_utilisateur) {
           const postOwner = await Utilisateur.findByPk(comment.post.id_utilisateur);
-          if (postOwner && postOwner.nbr_notifs > 0) {
+          if (postOwner && postOwner.nbr_notifs > 0 && isRead === 0) {
               // Only decrement if nbr_notifs is greater than 0
               await postOwner.decrement('nbr_notifs', { by: 1 });
           }
@@ -808,7 +812,7 @@ exports.deleteReply = async (req, res) => {
       for (let userId of affectedUserIds) {
           // Fetch user to check current `nbr_notifs`
           const user = await Utilisateur.findByPk(userId);
-          if (user && user.nbr_notifs > 0) {
+          if (user && user.nbr_notifs > 0 && isRead === 0) {
               // Decrement `nbr_notifs` if it's greater than 0
               await Utilisateur.decrement('nbr_notifs', { by: 1, where: { id_utilisateur: userId } });
           }
