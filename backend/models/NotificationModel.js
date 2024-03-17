@@ -64,6 +64,12 @@ const NotificationModel = sequelize.define(
       type: DataTypes.ENUM('like', 'comment'),
       allowNull: false,
     },
+    id_likeCom: {
+      type: DataTypes.INTEGER,
+    },
+    id_likeRep: {
+      type: DataTypes.INTEGER,
+    },
   },
   {
     tableName: 'notifications',

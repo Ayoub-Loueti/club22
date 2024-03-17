@@ -26,10 +26,14 @@ const ReponseModel = sequelize.define(
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: 'commentaire', 
+          model: 'commentaires', 
           key: 'id_cmntr', 
         },
-      }
+      },
+      nbr_likeRep: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+      },
   },
   {
     tableName: 'reponse',

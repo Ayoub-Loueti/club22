@@ -26,5 +26,8 @@ router.get('/posts/:id_post/is-saved', authenticate, postController.checkIfPostI
 router.post('/comments/:id_cmntr/responses',authenticate,postController.createReponse);
 router.delete('/replies/:id_reponse', authenticate, postController.deleteReply);
 router.put('/replies/:id_reponse', authenticate, postController.updateReply);
+router.post('/comment/:commentId/toggle-like', authenticate, postController.toggleLikeComment);
+router.post('/reponse/:rponseId/toggle-like', authenticate, postController.toggleLikeReponse);
+
 
 module.exports = router;

@@ -7,6 +7,8 @@ const Image = require('../models/ImageModel');
 const Enregistrement = require('../models/EnregistrementModel');
 const multiImageUpload = require('../middleware/multiImageUpload');
 const Reponse = require('../models/ReponseModel');
+const LikeCom = require('../models/LikeComModel');
+const LikeRep = require('../models/LikeRepModel');
 
 exports.createPost = (req, res) => {
   multiImageUpload(req, res, async (error) => {
@@ -368,7 +370,7 @@ exports.toggleLikePost = async (req, res) => {
 
               // Decrement the notification count for the post owner if greater than zero
               const postOwner = await Utilisateur.findByPk(post.id_utilisateur);
-              if (postOwner && postOwner.nbr_notifs > 0 && isRead === 0) {
+              if (postOwner && postOwner.nbr_notifs > 0 ) {
                   await postOwner.decrement('nbr_notifs', { by: 1 });
               }
           }
@@ -523,7 +525,7 @@ exports.deleteComment = async (req, res) => {
       // If the comment is associated with a post, check the notification count before decrementing for the post owner
       if (comment.post && comment.post.id_utilisateur) {
           const postOwner = await Utilisateur.findByPk(comment.post.id_utilisateur);
-          if (postOwner && postOwner.nbr_notifs > 0 && isRead === 0) {
+          if (postOwner && postOwner.nbr_notifs > 0) {
               // Only decrement if nbr_notifs is greater than 0
               await postOwner.decrement('nbr_notifs', { by: 1 });
           }
@@ -812,7 +814,7 @@ exports.deleteReply = async (req, res) => {
       for (let userId of affectedUserIds) {
           // Fetch user to check current `nbr_notifs`
           const user = await Utilisateur.findByPk(userId);
-          if (user && user.nbr_notifs > 0 && isRead === 0) {
+          if (user && user.nbr_notifs > 0 ) {
               // Decrement `nbr_notifs` if it's greater than 0
               await Utilisateur.decrement('nbr_notifs', { by: 1, where: { id_utilisateur: userId } });
           }
@@ -855,5 +857,189 @@ exports.updateReply = async (req, res) => {
       return res.status(500).json({ message: 'Error updating reply', error: error.message });
   }
 };
+
+exports.toggleLikeComment = async (req, res) => {
+  const commentId = req.params.commentId; // Extract the post ID from the path
+  const id_utilisateur = req.userId; // Extract user ID set by your authentication middleware
+
+  try {
+      const comment = await Commentaire.findByPk(commentId, {
+        include: [{
+          model: Utilisateur,
+          as: 'utilisateur'
+        },{
+          model: Post,
+          as: 'post'
+        }
+      ]
+      });
+      if (!comment) {
+          return res.status(404).json({ message: 'Comment not found' });
+      }
+
+      const existingLike = await LikeCom.findOne({
+          where: {
+              id_cmntr: commentId,
+              id_utilisateur: id_utilisateur
+          }
+      });
+
+      if (existingLike) {
+          // If a like exists, unlike the post and remove notification
+          await existingLike.destroy();
+          await comment.decrement('nbr_likeCom');
+
+          // Find and destroy the like notification
+          const likeNotification = await Notification.findOne({
+              where: {
+                  id_post: comment.id_post,
+                  id_utilisateur: id_utilisateur,
+                  id_likeCom: existingLike.id_likeCom,
+              }
+          });
+          if (likeNotification) {
+              await likeNotification.destroy();
+
+              // Decrement the notification count for the post owner if greater than zero
+              const commentOwner = await Utilisateur.findByPk(comment.id_utilisateur);
+              if (commentOwner && commentOwner.nbr_notifs > 0 ) {
+                  await commentOwner.decrement('nbr_notifs', { by: 1 });
+              }
+          }
+
+          return res.status(200).json({ message: 'Comment unliked successfully' });
+      } else {
+          // If no like exists, like the post
+          const like = await LikeCom.create({
+              id_cmntr: commentId,
+              id_utilisateur: id_utilisateur,
+              date_likeCom: new Date()
+          });
+          await comment.increment('nbr_likeCom');
+
+          // Do not create a notification if the user liking is the post owner
+          if (id_utilisateur !== comment.id_utilisateur) {
+              // Create a like notification
+              await Notification.create({
+                  id_post: comment.id_post,
+                  notifier: 'a aimé votre commentaire',
+                  id_own_post: comment.post.id_utilisateur,
+                  id_utilisateur: id_utilisateur,
+                  date_notif: new Date(),
+                  id_likeCom: like.id_likeCom,
+                  id_notifier: comment.id_utilisateur, // Assuming id_notifier is the user being notified
+                  type: 'like'
+              });
+
+              // Increment the notification count for the post owner
+              const postOwner = await Utilisateur.findByPk(comment.id_utilisateur);
+              if (postOwner) {
+                  await postOwner.increment('nbr_notifs', { by: 1 });
+              }
+          }
+
+          return res.status(200).json({ message: 'Comment liked successfully' });
+      }
+  } catch (error) {
+      console.error('Error toggling Comment like:', error);
+      return res.status(500).json({ message: 'Error toggling comment like', error });
+  }
+};
+
+exports.toggleLikeReponse = async (req, res) => {
+  const rponseId = req.params.rponseId; // Extract the response ID from the path
+  const id_utilisateur = req.userId; // Extract user ID set by your authentication middleware
+
+  try {
+    // Find the response including the user who made it and the comment it belongs to
+    const reponse = await Reponse.findByPk(rponseId, {
+      include: [{
+        model: Utilisateur,
+        as: 'utilisateur'
+      }, {
+        model: Commentaire,
+        as: 'commentaire',
+        include: [{
+          model: Post,
+          as: 'post'
+        }]
+      }]
+    });
+
+    if (!reponse) {
+      return res.status(404).json({ message: 'Response not found' });
+    }
+
+    // Check if there's an existing like by this user on this response
+    const existingLike = await LikeRep.findOne({
+      where: {
+        id_reponse: rponseId,
+        id_utilisateur: id_utilisateur
+      }
+    });
+
+    if (existingLike) {
+      // If a like exists, unlike the response and remove the like
+      await existingLike.destroy();
+      await reponse.decrement('nbr_likeRep');
+
+      // Find and destroy the like notification associated with this like
+      const likeNotification = await Notification.findOne({
+        where: {
+          id_post: reponse.commentaire.id_post,
+          id_utilisateur: id_utilisateur,
+          id_likeRep: existingLike.id_likeRep,
+        }
+      });
+      if (likeNotification) {
+        await likeNotification.destroy();
+
+        // Decrement the notification count for the comment owner if greater than zero
+        const commentOwner = await Utilisateur.findByPk(reponse.id_utilisateur);
+        if (commentOwner && commentOwner.nbr_notifs > 0) {
+          await commentOwner.decrement('nbr_notifs', { by: 1 });
+        }
+      }
+
+      return res.status(200).json({ message: 'Response unliked successfully' });
+    } else {
+      // If no like exists, like the response
+      const like = await LikeRep.create({
+        id_reponse: rponseId,
+        id_utilisateur: id_utilisateur,
+        date_likeRep: new Date()
+      });
+      await reponse.increment('nbr_likeRep');
+
+      // Only notify if the user liking the response is not the comment or post owner
+      if (id_utilisateur !== reponse.id_utilisateur ) {
+        // Create a like notification
+        await Notification.create({
+          id_post: reponse.commentaire.id_post,
+          notifier: 'a aimé votre réponse',
+          id_utilisateur: id_utilisateur,
+          id_own_post:reponse.commentaire.post.id_utilisateur,
+          date_notif: new Date(),
+          id_likeRep: like.id_likeRep,
+          id_notifier: reponse.id_utilisateur, // Notify the response creator
+          type: 'like'
+        });
+
+        // Increment the notification count for the response owner
+        const responseOwner = await Utilisateur.findByPk(reponse.id_utilisateur);
+        if (responseOwner) {
+          await responseOwner.increment('nbr_notifs', { by: 1 });
+        }
+      }
+
+      return res.status(200).json({ message: 'Response liked successfully' });
+    }
+  } catch (error) {
+    console.error('Error toggling response like:', error);
+    return res.status(500).json({ message: 'Error toggling response like', error: error.message });
+  }
+};
+
+
 
 module.exports = exports;
