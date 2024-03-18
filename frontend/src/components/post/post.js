@@ -37,6 +37,10 @@ const Post = (props) => {
   const [editCommentContent, setEditCommentContent] = useState('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isPostSaved, setIsPostSaved] = useState(false);
+  const [editingResponseId, setEditingResponseId] = useState(null);
+  const [editedContent, setEditedContent] = useState('');
+  const [responseContent, setResponseContent] = useState('');
+  const [commentIdToRespondTo, setCommentIdToRespondTo] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('login');
@@ -379,6 +383,113 @@ const Post = (props) => {
     </NavLink>
   </span>;
 
+const toggleLikeComment = async (commentId) => {
+  try {
+    // Assuming you have the token stored in the localStorage after login
+    const token = JSON.parse(localStorage.getItem('login'))?.token;
+    const response = await axios.post(
+      `http://localhost:5000/comment/${commentId}/toggle-like`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    // Log the response or handle the state update as needed
+    console.log(response.data);
+    // You might want to update your state here to reflect the like change
+    // For example:
+    // setComments(comments.map(comment => 
+    //   comment.id_cmntr === commentId 
+    //   ? { ...comment, isLikedByCurrentUser: !comment.isLikedByCurrentUser } 
+    //   : comment
+    // ));
+  } catch (error) {
+    console.error('Error toggling like:', error);
+  }
+};
+
+const toggleLikeResponse = async (responseId) => {
+  try {
+    // Assuming you have the token stored in the localStorage after login
+    const token = JSON.parse(localStorage.getItem('login'))?.token;
+    const response = await axios.post(
+      `http://localhost:5000/reponse/${responseId}/toggle-like`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    // Log the response or handle the state update as needed
+    console.log(response.data);
+  } catch (error) {
+    console.error('Error toggling like on response:', error);
+  }
+};
+
+const startEditing = (response) => {
+  setEditingResponseId(response.id_reponse);
+  setEditedContent(response.contenu);
+};
+
+// Function to save the edited response
+const saveEditedResponse = async (responseId) => {
+  // Ensure that there is content to save
+  if (!editedContent.trim()) return;
+
+  try {
+    // Retrieve the token
+    const token = JSON.parse(localStorage.getItem('login'))?.token;
+    if (!token) {
+      console.error('Authentication token is not available.');
+      // You might want to handle the redirection to the login page here
+      return;
+    }
+
+    // Make the PUT request to the server with the edited content
+    const response = await axios.put(
+      `http://localhost:5000/replies/${responseId}`, // Ensure this is the correct endpoint for updating a response
+      { contenu: editedContent }, // Make sure to send the updated content in the format expected by the server
+      { headers: { Authorization: `Bearer ${token}` } } // Include the Authorization header with the token
+    );
+
+    // If the server responds without errors, update the state accordingly
+    console.log(response.data);
+    setEditingResponseId(null);
+    setEditedContent('');
+    
+  } catch (error) {
+    console.error('Error updating the response:', error.response || error);
+    // If there's an error response from the server, you might want to handle it here
+  }
+};
+
+const handleResponseSubmit = async (e, commentId) => {
+  e.preventDefault(); // Prevent the default form submission behavior
+  try {
+    const response = await axios.post(
+      `http://localhost:5000/comments/${commentId}/responses`,
+      { contenu: responseContent },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    setResponseContent(''); // Clear the response input field
+    setCommentIdToRespondTo(null); // Reset the comment ID being responded to
+    reloadComments(); // Reload comments to include the new response
+  } catch (error) {
+    console.error('Error submitting the response:', error);
+    // Handle submission error (e.g., show an error message to the user)
+  }
+};
+
+const handleDeleteResponse = async (responseId) => {
+  try {
+    const token = JSON.parse(localStorage.getItem('login'))?.token;
+    await axios.delete(`http://localhost:5000/replies/${responseId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    reloadComments();
+  } catch (error) {
+    console.error('Error deleting the response:', error);
+    // Optionally show an error message to the user
+  }
+};
+
   return (
     <div className="Post">
       <div className="postHeader">
@@ -526,6 +637,26 @@ const Post = (props) => {
                   <p className="commentText">{comment.cmntr}</p>
                 )}
               </div>
+              {comment.nbr_likeCom}
+                    <button onClick={() => toggleLikeComment(comment.id_cmntr)}>
+              Like
+            </button>
+            {commentIdToRespondTo === comment.id_cmntr && (
+        <form onSubmit={(e) => handleResponseSubmit(e, comment.id_cmntr)} className="responseForm">
+          <input
+            type="text"
+            value={responseContent}
+            onChange={(e) => setResponseContent(e.target.value)}
+            placeholder="Write a response..."
+            className="responseInput"
+            required
+          />
+          <button type="submit" className="responseSubmitButton">Reply</button>
+        </form>
+      )}
+      <button onClick={() => setCommentIdToRespondTo(comment.id_cmntr)} className="replyToCommentButton">
+        Reply
+      </button>
               {comment.utilisateur.id_utilisateur.toString() ===
                 userId.toString() &&
                 (editingCommentId === comment.id_cmntr ? (
@@ -553,7 +684,39 @@ const Post = (props) => {
                     </button>
                     
                   </div>
+                  
                 ))}
+                            {comment.reponses.map((reponse) => (
+              <div key={reponse.id_reponse} className="response">
+                <div className="commentDetails">
+                  <img src={`http://localhost:5000/${reponse.utilisateur.photo}`} alt="Profile" className="commentUserPhoto" />
+                  <span className="userNameComment">{reponse.utilisateur.prenom} {reponse.utilisateur.nom}</span>
+                  {editingResponseId === reponse.id_reponse  ? (
+                    <input
+                      type="text"
+                      value={editedContent}
+                      onChange={(e) => setEditedContent(e.target.value)}
+                      className="editResponseInput"
+                    />
+                  ) : (
+                    <p className="commentText">{reponse.contenu}</p>
+                  )}
+                </div>
+                <div className="responseActions">
+                  <span>{reponse.nbr_likeRep} Likes</span>
+                  <button onClick={() => toggleLikeResponse(reponse.id_reponse)}>Like</button>
+                  {reponse.utilisateur.id_utilisateur.toString() === userId.toString()  &&
+                  (editingResponseId === reponse.id_reponse ? (
+                    <button onClick={() => saveEditedResponse(reponse.id_reponse)}>Save</button>
+                  ) : (
+                    <>
+      <button onClick={() => startEditing(reponse)}>Edit</button>
+      <button onClick={() => handleDeleteResponse(reponse.id_reponse)}>Delete</button>
+    </>
+                  ))}
+                </div>
+              </div>
+            ))}
             </div>
           </div>
           

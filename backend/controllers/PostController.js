@@ -196,23 +196,40 @@ exports.getLikesCount = async (req, res) => {
 
 // Fetch comments for a post
 exports.getComments = async (req, res) => {
-    const postId = req.params.postId; // Extract the post ID from the path
+  const postId = req.params.postId; // Extract the post ID from the path
 
-    try {
-        const comments = await Commentaire.findAll({
-            where: { id_post: postId },
-            include: [{
-                model: Utilisateur,
-                as: 'utilisateur',
-                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-            }],
-        });
+  try {
+      const commentss = await Commentaire.findAll({
+          where: { id_post: postId },
+          include: [{
+              model: Utilisateur,
+              as: 'utilisateur',
+              attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+          }],
+      });
 
-        return res.status(200).json({ comments });
-    } catch (error) {
-        console.error('Error fetching comments:', error);
-        return res.status(500).json({ message: 'Error fetching comments', error: error.message });
-    }
+const comments = await Promise.all(
+commentss.map(async (comment) => {
+      const postJson = comment.toJSON();
+      const reponses = await Reponse.findAll({
+        where: { id_cmntr: comment.id_cmntr },
+        include: [
+          {
+            model: Utilisateur,
+            as: 'utilisateur',
+            attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+          },
+        ],
+      });
+      postJson.reponses = reponses;
+      return postJson;
+    })
+  );
+      return res.status(200).json({ comments });
+  } catch (error) {
+      console.error('Error fetching comments:', error);
+      return res.status(500).json({ message: 'Error fetching comments', error: error.message });
+  }
 };
 
 
