@@ -10,7 +10,7 @@ import LogoutButton from './pages/logoutButton';
 import InsererNom from './pages/auth/insererNom';
 import Load from './pages/auth/load';
 import TousLesUtilisateurs from './pages/admin/tousLesUtilisateurs';
-import Profil from './pages/profil';
+import Profil from './pages/profil/profil';
 import ListClient from "./pages/admin/listClient";
 import ListEmploye from "./pages/admin/listEmploye";
 import Navbar from './components/navbar/navbar';

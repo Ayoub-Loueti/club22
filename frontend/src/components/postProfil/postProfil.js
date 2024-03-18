@@ -34,12 +34,20 @@ const PostProfile = () => {
 
   return (
     <div className="PostProfile">
-      {loggedInUserId === id && <PostShare />}
-      {posts.length > 0 ? (
-        <Posts posts={posts} />
-      ) : (
-        <p className="no-posts-message">This user does not have any posts.</p>
+      {loggedInUserId === id && (
+        <div className="PostShareContainer">
+          <PostShare />
+        </div>
       )}
+      <div className="PostsContainer">
+        {posts.length > 0 ? (
+          <Posts posts={posts} className="PostsProfile" />
+        ) : (
+          <p className="no-posts-message">
+            Cet utilisateur n'a aucune publication.
+          </p>
+        )}
+      </div>
     </div>
   );
 };
