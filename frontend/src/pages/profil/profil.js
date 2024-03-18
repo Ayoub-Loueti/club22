@@ -2,19 +2,19 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { FaEdit ,FaBookmark} from 'react-icons/fa';
-import Navbar from '../components/navbar/navbar';
-import NavbarHaut from '../components/navbar/navbarHaut';
-import '../assets/profil.css';
+import { FaEdit, FaBookmark, FaTrash } from 'react-icons/fa';
+import Navbar from '../../components/navbar/navbar';
+import NavbarHaut from '../../components/navbar/navbarHaut';
+import './profil.css';
 
-import PostProfile from '../components/postProfil/postProfil';
-import PostSavedModal from '../components/PostSavedModal/PostSavedModal'; // Adjust the import path as needed
+import PostProfile from '../../components/postProfil/postProfil';
+import PostSavedModal from '../../components/PostSavedModal/PostSavedModal'; // Adjust the import path as needed
 
 function Profil() {
   const { id } = useParams(); // Get user ID from URL
   const navigate = useNavigate();
   // Assuming 'login' is a JSON string that contains the token
-  const storedData = JSON.parse(localStorage.getItem('login')); 
+  const storedData = JSON.parse(localStorage.getItem('login'));
   const token = storedData?.token; // Retrieve the token without JSON.parse on the token itself
   const userId = JSON.parse(localStorage.getItem('userId')); // Assuming 'userId' is stored directly
   const isOwnProfile = userId?.toString() === id; // Safely check for equality
@@ -40,11 +40,14 @@ function Profil() {
     const fetchUserData = async () => {
       if (token && id) {
         try {
-          const response = await axios.get(`http://localhost:5000/profil/${id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`, // Use token directly
-            },
-          });
+          const response = await axios.get(
+            `http://localhost:5000/profil/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`, // Use token directly
+              },
+            }
+          );
           setUtilisateur(response.data.user);
           setEditValues({
             nom: response.data.user.nom,
@@ -53,22 +56,29 @@ function Profil() {
             description: response.data.user.description,
           });
         } catch (error) {
-          console.error("Erreur lors de la récupération des données de l'utilisateur", error);
-          Swal.fire('Erreur', 'Impossible de récupérer les données de l’utilisateur.', 'error');
+          console.error(
+            "Erreur lors de la récupération des données de l'utilisateur",
+            error
+          );
+          Swal.fire(
+            'Erreur',
+            'Impossible de récupérer les données de l’utilisateur.',
+            'error'
+          );
         }
       }
     };
     fetchUserData();
   }, [token, id]); // Dependency array
 
- const handleEditChange = (e) => {
-   const { name, value } = e.target;
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
 
-   if (name === 'description' && value.length > 50) return;
-   if ((name === 'nom' || name === 'prenom') && value.length > 15) return;
+    if (name === 'description' && value.length > 50) return;
+    if ((name === 'nom' || name === 'prenom') && value.length > 15) return;
 
-   setEditValues({ ...editValues, [name]: value });
- };
+    setEditValues({ ...editValues, [name]: value });
+  };
 
   const toggleEdit = (field) => {
     setEditing({ ...editing, [field]: !editing[field] });
@@ -79,8 +89,13 @@ function Profil() {
       console.error('La description ne peut pas dépasser 30 caractères');
       return;
     }
-    if ((field === 'nom' || field === 'prenom') && editValues[field].length > 15) {
-      console.error('Le nom et le prénom ne peuvent pas dépasser 11 caractères');
+    if (
+      (field === 'nom' || field === 'prenom') &&
+      editValues[field].length > 15
+    ) {
+      console.error(
+        'Le nom et le prénom ne peuvent pas dépasser 11 caractères'
+      );
       return;
     }
     try {
@@ -120,20 +135,64 @@ function Profil() {
       console.error('Error during the image upload', error);
     }
   };
+  const handleDeleteProfilePicture = async () => {
+    // Show confirmation dialog
+    Swal.fire({
+      title: 'Êtes-vous sûr(e) ?',
+      text: 'Vous ne pourrez pas revenir en arrière !',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, supprimer !',
+      cancelButtonText: 'Annuler',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // User confirmed the deletion
+        deleteProfilePicture(); // Proceed with the deletion
+      }
+    });
+  };
+
+  const deleteProfilePicture = async () => {
+    try {
+      const response = await axios.delete(
+        'http://localhost:5000/profile-picture',
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (response.status === 200) {
+        // Afficher un message de succès avant de recharger la page
+        Swal.fire({
+          title: 'Supprimée !',
+          text: 'Votre photo de profil a été supprimée.',
+          icon: 'success',
+          confirmButtonText: 'OK',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.reload(); // Recharge la page pour refléter les changements
+          }
+        });
+      }
+    } catch (error) {
+      console.error(
+        'Erreur lors de la suppression de la photo de profil :',
+        error
+      );
+      // Afficher un message d'erreur
+      Swal.fire(
+        'Erreur !',
+        "Votre photo de profil n'a pas pu être supprimée. Veuillez réessayer plus tard.",
+        'error'
+      );
+    }
+  };
 
   return (
     <>
       <Navbar />
       <NavbarHaut />
-      <div className="view-saved-posts-container">
-        <button
-          className="open-saved-posts-btn"
-          onClick={() => setModalOpened(true)}
-        >
-          <FaBookmark className="saved-posts-icon" />
-          <span>ENREGISTREMENTS</span>
-        </button>
-      </div>
 
       <PostSavedModal
         modalOpened={modalOpened}
@@ -170,12 +229,28 @@ function Profil() {
             ref={fileInputRef}
             style={{ display: 'none' }}
           />
+          {isOwnProfile && (
+            <FaTrash
+              className="delete-profile-picture-icon"
+              onClick={handleDeleteProfilePicture}
+            />
+          )}
           <h1>{`${utilisateur.prenom} ${utilisateur.nom} `}</h1>
         </div>
-
+        {isOwnProfile && (
+          <div className="view-saved-posts-container">
+            <button
+              className="open-saved-posts-btn"
+              onClick={() => setModalOpened(true)}
+            >
+              <FaBookmark className="saved-posts-icon" />
+              <span>ENREGISTREMENTS</span>
+            </button>
+          </div>
+        )}
         <div className="profile-bio">
           <h2>Description</h2>
-          {editing.description ? (
+          {editing.description && isOwnProfile ? (
             <textarea
               name="description"
               value={editValues.description}
@@ -184,8 +259,9 @@ function Profil() {
               className="edit-input-desc"
             />
           ) : (
-            <p onClick={() => toggleEdit('description')}>
-              {utilisateur.description}
+            <p onClick={() => isOwnProfile && toggleEdit('description')}>
+              {utilisateur.description ||
+                'Profil en cours de personnalisation!'}
             </p>
           )}
           {isOwnProfile && (
