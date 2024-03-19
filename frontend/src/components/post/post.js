@@ -26,6 +26,8 @@ const Post = (props) => {
 
   const token = JSON.parse(localStorage.getItem('login'))?.token;
   const [liked, setLiked] = useState(data.isLikedByCurrentUser);
+  const [comLiked, setComLiked] = useState(data.isComLikedByCurrentUser);
+  const [repLiked, setRepLiked] = useState(data.isRepLikedByCurrentUser);
   const [likes, setLikes] = useState(data.likesCount || 0);
   const [userInfo, setUserInfo] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -41,7 +43,11 @@ const Post = (props) => {
   const [editedContent, setEditedContent] = useState('');
   const [responseContent, setResponseContent] = useState('');
   const [commentIdToRespondTo, setCommentIdToRespondTo] = useState(null);
-
+  const [showReplyInputForCommentId, setShowReplyInputForCommentId] = useState(null);
+  const [visibleReplies, setVisibleReplies] = useState({});
+  const [likesModalVisible, setLikesModalVisible] = useState(false);
+  const [likesData, setLikesData] = useState([]);
+  
   useEffect(() => {
     const token = localStorage.getItem('login');
     const storedUserId = JSON.parse(localStorage.getItem('userId'));
@@ -306,6 +312,7 @@ const Post = (props) => {
       prevIndex === 0 ? data.lesImages.length - 1 : prevIndex - 1
     );
   };
+
   const reloadComments = async () => {
     try {
       const response = await axios.get(
@@ -319,6 +326,7 @@ const Post = (props) => {
       console.error('Error fetching comments:', error);
     }
   };
+  
   const [isLikesModalOpen, setIsLikesModalOpen] = useState(false);
   const showLikesModal = () => {
     setIsLikesModalOpen(true);
@@ -385,40 +393,53 @@ const Post = (props) => {
 
 const toggleLikeComment = async (commentId) => {
   try {
-    // Assuming you have the token stored in the localStorage after login
-    const token = JSON.parse(localStorage.getItem('login'))?.token;
     const response = await axios.post(
-      `http://localhost:5000/comment/${commentId}/toggle-like`,
-      {},
+      `http://localhost:5000/comment/${commentId}/toggle-like`, {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    // Log the response or handle the state update as needed
-    console.log(response.data);
-    // You might want to update your state here to reflect the like change
-    // For example:
-    // setComments(comments.map(comment => 
-    //   comment.id_cmntr === commentId 
-    //   ? { ...comment, isLikedByCurrentUser: !comment.isLikedByCurrentUser } 
-    //   : comment
-    // ));
+    reloadComments(); 
   } catch (error) {
-    console.error('Error toggling like:', error);
+    console.error('Error toggling like for comment:', error);
   }
 };
 
-const toggleLikeResponse = async (responseId) => {
+const toggleLikeResponse = async (commentId, responseId) => {
   try {
-    // Assuming you have the token stored in the localStorage after login
-    const token = JSON.parse(localStorage.getItem('login'))?.token;
-    const response = await axios.post(
-      `http://localhost:5000/reponse/${responseId}/toggle-like`,
-      {},
-      { headers: { Authorization: `Bearer ${token}` } }
+    // Toggle the like status in the backend
+    await axios.post(
+        `http://localhost:5000/reponse/${responseId}/toggle-like`, {},
+        { headers: { Authorization: `Bearer ${token}` } }
     );
-    // Log the response or handle the state update as needed
-    console.log(response.data);
+
+    // Fetch the updated likes count for the response
+    const likesCountResponse = await axios.get(
+        `http://localhost:5000/reponse/${responseId}/likesCount`,
+        { headers: { Authorization: `Bearer ${token}` } }
+    );
+    
+    // Update the state to reflect the change in the frontend
+    setComments(comments.map(comment => {
+        if (comment.id_cmntr === commentId) {
+            return {
+                ...comment,
+                reponses: comment.reponses.map(response => {
+                    if (response.id_reponse === responseId) {
+                        return {
+                            ...response,
+                            // Toggle based on the assumption the backend toggles the like status correctly
+                            isRepLikedByCurrentUser: !response.isRepLikedByCurrentUser,
+                            // Update with the new likes count fetched from the backend
+                            nbr_likeRep: likesCountResponse.data.likesCount
+                        };
+                    }
+                    return response;
+                })
+            };
+        }
+        return comment;
+    }));
   } catch (error) {
-    console.error('Error toggling like on response:', error);
+      console.error('Error toggling like on response:', error);
   }
 };
 
@@ -487,6 +508,38 @@ const handleDeleteResponse = async (responseId) => {
   } catch (error) {
     console.error('Error deleting the response:', error);
     // Optionally show an error message to the user
+  }
+};
+
+const toggleReplyInput = (commentId) => {
+  if (showReplyInputForCommentId === commentId) {
+    setShowReplyInputForCommentId(null); // Hide if already visible
+  } else {
+    setShowReplyInputForCommentId(commentId); // Show if not visible
+  }
+};
+
+const toggleRepliesVisibility = (commentId) => {
+  setVisibleReplies((prev) => ({
+    ...prev,
+    [commentId]: !prev[commentId],
+  }));
+};
+
+const fetchLikesAndOpenModal = async (id, type) => {
+  // Endpoint selection based on type (comment or response)
+  const endpoint = type === 'comment' 
+    ? `/comment/${id}/afficherLikes` 
+    : `/reponse/${id}/afficherLikes`;
+
+  try {
+    const response = await axios.get(`http://localhost:5000${endpoint}`, {
+      headers: { Authorization: `Bearer ${token}` }, // Assuming 'token' is defined in your component's scope
+    });
+    setLikesData(response.data.likes); // Update the state with the fetched likes
+    setLikesModalVisible(true); // Open the modal
+  } catch (error) {
+    console.error('Error fetching likes:', error);
   }
 };
 
@@ -595,7 +648,11 @@ const handleDeleteResponse = async (responseId) => {
         onRequestClose={() => setIsLikesModalOpen(false)}
         likes={data.likes}
       />
-
+<LikesModal 
+  isOpen={likesModalVisible} 
+  onRequestClose={() => setLikesModalVisible(false)} 
+  likes={likesData} 
+/>
       {showCommentForm && (
         <CommentForm
           postId={data.id_post}
@@ -637,10 +694,20 @@ const handleDeleteResponse = async (responseId) => {
                   <p className="commentText">{comment.cmntr}</p>
                 )}
               </div>
-              {comment.nbr_likeCom}
-                    <button onClick={() => toggleLikeComment(comment.id_cmntr)}>
-              Like
-            </button>
+              <div className="likesCount">
+              <span onClick={() => toggleLikeComment(comment.id_cmntr)}>
+  {comment.isComLikedByCurrentUser ? (
+    <span style={{ color: 'red', cursor: 'pointer' }}>❤️</span>
+  ) : (
+    <span style={{ color: 'grey', cursor: 'pointer' }}>🤍</span>
+  )}
+</span>
+
+<span onClick={() => fetchLikesAndOpenModal(comment.id_cmntr, 'comment')}>
+  {comment.nbr_likeCom} Likes
+</span>
+</div>
+
             {commentIdToRespondTo === comment.id_cmntr && (
         <form onSubmit={(e) => handleResponseSubmit(e, comment.id_cmntr)} className="responseForm">
           <input
@@ -654,9 +721,22 @@ const handleDeleteResponse = async (responseId) => {
           <button type="submit" className="responseSubmitButton">Reply</button>
         </form>
       )}
-      <button onClick={() => setCommentIdToRespondTo(comment.id_cmntr)} className="replyToCommentButton">
-        Reply
-      </button>
+     <span style={{cursor: 'pointer' }} onClick={() => toggleReplyInput(comment.id_cmntr)} className="replyEmoji">
+              💬
+            </span>
+            {showReplyInputForCommentId === comment.id_cmntr && (
+              <form onSubmit={(e) => handleResponseSubmit(e, comment.id_cmntr)} className="responseForm">
+                <input
+                  type="text"
+                  value={responseContent}
+                  onChange={(e) => setResponseContent(e.target.value)}
+                  placeholder="Write a response..."
+                  className="responseInput"
+                  required
+                />
+                <button type="submit" className="responseSubmitButton">Reply</button>
+              </form>
+            )}
               {comment.utilisateur.id_utilisateur.toString() ===
                 userId.toString() &&
                 (editingCommentId === comment.id_cmntr ? (
@@ -686,7 +766,15 @@ const handleDeleteResponse = async (responseId) => {
                   </div>
                   
                 ))}
-                            {comment.reponses.map((reponse) => (
+                 {comment.reponses && comment.reponses.length > 0 && (
+        <div>
+          <button onClick={() => toggleRepliesVisibility(comment.id_cmntr)}>
+            {visibleReplies[comment.id_cmntr] ? 'Hide Replies' : `Show Replies (${comment.reponses.length})`}
+          </button>
+        </div>
+      )}
+      {/* Conditionally render replies if they are visible */}
+      {visibleReplies[comment.id_cmntr] && comment.reponses.map((reponse) => (
               <div key={reponse.id_reponse} className="response">
                 <div className="commentDetails">
                   <img src={`http://localhost:5000/${reponse.utilisateur.photo}`} alt="Profile" className="commentUserPhoto" />
@@ -703,8 +791,19 @@ const handleDeleteResponse = async (responseId) => {
                   )}
                 </div>
                 <div className="responseActions">
-                  <span>{reponse.nbr_likeRep} Likes</span>
-                  <button onClick={() => toggleLikeResponse(reponse.id_reponse)}>Like</button>
+                <div className="likesCount">
+                <span onClick={() => toggleLikeResponse(comment.id_cmntr, reponse.id_reponse)}>
+  {reponse.isRepLikedByCurrentUser ? (
+    <span style={{ color: 'red', cursor: 'pointer' }}>❤️</span>
+  ) : (
+    <span style={{ color: 'grey', cursor: 'pointer' }}>🤍</span>
+  )}
+</span>
+
+<span onClick={() => fetchLikesAndOpenModal(reponse.id_reponse, 'reponse')}>
+  {reponse.nbr_likeRep} Likes
+</span>
+</div>
                   {reponse.utilisateur.id_utilisateur.toString() === userId.toString()  &&
                   (editingResponseId === reponse.id_reponse ? (
                     <button onClick={() => saveEditedResponse(reponse.id_reponse)}>Save</button>

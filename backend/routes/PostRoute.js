@@ -28,6 +28,10 @@ router.delete('/replies/:id_reponse', authenticate, postController.deleteReply);
 router.put('/replies/:id_reponse', authenticate, postController.updateReply);
 router.post('/comment/:commentId/toggle-like', authenticate, postController.toggleLikeComment);
 router.post('/reponse/:rponseId/toggle-like', authenticate, postController.toggleLikeReponse);
+router.get('/comment/:commentId/likesCount',authenticate,postController.getLikesComCount);
+router.get('/reponse/:reponseId/likesCount',authenticate,postController.getLikesRepCount);
 
+router.get('/comment/:commentId/afficherLikes', authenticate, postController.getUsersWhoLikedComment);
+router.get('/reponse/:responseId/afficherLikes', authenticate, postController.getUsersWhoLikedResponse);
 
 module.exports = router;
