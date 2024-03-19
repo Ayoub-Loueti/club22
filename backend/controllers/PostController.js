@@ -197,20 +197,31 @@ exports.getLikesCount = async (req, res) => {
 // Fetch comments for a post
 exports.getComments = async (req, res) => {
   const postId = req.params.postId; // Extract the post ID from the path
+  const userId = req.userId;
 
   try {
-      const commentss = await Commentaire.findAll({
-          where: { id_post: postId },
-          include: [{
-              model: Utilisateur,
-              as: 'utilisateur',
-              attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-          }],
-      });
+    const commentss = await Commentaire.findAll({
+      where: { id_post: postId },
+      include: [{
+        model: Utilisateur,
+        as: 'utilisateur',
+        attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+      }],
+    });
 
-const comments = await Promise.all(
-commentss.map(async (comment) => {
-      const postJson = comment.toJSON();
+    const commentsWithLikes = await Promise.all(commentss.map(async (comment) => {
+      const commentJson = comment.toJSON();
+
+      // Check like status for each comment
+      const likeStatus = await LikeCom.findOne({
+        where: {
+          id_cmntr: comment.id_cmntr,
+          id_utilisateur: userId,
+        },
+      });
+      commentJson.isComLikedByCurrentUser = !!likeStatus;
+
+      // Fetch and attach responses
       const reponses = await Reponse.findAll({
         where: { id_cmntr: comment.id_cmntr },
         include: [
@@ -221,21 +232,34 @@ commentss.map(async (comment) => {
           },
         ],
       });
-      postJson.reponses = reponses;
-      return postJson;
-    })
-  );
-      return res.status(200).json({ comments });
+
+      // Enrich responses with like status
+      commentJson.reponses = await Promise.all(reponses.map(async (reponse) => {
+        const reponseJson = reponse.toJSON();
+        const likeStatusResponse = await LikeRep.findOne({
+          where: {
+            id_reponse: reponse.id_reponse,
+            id_utilisateur: userId,
+          },
+        });
+        reponseJson.isRepLikedByCurrentUser = !!likeStatusResponse;
+        return reponseJson;
+      }));
+
+      return commentJson;
+    }));
+
+    return res.status(200).json({ comments: commentsWithLikes });
   } catch (error) {
-      console.error('Error fetching comments:', error);
-      return res.status(500).json({ message: 'Error fetching comments', error: error.message });
+    console.error('Error fetching comments:', error);
+    return res.status(500).json({ message: 'Error fetching comments', error: error.message });
   }
 };
 
 
 exports.getPostByIdWithDetails = async (req, res) => {
     const postId = req.params.id; 
-
+    const userId = req.userId;
     try {
          const post = await Post.findByPk(postId, {
             include: [{
@@ -247,7 +271,14 @@ exports.getPostByIdWithDetails = async (req, res) => {
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
+        const likeStatus = await Likes.findOne({
+          where: {
+            id_post: post.id_post,
+            id_utilisateur: post.utilisateur.id_utilisateur,
+          },
+        });
 
+        // Add a new property to postJson indicating if the current user has liked the post
         // Manually fetch comments for the post
         const comments = await Commentaire.findAll({
             where: { id_post: postId },
@@ -274,6 +305,7 @@ exports.getPostByIdWithDetails = async (req, res) => {
 
         // Convert Sequelize model instance to JSON and manually aggregate comments and likes into the post data
         const postWithDetails = post.toJSON();
+        postWithDetails.isLikedByCurrentUser = !!likeStatus;
         postWithDetails.commentaires = comments;
         postWithDetails.likes = likes;
         postWithDetails.lesImages = images;
@@ -321,6 +353,15 @@ exports.getAllPostsByUserWithDetails = async (req, res) => {
                 }],
             });
 
+            const likeStatus = await Likes.findOne({
+              where: {
+                id_post: post.id_post,
+                id_utilisateur: userId,
+              },
+            });
+    
+            // Add a new property to postJson indicating if the current user has liked the post
+            postJson.isLikedByCurrentUser = !!likeStatus;
             // Fetch likes for the post
             const likes = await Likes.findAll({
                 where: { id_post: post.id_post },
@@ -532,10 +573,9 @@ exports.deleteComment = async (req, res) => {
       }
 
       // Find and delete the associated notification
-      const notification = await Notification.findOne({ where: { id_cmntr: id_cmntr } });
-      if (notification) {
-          await notification.destroy();
-      }
+      await Notification.destroy({
+        where: { id_cmntr: id_cmntr }
+    });
 
       await comment.destroy();
 
@@ -771,6 +811,7 @@ exports.createReponse = async (req, res) => {
         id_utilisateur: id_utilisateur, // Aymen
         date_notif: new Date(),
         type: 'comment',
+        id_cmntr: newReponse.id_cmntr,
       });
       // Increment `nbr_notifs` for Taher
       await Utilisateur.increment('nbr_notifs', { by: 1, where: { id_utilisateur: comment.id_utilisateur } });
@@ -788,6 +829,7 @@ exports.createReponse = async (req, res) => {
         id_utilisateur: id_utilisateur, // Aymen
         date_notif: new Date(),
         type: 'comment',
+        id_cmntr: newReponse.id_cmntr,
       });
       // Increment `nbr_notifs` for Ayoub
       await Utilisateur.increment('nbr_notifs', { by: 1, where: { id_utilisateur: comment.post.id_utilisateur } });
@@ -945,7 +987,8 @@ exports.toggleLikeComment = async (req, res) => {
                   date_notif: new Date(),
                   id_likeCom: like.id_likeCom,
                   id_notifier: comment.id_utilisateur, // Assuming id_notifier is the user being notified
-                  type: 'like'
+                  type: 'like',
+                  id_cmntr: commentId,
               });
 
               // Increment the notification count for the post owner
@@ -1039,7 +1082,8 @@ exports.toggleLikeReponse = async (req, res) => {
           date_notif: new Date(),
           id_likeRep: like.id_likeRep,
           id_notifier: reponse.id_utilisateur, // Notify the response creator
-          type: 'like'
+          type: 'like',
+          id_reponse:rponseId,
         });
 
         // Increment the notification count for the response owner
@@ -1057,6 +1101,84 @@ exports.toggleLikeReponse = async (req, res) => {
   }
 };
 
+exports.getLikesComCount = async (req, res) => {
+  const commentId = req.params.commentId; // Extract the post ID from the path
 
+  try {
+      const likesCount = await LikeCom.count({
+          where: {
+              id_cmntr: commentId
+          }
+      });
+
+      return res.status(200).json({ likesCount });
+  } catch (error) {
+      console.error('Error fetching likes count:', error);
+      return res.status(500).json({ message: 'Error fetching likes count', error: error.message });
+  }
+};
+
+exports.getLikesRepCount = async (req, res) => {
+  const reponseId = req.params.reponseId; // Extract the post ID from the path
+
+  try {
+      const likesCount = await LikeRep.count({
+          where: {
+              id_reponse: reponseId
+          }
+      });
+
+      return res.status(200).json({ likesCount });
+  } catch (error) {
+      console.error('Error fetching likes count:', error);
+      return res.status(500).json({ message: 'Error fetching likes count', error: error.message });
+  }
+};
+
+exports.getUsersWhoLikedComment = async (req, res) => {
+  const { commentId } = req.params;
+  try {
+    const likes = await LikeCom.findAll({
+      where: { id_cmntr: commentId },
+      include: [{
+        model: Utilisateur,
+        as: 'utilisateur',
+        attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+      }]
+    });
+
+    if (!likes.length) {
+      return res.status(404).json({ message: 'No likes found for this comment' });
+    }
+
+    return res.status(200).json({ likes });
+  } catch (error) {
+    console.error('Error fetching users who liked the comment:', error);
+    return res.status(500).json({ message: 'Error fetching users who liked the comment', error: error.message });
+  }
+};
+
+exports.getUsersWhoLikedResponse = async (req, res) => {
+  const { responseId } = req.params;
+  try {
+    const likes = await LikeRep.findAll({
+      where: { id_reponse: responseId },
+      include: [{
+        model: Utilisateur,
+        as: 'utilisateur',
+        attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+      }]
+    });
+
+    if (!likes.length) {
+      return res.status(404).json({ message: 'No likes found for this response' });
+    }
+
+    return res.status(200).json({ likes });
+  } catch (error) {
+    console.error('Error fetching users who liked the response:', error);
+    return res.status(500).json({ message: 'Error fetching users who liked the response', error: error.message });
+  }
+};
 
 module.exports = exports;
