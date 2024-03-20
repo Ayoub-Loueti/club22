@@ -441,3 +441,11 @@ margin-left: 11%;
   font-weight: bold; /* Makes the number of replies bold */
   margin-left: 4px; /* Adds a small space between the text and the number */
 }
+/* In your post.css file */
+.showAllCommentsText {
+  cursor: pointer;
+  color: #191f43; /* Bootstrap-like link color */
+  text-decoration: underline;
+  display: block; /* Ensures it occupies its own line */
+  font-weight: 400;
+}

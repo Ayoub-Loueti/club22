@@ -4,9 +4,11 @@ import Posts from '../posts/posts';
 import PostShare from '../postShare/postShare';
 import './postSide.css';
 import axios from 'axios';
-
+import PostModal from '../postModal/postModal';
 const PostSide = () => {
   const [posts, setPosts] = useState([]);
+   const [isModalOpen, setIsModalOpen] = useState(false);
+   const [selectedPostId, setSelectedPostId] = useState(null);
   const token = JSON.parse(localStorage.getItem('login'))?.token; 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -24,11 +26,21 @@ const PostSide = () => {
 
     fetchPosts();
   }, [token]);
-
+const openModalForPost = (postId) => {
+  setSelectedPostId(postId);
+  setIsModalOpen(true);
+};
   return (
     <div className="PostSide">
       <PostShare />
-      <Posts posts={posts} /> {/* Passer les posts au composant Posts */}
+      <Posts posts={posts} openModalForPost={openModalForPost} />{' '}
+      {/* Pass the openModalForPost function to Posts */}
+      <PostModal
+        key={selectedPostId} // Unique key that changes with the post ID
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        postId={selectedPostId}
+      />
     </div>
   );
 };

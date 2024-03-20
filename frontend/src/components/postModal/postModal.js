@@ -9,20 +9,23 @@ const PostModal = ({ isOpen, onRequestClose, postId }) => {
   const [postDetails, setPostDetails] = useState(null);
 
  useEffect(() => {
-    const fetchPostDetails = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/getPostById/${postId}`);
-        setPostDetails(response.data);
-      } catch (error) {
-        console.error("Couldn't fetch post details", error);
-      }
-    };
+   setPostDetails(null); // Reset or set to a loading state immediately when postId changes
 
-    if (postId) {
-      fetchPostDetails();
-    }
-  }, [postId]);
+   const fetchPostDetails = async () => {
+     try {
+       const response = await axios.get(
+         `http://localhost:5000/getPostById/${postId}`
+       );
+       setPostDetails(response.data);
+     } catch (error) {
+       console.error("Couldn't fetch post details", error);
+     }
+   };
 
+   if (postId) {
+     fetchPostDetails();
+   }
+ }, [postId]);
 
   const customStyles = {
     content: {

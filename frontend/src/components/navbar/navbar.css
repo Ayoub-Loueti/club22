@@ -9,7 +9,7 @@
   top: 0;
   background-color: #191f43;
   overflow: hidden;
-   transform: translateX(0); /* Affiche par défaut */
+  transform: translateX(0); /* Affiche par défaut */
   transition: transform 0.3s ease;
 }
 .navbar:not(.visible) {
@@ -21,15 +21,14 @@
 }
 .navbar-toggle {
   position: fixed;
-  left: 10px; 
+  left: 10px;
   z-index: 2000;
   cursor: pointer;
   padding: 10px;
   margin-left: 41px;
   color: #191f43;
-  opacity: 0.7; 
+  opacity: 0.7;
   top: 6px;
-  
 }
 
 .navbar-inner {
@@ -47,7 +46,6 @@
   overflow-y: auto; /* Permet le défilement si la liste est longue */
 }
 
-
 .navbar-extension {
   width: 30px;
   height: 100%;
@@ -62,7 +60,7 @@
   height: 33px;
   width: 33px;
   position: absolute;
-  top:10px;
+  top: 10px;
   left: 10px;
 }
 
@@ -105,8 +103,6 @@
   margin-top: 1px; /* Ajustement vertical de la position */
 }
 
-
-
 .navbar-iconn {
   cursor: pointer; /* Change le curseur pour indiquer la cliquabilité */
 }
@@ -125,11 +121,10 @@
   flex-direction: column;
   align-items: flex-start; /* Alignement à gauche */
   height: 100%; /* Prend toute la hauteur disponible */
-   padding-left: 10px; /* Déplace toutes les icônes un peu plus à droite */
+  padding-left: 10px; /* Déplace toutes les icônes un peu plus à droite */
   padding-top: 180px; /* Espacement optionnel en haut */
   padding-bottom: 10px; /* Espacement optionnel en bas */
 }
-
 
 .icon-containerrr .navbar-iconnn {
   margin-bottom: 15px; /* Ajoute un espacement en bas de chaque icône */
@@ -144,7 +139,7 @@
   height: 25px; /* Définit une hauteur fixe pour toutes les icônes */
   margin-bottom: 15px; /* Espacement vertical uniforme */
   color: white; /* Assure la visibilité contre l'arrière-plan du navbar */
-  font-size: 23px; 
+  font-size: 23px;
   cursor: pointer;
 }
 /* notif icon*/
@@ -162,13 +157,12 @@
   color: #191f43; /* Couleur de l'icône */
   font-size: 24px; /* Taille de l'icône */
   margin: 20px 20px 20px 0; /* Espacement autour de l'icône avec une marge droite de 10px */
-margin-top:50px;
+  margin-top: 50px;
 
   cursor: pointer; /* Curseur de type pointer */
-  
 }
 .user-photo {
-    font-size: 34px; /* Taille de l'icône */
+  font-size: 34px; /* Taille de l'icône */
 
   width: 37px; /* Réduction de la taille de la photo de profil */
   height: 37px; /* Garde la photo de profil circulaire */
@@ -223,7 +217,8 @@ body {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow for lifted effect */
 }
 /* Styles pour les actions de l'utilisateur */
-.user-actions a, .user-actions button {
+.user-actions a,
+.user-actions button {
   color: #4a5568; /* Darker text for better readability */
   background-color: #ffffff; /* Background to match the dropdown */
   padding: 12px 20px; /* Larger padding for a roomier feel */
@@ -236,13 +231,16 @@ body {
   transition: background-color 0.2s, color 0.2s;
 }
 
-.user-actions a:hover, .user-actions button:hover {
+.user-actions a:hover,
+.user-actions button:hover {
   background-color: #edf2f7; /* Lighter grey for hover background */
   color: #2d3748; /* Slightly darker text on hover for contrast */
 }
 
 /* Icons color now uses primary color scheme for consistency */
-.acceuil-icon, .profil-icon, .logout-icon {
+.acceuil-icon,
+.profil-icon,
+.logout-icon {
   margin-right: 8px; /* Ensures spacing between icon and text */
   color: #4299e1; /* Bright blue for a pop of color */
 }
@@ -274,9 +272,6 @@ body {
   animation: slideDown 0.3s ease forwards;
 }
 
-
-
-
 /* Notifications Count Badge */
 .notifications-count {
   position: absolute;
@@ -299,13 +294,32 @@ body {
   top: 45px;
   background-color: #ffffff;
   width: 400px; /* Adjust based on your content width */
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  max-height: 450px; /* Set your desired maximum height here */
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 5;
   border-radius: 15px;
-  overflow: hidden;
-    cursor: pointer;
-    text-align:left ;
+  overflow-y: auto; /* Makes content scrollable vertically if it exceeds the max height */
+  cursor: pointer;
+  text-align: left;
+}
+.notifications-dropdown::-webkit-scrollbar {
+  width: 6px; /* Reducing the width of the scrollbar */
+}
 
+.notifications-dropdown::-webkit-scrollbar-track {
+  background: #f1f1f1;
+    border-radius: 45px;
+
+}
+
+.notifications-dropdown::-webkit-scrollbar-thumb {
+  background: #879eb9;
+  border-radius: 45px;
+
+}
+
+.notifications-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #191f43;
 }
 
 .notification-item {

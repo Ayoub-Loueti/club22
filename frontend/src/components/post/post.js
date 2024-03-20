@@ -21,7 +21,8 @@ import Swal from 'sweetalert2';
 import { NavLink } from 'react-router-dom';
 import LikesModal from '../likesModal/likesModal';
 const Post = (props) => {
-  const { data, onPostDeleted, onPostUpdated, isModalView } = props;
+  const { data, onPostDeleted, onPostUpdated, isModalView, openModalForPost } =
+    props;
 
   const token = JSON.parse(localStorage.getItem('login'))?.token;
   const [liked, setLiked] = useState(data.isLikedByCurrentUser);
@@ -583,6 +584,8 @@ const Post = (props) => {
       console.error('Error fetching likes:', error);
     }
   };
+  
+const commentsToShow = isModalView ? comments : comments.slice(0, 2);
 
   return (
     <div className="Post">
@@ -700,8 +703,9 @@ const Post = (props) => {
           onCommentSubmitted={reloadComments}
         />
       )}
+
       <div className="comments">
-        {comments.map((comment, index) => (
+        {commentsToShow.map((comment, index) => (
           <div key={index} className="comment">
             <img
               src={
@@ -982,6 +986,14 @@ const Post = (props) => {
           </div>
         ))}
       </div>
+      {!isModalView && (
+        <span
+          onClick={() => openModalForPost(data.id_post)}
+          className="showAllCommentsText"
+        >
+          Voir tous les commentaires{' '}
+        </span>
+      )}
     </div>
   );
 };

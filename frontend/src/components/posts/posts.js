@@ -3,7 +3,7 @@ import './posts.css';
 
 import Post from '../post/post';
 
-const Posts = ({ posts }) => {
+const Posts = ({ posts, openModalForPost }) => {
   const [currentPosts, setCurrentPosts] = useState([]);
 
   useEffect(() => {
@@ -14,15 +14,15 @@ const Posts = ({ posts }) => {
     const updatedPosts = currentPosts.filter((post) => post.id_post !== postId);
     setCurrentPosts(updatedPosts);
   };
-const handlePostUpdated = (updatedPost) => {
-  const updatedPosts = currentPosts.map((post) => {
-    if (post.id_post === updatedPost.id_post) {
-      return updatedPost; // Remplace le post par sa nouvelle version
-    }
-    return post;
-  });
-  setCurrentPosts(updatedPosts);
-};
+  const handlePostUpdated = (updatedPost) => {
+    const updatedPosts = currentPosts.map((post) => {
+      if (post.id_post === updatedPost.id_post) {
+        return updatedPost; // Remplace le post par sa nouvelle version
+      }
+      return post;
+    });
+    setCurrentPosts(updatedPosts);
+  };
   return (
     <div className="Posts">
       {currentPosts.map((post) => (
@@ -30,7 +30,8 @@ const handlePostUpdated = (updatedPost) => {
           key={post.id_post}
           data={post}
           onPostDeleted={handlePostDeleted}
-            onPostUpdated={handlePostUpdated}
+          onPostUpdated={handlePostUpdated}
+          openModalForPost={openModalForPost} // This prop is passed to each Post component
         />
       ))}
     </div>
