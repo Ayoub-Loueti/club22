@@ -90,13 +90,32 @@
   object-fit: cover;
   flex-shrink: 0; /* Empêche la photo de l'utilisateur de réduire */
 }
-
+.responseUserPhoto {
+  width: 30px; /* Smaller width for reply profile photos */
+  height: 30px; /* Smaller height for reply profile photos */
+  border-radius: 50%; /* Keeps the circular shape */
+  object-fit: cover; /* Ensures the photo covers the available space */
+  flex-shrink: 0; /* Prevents the photo from shrinking */
+float: left;
+margin-top: 6%;}
+.responseActions {
+   display: flex;
+  justify-content: flex-end;
+  margin-right: 45px;
+}
 .commentDetails {
   display: flex;
   flex-direction: column;
   flex-grow: 1; /* Permet au nom d'utilisateur et au contenu de s'étendre */
 }
-
+.responseDetails {
+  display: flex;
+  flex-direction: column;
+  background-color: #f0f2f5; /* Même couleur de fond que les commentaires pour la cohérence */
+  border-radius: 10px;
+  padding: 8px;
+  margin-bottom: 10px;
+}
 .userNameComment {
   font-weight: bold;
   font-size: 13px;
@@ -105,7 +124,17 @@
   margin-bottom: 0.25rem; /* Espacement inférieur réduit */
   text-align: left;
   margin-left: 17px;
-  
+}
+.userNameResponse {
+  font-weight: bold;
+  font-size: 13px;
+  font-family: Arial, sans-serif;
+  color: #37474f;
+text-align:left ;  
+display: flex;
+margin-left: 11%;
+  margin-bottom: 0.25rem; /* Espacement inférieur réduit */
+
 }
 
 .commentContent {
@@ -116,8 +145,22 @@
   text-align: left;
   word-wrap: break-word; /* Permet au texte de se couper correctement s'il est trop long */
 }
-
+.responseContent {
+  padding: 0.25rem 1rem 0.25rem 1rem; /* Réduction du rembourrage et ajout d'espace à droite */
+  background-color: #cfd8dc;
+  border-radius: 25px; /* Augmentation du rayon de la bordure */
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  word-wrap: break-word; /* Permet au texte de se couper correctement s'il est trop long */
+  max-width: 80%; /* Ajustement de la largeur maximale pour être plus étroit */
+  margin: 0 auto; /* Centrage du contenu si moins large que le max-width */
+}
 .commentText {
+  font-size: 12px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: #37474f;
+}
+.responseText {
   font-size: 12px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   color: #37474f;
@@ -132,6 +175,36 @@
 .likesCount {
   text-align: left;
 }
+.likesCountReact {
+  text-align: left;
+  margin-left: 25px;
+}
+.likesCountReact span {
+  cursor: pointer;
+  color: #191f43; /* Couleur bleue pour indiquer qu'il est cliquable, ajustez selon votre design */
+  text-decoration: underline; /* Souligner pour montrer qu'il est interactif */
+  transition: color 0.3s ease; /* Transition douce pour le survol */
+}
+
+.likesCountReact span:hover {
+  color: #ed1c24;
+}
+/* for response likes */
+.likesCountReactRes {
+  text-align: left;
+  margin-left: 60px;
+}
+.likesCountReactRes span {
+  cursor: pointer;
+  color: #191f43; /* Couleur bleue pour indiquer qu'il est cliquable, ajustez selon votre design */
+  text-decoration: underline; /* Souligner pour montrer qu'il est interactif */
+  transition: color 0.3s ease; /* Transition douce pour le survol */
+}
+
+.likesCountReactRes span:hover {
+  color: #ed1c24;
+}
+
 .iconButton {
   background: none;
   border: none;
@@ -139,19 +212,38 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
   border-radius: 4px; /* Optional: for rounded corners */
   transition: transform 0.2s, color 0.2s; /* Smooth transition for hover effects */
 }
-
 .iconButton svg {
-  font-size: 1.11rem; /* Makes icons slightly larger */
-  color: #ed1c24; /* Example color: Blue */
+  font-size: 1rem; /* Makes icons slightly larger */
+  color: #191f43; /* Example color: Blue */
 }
 
 .iconButton:hover {
   transform: scale(1.1); /* Slightly enlarge buttons on hover */
 }
+/* icons for response */
+.iconButtonRes {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  justify-content: flex-end;
+  border-radius: 4px; /* Optional: for rounded corners */
+  transition: transform 0.2s, color 0.2s; /* Smooth transition for hover effects */
+}
+.iconButtonRes svg {
+  font-size: 1rem; /* Makes icons slightly larger */
+  color: #191f43; /* Example color: Blue */
+}
 
+.iconButtonRes:hover {
+  transform: scale(1.1); /* Slightly enlarge buttons on hover */
+}
 .navigationButton {
   background: none;
   border: none;
@@ -204,8 +296,22 @@
   resize: none; /* Empêche le redimensionnement pour les éléments textarea */
 }
 
+.editResponseInput {
+  max-width: 80%; 
+  width: 80%;
+  padding: 15px;
+  margin-bottom: 0.25rem; /* Assure un petit espace en dessous */
+  font-size: 12px; /* Correspond à la taille de la police du commentaire original */
+  font-family: Verdana, Geneva, Tahoma, sans-serif; /* Utilise la même famille de polices */
+  border-radius: 25px; /* Conserve les bordures arrondies du commentaire original */
+  background-color: #cfd8dc; /* Fond blanc pour indiquer l'état d'édition */
+  resize: none; /* Empêche le redimensionnement pour les éléments textarea */
+}
+.editResponseInput:focus {
+  outline: 2px solid #191f43; /* Indique le focus avec une bordure bleue */
+}
 .commentEdit:focus {
-  outline: 2px solid #4d90fe; /* Indique le focus avec une bordure bleue */
+  outline: 2px solid #191f43; /* Indique le focus avec une bordure bleue */
 }
 
 .editContent:focus {
@@ -221,8 +327,58 @@
 .commentActions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px; /* Espacement entre les icônes */
+  margin-right: 9px;
 }
+.commentActionsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Adjust as needed */
+}
+.responseActionsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Adjust as needed */
+}
+.response {
+  margin-bottom: 0.75rem;
+  background-color: transparent;}
+
+.heartIconUnliked {
+  color: transparent; /* Or any other background color of your app */
+  stroke: #191f43;
+  stroke-width: 25px; /* Adjust the stroke width as needed */
+  font-size: 1.11rem; /* Makes icons slightly larger */
+}
+.heartIconUnliked:hover {
+  transform: scale(1.1); /* Slightly enlarge buttons on hover */
+}
+.heartIconlove {
+  font-size: 1.11rem; /* Makes icons slightly larger */
+  color: #ed1c24;
+}
+.heartIconlove:hover {
+  transform: scale(1.1); /* Slightly enlarge buttons on hover */
+}
+.commentIcon:hover {
+  transform: scale(1.1); /* Slightly enlarge buttons on hover */
+}
+.commentIcon {
+  margin-left: 10px; /* Space between heart icon and comment icon */
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.11rem; /* Makes icons slightly larger */
+  color: transparent; /* Example color: Blue */
+  border-radius: 4px; /* Optional: for rounded corners */
+  transition: transform 0.2s, color 0.2s;
+  stroke: #191f43;
+  stroke-width: 25px; /* Adjust the stroke width as needed */
+}
+.commentActionButtons {
+  display: flex;
+  gap: 8px; /* Adjust the spacing between buttons */
+}
+
 .userLink {
   text-decoration: none; /* Supprimez le soulignement par défaut */
   color: #37474f; /* Couleur du texte par défaut */
@@ -230,7 +386,7 @@
 }
 
 .userLink:hover {
-  color: #ed1c24; /* Couleur du texte lors du survol */
+  color: #191f43; /* Couleur du texte lors du survol */
 }
 .userNameLink {
   text-decoration: none; /* Supprimez le soulignement par défaut */
@@ -239,7 +395,7 @@
 }
 
 .userNameLink:hover {
-  color: #ed1c24; /* Couleur du texte lors du survol */
+  color: #191f43; /* Couleur du texte lors du survol */
 }
 .likesCount span {
   cursor: pointer;
@@ -249,9 +405,8 @@
 }
 
 .likesCount span:hover {
-  color: #ed1c24; /* Couleur plus foncée au survol */
+  color: #191f43; /* Couleur plus foncée au survol */
 }
-
 
 .savePostButton {
   background: none;
@@ -263,4 +418,26 @@
 
 .savePostButton:hover {
   color: #3085d6; /* Highlight on hover */
+}
+/* Styling for the Show Replies button */
+.showRepliesButton {
+  padding: 8px 16px; /* Provides some padding around the text */
+  background-color: #f0f0f0; /* Light grey background */
+  border: none; /* No border for a modern look */
+  border-radius: 4px; /* Slightly rounded corners */
+  cursor: pointer; /* Changes the cursor to a pointer to indicate it's clickable */
+  font-size: 0.875rem; /* Sets a moderate font size */
+  color: #37474f; /* Dark grey color for the text */
+  transition: background-color 0.2s, color 0.2s; /* Smooth transition for hover effect */
+}
+
+.showRepliesButton:hover {
+  background-color: #e0e0e0; /* Darker grey background on hover */
+  color: #191f43; /* Slightly darker text color for contrast */
+}
+
+/* Optional: Styling for the number of replies indicator */
+.repliesCountIndicator {
+  font-weight: bold; /* Makes the number of replies bold */
+  margin-left: 4px; /* Adds a small space between the text and the number */
 }

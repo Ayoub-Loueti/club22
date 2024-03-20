@@ -8,13 +8,12 @@ import axios from 'axios';
 import CommentForm from '../comments/commentForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faEdit,
-  faTrashAlt,
   faSave,
   faBookmark,
-  faTimesCircle,
   faPen,
   faTrash,
+  faHeart,
+  faComment,
 } from '@fortawesome/free-solid-svg-icons';
 import { faBookmark as farBookmark } from '@fortawesome/free-regular-svg-icons'; // Importing the regular (outline) bookmark icon
 
@@ -43,11 +42,12 @@ const Post = (props) => {
   const [editedContent, setEditedContent] = useState('');
   const [responseContent, setResponseContent] = useState('');
   const [commentIdToRespondTo, setCommentIdToRespondTo] = useState(null);
-  const [showReplyInputForCommentId, setShowReplyInputForCommentId] = useState(null);
+  const [showReplyInputForCommentId, setShowReplyInputForCommentId] =
+    useState(null);
   const [visibleReplies, setVisibleReplies] = useState({});
   const [likesModalVisible, setLikesModalVisible] = useState(false);
   const [likesData, setLikesData] = useState([]);
-  
+
   useEffect(() => {
     const token = localStorage.getItem('login');
     const storedUserId = JSON.parse(localStorage.getItem('userId'));
@@ -326,7 +326,7 @@ const Post = (props) => {
       console.error('Error fetching comments:', error);
     }
   };
-  
+
   const [isLikesModalOpen, setIsLikesModalOpen] = useState(false);
   const showLikesModal = () => {
     setIsLikesModalOpen(true);
@@ -345,8 +345,7 @@ const Post = (props) => {
           'Supprimée !',
           'La publication a été supprimée des publications enregistrées.',
           'success'
-        ); 
-        
+        );
       } else {
         // Save post
         await axios.post(
@@ -361,7 +360,6 @@ const Post = (props) => {
           'success'
         );
       }
-      
     } catch (error) {
       console.error(
         "Erreur lors de la bascule de l'enregistrement de la publication :",
@@ -391,157 +389,200 @@ const Post = (props) => {
     </NavLink>
   </span>;
 
-const toggleLikeComment = async (commentId) => {
-  try {
-    const response = await axios.post(
-      `http://localhost:5000/comment/${commentId}/toggle-like`, {},
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    reloadComments(); 
-  } catch (error) {
-    console.error('Error toggling like for comment:', error);
-  }
-};
-
-const toggleLikeResponse = async (commentId, responseId) => {
-  try {
-    // Toggle the like status in the backend
-    await axios.post(
-        `http://localhost:5000/reponse/${responseId}/toggle-like`, {},
+  const toggleLikeComment = async (commentId) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/comment/${commentId}/toggle-like`,
+        {},
         { headers: { Authorization: `Bearer ${token}` } }
-    );
+      );
+      reloadComments();
+    } catch (error) {
+      console.error('Error toggling like for comment:', error);
+    }
+  };
 
-    // Fetch the updated likes count for the response
-    const likesCountResponse = await axios.get(
+  const toggleLikeResponse = async (commentId, responseId) => {
+    try {
+      // Toggle the like status in the backend
+      await axios.post(
+        `http://localhost:5000/reponse/${responseId}/toggle-like`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // Fetch the updated likes count for the response
+      const likesCountResponse = await axios.get(
         `http://localhost:5000/reponse/${responseId}/likesCount`,
         { headers: { Authorization: `Bearer ${token}` } }
-    );
-    
-    // Update the state to reflect the change in the frontend
-    setComments(comments.map(comment => {
-        if (comment.id_cmntr === commentId) {
+      );
+
+      // Update the state to reflect the change in the frontend
+      setComments(
+        comments.map((comment) => {
+          if (comment.id_cmntr === commentId) {
             return {
-                ...comment,
-                reponses: comment.reponses.map(response => {
-                    if (response.id_reponse === responseId) {
-                        return {
-                            ...response,
-                            // Toggle based on the assumption the backend toggles the like status correctly
-                            isRepLikedByCurrentUser: !response.isRepLikedByCurrentUser,
-                            // Update with the new likes count fetched from the backend
-                            nbr_likeRep: likesCountResponse.data.likesCount
-                        };
-                    }
-                    return response;
-                })
+              ...comment,
+              reponses: comment.reponses.map((response) => {
+                if (response.id_reponse === responseId) {
+                  return {
+                    ...response,
+                    // Toggle based on the assumption the backend toggles the like status correctly
+                    isRepLikedByCurrentUser: !response.isRepLikedByCurrentUser,
+                    // Update with the new likes count fetched from the backend
+                    nbr_likeRep: likesCountResponse.data.likesCount,
+                  };
+                }
+                return response;
+              }),
             };
-        }
-        return comment;
-    }));
-  } catch (error) {
+          }
+          return comment;
+        })
+      );
+    } catch (error) {
       console.error('Error toggling like on response:', error);
-  }
-};
-
-const startEditing = (response) => {
-  setEditingResponseId(response.id_reponse);
-  setEditedContent(response.contenu);
-};
-
-// Function to save the edited response
-const saveEditedResponse = async (responseId) => {
-  // Ensure that there is content to save
-  if (!editedContent.trim()) return;
-
-  try {
-    // Retrieve the token
-    const token = JSON.parse(localStorage.getItem('login'))?.token;
-    if (!token) {
-      console.error('Authentication token is not available.');
-      // You might want to handle the redirection to the login page here
-      return;
     }
+  };
 
-    // Make the PUT request to the server with the edited content
-    const response = await axios.put(
-      `http://localhost:5000/replies/${responseId}`, // Ensure this is the correct endpoint for updating a response
-      { contenu: editedContent }, // Make sure to send the updated content in the format expected by the server
-      { headers: { Authorization: `Bearer ${token}` } } // Include the Authorization header with the token
-    );
+  const startEditing = (response) => {
+    setEditingResponseId(response.id_reponse);
+    setEditedContent(response.contenu);
+  };
 
-    // If the server responds without errors, update the state accordingly
-    console.log(response.data);
-    setEditingResponseId(null);
-    setEditedContent('');
-    
-  } catch (error) {
-    console.error('Error updating the response:', error.response || error);
-    // If there's an error response from the server, you might want to handle it here
-  }
-};
+  // Function to save the edited response
+  const saveEditedResponse = async (responseId) => {
+    // Ensure that there is content to save
+    if (!editedContent.trim()) return;
 
-const handleResponseSubmit = async (e, commentId) => {
-  e.preventDefault(); // Prevent the default form submission behavior
-  try {
-    const response = await axios.post(
-      `http://localhost:5000/comments/${commentId}/responses`,
-      { contenu: responseContent },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    setResponseContent(''); // Clear the response input field
-    setCommentIdToRespondTo(null); // Reset the comment ID being responded to
-    reloadComments(); // Reload comments to include the new response
-  } catch (error) {
-    console.error('Error submitting the response:', error);
-    // Handle submission error (e.g., show an error message to the user)
-  }
-};
+    try {
+      // Retrieve the token
+      const token = JSON.parse(localStorage.getItem('login'))?.token;
+      if (!token) {
+        console.error('Authentication token is not available.');
+        // You might want to handle the redirection to the login page here
+        return;
+      }
 
-const handleDeleteResponse = async (responseId) => {
-  try {
-    const token = JSON.parse(localStorage.getItem('login'))?.token;
-    await axios.delete(`http://localhost:5000/replies/${responseId}`, {
-      headers: { Authorization: `Bearer ${token}` },
+      // Make the PUT request to the server with the edited content
+      const response = await axios.put(
+        `http://localhost:5000/replies/${responseId}`, // Ensure this is the correct endpoint for updating a response
+        { contenu: editedContent }, // Make sure to send the updated content in the format expected by the server
+        { headers: { Authorization: `Bearer ${token}` } } // Include the Authorization header with the token
+      );
+      setComments(
+        comments.map((comment) => {
+          return {
+            ...comment,
+            reponses: comment.reponses.map((response) => {
+              if (response.id_reponse === responseId) {
+                return { ...response, contenu: editedContent };
+              }
+              return response;
+            }),
+          };
+        })
+      );
+      // If the server responds without errors, update the state accordingly
+      console.log(response.data);
+      setEditingResponseId(null);
+      setEditedContent('');
+    } catch (error) {
+      console.error('Error updating the response:', error.response || error);
+      // If there's an error response from the server, you might want to handle it here
+    }
+  };
+
+  const handleResponseSubmit = async (e, commentId) => {
+    e.preventDefault(); // Prevent the default form submission behavior
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/comments/${commentId}/responses`,
+        { contenu: responseContent },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setResponseContent(''); // Clear the response input field
+      setCommentIdToRespondTo(null); // Reset the comment ID being responded to
+      reloadComments(); // Reload comments to include the new response
+    } catch (error) {
+      console.error('Error submitting the response:', error);
+      // Handle submission error (e.g., show an error message to the user)
+    }
+  };
+
+  const handleDeleteResponse = async (responseId) => {
+    Swal.fire({
+      title: 'Êtes-vous sûr?',
+      text: 'Vous ne pourrez pas revenir en arrière!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, supprimez-le!',
+      cancelButtonText: 'Annuler',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const token = JSON.parse(localStorage.getItem('login'))?.token;
+          await axios.delete(`http://localhost:5000/replies/${responseId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          // Update comments state to remove the deleted reply
+          setComments(
+            comments.map((comment) => ({
+              ...comment,
+              reponses: comment.reponses.filter(
+                (response) => response.id_reponse !== responseId
+              ),
+            }))
+          );
+
+          Swal.fire('Supprimé!', 'Votre réponse a été supprimée.', 'success');
+        } catch (error) {
+          console.error('Error deleting the response:', error);
+          Swal.fire(
+            'Échec!',
+            'Un problème est survenu lors de la suppression de votre réponse.',
+            'error'
+          );
+        }
+      }
     });
+  };
 
-    reloadComments();
-  } catch (error) {
-    console.error('Error deleting the response:', error);
-    // Optionally show an error message to the user
-  }
-};
+  const toggleReplyInput = (commentId) => {
+    if (showReplyInputForCommentId === commentId) {
+      setShowReplyInputForCommentId(null); // Hide if already visible
+    } else {
+      setShowReplyInputForCommentId(commentId); // Show if not visible
+    }
+  };
 
-const toggleReplyInput = (commentId) => {
-  if (showReplyInputForCommentId === commentId) {
-    setShowReplyInputForCommentId(null); // Hide if already visible
-  } else {
-    setShowReplyInputForCommentId(commentId); // Show if not visible
-  }
-};
+  const toggleRepliesVisibility = (commentId) => {
+    setVisibleReplies((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
 
-const toggleRepliesVisibility = (commentId) => {
-  setVisibleReplies((prev) => ({
-    ...prev,
-    [commentId]: !prev[commentId],
-  }));
-};
+  const fetchLikesAndOpenModal = async (id, type) => {
+    // Endpoint selection based on type (comment or response)
+    const endpoint =
+      type === 'comment'
+        ? `/comment/${id}/afficherLikes`
+        : `/reponse/${id}/afficherLikes`;
 
-const fetchLikesAndOpenModal = async (id, type) => {
-  // Endpoint selection based on type (comment or response)
-  const endpoint = type === 'comment' 
-    ? `/comment/${id}/afficherLikes` 
-    : `/reponse/${id}/afficherLikes`;
-
-  try {
-    const response = await axios.get(`http://localhost:5000${endpoint}`, {
-      headers: { Authorization: `Bearer ${token}` }, // Assuming 'token' is defined in your component's scope
-    });
-    setLikesData(response.data.likes); // Update the state with the fetched likes
-    setLikesModalVisible(true); // Open the modal
-  } catch (error) {
-    console.error('Error fetching likes:', error);
-  }
-};
+    try {
+      const response = await axios.get(`http://localhost:5000${endpoint}`, {
+        headers: { Authorization: `Bearer ${token}` }, // Assuming 'token' is defined in your component's scope
+      });
+      setLikesData(response.data.likes); // Update the state with the fetched likes
+      setLikesModalVisible(true); // Open the modal
+    } catch (error) {
+      console.error('Error fetching likes:', error);
+    }
+  };
 
   return (
     <div className="Post">
@@ -648,11 +689,11 @@ const fetchLikesAndOpenModal = async (id, type) => {
         onRequestClose={() => setIsLikesModalOpen(false)}
         likes={data.likes}
       />
-<LikesModal 
-  isOpen={likesModalVisible} 
-  onRequestClose={() => setLikesModalVisible(false)} 
-  likes={likesData} 
-/>
+      <LikesModal
+        isOpen={likesModalVisible}
+        onRequestClose={() => setLikesModalVisible(false)}
+        likes={likesData}
+      />
       {showCommentForm && (
         <CommentForm
           postId={data.id_post}
@@ -683,7 +724,7 @@ const fetchLikesAndOpenModal = async (id, type) => {
                 </NavLink>
               </span>
 
-              <div className="commentContent">
+              <div>
                 {editingCommentId === comment.id_cmntr ? (
                   <textarea
                     className="commentEdit"
@@ -691,134 +732,254 @@ const fetchLikesAndOpenModal = async (id, type) => {
                     onChange={(e) => setEditCommentContent(e.target.value)}
                   />
                 ) : (
-                  <p className="commentText">{comment.cmntr}</p>
+                  <div className="commentContent">
+                    <p className="commentText">{comment.cmntr}</p>
+                  </div>
                 )}
               </div>
-              <div className="likesCount">
-              <span onClick={() => toggleLikeComment(comment.id_cmntr)}>
-  {comment.isComLikedByCurrentUser ? (
-    <span style={{ color: 'red', cursor: 'pointer' }}>❤️</span>
-  ) : (
-    <span style={{ color: 'grey', cursor: 'pointer' }}>🤍</span>
-  )}
-</span>
-
-<span onClick={() => fetchLikesAndOpenModal(comment.id_cmntr, 'comment')}>
-  {comment.nbr_likeCom} Likes
-</span>
-</div>
-
-            {commentIdToRespondTo === comment.id_cmntr && (
-        <form onSubmit={(e) => handleResponseSubmit(e, comment.id_cmntr)} className="responseForm">
-          <input
-            type="text"
-            value={responseContent}
-            onChange={(e) => setResponseContent(e.target.value)}
-            placeholder="Write a response..."
-            className="responseInput"
-            required
-          />
-          <button type="submit" className="responseSubmitButton">Reply</button>
-        </form>
-      )}
-     <span style={{cursor: 'pointer' }} onClick={() => toggleReplyInput(comment.id_cmntr)} className="replyEmoji">
-              💬
-            </span>
-            {showReplyInputForCommentId === comment.id_cmntr && (
-              <form onSubmit={(e) => handleResponseSubmit(e, comment.id_cmntr)} className="responseForm">
-                <input
-                  type="text"
-                  value={responseContent}
-                  onChange={(e) => setResponseContent(e.target.value)}
-                  placeholder="Write a response..."
-                  className="responseInput"
-                  required
-                />
-                <button type="submit" className="responseSubmitButton">Reply</button>
-              </form>
-            )}
-              {comment.utilisateur.id_utilisateur.toString() ===
-                userId.toString() &&
-                (editingCommentId === comment.id_cmntr ? (
-                  <button
-                    onClick={handleSaveEditComment}
-                    className="iconButton"
+              <div className="commentActionsContainer">
+                <div className="likesCountReact">
+                  <span
+                    onClick={() => toggleLikeComment(comment.id_cmntr)}
+                    style={{ cursor: 'pointer' }}
                   >
-                    <FontAwesomeIcon icon={faSave} />
+                    {comment.isComLikedByCurrentUser ? (
+                      <FontAwesomeIcon
+                        icon={faHeart}
+                        className="heartIconlove"
+                      />
+                    ) : (
+                      <FontAwesomeIcon
+                        icon={faHeart}
+                        className="heartIconUnliked"
+                      />
+                    )}
+                  </span>
+                  <span
+                    onClick={() =>
+                      fetchLikesAndOpenModal(comment.id_cmntr, 'comment')
+                    }
+                  >
+                    {''} {comment.nbr_likeCom} J'aime
+                  </span>
+                  <button
+                    onClick={() => toggleReplyInput(comment.id_cmntr)}
+                    className="commentIcon"
+                  >
+                    <FontAwesomeIcon icon={faComment} />
                   </button>
-                ) : (
-                  <div className="commentActions">
-                    <button
-                      className="iconButton"
-                      onClick={() =>
-                        handleEditComment(comment.id_cmntr, comment.cmntr)
-                      }
-                    >
-                      <FontAwesomeIcon icon={faPen} />
-                    </button>
-                    <button
-                      className="iconButton"
-                      onClick={() => handleDeleteComment(comment.id_cmntr)}
-                    >
-                      <FontAwesomeIcon icon={faTrash} className="fa-solid" />
-                    </button>
-                    
-                  </div>
-                  
-                ))}
-                 {comment.reponses && comment.reponses.length > 0 && (
-        <div>
-          <button onClick={() => toggleRepliesVisibility(comment.id_cmntr)}>
-            {visibleReplies[comment.id_cmntr] ? 'Hide Replies' : `Show Replies (${comment.reponses.length})`}
-          </button>
-        </div>
-      )}
-      {/* Conditionally render replies if they are visible */}
-      {visibleReplies[comment.id_cmntr] && comment.reponses.map((reponse) => (
-              <div key={reponse.id_reponse} className="response">
-                <div className="commentDetails">
-                  <img src={`http://localhost:5000/${reponse.utilisateur.photo}`} alt="Profile" className="commentUserPhoto" />
-                  <span className="userNameComment">{reponse.utilisateur.prenom} {reponse.utilisateur.nom}</span>
-                  {editingResponseId === reponse.id_reponse  ? (
-                    <input
-                      type="text"
-                      value={editedContent}
-                      onChange={(e) => setEditedContent(e.target.value)}
-                      className="editResponseInput"
-                    />
-                  ) : (
-                    <p className="commentText">{reponse.contenu}</p>
-                  )}
                 </div>
-                <div className="responseActions">
-                <div className="likesCount">
-                <span onClick={() => toggleLikeResponse(comment.id_cmntr, reponse.id_reponse)}>
-  {reponse.isRepLikedByCurrentUser ? (
-    <span style={{ color: 'red', cursor: 'pointer' }}>❤️</span>
-  ) : (
-    <span style={{ color: 'grey', cursor: 'pointer' }}>🤍</span>
-  )}
-</span>
-
-<span onClick={() => fetchLikesAndOpenModal(reponse.id_reponse, 'reponse')}>
-  {reponse.nbr_likeRep} Likes
-</span>
-</div>
-                  {reponse.utilisateur.id_utilisateur.toString() === userId.toString()  &&
-                  (editingResponseId === reponse.id_reponse ? (
-                    <button onClick={() => saveEditedResponse(reponse.id_reponse)}>Save</button>
-                  ) : (
-                    <>
-      <button onClick={() => startEditing(reponse)}>Edit</button>
-      <button onClick={() => handleDeleteResponse(reponse.id_reponse)}>Delete</button>
-    </>
-                  ))}
+                <div className="commentActionButtons">
+                  {comment.utilisateur.id_utilisateur.toString() ===
+                    userId.toString() &&
+                    (editingCommentId === comment.id_cmntr ? (
+                      <button
+                        onClick={handleSaveEditComment}
+                        className="iconButton"
+                      >
+                        <FontAwesomeIcon icon={faSave} />
+                      </button>
+                    ) : (
+                      <div className="commentActions">
+                        <button
+                          className="iconButton"
+                          onClick={() =>
+                            handleEditComment(comment.id_cmntr, comment.cmntr)
+                          }
+                        >
+                          <FontAwesomeIcon icon={faPen} />
+                        </button>
+                        <button
+                          className="iconButton"
+                          onClick={() => handleDeleteComment(comment.id_cmntr)}
+                        >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                      </div>
+                    ))}
                 </div>
               </div>
-            ))}
+
+              {commentIdToRespondTo === comment.id_cmntr && (
+                <form
+                  onSubmit={(e) => handleResponseSubmit(e, comment.id_cmntr)}
+                  className="responseForm"
+                >
+                  <input
+                    type="text"
+                    value={responseContent}
+                    onChange={(e) => setResponseContent(e.target.value)}
+                    placeholder="Write a response..."
+                    className="responseInput"
+                    required
+                  />
+                  <button type="submit" className="responseSubmitButton">
+                    Reply
+                  </button>
+                </form>
+              )}
+
+              {showReplyInputForCommentId === comment.id_cmntr && (
+                <form
+                  onSubmit={(e) => handleResponseSubmit(e, comment.id_cmntr)}
+                  className="commentInput"
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      position: 'relative',
+                      marginLeft: '20px',
+                      marginBottom: '15px',
+                      marginTop: '10px',
+                    }}
+                  >
+                    <input
+                      type="text"
+                      value={responseContent}
+                      onChange={(e) => setResponseContent(e.target.value)}
+                      placeholder="Écrire une réponse..."
+                      className="commentContent"
+                      style={{
+                        width: '50%',
+                        minHeight: '30px',
+                        marginRight: '10px',
+                      }}
+                      required
+                    />
+                    <button
+                      type="submit"
+                      className="postShare-button"
+                      style={{
+                        width: '20%',
+                      }}
+                    >
+                      Répondre
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {comment.reponses && comment.reponses.length > 0 && (
+                <div>
+                  <button
+                    onClick={() => toggleRepliesVisibility(comment.id_cmntr)}
+                    className="showRepliesButton"
+                  >
+                    {visibleReplies[comment.id_cmntr]
+                      ? 'Masquer les réponses'
+                      : `Afficher les réponses (${comment.reponses.length})`}
+                  </button>
+                </div>
+              )}
+              {visibleReplies[comment.id_cmntr] &&
+                comment.reponses.map((reponse) => (
+                  <div key={reponse.id_reponse} className="response">
+                    <div>
+                      <img
+                        src={`http://localhost:5000/${reponse.utilisateur.photo}`}
+                        alt="Profile"
+                        className="responseUserPhoto"
+                      />
+                      <span className="userNameResponse">
+                        <NavLink
+                          to={`/profil/${reponse.utilisateur.id_utilisateur}`}
+                          className="userNameLink"
+                        >
+                          <span>{`${capitalizeFirstLetter(
+                            reponse.utilisateur.prenom
+                          )} ${capitalizeFirstLetter(
+                            reponse.utilisateur.nom
+                          )}`}</span>
+                        </NavLink>{' '}
+                      </span>
+                      <div>
+                        {editingResponseId === reponse.id_reponse ? (
+                          <input
+                            type="text"
+                            value={editedContent}
+                            onChange={(e) => setEditedContent(e.target.value)}
+                            className="editResponseInput"
+                          />
+                        ) : (
+                          <div className="responseContent">
+                            <p className="responseText">{reponse.contenu}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="responseActionsContainer">
+                      <div className="likesCountReactRes">
+                        <span
+                          onClick={() =>
+                            toggleLikeResponse(
+                              comment.id_cmntr,
+                              reponse.id_reponse
+                            )
+                          }
+                          style={{ cursor: 'pointer' }}
+                        >
+                          {reponse.isRepLikedByCurrentUser ? (
+                            <FontAwesomeIcon
+                              icon={faHeart}
+                              className="heartIconlove"
+                            />
+                          ) : (
+                            <FontAwesomeIcon
+                              icon={faHeart}
+                              className="heartIconUnliked"
+                            />
+                          )}
+                        </span>
+
+                        <span
+                          onClick={() =>
+                            fetchLikesAndOpenModal(
+                              reponse.id_reponse,
+                              'reponse'
+                            )
+                          }
+                        >
+                          {''} {reponse.nbr_likeRep} J'aime
+                        </span>
+                      </div>
+
+                      <div className="responseActions">
+                        {reponse.utilisateur.id_utilisateur.toString() ===
+                          userId.toString() &&
+                          (editingResponseId === reponse.id_reponse ? (
+                            <button
+                              onClick={() =>
+                                saveEditedResponse(reponse.id_reponse)
+                              }
+                              className="iconButtonRes"
+                            >
+                              <FontAwesomeIcon icon={faSave} />
+                            </button>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => startEditing(reponse)}
+                                className="iconButtonRes"
+                              >
+                                <FontAwesomeIcon icon={faPen} />
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleDeleteResponse(reponse.id_reponse)
+                                }
+                                className="iconButtonRes"
+                              >
+                                <FontAwesomeIcon icon={faTrash} />
+                              </button>
+                            </>
+                          ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
-          
         ))}
       </div>
     </div>
