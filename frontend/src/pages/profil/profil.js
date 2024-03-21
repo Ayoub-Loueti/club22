@@ -19,7 +19,6 @@ function Profil() {
   const userId = JSON.parse(localStorage.getItem('userId')); // Assuming 'userId' is stored directly
   const isOwnProfile = userId?.toString() === id; // Safely check for equality
   const [modalOpened, setModalOpened] = useState(false); // State to control the modal
-
   const [utilisateur, setUtilisateur] = useState({});
   const [editing, setEditing] = useState({
     nom: false,
@@ -35,6 +34,10 @@ function Profil() {
   });
 
   const fileInputRef = useRef(null);
+const [showDropdown, setShowDropdown] = useState(false);
+const dropdownRef = useRef(null);
+
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -188,6 +191,26 @@ function Profil() {
       );
     }
   };
+const toggleDropdown = () => {
+  setShowDropdown(!showDropdown);
+};
+function useOutsideClick(ref, callback) {
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        callback();
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [ref, callback]);
+}
+useOutsideClick(dropdownRef, () => {
+  if (showDropdown) setShowDropdown(false);
+});
 
   return (
     <>
@@ -197,46 +220,59 @@ function Profil() {
       <PostSavedModal
         modalOpened={modalOpened}
         setModalOpened={setModalOpened}
+        
       />
       <div className="profile-container">
         <div className="profile-header">
-          <img
-            src={
-              utilisateur.photo
-                ? `http://localhost:5000/${utilisateur.photo}`
-                : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
-            }
-            alt="Profil"
-            className="profile-picturee"
-          />
-          {isOwnProfile && (
-            <>
-              <FaEdit
-                className="edit-profile-picture-icon"
-                onClick={() => fileInputRef.current.click()}
-              />
-              <input
-                type="file"
-                onChange={handleFileChange}
-                ref={fileInputRef}
-                style={{ display: 'none' }}
-              />
-            </>
-          )}
-          <input
-            type="file"
-            onChange={handleFileChange}
-            ref={fileInputRef}
-            style={{ display: 'none' }}
-          />
-          {isOwnProfile && (
-            <FaTrash
-              className="delete-profile-picture-icon"
-              onClick={handleDeleteProfilePicture}
+          <div className="profile-picture-options">
+            <img
+              src={
+                utilisateur.photo
+                  ? `http://localhost:5000/${utilisateur.photo}`
+                  : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+              }
+              alt="Profil"
+              className="profile-picturee"
             />
-          )}
-          <h1>{`${utilisateur.prenom} ${utilisateur.nom} `}</h1>
+            {isOwnProfile && (
+              <>
+                <button
+                  onClick={toggleDropdown}
+                  className="dropdown-toggle-btn"
+                >
+                  ⋮
+                </button>{' '}
+                {/* This is the button to toggle the dropdown */}
+                {showDropdown && (
+                  <div className="dropdown-menu" ref={dropdownRef}>
+                    <div onClick={() => fileInputRef.current.click()}>
+                      {' '}
+                      📸 Changer photo
+                    </div>
+                    <div onClick={handleDeleteProfilePicture}>
+                      🗑️ Supprimer photo
+                    </div>
+                  </div>
+                )}
+                <input
+                  type="file"
+                  onChange={handleFileChange}
+                  ref={fileInputRef}
+                  style={{ display: 'none' }}
+                />
+              </>
+            )}
+            <input
+              type="file"
+              onChange={handleFileChange}
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+            />
+
+            <h1>{`${utilisateur.prenom} ${utilisateur.nom} `}</h1>
+          </div>{' '}
         </div>
+
         {isOwnProfile && (
           <div className="view-saved-posts-container">
             <button
@@ -265,10 +301,12 @@ function Profil() {
             </p>
           )}
           {isOwnProfile && (
-            <FaEdit
+            <span
               onClick={() => toggleEdit('description')}
               className="edit-icon-desc"
-            />
+            >
+              📝
+            </span>
           )}
         </div>
         <div className="profile-info">
@@ -292,10 +330,9 @@ function Profil() {
                 <span className="info-value">{utilisateur.nom}</span>
               )}
               {isOwnProfile && (
-                <FaEdit
-                  onClick={() => toggleEdit('nom')}
-                  className="edit-icon"
-                />
+                <span onClick={() => toggleEdit('nom')} className="edit-icon">
+                  🖊️
+                </span>
               )}
             </div>
             <div className="info-item">
@@ -313,10 +350,12 @@ function Profil() {
                 <span className="info-value">{utilisateur.prenom}</span>
               )}
               {isOwnProfile && (
-                <FaEdit
+                <span
                   onClick={() => toggleEdit('prenom')}
                   className="edit-icon"
-                />
+                >
+                  🖊️
+                </span>
               )}
             </div>
             <div className="info-item">
@@ -336,15 +375,14 @@ function Profil() {
                 <span className="info-value">{utilisateur.genre}</span>
               )}
               {isOwnProfile && (
-                <FaEdit
-                  onClick={() => toggleEdit('genre')}
-                  className="edit-icon"
-                />
+                <span onClick={() => toggleEdit('genre')} className="edit-icon">
+                  🖊️
+                </span>
               )}
             </div>
 
             <div className="info-item">
-              <span className="info-label">Vous êtes:</span>
+              <span className="info-label">Rôle:</span>
               <span className="info-value">{utilisateur.type}</span>
             </div>
           </div>
