@@ -36,7 +36,6 @@ const openModalForPost = (postId) => {
       <Posts posts={posts} openModalForPost={openModalForPost} />{' '}
       {/* Pass the openModalForPost function to Posts */}
       <PostModal
-        key={selectedPostId} // Unique key that changes with the post ID
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}
         postId={selectedPostId}
