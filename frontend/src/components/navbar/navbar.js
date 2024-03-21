@@ -15,22 +15,27 @@ import {
 function Navbar() {
   const [isVisible, setIsVisible] = useState(true);
   const [randomUsers, setRandomUsers] = useState([]);
-  const [navbarExtensionColor, setNavbarExtensionColor] = useState('#f3f3f3'); // Couleur par défaut
+  const [navbarExtensionColor, setNavbarExtensionColor] = useState('#f3f3f3'); // Default color
 
   const navigate = useNavigate();
-  // Logique pour définir la couleur en fonction de la page(navbar extension pour profil et home)
-  useEffect(() => {
-    // Vérifiez la page actuelle ou tout autre critère
-    const currentPage = window.location.pathname;
+  // Current user's ID for navigation to the profile page
+  const [currentUserId, setCurrentUserId] = useState(null);
 
-    // Si la page est la page d'accueil, définissez la couleur spécifique
+  useEffect(() => {
+    // Assuming the user ID is stored in localStorage under 'userId' after login
+    const storedUserId = JSON.parse(localStorage.getItem('userId'));
+    setCurrentUserId(storedUserId);
+  }, []);
+
+  useEffect(() => {
+    const currentPage = window.location.pathname;
     if (currentPage.toLowerCase() === '/home') {
-      setNavbarExtensionColor('#f3f3f3'); // Couleur spécifique pour la page d'accueil
+      setNavbarExtensionColor('#f3f3f3');
     } else {
-      setNavbarExtensionColor('white'); // Couleur spécifique pour les autres pages
+      setNavbarExtensionColor('white');
     }
   }, []);
-  // Function to toggle visibility
+
   const toggleNavbar = () => {
     setIsVisible(!isVisible);
   };
@@ -50,17 +55,15 @@ function Navbar() {
         setRandomUsers(response.data);
       } catch (error) {
         console.error('Error fetching random users:', error);
-        // Handle error: Redirect to login page or display an error message
       }
     };
-
     fetchRandomUsers();
   }, []);
 
   return (
     <div>
       <div className="navbar-toggle" onClick={toggleNavbar}>
-        <FontAwesomeIcon icon={faBars} style={{ fontSize: '27px' }} />{' '}
+        <FontAwesomeIcon icon={faBars} style={{ fontSize: '27px' }} />
       </div>
 
       <nav className={`navbar ${!isVisible ? '' : 'visible'}`}>
@@ -74,7 +77,7 @@ function Navbar() {
           <FontAwesomeIcon
             icon={faUser}
             className="navbar-iconnn"
-            onClick={() => navigate('/profil/:id')}
+            onClick={() => navigate(`/profil/${currentUserId}`)}
           />
           <FontAwesomeIcon icon={faCalendar} className="navbar-iconnn" />
         </div>

@@ -591,4 +591,43 @@ exports.deleteProfilePicture = async (req, res) => {
   }
 };
 
+exports.findUsersBySubstring = async (req, res) => {
+  const substring = req.query.substring || '';
+  const currentUserId = req.userId; // Assuming this is how you get the current user's ID
+
+  try {
+    const users = await Utilisateur.findAll({
+      where: {
+        id_utilisateur: {
+          [Op.ne]: currentUserId, // Exclude the current user's ID
+        },
+        [Op.or]: [
+          {
+            nom: {
+              [Op.like]: `%${substring}%`
+            },
+          },
+          {
+            prenom: {
+              [Op.like]: `%${substring}%`
+            },
+          },
+        ],
+      },
+      attributes: ['id_utilisateur', 'nom', 'prenom', 'email', 'photo'], // Customize attributes as needed
+    });
+
+    // If no users are found, return a friendly message instead of an error
+    if (users.length === 0) {
+      return res.status(200).json({ message: 'There are no users matching your search.' });
+    }
+
+    return res.status(200).json(users);
+  } catch (error) {
+    console.error('Error fetching users by substring:', error);
+    return res.status(500).json({ message: 'Error fetching users', error: error.message });
+  }
+};
+
+
 module.exports = exports;

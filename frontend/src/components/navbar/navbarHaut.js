@@ -28,7 +28,9 @@ function NavbarHaut() {
   const [selectedPostId, setSelectedPostId] = useState(null);
   const menuRef = useRef();
   const notificationsRef = useRef();
-
+  const [searchInput, setSearchInput] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  
   // This function toggles the notification dropdown
   const handleBellClick = async () => {
     setShowNotifications(!showNotifications);
@@ -36,6 +38,31 @@ function NavbarHaut() {
       // Only fetch notifications and reset count if notifications are not currently shown
       await fetchNotifications();
       await resetNotificationsCount();
+    }
+  };
+
+  const handleSearchChange = async (e) => {
+    const inputValue = e.target.value;
+    setSearchInput(inputValue);
+  
+    if (inputValue.length > 0) {
+      fetchUsersBySubstring(inputValue);
+    } else {
+      setSearchResults([]); // Clear results if input is cleared
+    }
+  };
+
+  const fetchUsersBySubstring = async (substring) => {
+    const token = JSON.parse(localStorage.getItem('login')).token;
+    try {
+      const response = await axios.get(`http://localhost:5000/search?substring=${substring}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setSearchResults(response.data);
+    } catch (error) {
+      console.error('Error fetching users by substring', error);
     }
   };
 
@@ -300,18 +327,39 @@ const handleDeleteNotification = async (notificationId) => {
 
   return (
     <div className="navbar-horizontal">
-      <form className="searchh-formm">
-        <input
-          type="text"
-          name="search"
-          placeholder="Recherche..."
-          id="search-input-navbar"
-          className="searchh-inputt"
+      <form className="searchh-formm" onSubmit={(e) => e.preventDefault()}>
+  <input
+    type="text"
+    name="search"
+    placeholder="Recherche..."
+    id="search-input-navbar"
+    className="searchh-inputt"
+    value={searchInput}
+    onChange={handleSearchChange}
+  />
+  <button type="submit" className="search-iconn">
+    <FontAwesomeIcon icon={faSearch} />
+  </button>
+</form>
+{searchResults.length > 0 ? (
+  <div className="search-results">
+    {searchResults.map((user) => (
+      <Link to={`/profil/${user.id_utilisateur}`} key={user.id_utilisateur} className="search-result-item" style={{ textDecoration: 'none' }}>
+        <img 
+          src={user.photo ? `http://localhost:5000/${user.photo}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'} 
+          alt={user.nom} 
+          className="user-photooo" 
         />
-        <button type="submit" className="search-iconn">
-          <FontAwesomeIcon icon={faSearch} />
-        </button>
-      </form>
+        <div>
+          {user.prenom} {user.nom}
+        </div>
+      </Link>
+    ))}
+  </div>
+): (
+  searchInput && <div className="search-results search-no-results-message">Il n'y a aucun utilisateur correspondant à votre recherche.</div> // This line displays a message when there are no search results
+)}
+
       <div className="icon-containerr">
         <FontAwesomeIcon
           icon={faBell}

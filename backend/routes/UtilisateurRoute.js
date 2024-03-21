@@ -63,4 +63,7 @@ router.delete(
   authenticate,
   utilisateurController.deleteProfilePicture
 );
+
+router.get('/search', authenticate, utilisateurController.findUsersBySubstring);
+
 module.exports = router;

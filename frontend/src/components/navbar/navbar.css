@@ -388,3 +388,41 @@ body {
   align-items: center;
   justify-content: space-between; /* Ensures space between the notification text and delete icon */
 }
+
+.search-results {
+  position: absolute;
+  top: 40px;
+  left: 390px;
+  background-color: #fff;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  width: 50%;
+  z-index: 1002; /* Ensure it appears above other content */
+  border-radius: 5px; /* Optional: for rounded corners */
+  overflow: hidden; /* Optional: to ensure the border-radius applies to child elements */
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  text-decoration: none; /* Remove underline from links */
+  color: inherit; /* Ensure text inherits the default color, not link color */
+}
+
+.user-photooo {
+  margin-right: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 5px 0;
+  margin-right: 23px;
+  cursor: pointer; /* Indicates the element is clickable */
+}
+
+.search-no-results-message {
+  padding: 10px;
+  text-align: center;
+  color: #666; /* Optional: Change the text color to differentiate the message */
+  font-style: italic; /* Optional: Italicize the message */
+}
