@@ -650,21 +650,32 @@ const commentsToShow = isModalView ? comments : comments.slice(0, 2);
         )}
       </div>
       <div className="postImages">
-        {data.lesImages && data.lesImages.length > 0 && (
-          <>
-            <button onClick={showPreviousImage} className="navigationButton">
-              &#9664; {/* Left arrow */}
-            </button>
-            <img
-              src={`http://localhost:5000/${data.lesImages[currentImageIndex].pathImage}`}
-              alt="Post"
-              className="postImage"
-            />
-            <button onClick={showNextImage} className="navigationButton">
-              &#9654; {/* Right arrow */}
-            </button>
-          </>
-        )}
+      {data.lesImages && data.lesImages.length > 0 && (
+  <>
+    <button onClick={showPreviousImage} className="navigationButton">
+      &#9664; {/* Left arrow */}
+    </button>
+
+    {/* Check the file extension to determine whether to render an image or a video */}
+    {data.lesImages[currentImageIndex].pathImage.endsWith('.mp4') ? (
+      <video controls className="postImage">
+        <source src={`http://localhost:5000/${data.lesImages[currentImageIndex].pathImage}`} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    ) : (
+      <img
+        src={`http://localhost:5000/${data.lesImages[currentImageIndex].pathImage}`}
+        alt="Post"
+        className="postImage"
+      />
+    )}
+
+    <button onClick={showNextImage} className="navigationButton">
+      &#9654; {/* Right arrow */}
+    </button>
+  </>
+)}
+
       </div>
       <div className="postReact">
         <img

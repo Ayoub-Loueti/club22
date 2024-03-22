@@ -532,12 +532,19 @@ exports.updateUserPhoto = async (req, res, filePath) => {
 
 exports.getRandomUsers = async (req, res) => {
   try {
-      let whereCondition = {};
+      let whereCondition = {
+          etat: 'autorise', // Ensure only users with 'etat' as 'autorise' are selected
+      };
       
       // Check if the user is authenticated (req.userId is set by your authentication middleware)
       if (req.userId) {
-          // Exclude the current user from the results
-          whereCondition = { id_utilisateur: { [Sequelize.Op.ne]: req.userId } };
+          // Exclude the current user from the results and ensure 'etat' is 'autorise'
+          whereCondition = {
+              [Sequelize.Op.and]: [
+                  { id_utilisateur: { [Sequelize.Op.ne]: req.userId } },
+                  { etat: 'autorise' }
+              ]
+          };
       }
 
       const users = await Utilisateur.findAll({
@@ -561,6 +568,7 @@ exports.getRandomUsers = async (req, res) => {
       return res.status(500).json({ message: 'Error fetching users', error: error.message });
   }
 };
+
 
 exports.deleteProfilePicture = async (req, res) => {
   const userId = req.userId; // Assuming you have middleware that sets req.userId from the token
@@ -598,9 +606,10 @@ exports.findUsersBySubstring = async (req, res) => {
   try {
     const users = await Utilisateur.findAll({
       where: {
-        id_utilisateur: {
-          [Op.ne]: currentUserId, // Exclude the current user's ID
-        },
+        [Op.and]: [
+          { id_utilisateur: { [Op.ne]: currentUserId } }, // Exclude the current user's ID
+          { etat: 'autorise' }, // Include only users whose 'etat' is 'autorise'
+        ],
         [Op.or]: [
           {
             nom: {
