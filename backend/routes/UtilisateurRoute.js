@@ -65,5 +65,6 @@ router.delete(
 );
 
 router.get('/search', authenticate, utilisateurController.findUsersBySubstring);
+router.post('/send-sms', authenticate, utilisateurController.sendSMS);
 
 module.exports = router;

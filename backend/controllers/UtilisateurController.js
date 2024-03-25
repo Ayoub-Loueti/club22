@@ -6,6 +6,7 @@ const { Op } = require('sequelize');
 const passport = require('passport');
 const { Sequelize } = require('sequelize'); 
 const { sequelize } = require('../config/db'); // Ensure this import is correct
+const twilio = require('twilio');
 
 const crypto = require('crypto');
 const Utilisateur = require('../models/UtilisateurModel');
@@ -635,6 +636,37 @@ exports.findUsersBySubstring = async (req, res) => {
   } catch (error) {
     console.error('Error fetching users by substring:', error);
     return res.status(500).json({ message: 'Error fetching users', error: error.message });
+  }
+};
+
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
+
+const client = new twilio(accountSid, authToken);
+
+exports.sendSMS = async (req, res) => {
+  const { phoneNumber } = req.body;
+
+  try {
+    const userId = req.userId;
+    const user = await Utilisateur.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    }
+
+    const messageBody = `Bonjour ${user.nom} ${user.prenom}, vous avez reçu un message `;
+
+    await client.messages.create({
+      body: messageBody,
+      from: twilioPhoneNumber,
+      to: phoneNumber,
+    });
+
+    return res.status(200).json({ message: 'SMS envoyé avec succès.' });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
 };
 
