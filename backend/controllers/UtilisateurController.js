@@ -7,6 +7,7 @@ const passport = require('passport');
 const { Sequelize } = require('sequelize'); 
 const { sequelize } = require('../config/db'); // Ensure this import is correct
 const twilio = require('twilio');
+const Client = require('../models/ClientModel');
 
 const crypto = require('crypto');
 const Utilisateur = require('../models/UtilisateurModel');
@@ -670,5 +671,24 @@ exports.sendSMS = async (req, res) => {
   }
 };
 
+exports.getPoints = async (req, res) => {
+  const id_utilisateur = req.userId; // Assuming user ID is retrieved from authentication middleware
+
+  try {
+    // Find the client record for the user ID
+    const client = await Client.findOne({ where: { id_utilisateur } });
+
+    if (client) {
+      // If client record exists, send the points in the response
+      res.status(200).json({ points: client.points });
+    } else {
+      // If client record does not exist, send an appropriate message
+      res.status(404).json({ message: 'Points not found for this user' });
+    }
+  } catch (error) {
+    // If an error occurs, send a 500 status response with the error message
+    res.status(500).json({ message: 'Error retrieving points', error: error.message });
+  }
+};
 
 module.exports = exports;

@@ -55,9 +55,6 @@ const UtilisateurModel = sequelize.define(
     },
     nbr_notifs: {
       type: DataTypes.INTEGER,
-    },
-    points: {
-      type: DataTypes.INTEGER,
     }
   },
   {

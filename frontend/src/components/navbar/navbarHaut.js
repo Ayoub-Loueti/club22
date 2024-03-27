@@ -12,9 +12,11 @@ import {
   faUser,
   faSignOutAlt,
   faTimes,
+  faPhone,
 } from '@fortawesome/free-solid-svg-icons';
 import '../navbar/navbar.css';
 import PostModal from '../postModal/postModal';
+import PhoneNumberModal from '../PhoneNumberModal/PhoneNumberModal';
 
 function NavbarHaut() {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -30,7 +32,9 @@ function NavbarHaut() {
   const notificationsRef = useRef();
   const [searchInput, setSearchInput] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  
+  const [userPoints, setUserPoints] = useState(null);
+  const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false); // State to control the phone modal visibility
+
   // This function toggles the notification dropdown
   const handleBellClick = async () => {
     setShowNotifications(!showNotifications);
@@ -325,6 +329,32 @@ const handleDeleteNotification = async (notificationId) => {
   }
 };
 
+useEffect(() => {
+  const fetchUserPoints = async () => {
+    const token = JSON.parse(localStorage.getItem('login')).token;
+    try {
+      const response = await axios.get('http://localhost:5000/points', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setUserPoints(response.data.points); // Set user points in state
+    } catch (error) {
+      console.error('Error fetching user points', error);
+    }
+  };
+
+  fetchUserPoints();
+}, []);
+
+const openPhoneModal = () => {
+  setIsPhoneModalOpen(true);
+};
+
+const closePhoneModal = () => {
+  setIsPhoneModalOpen(false);
+};
+
   return (
     <div className="navbar-horizontal">
       <form className="searchh-formm" onSubmit={(e) => e.preventDefault()}>
@@ -359,7 +389,16 @@ const handleDeleteNotification = async (notificationId) => {
 ): (
   searchInput && <div className="search-results search-no-results-message">Il n'y a aucun utilisateur correspondant à votre recherche.</div> // This line displays a message when there are no search results
 )}
-
+ {userInfo && userInfo.type === 'client' && (
+      <FontAwesomeIcon
+        icon={faPhone}
+        className="navbar-icon"
+        onClick={openPhoneModal}
+      />
+    )}
+{userPoints !== null && (
+          <span className="points">{userPoints} points</span>
+        )}
       <div className="icon-containerr">
         <FontAwesomeIcon
           icon={faBell}
@@ -388,6 +427,10 @@ const handleDeleteNotification = async (notificationId) => {
               onRequestClose={() => setIsPostModalOpen(false)}
               postId={selectedPostId}
             />
+            <PhoneNumberModal
+        isOpen={isPhoneModalOpen}
+        onRequestClose={closePhoneModal}
+      />
           </>
         ) : (
           <>

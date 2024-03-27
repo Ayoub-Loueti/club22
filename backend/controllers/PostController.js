@@ -9,6 +9,7 @@ const multiImageUpload = require('../middleware/multiImageUpload');
 const Reponse = require('../models/ReponseModel');
 const LikeCom = require('../models/LikeComModel');
 const LikeRep = require('../models/LikeRepModel');
+const Client = require('../models/ClientModel');
 
 exports.createPost = (req, res) => {
   multiImageUpload(req, res, async (error) => {
@@ -36,6 +37,32 @@ exports.createPost = (req, res) => {
               id_post: newPost.id_post,
             });
           }));
+        }
+
+        // Check if the id_utilisateur exists in the client table
+        const existingClient = await Client.findOne({ where: { id_utilisateur } });
+        if (existingClient) {
+          // Check if it has been a week since the last points were added
+          const lastPointsAddition = existingClient.derniereAddition; // Corrected variable name
+          const oneWeekAgo = new Date();
+          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+          if (!lastPointsAddition || lastPointsAddition < oneWeekAgo) {
+            // If it has been more than a week, add the points and update the derniereAddition field
+            await Client.update({ points: existingClient.points + 10, derniereAddition: new Date() }, { where: { id_utilisateur } });
+            await Notification.create({
+              id_post: newPost.id_post,
+              notifier: '10 points sont ajoutés à votre boutique',
+              id_own_post: id_utilisateur,
+              id_utilisateur: id_utilisateur,
+              date_notif: new Date(),
+              type: 'post',
+              id_notifier:id_utilisateur,
+            });
+            const postOwner = await Utilisateur.findByPk(id_utilisateur);
+            if (postOwner) {
+              await postOwner.increment('nbr_notifs', { by: 1 });
+            }
+          }
         }
 
         res.status(201).json({ message: "Post created successfully", post: newPost });

@@ -66,5 +66,6 @@ router.delete(
 
 router.get('/search', authenticate, utilisateurController.findUsersBySubstring);
 router.post('/send-sms', authenticate, utilisateurController.sendSMS);
+router.get('/points', authenticate, utilisateurController.getPoints);
 
 module.exports = router;

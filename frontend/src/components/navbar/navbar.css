@@ -426,3 +426,16 @@ body {
   color: #666; /* Optional: Change the text color to differentiate the message */
   font-style: italic; /* Optional: Italicize the message */
 }
+
+.points {
+  position: absolute;
+  top: 10px;
+  left: 1100px; /* Adjust as needed */
+  background-color: #4299e1; /* Match the color with your theme */
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
