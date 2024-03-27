@@ -5,6 +5,8 @@ const utilisateur = require('./routes/UtilisateurRoute');
 const admin = require('./routes/AdminRoute');
 const post = require('./routes/PostRoute');
 const notif = require('./routes/NotificationRoute');
+const likes = require('./routes/LikesRoute');
+const comments = require('./routes/CommentairesRoute');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const session = require('express-session');
@@ -40,6 +42,8 @@ app.use(utilisateur);
 app.use(admin);
 app.use(post);
 app.use(notif);
+app.use(likes);
+app.use(comments);
 app.use('/uploads', express.static('uploads'));
 
 const PORT = process.env.PORT || 5000;
