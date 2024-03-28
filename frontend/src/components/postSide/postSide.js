@@ -1,40 +1,65 @@
-import { useEffect ,useState} from 'react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Posts from '../posts/posts';
 import PostShare from '../postShare/postShare';
-import './postSide.css';
-import axios from 'axios';
 import PostModal from '../postModal/postModal';
+import './postSide.css';
+
 const PostSide = () => {
   const [posts, setPosts] = useState([]);
-   const [isModalOpen, setIsModalOpen] = useState(false);
-   const [selectedPostId, setSelectedPostId] = useState(null);
-  const token = JSON.parse(localStorage.getItem('login'))?.token; 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState(null);
+  const [postType, setPostType] = useState('tous');
+  const token = JSON.parse(localStorage.getItem('login'))?.token;
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/posts', {
+        let url = 'http://localhost:5000/posts';
+        if (postType !== 'tous') {
+          url += `/${postType}`; // Append the selected post type to the URL
+        }
+        const response = await axios.get(url, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setPosts(response.data); // Stocker les posts dans l'état
+        setPosts(response.data);
       } catch (error) {
-        console.error('Erreur lors du chargement des posts', error);
+        console.error('Error loading posts', error);
       }
     };
 
     fetchPosts();
-  }, [token]);
-const openModalForPost = (postId) => {
-  setSelectedPostId(postId);
-  setIsModalOpen(true);
-};
+  }, [token, postType]);
+
+  const openModalForPost = (postId) => {
+    setSelectedPostId(postId);
+    setIsModalOpen(true);
+  };
+
+  const handlePostTypeChange = (type) => {
+    setPostType(type);
+  };
+
   return (
     <div className="PostSide">
       <PostShare />
-      <Posts posts={posts} openModalForPost={openModalForPost} />{' '}
-      {/* Pass the openModalForPost function to Posts */}
+      {/* Mini navbar */}
+      <div className="mini-navbar">
+        <button className={postType === 'tous' ? 'active' : ''} onClick={() => handlePostTypeChange('tous')}>
+          Tous
+        </button>
+        <button className={postType === 'comping' ? 'active' : ''} onClick={() => handlePostTypeChange('comping')}>
+          Comping
+        </button>
+        <button className={postType === 'voyage' ? 'active' : ''} onClick={() => handlePostTypeChange('voyage')}>
+          Voyage
+        </button>
+      </div>
+      {/* Posts component */}
+      <Posts posts={posts} openModalForPost={openModalForPost} />
+      {/* PostModal component */}
       <PostModal
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}

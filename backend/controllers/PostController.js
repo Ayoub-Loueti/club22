@@ -206,7 +206,6 @@ exports.getAllPosts = async (req, res) => {
   }
 };
 
-
 exports.getPostByIdWithDetails = async (req, res) => {
     const postId = req.params.id; 
     const userId = req.userId;
@@ -334,6 +333,90 @@ exports.getAllPostsByUserWithDetails = async (req, res) => {
         console.error('Error fetching posts by user with details:', error);
         return res.status(500).json({ message: 'Error fetching posts', error: error.message });
     }
+};
+
+exports.getPostsByType = async (req, res) => {
+  const userId = req.userId; // Ensure you have access to the userId, typically set from the auth middleware
+  const type = req.params.type;
+
+  try {
+    const posts = await Post.findAll({
+      where: {
+        type: type // Filter posts by type
+      },
+      include: [
+        {
+          model: Utilisateur,
+          as: 'utilisateur',
+          attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+        },
+      ],
+    });
+
+    if (!posts.length) {
+      return res.status(404).json({ message: 'No posts found for this type' });
+    }
+
+    const postsWithDetails = await Promise.all(
+      posts.map(async (post) => {
+        const postJson = post.toJSON();
+
+        // Additional query to check if the current user has liked the post
+        const likeStatus = await Likes.findOne({
+          where: {
+            id_post: post.id_post,
+            id_utilisateur: userId,
+          },
+        });
+
+        // Add a new property to postJson indicating if the current user has liked the post
+        postJson.isLikedByCurrentUser = !!likeStatus;
+
+        const images = await Image.findAll({
+            where: {
+              id_post: post.id_post,
+            },
+          });
+          postJson.lesImages = images;
+
+        // Fetch comments for the post
+        const comments = await Commentaire.findAll({
+          where: { id_post: post.id_post },
+          include: [
+            {
+              model: Utilisateur,
+              as: 'utilisateur',
+              attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+            },
+          ],
+        });
+        postJson.commentaires = comments;
+
+        // Fetch likes for the post
+        const likes = await Likes.findAll({
+          where: { id_post: post.id_post },
+          include: [
+            {
+              model: Utilisateur,
+              as: 'utilisateur',
+              attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+            },
+          ],
+        });
+        postJson.likesCount = likes.length; // Add likes count
+        postJson.likes = likes; // This includes detailed likes info, adjust as needed
+
+        return postJson;
+      })
+    );
+
+    return res.status(200).json(postsWithDetails);
+  } catch (error) {
+    console.error('Error fetching posts by type:', error);
+    return res
+      .status(500)
+      .json({ message: 'Error fetching posts', error: error.message });
+  }
 };
 
 // save posts

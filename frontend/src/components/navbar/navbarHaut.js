@@ -387,7 +387,7 @@ const closePhoneModal = () => {
     ))}
   </div>
 ): (
-  searchInput && <div className="search-results search-no-results-message">Il n'y a aucun utilisateur correspondant à votre recherche.</div> // This line displays a message when there are no search results
+  searchInput && <div className="search-results search-no-results-message">Il n'y a aucun utilisateur correspondant à votre recherche.</div>
 )}
  {userInfo && userInfo.type === 'client' && (
       <FontAwesomeIcon
@@ -396,7 +396,7 @@ const closePhoneModal = () => {
         onClick={openPhoneModal}
       />
     )}
-{userPoints !== null && (
+{userPoints !== null && userInfo && userInfo.type === 'client' && (
           <span className="points">{userPoints} points</span>
         )}
       <div className="icon-containerr">

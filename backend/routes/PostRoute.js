@@ -11,6 +11,7 @@ router.delete('/posts/:postId', authenticate, postController.deletePost);
 router.get('/posts', authenticate, postController.getAllPosts);
 router.get('/getPostById/:id', postController.getPostByIdWithDetails);
 router.get('/getAllPostsByUser/:userId', postController.getAllPostsByUserWithDetails);
+router.get('/posts/:type', authenticate, postController.getPostsByType);
 
 router.post('/posts/:id_post/enregistrement', authenticate, postController.createEnregistrement);
 router.get('/enregistrements', authenticate, postController.getEnregistrementsByUser);
