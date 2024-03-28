@@ -10,6 +10,11 @@ const Reponse = require('../models/ReponseModel');
 const LikeCom = require('../models/LikeComModel');
 const LikeRep = require('../models/LikeRepModel');
 const Client = require('../models/ClientModel');
+const Collaborateur = require ('../models/CollaborateurModel');
+const Mention = require ('../models/MentionModel');
+const { Op } = require('sequelize');
+const { sequelize } = require('../config/db');
+const { Sequelize } = require('sequelize'); 
 
 // crud 
 
@@ -41,6 +46,40 @@ exports.createPost = (req, res) => {
           }));
         }
 
+        // Extract individual words from the post content (contenu)
+        const words = contenu.split(' ');
+
+        // Iterate over each word to check for mentions of collaborators
+        for (const word of words) {
+          // Search for collaborators where the word matches any field (nom, email, tel, etc.)
+          const collaborators = await Collaborateur.findAll({
+            where: {
+              [Sequelize.Op.or]: [
+                { nom: { [Sequelize.Op.like]: `%${word}%` } },
+                { email: { [Sequelize.Op.like]: `%${word}%` } },
+                { tel: { [Sequelize.Op.like]: `%${word}%` } },
+                { adresse: { [Sequelize.Op.like]: `%${word}%` } },
+                // Add other fields you want to search here
+              ],
+            },
+          });
+
+          // If any collaborators are found, associate the post with each one found
+          if (collaborators.length > 0) {
+            await Promise.all(collaborators.map(async (collaborator) => {
+              // Check if the collaborator's name is a full word in the post content
+              if (contenu.match(new RegExp(`\\b${collaborator.tel}\\b`, 'i'))
+              ||contenu.match(new RegExp(`\\b${collaborator.nom}\\b`, 'i'))
+              ||contenu.match(new RegExp(`\\b${collaborator.adresse}\\b`, 'i'))
+            ) {
+                await Mention.create({
+                  id_post: newPost.id_post,
+                  id_collaborateur: collaborator.id_collaborateur,
+                });
+              }
+            }));
+          }
+        }
         // Check if the id_utilisateur exists in the client table
         const existingClient = await Client.findOne({ where: { id_utilisateur } });
         if (existingClient) {
@@ -166,6 +205,21 @@ exports.getAllPosts = async (req, res) => {
           });
           postJson.lesImages = images;
 
+            const collabs = await Mention.findAll({
+              where: {
+                id_post: post.id_post,
+              },
+              include: [
+                {
+                  model: Collaborateur,
+                  as: 'collaborateur',
+                  attributes: ['id_collaborateur', 'nom', 'adresse', 'tel','email'],
+                },
+              ],
+            });
+            postJson.lesCollab = collabs;
+          
+          
         // Fetch comments for the post
         const comments = await Commentaire.findAll({
           where: { id_post: post.id_post },
@@ -251,13 +305,26 @@ exports.getPostByIdWithDetails = async (req, res) => {
                 attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
             }],
         });
-
+        const collabs = await Mention.findAll({
+          where: {
+            id_post: post.id_post,
+          },
+          include: [
+            {
+              model: Collaborateur,
+              as: 'collaborateur',
+              attributes: ['id_collaborateur', 'nom', 'adresse', 'tel','email'],
+            },
+          ],
+        });
+        
         // Convert Sequelize model instance to JSON and manually aggregate comments and likes into the post data
         const postWithDetails = post.toJSON();
         postWithDetails.isLikedByCurrentUser = !!likeStatus;
         postWithDetails.commentaires = comments;
         postWithDetails.likes = likes;
         postWithDetails.lesImages = images;
+        postWithDetails.lesCollab = collabs;
         return res.status(200).json(postWithDetails);
     } catch (error) {
         console.error('Error fetching post by ID with details:', error);
@@ -320,7 +387,19 @@ exports.getAllPostsByUserWithDetails = async (req, res) => {
                     attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
                 }],
             });
-
+            const collabs = await Mention.findAll({
+              where: {
+                id_post: post.id_post,
+              },
+              include: [
+                {
+                  model: Collaborateur,
+                  as: 'collaborateur',
+                  attributes: ['id_collaborateur', 'nom', 'adresse', 'tel','email'],
+                },
+              ],
+            });
+            postJson.lesCollab = collabs;
             // Manually aggregate comments and likes into the post data
             postJson.commentaires = comments;
             postJson.likes = likes;
@@ -403,6 +482,19 @@ exports.getPostsByType = async (req, res) => {
             },
           ],
         });
+        const collabs = await Mention.findAll({
+          where: {
+            id_post: post.id_post,
+          },
+          include: [
+            {
+              model: Collaborateur,
+              as: 'collaborateur',
+              attributes: ['id_collaborateur', 'nom', 'adresse', 'tel','email'],
+            },
+          ],
+        });
+        postJson.lesCollab = collabs;
         postJson.likesCount = likes.length; // Add likes count
         postJson.likes = likes; // This includes detailed likes info, adjust as needed
 
@@ -533,7 +625,21 @@ exports.getEnregistrementsByUser = async (req, res) => {
           });
           postJson.likesCount = likes.length;
           postJson.likes = likes;
-  
+
+          const collabs = await Mention.findAll({
+            where: {
+              id_post: post.id_post,
+            },
+            include: [
+              {
+                model: Collaborateur,
+                as: 'collaborateur',
+                attributes: ['id_collaborateur', 'nom', 'adresse', 'tel','email'],
+              },
+            ],
+          });
+          postJson.lesCollab = collabs;
+          
           return postJson;
         })
       );

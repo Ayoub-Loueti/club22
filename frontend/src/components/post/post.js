@@ -648,6 +648,20 @@ const commentsToShow = isModalView ? comments : comments.slice(0, 2);
             onChange={(e) => setEditContent(e.target.value)}
           />
         )}
+        {userInfo && userInfo.type === 'employe' && (
+  <div className="lesCollab">
+     <p>Les cordonnees du collaborateur : </p>
+    {data.lesCollab.map((collab) => (
+      
+      <div key={collab.id_mention}>
+        <hr></hr>
+        <p>Nom: {collab.collaborateur.nom}</p>
+        <p>Telephone: {collab.collaborateur.tel}</p>
+        <p>Link pour reserver: <a>link bch treservi . com</a></p>
+      </div>
+    ))}
+  </div>
+)}
       </div>
       <div className="postImages">
       {data.lesImages && data.lesImages.length > 0 && (

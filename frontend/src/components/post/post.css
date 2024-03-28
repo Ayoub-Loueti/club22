@@ -449,3 +449,33 @@ margin-left: 11%;
   display: block; /* Ensures it occupies its own line */
   font-weight: 400;
 }
+
+/* Style for lesCollab details */
+.lesCollab {
+  margin-top: 1rem; /* Adjust as needed */
+}
+
+.lesCollab hr {
+  border: none;
+  border-top: 1px solid #ccc; /* Gray color for the horizontal rule */
+}
+
+.lesCollab p {
+  margin: 0.5rem 0; /* Adjust top and bottom margin for spacing */
+  font-size: 14px; /* Adjust font size as needed */
+  color: #333; /* Adjust color as needed */
+}
+
+.lesCollab p:first-of-type {
+  font-weight: bold; /* Make the first paragraph bold */
+}
+
+/* Style for the link */
+.lesCollab a {
+  color: #007bff; /* Blue color for the link */
+  text-decoration: underline; /* Underline the link */
+}
+
+.lesCollab a:hover {
+  color: #0056b3; /* Darker blue color on hover */
+}
