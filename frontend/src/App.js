@@ -9,15 +9,16 @@ import VerificationSignup from './pages/auth/verificationSignup';
 import LogoutButton from './pages/logoutButton';
 import InsererNom from './pages/auth/insererNom';
 import Load from './pages/auth/load';
-import TousLesUtilisateurs from './pages/admin/tousLesUtilisateurs';
+import TousLesUtilisateurs from './pages/admin/TousLesUtilisateurs/tousLesUtilisateurs';
 import Profil from './pages/profil/profil';
-import ListClient from "./pages/admin/listClient";
-import ListEmploye from "./pages/admin/listEmploye";
+import ListClient from './pages/admin/listClient/listClient';
+import ListEmploye from './pages/admin/listEmploye/listEmploye';
 import Navbar from './components/navbar/navbar';
 import NavbarHaut from './components/navbar/navbarHaut';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import Home from './pages/home/home';
+import ListCollaborateur from './pages/admin/collaborateur/listCollaborateur';
 function App() {
   return (
     <React.StrictMode>
@@ -76,6 +77,14 @@ function App() {
               }
             />
             <Route
+              path="/listCollaborateur"
+              element={
+                <ProtectedRoute>
+                  <ListCollaborateur />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/verificationToken/:email"
               element={<VerificationToken />}
             />
@@ -121,14 +130,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/home"
-              element={
-               
-                  <Home />
-               
-              }
-            />
+            <Route path="/home" element={<Home />} />
             <Route
               path="/activate-account/:userId/:token"
               element={<VerificationSignup />}

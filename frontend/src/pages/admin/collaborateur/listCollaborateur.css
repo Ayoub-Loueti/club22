@@ -1,0 +1,87 @@
+/* CSS personnalisé pour la page listCollaborateur */
+.listCollaborateur-container {
+  padding: 20px;
+}
+
+.listCollaborateur-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.listCollaborateur-title {
+  color: #191f43;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.listCollaborateur-search-input {
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 2px solid #bbb;
+  border-radius: 20px;
+  width: 300px;
+  margin-top: -67px;
+  outline: none;
+  margin-left: auto;
+}
+
+.listCollaborateur-search-input:focus {
+  border-color: #191f43;
+}
+
+.listCollaborateur-table {
+  width: 100%;
+  margin: 25px auto;
+  border-collapse: collapse;
+  font-size: 1em;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.listCollaborateur-table thead tr {
+  background-color: #191f43;
+  color: #ffffff;
+  text-align: left;
+}
+
+.listCollaborateur-table tbody tr {
+  border-bottom: thin solid #dddddd;
+}
+
+.listCollaborateur-table tbody tr:nth-of-type(even) {
+  background-color: #f2f2f2;
+}
+
+.listCollaborateur-table tbody tr:hover {
+  background-color: #f1f7ff;
+}
+
+.listCollaborateur-table td {
+  padding: 10px;
+  text-align: left;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 10px;
+}
+
+.navigation-buttons button {
+  background-color: #191f43;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.navigation-buttons button:hover {
+  background-color: #163172;
+}
