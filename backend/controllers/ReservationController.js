@@ -58,7 +58,30 @@ exports.createReservation = async (req, res) => {
 exports.getAllReservations = async (req, res) => {
   try {
     // Fetch all reservations from the database
-    const reservations = await Reservation.findAll();
+    const reservations = await Reservation.findAll({
+      include: [
+        {
+          model: Offre,
+          as: 'offre', // alias to access offre information
+          include: [
+            {
+              model: Collaborateur,
+              as: 'collaborateur', // alias to access collaborateur information
+            },
+          ],
+        },
+        {
+          model: Employe,
+          as: 'employe', // alias to access employe information
+          include: [
+            {
+              model: Utilisateur,
+              as: 'utilisateur', // alias to access utilisateur information
+            },
+          ],
+        },
+      ],
+    });
     res.status(200).json(reservations);
   } catch (error) {
     res.status(500).json({ error: 'Failed to get reservations' });
@@ -67,18 +90,37 @@ exports.getAllReservations = async (req, res) => {
 
 // Controller function to get a reservation by ID
 exports.getReservationById = async (req, res) => {
-  const { id } = req.params; // Extract the reservation ID from the request parameters
+  const { id } = req.params; 
   try {
-    // Fetch the reservation from the database by its ID
-    const reservation = await Reservation.findByPk(id);
+    const reservation = await Reservation.findByPk(id, {
+      include: [
+        {
+          model: Offre,
+          as: 'offre', // alias to access offre information
+          include: [
+            {
+              model: Collaborateur,
+              as: 'collaborateur', // alias to access collaborateur information
+            },
+          ],
+        },
+        {
+          model: Employe,
+          as: 'employe', // alias to access employe information
+          include: [
+            {
+              model: Utilisateur,
+              as: 'utilisateur', // alias to access utilisateur information
+            },
+          ],
+        },
+      ],
+    });
     if (!reservation) {
-      // If reservation with the provided ID is not found, return a 404 error
       return res.status(404).json({ error: 'Reservation not found' });
     }
-    // If reservation is found, return it in the response
     res.status(200).json(reservation);
   } catch (error) {
-    // If an error occurs, return a 500 error with the error message
     res.status(500).json({ error: 'Failed to get reservation by ID' });
   }
 };

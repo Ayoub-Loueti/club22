@@ -42,7 +42,6 @@ const OffreModel = sequelize.define(
     timestamps: false,
   }
 );
-OffreModel.belongsTo(CollaborateurModel, {
-  foreignKey: 'id_collaborateur',as: 'collaborateur'
-});
+OffreModel.belongsTo(CollaborateurModel, {foreignKey: 'id_collaborateur',as: 'collaborateur'});
+
 module.exports = OffreModel;

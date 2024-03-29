@@ -25,7 +25,6 @@ const EmployeModel = sequelize.define(
   }
 );
 
-EmployeModel.belongsTo(UtilisateurModel, { foreignKey: 'id_utilisateur', as: 'utilisateur' });
-
+EmployeModel.belongsTo(UtilisateurModel, {foreignKey: 'id_utilisateur',as: 'utilisateur'});
 
 module.exports = EmployeModel;

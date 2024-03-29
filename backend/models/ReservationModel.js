@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 const OffreModel = require('./OffreModel');
-const EmployeModel =require('./UtilisateurModel');
+const EmployeModel =require('./EmployeModel');
 
 const ReservationModel = sequelize.define(
   'Reservation',
