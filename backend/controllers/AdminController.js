@@ -391,7 +391,28 @@ exports.deleteCollaborateur = async (req, res) => {
   }
 };
 */
+exports.getAllCollaborateursAD = async (req, res) => {
+  try {
+    const isAdmin = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: req.userId,
+        type: 'admin',
+      },
+    });
 
+    if (!isAdmin) {
+      return res.status(403).json({
+        error:
+          'Permission denied. Only administrators can perform this action.',
+      });
+    }
+
+    const collaborateur = await Collaborateur.findAll();
+    res.status(200).json(collaborateur);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get Collaborateur' });
+  }
+};
 exports.getAllCollaborateurs = async (req, res) => {
   try {
     const isAdmin = await Utilisateur.findOne({

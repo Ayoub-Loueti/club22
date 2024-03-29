@@ -32,6 +32,12 @@ router.put('/collaborateur/:collabId/desarchiver', authenticate, adminController
 //router.delete('/collaborator/:collaboratorId', authenticate, adminController.deleteCollaborateur);
 
 router.get('/allCollaborators',authenticate,adminController.getAllCollaborateurs);
+//get all colab archivé et desarchivé:
+router.get(
+  '/allCollaborateursAD',
+  authenticate,
+  adminController.getAllCollaborateursAD
+);
 
 router.get('/collaborator/:collaboratorId',authenticate,adminController.getCollaborateurById);
 

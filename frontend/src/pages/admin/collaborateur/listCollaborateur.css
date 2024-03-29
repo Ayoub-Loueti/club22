@@ -60,11 +60,16 @@
   background-color: #f1f7ff;
 }
 
-.listCollaborateur-table td {
-  padding: 10px;
-  text-align: left;
+.listCollaborateur-table th {
+  padding: 12px;
+  text-align: center;
+  white-space: nowrap; /* Empêche le texte de se couper sur plusieurs lignes */
 }
-
+.listCollaborateur-table td {
+  padding: 12px;
+  text-align: center;
+  white-space: nowrap; /* Empêche le texte de se couper sur plusieurs lignes */
+}
 .navigation-buttons {
   display: flex;
   justify-content: center;
@@ -84,4 +89,19 @@
 
 .navigation-buttons button:hover {
   background-color: #163172;
+}
+.list-collab-button {
+  padding: 8px 16px;
+  background-color: #163172;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.list-collab-button:hover {
+  background-color: #191f43; /* Plus sombre au survol */
 }

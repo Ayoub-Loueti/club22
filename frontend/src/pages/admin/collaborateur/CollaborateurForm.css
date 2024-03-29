@@ -1,0 +1,70 @@
+/* CSS personnalisé pour CollaborateurForm */
+.collaborateur-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.collaborateur-title {
+  text-align: center;
+  font-size: 24px;
+  color: #191f43;
+  margin-bottom: 20px;
+}
+
+.collaborateur-label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #333;
+}
+
+.collaborateur-input {
+  width: 90%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.collaborateur-input:focus {
+  outline: none;
+  border-color: #191f43;
+}
+
+.collaborateur-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #191f43;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.collaborateur-button:hover {
+  background-color: #163172;
+}
+
+.form-collab-button {
+  padding: 8px 16px;
+  background-color: #163172;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.form-collab-button:hover {
+  background-color: #191f43; /* Plus sombre au survol */
+}

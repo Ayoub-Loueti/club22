@@ -3,13 +3,14 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import './listCollaborateur.css';
-import UpdateCollaborateurModal from './UpdateCollaborateur/UpdateCollaborateurModal'; // Import de la modal pour la mise à jour
-import AddCollaborateurModal from './AddCollaborateur/AddCollaborateurModal';
+import UpdateCollaborateurModal from './UpdateCollaborateurModal';
+import AddCollaborateurModal from './AddCollaborateurModal';
 
 function ListCollaborateur() {
   const [collaborateurs, setCollaborateurs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCollaborateur, setSelectedCollaborateur] = useState(null);
+  const [selectedCollaborateurId, setSelectedCollaborateurId] = useState(null);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false); // État pour contrôler l'ouverture de la modal
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal opening
   const [collaboratorAddedOrUpdated, setCollaboratorAddedOrUpdated] =
@@ -22,7 +23,7 @@ function ListCollaborateur() {
     const fetchCollaborateurs = async () => {
       try {
         const response = await axios.get(
-          'http://localhost:5000/allCollaborators',
+          'http://localhost:5000/allCollaborateursAD',
           {
             headers: {
               Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -40,69 +41,31 @@ function ListCollaborateur() {
     }
   }, [token, collaboratorAddedOrUpdated]);
 
-  const filteredCollaborateurs = collaborateurs.filter(
-    (collaborateur) =>
-      collaborateur.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      collaborateur.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      collaborateur.adresse.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      collaborateur.tel.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      collaborateur.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      collaborateur.siteWeb.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredCollaborateurs = collaborateurs.filter((collaborateur) => {
+    const nom = collaborateur.nom ? collaborateur.nom.toLowerCase() : ''; // Check if nom is not null
+    const type = collaborateur.type ? collaborateur.type.toLowerCase() : ''; // Check if type is not null
+    const adresse = collaborateur.adresse
+      ? collaborateur.adresse.toLowerCase()
+      : ''; // Check if adresse is not null
+    const tel = collaborateur.tel ? collaborateur.tel.toLowerCase() : ''; // Check if tel is not null
+    const email = collaborateur.email ? collaborateur.email.toLowerCase() : ''; // Check if email is not null
+    const siteWeb = collaborateur.siteWeb
+      ? collaborateur.siteWeb.toLowerCase()
+      : ''; // Check if siteWeb is not null
 
-  const handleDelete = async (collaboratorId) => {
-    // Afficher une boîte de dialogue de confirmation
-    Swal.fire({
-      title: 'Êtes-vous sûr(e) de vouloir supprimer ce collaborateur ?',
-      text: 'Cette action est irréversible !',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Oui, supprimer',
-      cancelButtonText: 'Annuler',
-      reverseButtons: true, // Inverser le bouton de confirmation et le bouton d'annulation
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await axios.delete(
-            `http://localhost:5000/collaborator/${collaboratorId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${JSON.parse(token).token}`,
-              },
-            }
-          );
-          console.log(response.data.message); // Message de confirmation de suppression
-          // Mettre à jour la liste après suppression
-          setCollaborateurs(
-            collaborateurs.filter(
-              (collab) => collab.id_collaborateur !== collaboratorId
-            )
-          );
-          // Afficher une alerte de succès
-          Swal.fire({
-            icon: 'success',
-            title: 'Succès',
-            text: 'Le collaborateur a été supprimé avec succès.',
-          });
-        } catch (error) {
-          console.error('Error deleting collaborator:', error);
-          // Afficher une alerte d'erreur
-          Swal.fire({
-            icon: 'error',
-            title: 'Erreur',
-            text: 'Une erreur est survenue lors de la suppression du collaborateur.',
-          });
-        }
-      }
-    });
-  };
-
-  const handleUpdate = (collaboratorId) => {
-    // Ouvrir la modal de mise à jour avec le collaborateur sélectionné
-    setSelectedCollaborateur(
-      collaborateurs.find((collab) => collab.id === collaboratorId)
+    return (
+      nom.includes(searchTerm.toLowerCase()) ||
+      type.includes(searchTerm.toLowerCase()) ||
+      adresse.includes(searchTerm.toLowerCase()) ||
+      tel.includes(searchTerm.toLowerCase()) ||
+      email.includes(searchTerm.toLowerCase()) ||
+      siteWeb.includes(searchTerm.toLowerCase())
     );
-    setIsUpdateModalOpen(true); // Ouvrir la modal
+  });
+
+  const handleUpdate = (collaborateurId) => {
+    setSelectedCollaborateurId(collaborateurId);
+    setIsUpdateModalOpen(true);
   };
 
   // Function to open the modal
@@ -115,18 +78,58 @@ function ListCollaborateur() {
     setIsModalOpen(false);
   };
   const handleAddOrUpdateSuccess = () => {
-    setCollaboratorAddedOrUpdated(true); // Trigger re-render after adding or updating a collaborator
+    setCollaboratorAddedOrUpdated((prev) => !prev); // Inverser la valeur actuelle de l'état
   };
+  const handleArchive = async (collabId) => {
+    try {
+      await axios.put(
+        `http://localhost:5000/collaborateur/${collabId}/archiver`,
+        null, // Empty data since it's a PUT request
+        {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(token).token}`,
+          },
+        }
+      );
+      setCollaboratorAddedOrUpdated(!collaboratorAddedOrUpdated);
+      Swal.fire('Success', 'Collaborateur archivé avec succès', 'success');
+    } catch (error) {
+      console.error('Error archiving collaborator:', error);
+      Swal.fire('Error', 'Failed to archive collaborateur', 'error');
+    }
+  };
+
+  const handleUnarchive = async (collabId) => {
+    try {
+      await axios.put(
+        `http://localhost:5000/collaborateur/${collabId}/desarchiver`,
+        null, // Empty data since it's a PUT request
+        {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(token).token}`,
+          },
+        }
+      );
+      setCollaboratorAddedOrUpdated(!collaboratorAddedOrUpdated);
+      Swal.fire('Success', 'Collaborateur désarchivé avec succès', 'success');
+    } catch (error) {
+      console.error('Error unarchiving collaborator:', error);
+      Swal.fire('Error', 'Failed to unarchive collaborateur', 'error');
+    }
+  };
+
   return (
     <div className="listCollaborateur-container">
-      <button onClick={handleOpenModal}>Ajouter Collaborateur</button>
+      <button onClick={handleOpenModal} className="list-collab-button">
+        Ajouter Collaborateur
+      </button>
       <AddCollaborateurModal
         isOpen={isModalOpen}
         onRequestClose={handleCloseModal}
         onSuccess={handleAddOrUpdateSuccess}
       />
       <div className="listCollaborateur-header">
-        <h1>Liste des Collaborateurs</h1>
+        <h1 className="listCollaborateur-title">LISTE DES COLLABORATEURS</h1>
         <input
           type="text"
           className="listCollaborateur-search-input"
@@ -140,10 +143,10 @@ function ListCollaborateur() {
         <thead>
           <tr>
             <th>ID</th>
-            <th>Nom</th>
-            <th>Type</th>
+            <th>Collaborateur</th>
+            <th>Catégorie</th>
             <th>Adresse</th>
-            <th>Tel</th>
+            <th>Télephone</th>
             <th>Email</th>
             <th>Site Web</th>
             <th>Logo</th>
@@ -162,17 +165,42 @@ function ListCollaborateur() {
               <td>{collaborateur.siteWeb}</td>
               <td>{collaborateur.logo}</td>
               <td>
-                <button onClick={() => handleUpdate(collaborateur.id)}>
+                <button
+                  onClick={() => handleUpdate(collaborateur.id_collaborateur)}
+                  className="list-collab-button"
+                >
                   Modifier
                 </button>
-                <button onClick={() => handleDelete(collaborateur.id)}>
-                  Supprimer
-                </button>
+                {collaborateur.archiver ? (
+                  <button
+                    onClick={() =>
+                      handleUnarchive(collaborateur.id_collaborateur)
+                    }
+                    className="list-collab-button"
+                  >
+                    Désarchiver
+                  </button>
+                ) : (
+                  <button
+                    onClick={() =>
+                      handleArchive(collaborateur.id_collaborateur)
+                    }
+                    className="list-collab-button"
+                  >
+                    Archiver
+                  </button>
+                )}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      <UpdateCollaborateurModal
+        isOpen={isUpdateModalOpen}
+        onRequestClose={() => setIsUpdateModalOpen(false)}
+        onSuccess={handleAddOrUpdateSuccess}
+        collaborateurId={selectedCollaborateurId}
+      />
     </div>
   );
 }
