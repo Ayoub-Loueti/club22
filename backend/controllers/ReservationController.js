@@ -4,6 +4,7 @@ const Utilisateur = require('../models/UtilisateurModel');
 const Collaborateur = require('../models/CollaborateurModel');
 const Offre = require('../models/OffreModel');
 const Employe = require('../models/EmployeModel');
+const { Op } = require('sequelize');
 
 exports.createReservation = async (req, res) => {
   const {id_offre} = req.body;
@@ -54,7 +55,6 @@ exports.createReservation = async (req, res) => {
   }
 };
 
-// Controller function to get all reservations
 exports.getAllReservations = async (req, res) => {
   try {
     // Fetch all reservations from the database
@@ -88,7 +88,6 @@ exports.getAllReservations = async (req, res) => {
   }
 };
 
-// Controller function to get a reservation by ID
 exports.getReservationById = async (req, res) => {
   const { id } = req.params; 
   try {
@@ -125,42 +124,172 @@ exports.getReservationById = async (req, res) => {
   }
 };
 
-// Controller function to update a reservation
-exports.updateReservation = async (req, res) => {
-  const { reservationId } = req.params;
+exports.getUserReservations = async (req, res) => {
+  const userId = req.userId;
+
   try {
-    // Find the reservation by ID
-    const reservation = await Reservation.findByPk(reservationId);
-    if (!reservation) {
-      return res.status(404).json({ error: 'Reservation not found' });
+    const employe = await Employe.findOne({
+      where: {
+        id_utilisateur: userId,
+      },
+    });
+
+    if (!employe) {
+      return res.status(404).json({ error: 'Employe not found' });
     }
 
-    // Update the reservation with data from the request body
-    await reservation.update(req.body);
+    const userReservations = await Reservation.findAll({
+      where: {
+        id_employe: employe.id_employe,
+      },
+      include: [
+        {
+          model: Offre,
+          as: 'offre', 
+          include: [
+            {
+              model: Collaborateur,
+              as: 'collaborateur', 
+            },
+          ],
+        },
+      ],
+    });
+
+    res.status(200).json(userReservations);
+  } catch (error) {
+    console.error('Error fetching user reservations:', error);
+    res.status(500).json({ error: 'Failed to get user reservations' });
+  }
+};
+
+exports.annulerReservation = async (req, res) => {
+  const userId = req.userId;
+  const reservationId = req.params.id; // Assuming reservation ID is passed as a parameter
+
+  try {
+    // Find the employee corresponding to the logged-in user
+    const employe = await Employe.findOne({
+      where: {
+        id_utilisateur: userId,
+      },
+    });
+
+    if (!employe) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+
+    // Find the reservation to be cancelled
+    const userReservation = await Reservation.findOne({
+      where: {
+        id_employe: employe.id_employe,
+        id_reservation: reservationId,
+        etat: 'en_cours',
+      },
+    });
+
+    if (!userReservation) {
+      return res.status(404).json({ error: 'Reservation not found or cannot be cancelled' });
+    }
+
+    // Update the reservation state to 'annuler'
+    await userReservation.update({ etat: 'annuler' });
+
+    res.status(200).json({ message: 'Reservation cancelled successfully' });
+  } catch (error) {
+    console.error('Error cancelling reservation:', error);
+    res.status(500).json({ error: 'Failed to cancel reservation' });
+  }
+};
+
+exports.confirmationReservation = async (req, res) => {
+  const userId = req.userId;
+  const reservationId = req.params.id; // Assuming reservation ID is passed as a parameter
+
+  try {
+    // Find the employee corresponding to the logged-in user
+    const employe = await Employe.findOne({
+      where: {
+        id_utilisateur: userId,
+      },
+    });
+
+    if (!employe) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+
+    // Find the reservation to be cancelled
+    const userReservation = await Reservation.findOne({
+      where: {
+        id_employe: employe.id_employe,
+        id_reservation: reservationId,
+        etat: 'en_cours',
+      },
+    });
+
+    if (!userReservation) {
+      return res.status(404).json({ error: 'Reservation not found or cannot be cancelled' });
+    }
+
+    // Update the reservation state to 'annuler'
+    await userReservation.update({ etat: 'confirmer' });
+
+    res.status(200).json({ message: 'Reservation confirmer successfully' });
+  } catch (error) {
+    console.error('Error confirming reservation:', error);
+    res.status(500).json({ error: 'Failed to confirm reservation' });
+  }
+};
+
+exports.updateReservation = async (req, res) => {
+  const userId = req.userId;
+  const reservationId = req.params.id; // Assuming reservation ID is passed as a parameter
+  const { id_offre } = req.body; // Assuming you want to update the offer ID
+
+  try {
+    // Find the employee corresponding to the logged-in user
+    const employe = await Employe.findOne({
+      where: {
+        id_utilisateur: userId,
+      },
+    });
+
+    if (!employe) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+
+    // Find the reservation to be updated
+    const userReservation = await Reservation.findOne({
+      where: {
+        id_employe: employe.id_employe,
+        id_reservation: reservationId,
+        etat: 'en_cours', // Only update reservations that are in progress
+      },
+    });
+
+    if (!userReservation) {
+      return res.status(404).json({ error: 'Reservation not found or cannot be updated' });
+    }
+
+    // Check if the new offer ID exists
+    const newOfferExists = await Offre.findOne({
+      where: {
+        id_offre: id_offre,
+      },
+    });
+
+    if (!newOfferExists) {
+      return res.status(404).json({ error: 'New offer not found' });
+    }
+
+    // Update the reservation with the new offer ID
+    await userReservation.update({ id_offre: id_offre });
+
     res.status(200).json({ message: 'Reservation updated successfully' });
   } catch (error) {
+    console.error('Error updating reservation:', error);
     res.status(500).json({ error: 'Failed to update reservation' });
   }
 };
-
-// Controller function to delete a reservation
-exports.deleteReservation = async (req, res) => {
-  const { reservationId } = req.params;
-  try {
-    // Find the reservation by ID
-    const reservation = await Reservation.findByPk(reservationId);
-    if (!reservation) {
-      return res.status(404).json({ error: 'Reservation not found' });
-    }
-
-    // Delete the reservation
-    await reservation.destroy();
-    res.status(200).json({ message: 'Reservation deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to delete reservation' });
-  }
-};
-
-// Other reservation-related controller functions can be added here as needed
 
 module.exports = exports;

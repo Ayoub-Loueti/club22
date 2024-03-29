@@ -6,6 +6,10 @@ const authenticate = require('../middleware/authenticate');
 router.post('/reservation',authenticate, reservationController.createReservation);
 router.get('/reservations', authenticate , reservationController.getAllReservations);
 router.get('/reservation/:id', authenticate, reservationController.getReservationById);
+router.get('/myReservations', authenticate, reservationController.getUserReservations); 
+router.put('/reservation/:id/annuler', authenticate, reservationController.annulerReservation);
+router.put('/reservation/:id/confirmer', authenticate, reservationController.confirmationReservation);
+router.put('/updateReservation/:id', authenticate, reservationController.updateReservation);
 
 /*
 

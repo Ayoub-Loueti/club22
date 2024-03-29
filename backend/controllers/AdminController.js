@@ -1,6 +1,8 @@
 const Utilisateur = require('../models/UtilisateurModel');
 const Collaborateur = require('../models/CollaborateurModel');
 const OffreModel = require('../models/OffreModel');
+const Employe = require('../models/EmployeModel');
+
 exports.getAllUsers = async (req, res) => {
   try {
     // Vérifier si l'utilisateur est un administrateur
@@ -236,7 +238,6 @@ exports.getAllEmploye = async (req, res) => {
   }
 }; */
 
-// Controller pour créer un collaborateur
 exports.createCollaborateur = async (req, res) => {
   try {
     const isAdmin = await Utilisateur.findOne({
@@ -260,6 +261,91 @@ exports.createCollaborateur = async (req, res) => {
   }
 };
 
+exports.archiveCollab = async (req, res) => {
+  const { collabId } = req.params;
+
+  try {
+    // Check if the user making the request is an administrator
+    const isAdmin = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: req.userId,
+        type: 'admin',
+      },
+    });
+
+    if (!isAdmin) {
+      return res.status(403).json({
+        error: 'Permission denied. Only administrators can perform this action.',
+      });
+    }
+
+    // Find the employe by ID
+    const collab = await Collaborateur.findOne({
+      where: {
+        id_collaborateur: collabId,
+      },
+    });
+
+    if (!collab) {
+      return res.status(404).json({ error: 'Collaborateur not found' });
+    }
+
+    // Update the adherant field only if it's false
+    if (!collab.archiver) {
+      await collab.update({ archiver: true });
+      return res.status(200).json({ message: 'Collaborateur archiver avec succees' });
+    } else {
+      return res.status(400).json({ error: 'Collaborateur deja archivée' });
+    }
+  } catch (error) {
+    console.error('Failed to update collaborateur archive status:', error);
+    res.status(500).json({ error: 'Failed to update collaborateur archive status' });
+  }
+};
+
+exports.desarchiveCollab = async (req, res) => {
+  const { collabId } = req.params;
+
+  try {
+    // Check if the user making the request is an administrator
+    const isAdmin = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: req.userId,
+        type: 'admin',
+      },
+    });
+
+    if (!isAdmin) {
+      return res.status(403).json({
+        error: 'Permission denied. Only administrators can perform this action.',
+      });
+    }
+
+    // Find the employe by ID
+    const collab = await Collaborateur.findOne({
+      where: {
+        id_collaborateur: collabId,
+      },
+    });
+
+    if (!collab) {
+      return res.status(404).json({ error: 'Collaborateur not found' });
+    }
+
+    // Update the adherant field only if it's false
+    if (collab.archiver) {
+      await collab.update({ archiver: false });
+      return res.status(200).json({ message: 'Collaborateur desarchiver avec succees' });
+    } else {
+      return res.status(400).json({ error: 'Collaborateur deja desarchivée' });
+    }
+  } catch (error) {
+    console.error('Failed to update collaborateur archive status:', error);
+    res.status(500).json({ error: 'Failed to update collaborateur archive status' });
+  }
+};
+
+/*
 exports.deleteCollaborateur = async (req, res) => {
   const { collaboratorId } = req.params;
   console.log('ID du collaborateur à supprimer :', collaboratorId); // Log for debugging
@@ -304,6 +390,7 @@ exports.deleteCollaborateur = async (req, res) => {
     res.status(500).json({ error: 'Failed to delete collaborateur' });
   }
 };
+*/
 
 exports.getAllCollaborateurs = async (req, res) => {
   try {
@@ -321,7 +408,11 @@ exports.getAllCollaborateurs = async (req, res) => {
       });
     }
 
-    const collaborateur = await Collaborateur.findAll();
+    const collaborateur = await Collaborateur.findAll({
+      where: {
+        archiver: false,
+      },
+    });
     res.status(200).json(collaborateur);
   } catch (error) {
     res.status(500).json({ error: 'Failed to get Collaborateur' });
@@ -354,6 +445,7 @@ exports.getCollaborateurById = async (req, res) => {
     res.status(500).json({ error: 'Failed to get collaborateur' });
   }
 };
+
 exports.updateCollaborateur = async (req, res) => {
   const { collaboratorId } = req.params;
   try {
@@ -469,7 +561,6 @@ exports.deleteOffre = async (req, res) => {
   }
 };
 
-
 exports.getAllOffres = async (req, res) => {
   try {
     const isAdmin = await Utilisateur.findOne({
@@ -517,6 +608,90 @@ exports.getOffreById = async (req, res) => {
     res.status(200).json(offre);
   } catch (error) {
     res.status(500).json({ error: 'Failed to get offre' });
+  }
+};
+
+exports.updateEmployeAdherant = async (req, res) => {
+  const { employeId } = req.params;
+
+  try {
+    // Check if the user making the request is an administrator
+    const isAdmin = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: req.userId,
+        type: 'admin',
+      },
+    });
+
+    if (!isAdmin) {
+      return res.status(403).json({
+        error: 'Permission denied. Only administrators can perform this action.',
+      });
+    }
+
+    // Find the employe by ID
+    const employe = await Employe.findOne({
+      where: {
+        id_utilisateur: employeId,
+      },
+    });
+
+    if (!employe) {
+      return res.status(404).json({ error: 'Employe not found' });
+    }
+
+    // Update the adherant field only if it's false
+    if (!employe.adherant) {
+      await employe.update({ adherant: true });
+      return res.status(200).json({ message: 'Employe adherant status updated successfully' });
+    } else {
+      return res.status(400).json({ error: 'Employe is already an adherant' });
+    }
+  } catch (error) {
+    console.error('Failed to update employe adherant status:', error);
+    res.status(500).json({ error: 'Failed to update employe adherant status' });
+  }
+};
+
+exports.updateEmployeNonAdherant = async (req, res) => {
+  const { employeId } = req.params;
+
+  try {
+    // Check if the user making the request is an administrator
+    const isAdmin = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: req.userId,
+        type: 'admin',
+      },
+    });
+
+    if (!isAdmin) {
+      return res.status(403).json({
+        error: 'Permission denied. Only administrators can perform this action.',
+      });
+    }
+
+    // Find the employe by ID
+    const employe = await Employe.findOne({
+      where: {
+        id_utilisateur: employeId,
+      },
+    });
+
+    if (!employe) {
+      return res.status(404).json({ error: 'Employe not found' });
+    }
+
+    // Update the adherant field only if it's false
+    if (employe.adherant) {
+      await employe.update({ adherant: false });
+      return res.status(200).json({ message: 'Employe adherant status updated successfully' });
+    } else {
+      return res.status(400).json({ error: 'Employe is already an non adherant' });
+    }
+  } catch (error) {
+    console.error('Failed to update employe adherant status:', error);
+    res.status(500).json({ error: 'Failed to update employe adherant status' });
   }
 };
 

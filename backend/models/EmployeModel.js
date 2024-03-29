@@ -18,6 +18,9 @@ const EmployeModel = sequelize.define(
           key: 'id_utilisateur', 
         },
       },
+      adherant:{
+        type: DataTypes.BOOLEAN,
+      },
   },
   {
     tableName: 'employe',

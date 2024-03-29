@@ -31,6 +31,9 @@ const ReservationModel = sequelize.define(
           model: 'employe',
           key: 'id_employe',
       },
+    },
+    etat: {
+      type: DataTypes.ENUM('en_cours', 'confirmer', 'annuler'),
     }
   },
   {

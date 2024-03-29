@@ -25,7 +25,11 @@ router.get('/allUsers', authenticate, adminController.getAllUsers);
 //collab et offre
 router.post('/collaborator', authenticate, adminController.createCollaborateur);
 
-router.delete('/collaborator/:collaboratorId', authenticate, adminController.deleteCollaborateur);
+router.put('/collaborateur/:collabId/archiver', authenticate, adminController.archiveCollab);
+
+router.put('/collaborateur/:collabId/desarchiver', authenticate, adminController.desarchiveCollab);
+
+//router.delete('/collaborator/:collaboratorId', authenticate, adminController.deleteCollaborateur);
 
 router.get('/allCollaborators',authenticate,adminController.getAllCollaborateurs);
 
@@ -42,5 +46,9 @@ router.delete('/offer/:offreId', authenticate, adminController.deleteOffre);
 router.get('/allOffers', authenticate, adminController.getAllOffres);
 
 router.get('/offer/:offreId', authenticate, adminController.getOffreById);
+
+router.put('/employes/:employeId/adherant', authenticate, adminController.updateEmployeAdherant);
+
+router.put('/employes/:employeId/nonAdherant', authenticate, adminController.updateEmployeNonAdherant);
 
 module.exports = router;

@@ -31,7 +31,11 @@ const CollaborateurModel = sequelize.define('Collaborateur', {
     type: DataTypes.STRING,
   },
   logo: {
-    type: DataTypes.STRING,}
+    type: DataTypes.STRING,
+  },
+  archiver: {
+    type: DataTypes.BOOLEAN,
+  }
 }, {
     tableName: 'collaborateur',
     timestamps: false
