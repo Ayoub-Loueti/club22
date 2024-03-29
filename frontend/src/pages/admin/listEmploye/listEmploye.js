@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../../assets/listEmployE.css'
+import './listEmployE.css'
 function ListEmploye() {
   const [Employes, setEmployes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
