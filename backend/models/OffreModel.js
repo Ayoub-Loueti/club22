@@ -12,28 +12,30 @@ const OffreModel = sequelize.define(
     },
     titre: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
     description: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
     date_debut: {
       type: DataTypes.DATE,
-      allowNull: false,
     },
     date_fin: {
       type: DataTypes.DATE,
-      allowNull: false,
     },
     photo: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
     prix: {
       type: DataTypes.FLOAT,
-      allowNull: false,
     },
+    id_collaborateur: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+          model: 'collaborateur',
+          key: 'id_collaborateur',
+      },
+  },
   },
   {
     tableName: 'offre',
@@ -41,6 +43,6 @@ const OffreModel = sequelize.define(
   }
 );
 OffreModel.belongsTo(CollaborateurModel, {
-  foreignKey: 'id_collaborateur',
+  foreignKey: 'id_collaborateur',as: 'collaborateur'
 });
 module.exports = OffreModel;

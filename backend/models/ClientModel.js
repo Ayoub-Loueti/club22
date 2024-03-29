@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
+const UtilisateurModel = require('./UtilisateurModel');
 
 const ClientModel = sequelize.define(
   'Client',
@@ -10,8 +11,13 @@ const ClientModel = sequelize.define(
       autoIncrement: true,
     },
     id_utilisateur: {
-        type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'utilisateur', 
+        key: 'id_utilisateur', 
       },
+    },
     points: {
       type: DataTypes.INTEGER,
     },
@@ -25,5 +31,7 @@ const ClientModel = sequelize.define(
     timestamps: false,
   }
 );
+
+ClientModel.belongsTo(UtilisateurModel, { foreignKey: 'id_utilisateur', as: 'utilisateur' });
 
 module.exports = ClientModel;

@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 const OffreModel = require('./OffreModel');
-const UtilisateurModel=require('./UtilisateurModel');
+const EmployeModel =require('./UtilisateurModel');
 
 const ReservationModel = sequelize.define(
   'Reservation',
@@ -16,18 +16,31 @@ const ReservationModel = sequelize.define(
       allowNull: false,
       defaultValue: DataTypes.NOW,
     },
+    id_offre:{
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+          model: 'offre',
+          key: 'id_offre',
+      },
+    },
+    id_employe:{
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+          model: 'employe',
+          key: 'id_employe',
+      },
+    }
   },
   {
     tableName: 'reservation',
     timestamps: false,
   }
 );
-ReservationModel.belongsTo(OffreModel, {
-  foreignKey: 'id_offre',
-});
-ReservationModel.belongsTo(UtilisateurModel, {
-  foreignKey: 'id_utilisateur',
-});
+
+ReservationModel.belongsTo(OffreModel, { foreignKey: 'id_offre',as: 'offre'});
+ReservationModel.belongsTo(EmployeModel, { foreignKey: 'id_employe',as: 'employe'});
 
 
 module.exports = ReservationModel;
