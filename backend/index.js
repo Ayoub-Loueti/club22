@@ -8,10 +8,15 @@ const notif = require('./routes/NotificationRoute');
 const likes = require('./routes/LikesRoute');
 const comments = require('./routes/CommentairesRoute');
 const reservation = require('./routes/ReservationRoute');
+const collaborateur = require('./routes/CollaborateurRoute');
+const offre = require('./routes/OffreRoute');
+const employe = require('./routes/EmployeRoute');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const session = require('express-session');
 const passport = require('passport');
+const multer = require('multer');
+const path = require('path');
 require('./passportSetup'); // Path to your passport configuration file
 dotenv.config();
 app.use(express.json());
@@ -46,13 +51,30 @@ app.use(notif);
 app.use(likes);
 app.use(comments);
 app.use(reservation);
+app.use(collaborateur);
+app.use(offre);
+app.use(employe);
 app.use('/uploads', express.static('uploads'));
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // save files to the 'uploads' directory
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // set unique filename
+  },
+});
+
+const upload = multer({ storage });
+
+// Handle image upload
+app.post('/upload-image', upload.single('file'), (req, res) => {
+  const imageUrl = `uploads/${req.file.filename}`;
+  res.json({ imageUrl });
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
 
   console.log(`Server is running on port ${PORT}`);
 });
-
-
-

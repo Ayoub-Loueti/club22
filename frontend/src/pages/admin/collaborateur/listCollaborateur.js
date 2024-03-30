@@ -163,7 +163,12 @@ function ListCollaborateur() {
               <td>{collaborateur.tel}</td>
               <td>{collaborateur.email}</td>
               <td>{collaborateur.siteWeb}</td>
-              <td>{collaborateur.logo}</td>
+              <td><img
+              src={
+                 `http://localhost:5000/${collaborateur.logo}`
+                  }
+              className="collaborateur-picturee"
+            /></td>
               <td>
                 <button
                   onClick={() => handleUpdate(collaborateur.id_collaborateur)}

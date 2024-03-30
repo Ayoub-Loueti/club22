@@ -25,95 +25,19 @@ function App() {
       <Router>
         <div className="App">
           <Routes>
-            <Route
-              path="/"
-              element={
-                <PublicRoute>
-                  <Login />
-                </PublicRoute>
-              }
-            />
-
-            <Route
-              path="/signup"
-              element={
-                <PublicRoute>
-                  <Signup />
-                </PublicRoute>
-              }
-            />
-
-            <Route
-              path="/logout"
-              element={
-                <ProtectedRoute>
-                  {' '}
-                  <LogoutButton />{' '}
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/insererNom"
-              element={
-                <ProtectedRoute>
-                  <InsererNom />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/listClient"
-              element={
-                <ProtectedRoute>
-                  <ListClient />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/listEmploye"
-              element={
-                <ProtectedRoute>
-                  <ListEmploye />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/listCollaborateur"
-              element={
-                <ProtectedRoute>
-                  <ListCollaborateur />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/verificationToken/:email"
-              element={<VerificationToken />}
-            />
+            <Route path="/" element={  <PublicRoute>  <Login /> </PublicRoute> } />
+            <Route path="/signup"  element={  <PublicRoute>   <Signup />  </PublicRoute> }  />
+            <Route path="/logout" element={   <ProtectedRoute>  {' '}  <LogoutButton />{' '}   </ProtectedRoute>  }  />
+            <Route path="/insererNom" element={  <ProtectedRoute>  <InsererNom /> </ProtectedRoute>  }  />
+            <Route path="/listClient"  element={ <ProtectedRoute> <ListClient />  </ProtectedRoute> } />
+            <Route path="/listEmploye" element={  <ProtectedRoute> <ListEmploye />  </ProtectedRoute> } />
+            <Route path="/listCollaborateur" element={ <ProtectedRoute> <ListCollaborateur />  </ProtectedRoute> }/>
+            <Route path="/verificationToken/:email" element={<VerificationToken />} />
             <Route path="/changerPass/:token" element={<ChangerPass />} />
             <Route path="/load" element={<Load />} />
-            <Route
-              path="/tousLesUtilisateurs"
-              element={
-                <ProtectedRoute>
-                  <TousLesUtilisateurs />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profil/:id"
-              element={
-                <ProtectedRoute>
-                  <Profil />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/navbar"
-              element={
-                <ProtectedRoute>
-                  <Navbar />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/tousLesUtilisateurs" element={<ProtectedRoute><TousLesUtilisateurs /></ProtectedRoute>}/>
+            <Route path="/profil/:id"element={ <ProtectedRoute> <Profil /> </ProtectedRoute>}/>
+            <Route path="/navbar" element={ <ProtectedRoute><Navbar /> </ProtectedRoute>}/>
             <Route
               path="/navbarHaut"
               element={

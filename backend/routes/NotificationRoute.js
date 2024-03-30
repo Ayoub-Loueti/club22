@@ -7,10 +7,6 @@ router.get('/notifications', authenticate, notificationController.getNotificatio
 router.patch('/notifications/:notificationId', authenticate, notificationController.updateNotificationStatus);
 router.get('/user-notifications',authenticate, notificationController.getUserNotificationCount);
 router.post('/reset-notifications', authenticate, notificationController.resetUserNotificationCount);
-router.delete(
-  '/notifications/:notificationId',
-  authenticate,
-  notificationController.deleteNotification
-);
+router.delete('/notifications/:notificationId',authenticate,notificationController.deleteNotification);
 
 module.exports = router;

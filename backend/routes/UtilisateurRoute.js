@@ -5,39 +5,24 @@ const authenticate = require('../middleware/authenticate.js');
 const optionalAuthenticate = require('../middleware/optionalAuthenticate.js');
 
 router.post('/signup', utilisateurController.signup);
-router.get(
-  '/activateAccount/:userId/:token',
-  utilisateurController.activateAccount
-);
+router.get('/activateAccount/:userId/:token',utilisateurController.activateAccount);
 router.post('/resendEmail', utilisateurController.resendActivationEmail);
 
 router.post('/login', utilisateurController.login);
 router.get('/auth/google', utilisateurController.googleAuth);
 router.get('/auth/google/callback', utilisateurController.googleAuthCallback);
-
 router.get('/auth/logout', utilisateurController.logout);
 
 router.put('/updateCompte', authenticate, utilisateurController.updateUser);
-router.patch(
-  '/updateNameSurnameGenre',
-  authenticate,
-  utilisateurController.updateNameSurnameGenre
-);
+router.patch('/updateNameSurnameGenre',authenticate,utilisateurController.updateNameSurnameGenre);
 router.get('/rechercher/:id', authenticate, utilisateurController.findUser);
 
 router.post('/forgot-password', utilisateurController.forgotPassword);
 router.post('/check-reset-token', utilisateurController.checkResetToken);
 router.post('/reset-password/:token', utilisateurController.resetPassword);
-router.post(
-  '/resend-forgot-password-email/:email',
-  utilisateurController.resendForgotPasswordEmail
-);
+router.post('/resend-forgot-password-email/:email',utilisateurController.resendForgotPasswordEmail);
 router.get('/profil/:id', authenticate, utilisateurController.getUserProfile);
-router.get(
-  '/randomUsers',
-  optionalAuthenticate,
-  utilisateurController.getRandomUsers
-);
+router.get('/randomUsers',optionalAuthenticate,utilisateurController.getRandomUsers);
 
 const upload = require('../middleware/multerConfig');
 
@@ -58,12 +43,8 @@ router.post('/updateProfilePicture', authenticate, (req, res) => {
     }
   });
 });
-router.delete(
-  '/profile-picture',
-  authenticate,
-  utilisateurController.deleteProfilePicture
-);
 
+router.delete('/profile-picture', authenticate, utilisateurController.deleteProfilePicture);
 router.get('/search', authenticate, utilisateurController.findUsersBySubstring);
 router.post('/send-sms', authenticate, utilisateurController.sendSMS);
 router.get('/points', authenticate, utilisateurController.getPoints);
