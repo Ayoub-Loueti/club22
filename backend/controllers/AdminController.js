@@ -1,7 +1,6 @@
 const Utilisateur = require('../models/UtilisateurModel');
-const Collaborateur = require('../models/CollaborateurModel');
-const OffreModel = require('../models/OffreModel');
 const Employe = require('../models/EmployeModel');
+const Demande = require('../models/DemandeModel');
 
 exports.getAllUsers = async (req, res) => {
   try {
@@ -320,6 +319,30 @@ exports.updateEmployeNonAdherant = async (req, res) => {
   } catch (error) {
     console.error('Failed to update employe adherant status:', error);
     res.status(500).json({ error: 'Failed to update employe adherant status' });
+  }
+};
+
+exports.getAllDemandes = async (req, res) => {
+  try {
+      // Check if the user making the request is an admin
+      const isAdmin = await Utilisateur.findOne({
+          where: {
+              id_utilisateur: req.userId,
+              type: 'admin',
+          },
+      });
+
+      if (!isAdmin) {
+          return res.status(403).json({
+              error: 'Permission denied. Only administrators can view demandes.',
+          });
+      }
+
+      const demandes = await Demande.findAll();
+      res.status(200).json(demandes);
+  } catch (error) {
+      console.error('Error fetching demandes:', error);
+      res.status(500).json({ error: 'Failed to get demandes' });
   }
 };
 

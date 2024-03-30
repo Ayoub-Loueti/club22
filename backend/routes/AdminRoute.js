@@ -14,5 +14,6 @@ router.get('/allUsers', authenticate, adminController.getAllUsers);
 
 router.put('/employes/:employeId/adherant', authenticate, adminController.updateEmployeAdherant);
 router.put('/employes/:employeId/nonAdherant', authenticate, adminController.updateEmployeNonAdherant);
+router.get('/demandes', authenticate, adminController.getAllDemandes);
 
 module.exports = router;

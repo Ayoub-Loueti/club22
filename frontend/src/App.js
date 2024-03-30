@@ -19,6 +19,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import Home from './pages/home/home';
 import ListCollaborateur from './pages/admin/collaborateur/listCollaborateur';
+import ListReservation from './pages/admin/reservation/listReservation';
 function App() {
   return (
     <React.StrictMode>
@@ -32,20 +33,14 @@ function App() {
             <Route path="/listClient"  element={ <ProtectedRoute> <ListClient />  </ProtectedRoute> } />
             <Route path="/listEmploye" element={  <ProtectedRoute> <ListEmploye />  </ProtectedRoute> } />
             <Route path="/listCollaborateur" element={ <ProtectedRoute> <ListCollaborateur />  </ProtectedRoute> }/>
+            <Route path="/listReservation" element={ <ProtectedRoute> <ListReservation />  </ProtectedRoute> }/>
             <Route path="/verificationToken/:email" element={<VerificationToken />} />
             <Route path="/changerPass/:token" element={<ChangerPass />} />
             <Route path="/load" element={<Load />} />
             <Route path="/tousLesUtilisateurs" element={<ProtectedRoute><TousLesUtilisateurs /></ProtectedRoute>}/>
             <Route path="/profil/:id"element={ <ProtectedRoute> <Profil /> </ProtectedRoute>}/>
             <Route path="/navbar" element={ <ProtectedRoute><Navbar /> </ProtectedRoute>}/>
-            <Route
-              path="/navbarHaut"
-              element={
-                <ProtectedRoute>
-                  <NavbarHaut />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/navbarHaut" element={ <ProtectedRoute><NavbarHaut /> </ProtectedRoute>}/>
             <Route
               path="/navbarHaut"
               element={

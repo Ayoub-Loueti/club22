@@ -5,6 +5,8 @@ const Collaborateur = require('../models/CollaborateurModel');
 const Offre = require('../models/OffreModel');
 const Employe = require('../models/EmployeModel');
 const { Op } = require('sequelize');
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
 
 exports.createReservation = async (req, res) => {
   const {id_offre} = req.body;
@@ -289,6 +291,58 @@ exports.updateReservation = async (req, res) => {
   } catch (error) {
     console.error('Error updating reservation:', error);
     res.status(500).json({ error: 'Failed to update reservation' });
+  }
+};
+
+const generatePDF = async (reservationId) => {
+  try {
+      // Fetch reservation details from the database
+      const reservation = await Reservation.findByPk(reservationId, {
+          include: [
+              {
+                  model: Offre,
+                  as: 'offre',
+                  include: [
+                      {
+                          model: Collaborateur,
+                          as: 'collaborateur',
+                      },
+                  ],
+              },
+              {
+                  model: Employe,
+                  as: 'employe',
+              },
+          ],
+      });
+
+      // Create a new PDF document
+      const doc = new PDFDocument();
+      doc.pipe(fs.createWriteStream(`reservation_${reservationId}.pdf`));
+
+      // Write reservation details to the PDF
+      doc.text(`Réservation #${reservation.id_reservation}`);
+      doc.text(`Date de réservation: ${new Date(reservation.date_reservation).toLocaleDateString()}`);
+      doc.text(`État: ${reservation.etat}`);
+      doc.text(`Offre: ${reservation.offre.titre}`);
+      doc.text(`Collaborateur: ${reservation.offre.collaborateur.nom}`);
+
+      // Finalize the PDF document
+      doc.end();
+  } catch (error) {
+      console.error('Error generating PDF:', error);
+      throw error; // Re-throw the error to be handled elsewhere if needed
+  }
+};
+
+exports.generateReservationPDF = async (req, res) => {
+  const reservationId = req.params.id;
+  try {
+      await generatePDF(reservationId);
+      res.status(200).json({ message: 'PDF generated successfully' });
+  } catch (error) {
+      console.error('Error generating reservation PDF:', error);
+      res.status(500).json({ error: 'Failed to generate reservation PDF' });
   }
 };
 
