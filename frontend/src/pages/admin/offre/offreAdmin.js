@@ -12,6 +12,7 @@ function OffreAdmin() {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [offreAddedOrUpdated, setOffreAddedOrUpdated] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0); // Track current image index
   const token = localStorage.getItem('login');
 
   useEffect(() => {
@@ -29,19 +30,18 @@ function OffreAdmin() {
     };
 
     fetchOffres();
-  }, [offreAddedOrUpdated]);
+  }, [offreAddedOrUpdated, token]);
 
-  const filteredOffres = offres.filter((offre) => {
-    const titre = offre.titre ? offre.titre.toLowerCase() : '';
-    const description = offre.description
-      ? offre.description.toLowerCase()
-      : '';
+  useEffect(() => {
+    // Automatically switch to the next image every 5 seconds
+    const intervalId = setInterval(() => {
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === offres.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000);
 
-    return (
-      titre.includes(searchTerm.toLowerCase()) ||
-      description.includes(searchTerm.toLowerCase())
-    );
-  });
+    return () => clearInterval(intervalId); // Cleanup on component unmount
+  }, [currentImageIndex, offres.length]);
 
   const handleUpdate = (offreId) => {
     setSelectedOffreId(offreId);
@@ -113,22 +113,15 @@ function OffreAdmin() {
         />
       </div>
       <div className="offre-cards-container">
-        {filteredOffres.map((offre, index) => (
+        {offres.map((offre, index) => (
           <div key={index} className="offre-card">
             <h2>{offre.titre}</h2>
             <p>{offre.description}</p>
             <p>Date de début: {offre.date_debut}</p>
             <p>Date de fin: {offre.date_fin}</p>
-            <img src={offre.photo} alt="Offre" />
+            <img src={`http://localhost:5000/${offre.lesImages[currentImageIndex]?.image}`} alt={`Image ${currentImageIndex}`} />
             <p>Prix: {offre.prix}</p>
-            {offre.collaborateur ? (
-              <>
-                <p>Collaborateur : {offre.collaborateur.nom}</p>
-                <img src={offre.collaborateur.logo} alt="Logo Collaborateur" />
-              </>
-            ) : (
-              <p>Collaborateur non disponible</p>
-            )}
+            
             <button onClick={() => handleUpdate(offre.id_offre)}>
               Modifier
             </button>

@@ -1,8 +1,6 @@
-/* OffreAdmin.css */
-
 .offre-cards-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* 300px est la largeur minimale, 1fr signifie que chaque colonne prendra autant d'espace que possible */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
   padding: 20px;
 }
@@ -17,6 +15,16 @@
 
 .offre-card:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.offre-card img {
+  max-width: 100%;
+  height: auto;
+  transition: transform 0.5s ease;
+}
+
+.offre-card:hover img {
+  transform: scale(0.9); /* Decrease the size of the image on hover */
 }
 
 

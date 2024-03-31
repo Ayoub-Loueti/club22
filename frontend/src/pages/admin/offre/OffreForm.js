@@ -8,9 +8,9 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
   const [prix, setPrix] = useState(0);
   const [date_debut, setDateDebut] = useState('');
   const [date_fin, setDateFin] = useState('');
-  const [photo, setPhoto] = useState('');
   const [collaborateurs, setCollaborateurs] = useState([]);
   const [selectedCollaborateur, setSelectedCollaborateur] = useState('');
+  const [images, setImages] = useState([]);
 
   const token = localStorage.getItem('login');
 
@@ -31,7 +31,6 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
           prix,
           date_debut,
           date_fin,
-          photo,
           id_collaborateur,
         } = response.data;
         setTitre(titre);
@@ -39,7 +38,6 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
         setPrix(prix);
         setDateDebut(date_debut);
         setDateFin(date_fin);
-        setPhoto(photo);
         setSelectedCollaborateur(id_collaborateur); // Set the selected collaborateur ID
       } catch (error) {
         console.error('Error fetching offre data:', error);
@@ -73,32 +71,35 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const offreData = {
-      titre,
-      description,
-      prix,
-      date_debut,
-      date_fin,
-      photo,
-      id_collaborateur: selectedCollaborateur,
-    };
+    const formData = new FormData();
+    formData.append('titre', titre);
+    formData.append('description', description);
+    formData.append('prix', prix);
+    formData.append('date_debut', date_debut);
+    formData.append('date_fin', date_fin);
+    formData.append('id_collaborateur', selectedCollaborateur);
+    images.forEach((image) => {
+      formData.append('photos', image);
+    });
 
     try {
       let response;
       if (isUpdate) {
         response = await axios.put(
           `http://localhost:5000/offer/${offreId}`,
-          offreData,
+          formData,
           {
             headers: {
               Authorization: `Bearer ${JSON.parse(token).token}`,
+              'Content-Type': 'multipart/form-data',
             },
           }
         );
       } else {
-        response = await axios.post('http://localhost:5000/offer', offreData, {
+        response = await axios.post('http://localhost:5000/offer', formData, {
           headers: {
             Authorization: `Bearer ${JSON.parse(token).token}`,
+            'Content-Type': 'multipart/form-data',
           },
         });
       }
@@ -123,6 +124,11 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
         } de l'offre.`,
       });
     }
+  };
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    setImages(files);
   };
 
   return (
@@ -172,15 +178,6 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
         />
       </label>
       <label>
-        Photo:
-        <input
-          type="text"
-          value={photo}
-          onChange={(e) => setPhoto(e.target.value)}
-          required
-        />
-      </label>
-      <label>
         Collaborateur:
         <select
           value={selectedCollaborateur}
@@ -197,6 +194,15 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
             </option>
           ))}
         </select>
+      </label>
+      <label>
+        Images:
+        <input
+          type="file"
+          accept="image/*"
+          multiple // Allow multiple file selection
+          onChange={handleImageChange}
+        />
       </label>
       <button type="submit">
         {isUpdate ? 'Modifier Offre' : 'Ajouter Offre'}

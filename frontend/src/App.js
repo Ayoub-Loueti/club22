@@ -19,6 +19,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import Home from './pages/home/home';
 import ListCollaborateur from './pages/admin/collaborateur/listCollaborateur';
+import ListCollab from './pages/admin/collaborateur/listCollab';
 import OffreAdmin from './pages/admin/offre/offreAdmin';
 import ListReservation from './pages/admin/reservation/listReservation';
 function App() {
@@ -87,6 +88,15 @@ function App() {
                 <ProtectedRoute>
                   {' '}
                   <ListCollaborateur />{' '}
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/listCollab"
+              element={
+                <ProtectedRoute>
+                  {' '}
+                  <ListCollab />{' '}
                 </ProtectedRoute>
               }
             />

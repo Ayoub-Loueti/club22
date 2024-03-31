@@ -22,9 +22,6 @@ const OffreModel = sequelize.define(
     date_fin: {
       type: DataTypes.DATE,
     },
-    photo: {
-      type: DataTypes.STRING,
-    },
     prix: {
       type: DataTypes.FLOAT,
     },
