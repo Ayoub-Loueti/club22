@@ -1,6 +1,6 @@
 const Utilisateur = require('../models/UtilisateurModel');
 const OffreModel = require('../models/OffreModel');
-
+const CollaborateurModel = require('../models/CollaborateurModel');
 exports.createOffre = async (req, res) => {
     try {
       const isAdmin = await Utilisateur.findOne({
@@ -102,7 +102,14 @@ exports.getAllOffres = async (req, res) => {
         });
       }
   
-      const offres = await OffreModel.findAll();
+      const offres = await OffreModel.findAll({
+        include: {
+          model: CollaborateurModel,
+          as: 'collaborateur',
+          attributes: ['nom', 'logo'],
+        },
+        attributes: { exclude: ['created_at', 'updated_at'] }, // Exclude timestamps from OffreModel
+      });
       res.status(200).json(offres);
     } catch (error) {
       res.status(500).json({ error: 'Failed to get offres' });

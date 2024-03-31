@@ -121,8 +121,14 @@ function OffreAdmin() {
             <p>Date de fin: {offre.date_fin}</p>
             <img src={offre.photo} alt="Offre" />
             <p>Prix: {offre.prix}</p>
-            <p>Collaborateur : {offre.collaborateur.nom}</p>
-            <img src={offre.collaborateur.logo} alt="Logo Collaborateur" />
+            {offre.collaborateur ? (
+              <>
+                <p>Collaborateur : {offre.collaborateur.nom}</p>
+                <img src={offre.collaborateur.logo} alt="Logo Collaborateur" />
+              </>
+            ) : (
+              <p>Collaborateur non disponible</p>
+            )}
             <button onClick={() => handleUpdate(offre.id_offre)}>
               Modifier
             </button>
