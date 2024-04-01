@@ -11,5 +11,6 @@ router.get('/allCollaborators',authenticate,collaborateurController.getAllCollab
 router.get('/allCollaborateursAD',authenticate,collaborateurController.getAllCollaborateursAD);
 router.get('/collaborator/:collaboratorId',authenticate,collaborateurController.getCollaborateurById);
 router.put('/collaborator/:collaboratorId',authenticate,collaborateurController.updateCollaborateur);
+router.get('/allCollaborateursEmploye',authenticate,collaborateurController.getAllCollaborateursEmploye);
 
 module.exports = router;

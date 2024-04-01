@@ -204,6 +204,32 @@ exports.getAllCollaborateurs = async (req, res) => {
       res.status(500).json({ error: 'Failed to get Collaborateur' });
     }
 };
+exports.getAllCollaborateursEmploye = async (req, res) => {
+  try {
+    const isEmployee = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: req.userId,
+        type: 'employe',
+      },
+    });
+
+    if (!isEmployee) {
+      return res.status(403).json({
+        error: 'Permission denied. Only employees can perform this action.',
+      });
+    }
+
+    const collaborateurs = await Collaborateur.findAll({
+      where: {
+        archiver: false,
+      },
+    });
+    res.status(200).json(collaborateurs);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get Collaborateurs' });
+  }
+};
+
   
 exports.getCollaborateurById = async (req, res) => {
     const { collaboratorId } = req.params;

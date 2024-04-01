@@ -22,6 +22,7 @@ import ListCollaborateur from './pages/admin/collaborateur/listCollaborateur';
 import ListCollab from './pages/admin/collaborateur/listCollab';
 import OffreAdmin from './pages/admin/offre/offreAdmin';
 import ListReservation from './pages/admin/reservation/listReservation';
+import CollaborateurPage from './pages/OffreEmploye/collaborateurPage';
 function App() {
   return (
     <React.StrictMode>
@@ -115,6 +116,15 @@ function App() {
                 <ProtectedRoute>
                   {' '}
                   <ListReservation />{' '}
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/collabPage"
+              element={
+                <ProtectedRoute>
+                  {' '}
+                  <CollaborateurPage/>{' '}
                 </ProtectedRoute>
               }
             />
