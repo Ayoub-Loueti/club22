@@ -12,7 +12,6 @@ function OffreAdmin() {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [offreAddedOrUpdated, setOffreAddedOrUpdated] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0); // Track current image index
   const token = localStorage.getItem('login');
 
   useEffect(() => {
@@ -23,7 +22,12 @@ function OffreAdmin() {
             Authorization: `Bearer ${JSON.parse(token).token}`,
           },
         });
-        setOffres(response.data);
+        // Add currentImageIndex property to each offre object
+        const updatedOffres = response.data.map(offre => ({
+          ...offre,
+          currentImageIndex: 0
+        }));
+        setOffres(updatedOffres);
       } catch (error) {
         console.error('Error fetching offres:', error);
       }
@@ -33,15 +37,16 @@ function OffreAdmin() {
   }, [offreAddedOrUpdated, token]);
 
   useEffect(() => {
-    // Automatically switch to the next image every 5 seconds
+    // Automatically switch to the next image for each offer every 5 seconds
     const intervalId = setInterval(() => {
-      setCurrentImageIndex((prevIndex) =>
-        prevIndex === offres.length - 1 ? 0 : prevIndex + 1
-      );
+      setOffres(prevOffres => prevOffres.map(offre => ({
+        ...offre,
+        currentImageIndex: (offre.currentImageIndex + 1) % offre.lesImages.length
+      })));
     }, 5000);
 
     return () => clearInterval(intervalId); // Cleanup on component unmount
-  }, [currentImageIndex, offres.length]);
+  }, []);
 
   const handleUpdate = (offreId) => {
     setSelectedOffreId(offreId);
@@ -57,7 +62,7 @@ function OffreAdmin() {
   };
 
   const handleAddOrUpdateSuccess = () => {
-    setOffreAddedOrUpdated((prev) => !prev);
+    setOffreAddedOrUpdated(prev => !prev);
   };
 
   const handleDelete = async (offreId) => {
@@ -77,7 +82,7 @@ function OffreAdmin() {
             Authorization: `Bearer ${JSON.parse(token).token}`,
           },
         });
-        setOffreAddedOrUpdated((prev) => !prev);
+        setOffreAddedOrUpdated(prev => !prev);
         Swal.fire('Succès', 'Offre supprimée avec succès', 'success');
       } catch (error) {
         console.error("Erreur lors de la suppression de l'offre:", error);
@@ -119,7 +124,7 @@ function OffreAdmin() {
             <p>{offre.description}</p>
             <p>Date de début: {offre.date_debut}</p>
             <p>Date de fin: {offre.date_fin}</p>
-            <img src={`http://localhost:5000/${offre.lesImages[currentImageIndex]?.image}`} alt={`Image ${currentImageIndex}`} />
+            <img src={`http://localhost:5000/${offre.lesImages[offre.currentImageIndex]?.image}`} alt={`Image ${offre.currentImageIndex}`} />
             <p>Prix: {offre.prix}</p>
             
             <button onClick={() => handleUpdate(offre.id_offre)}>
