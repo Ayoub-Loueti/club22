@@ -1,0 +1,72 @@
+.offre-cardDetails {
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Centrer les cartes verticalement */
+  margin-top: 100px; /* Ajoute un espace au-dessus de la carte */
+}
+
+.offre-cardDetails img {
+  width: 35%; /* Met la photo à gauche */
+  margin-bottom: 0px; /* Ajoute un espace en bas de l'image */
+  border-radius: 1%;
+}
+
+.offre-cardDetails .offre-titleDetails {
+  color: #191f43;
+  font-size: 24px; /* En grand */
+  margin-bottom: 5px; /* Ajoute un espace en bas du titre */
+  text-align: left;
+      font-size: 40px;
+       text-transform: uppercase; 
+
+}
+
+.offre-cardDetails .offre-priceDetails {
+  color: #c50f10;
+  font-weight: bold; /* Met le prix en gras */
+  text-align: left;
+        font-size: 30px;
+}
+
+.offre-cardDetails .offre-descriptionDetails {
+  margin-top: 10px;
+    text-align: left;
+
+}
+
+.offre-cardDetails .offre-buttonsDetails {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px; /* Ajoute un espace au-dessus des boutons */
+}
+
+.offre-cardDetails .offre-buttonDetails {
+  border-radius: 5px;
+  padding: 10px 40px;
+  cursor: pointer;
+  border: none; /* Supprime les contours */
+  outline: none; /* Supprime la mise en évidence du bouton lorsqu'il est cliqué */
+}
+
+.offre-cardDetails .offre-button-reserverDetails {
+  background-color: #879eb9;
+  color: white;
+  font-weight: bold; /* Met le prix en gras */
+  
+  font-size: large;
+}
+
+.offre-cardDetails .offre-button-adherantDetails {
+  background-color: #ed1c24;
+  color: white;
+  font-weight: bold; /* Met le prix en gras */
+    font-size: large;
+
+}
+.offre-buttonsDetails .offre-buttonDetails:first-child {
+  margin-right: 10px; /* Ajoute un espace entre le premier bouton et le second */
+}
+
+.offre-cardDetails .offre-details {
+  margin-left: 20px; /* Ajoute un espace entre la photo et les textes */
+}
