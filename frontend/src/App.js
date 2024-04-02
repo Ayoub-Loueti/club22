@@ -23,6 +23,8 @@ import ListCollab from './pages/admin/collaborateur/listCollab';
 import OffreAdmin from './pages/admin/offre/offreAdmin';
 import ListReservation from './pages/admin/reservation/listReservation';
 import CollaborateurPage from './pages/OffreEmploye/collaborateurPage';
+import OffreEmploye from './pages/OffreEmploye/OffreEmploye';
+import OffreEmployeDetails from './pages/OffreEmploye/OffreEmployeDetails';
 function App() {
   return (
     <React.StrictMode>
@@ -124,7 +126,25 @@ function App() {
               element={
                 <ProtectedRoute>
                   {' '}
-                  <CollaborateurPage/>{' '}
+                  <CollaborateurPage />{' '}
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/offrePage"
+              element={
+                <ProtectedRoute>
+                  {' '}
+                  <OffreEmploye />{' '}
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/offrePageDetails/:offreId"
+              element={
+                <ProtectedRoute>
+                  {' '}
+                  <OffreEmployeDetails />{' '}
                 </ProtectedRoute>
               }
             />

@@ -9,4 +9,14 @@ router.delete('/offer/:offreId', authenticate, offreController.deleteOffre);
 router.get('/allOffers', authenticate, offreController.getAllOffres);
 router.get('/offer/:offreId', authenticate, offreController.getOffreById);
 
+router.get(
+  '/employeOffers',
+  authenticate,
+  offreController.getAllEmployeeOffers
+);
+router.get(
+  '/employeOffer/:offreId',
+  authenticate,
+  offreController.getEmployeeOfferById
+);
 module.exports = router;

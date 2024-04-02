@@ -202,4 +202,84 @@ exports.getOffreById = async (req, res) => {
   }
 };
 
+exports.getAllEmployeeOffers = async (req, res) => {
+  try {
+    const isEmployee = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: req.userId,
+        type: 'employe',
+      },
+    });
+
+    if (!isEmployee) {
+      return res.status(403).json({
+        error: 'Permission denied. Only employees can perform this action.',
+      });
+    }
+
+    const offres = await OffreModel.findAll({
+      include: {
+        model: CollaborateurModel,
+        as: 'collaborateur',
+        attributes: ['nom', 'logo'],
+      },
+      attributes: { exclude: ['created_at', 'updated_at'] },
+    });
+
+    if (!offres.length) {
+      return res.status(404).json({ message: 'No offers found' });
+    }
+
+    const offreDetails = await Promise.all(
+      offres.map(async (offre) => {
+        const offreJson = offre.toJSON();
+
+        const images = await ImageOffre.findAll({
+          where: {
+            id_offre: offre.id_offre,
+          },
+        });
+        offreJson.lesImages = images;
+        return offreJson;
+      })
+    );
+    res.status(200).json(offreDetails);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get offers' });
+  }
+};
+
+exports.getEmployeeOfferById = async (req, res) => {
+  const { offreId } = req.params;
+  try {
+    const isEmployee = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: req.userId,
+        type: 'employe',
+      },
+    });
+
+    if (!isEmployee) {
+      return res.status(403).json({
+        error: 'Permission denied. Only employees can perform this action.',
+      });
+    }
+
+    const offre = await OffreModel.findByPk(offreId);
+    if (!offre) {
+      return res.status(404).json({ error: 'Offer not found' });
+    }
+    const images = await ImageOffre.findAll({
+      where: {
+        id_offre: offre.id_offre,
+      },
+    });
+    const offreDetail = offre.toJSON();
+    offreDetail.lesImages = images;
+    res.status(200).json(offreDetail);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get offer' });
+  }
+};
+
 module.exports = exports;
