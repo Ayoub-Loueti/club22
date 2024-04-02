@@ -8,6 +8,7 @@ router.put('/offer/:offreId', authenticate, offreController.updateOffre);
 router.delete('/offer/:offreId', authenticate, offreController.deleteOffre);
 router.get('/allOffers', authenticate, offreController.getAllOffres);
 router.get('/offer/:offreId', authenticate, offreController.getOffreById);
+router.get('/allOffersCollab/:collabId', authenticate, offreController.getAllOffresCollab);
 
 router.get(
   '/employeOffers',

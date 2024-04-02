@@ -282,4 +282,54 @@ exports.getEmployeeOfferById = async (req, res) => {
   }
 };
 
+exports.getAllOffresCollab = async (req, res) => {
+  try {
+    const isAdmin = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: req.userId,
+        type: 'admin',
+      },
+    });
+
+    if (!isAdmin) {
+      return res.status(403).json({
+        error: 'Permission denied. Only administrators can perform this action.',
+      });
+    }
+
+    const { collabId } = req.params; // Assuming collabId is passed as a parameter
+
+    const offres = await OffreModel.findAll({
+      include: {
+        model: CollaborateurModel,
+        as: 'collaborateur',
+        where: { id_collaborateur: collabId }, // Filter by collaborator ID
+        attributes: ['nom', 'logo'],
+      },
+      attributes: { exclude: ['created_at', 'updated_at'] }, // Exclude timestamps from OffreModel
+    });
+
+    if (!offres.length) {
+      return res.status(404).json({ message: 'No offres found for the collaborator' });
+    }
+
+    const offreDetails = await Promise.all(
+      offres.map(async(offre) => {
+        const offreJson = offre.toJSON();
+
+        const images = await ImageOffre.findAll({
+          where: {
+            id_offre:offre.id_offre,
+          },
+        });
+        offreJson.lesImages = images;
+        return offreJson;
+      })
+    );
+    res.status(200).json(offreDetails);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get offres' });
+  }
+};
+
 module.exports = exports;
