@@ -1,0 +1,88 @@
+/* PhoneNumberInput.css */
+
+.PhoneInput {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 5px 10px;
+    margin-bottom: 20px;
+  }
+  
+  .PhoneInputCountrySelect {
+    border: none;
+    background: none;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
+  .PhoneInputCountrySelect:focus {
+    outline: none;
+  }
+  
+  .PhoneInputInput {
+    border: none;
+    outline: none;
+    padding: 10px;
+    flex-grow: 1;
+  }
+  
+  .PhoneInputCountrySelectArrow {
+    display: none;
+  }
+  
+  /* You may need to adjust the path to the flags.png file depending on your setup */
+  .PhoneInputCountryIcon {
+    background-size: contain;
+    height: auto;
+  }
+  
+  /* This is to remove the native dropdown arrow */
+  .PhoneInputCountrySelect::-ms-expand {
+    display: none;
+  }
+
+.PhoneInput__control {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 5px 10px;
+  }
+  
+  .PhoneInput__option {
+    display: flex;
+    align-items: center;
+  }
+  
+  .PhoneInput__single-value {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Replace `.dropdown-container` and `.country-option` with the actual class names you find */
+.dropdown-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  .country-option {
+    padding: 8px 10px;
+    list-style-type: none;
+    cursor: pointer;
+  }
+  
+  .country-option:hover {
+    background-color: #f2f2f2;
+  }
+  
