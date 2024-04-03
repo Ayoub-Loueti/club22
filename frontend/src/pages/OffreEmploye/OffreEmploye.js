@@ -40,7 +40,7 @@ function OffreEmploye() {
    
   return (
     <div className="offre-employee-container">
-      <h1 className="offre-employee-title">Offres pour Employés</h1>
+      <h1 className="offre-employee-title">Les Offres disponibles</h1>
       <div className="offre-employee-cards-container">
         {offres.map((offre, index) => (
           <div key={index} className="offre-employee-card">
