@@ -651,22 +651,49 @@ exports.sendSMS = async (req, res) => {
 
   try {
     const userId = req.userId;
-    const user = await Utilisateur.findByPk(userId);
+    const user = await Client.findOne({
+      where: {
+        id_utilisateur: userId
+      },
+      include: [{
+        model: Utilisateur,
+        as: 'utilisateur'
+      }],
+    });
 
     if (!user) {
       return res.status(404).json({ error: 'Utilisateur non trouvé' });
     }
 
-    const messageBody = `Bonjour ${user.nom} ${user.prenom}, vous avez reçu un message `;
+    if (user.points <= 0) {
+      return res.status(403).json({ message: 'Vous n\'avez pas assez de points pour envoyer un SMS.' });
+    }
 
-    await client.messages.create({
+    // Calculate tomorrow's date
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const dateString = tomorrow.toLocaleDateString('fr-FR', { // Assuming you want the date in French format
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+
+    const messageBody = `Bonjour ${user.utilisateur.nom} ${user.utilisateur.prenom}, vous avez ${user.points} points valable jusqu'au ${dateString}`;
+
+    const messageResponse = await client.messages.create({
       body: messageBody,
       from: twilioPhoneNumber,
       to: phoneNumber,
     });
 
-    return res.status(200).json({ message: 'SMS envoyé avec succès.' });
+    if (messageResponse.sid) {
+      await Client.update({ points: 0 }, { where: { id_utilisateur: userId } });
+      return res.status(200).json({ message: 'SMS envoyé avec succès. Vos points ont été réinitialisés.' });
+    } else {
+      return res.status(500).json({ message: 'Échec de l\'envoi du SMS.' });
+    }
   } catch (error) {
+    console.error('Error in sendSMS:', error);
     return res.status(500).json({ error: error.message });
   }
 };

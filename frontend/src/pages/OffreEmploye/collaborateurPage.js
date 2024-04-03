@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './collaborateurPage.css';
-import { useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'; // Import Font Awesome icons
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import OffreEmploye from './OffreEmploye';
+import OffreCollabEmploye from './OffreCollabEmploye';
 
 function CollaborateurPage() {
   const [collaborateurs, setCollaborateurs] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [collaboratorAddedOrUpdated, setCollaboratorAddedOrUpdated] =
-    useState(false);
+  const [selectedCollaborateurId, setSelectedCollaborateurId] = useState(null);
   const [startIndex, setStartIndex] = useState(0);
-  const navigate = useNavigate();
+  const [showOffreCollab, setShowOffreCollab] = useState(false); // State variable to control which component to render
 
   useEffect(() => {
     const token = localStorage.getItem('login');
@@ -32,7 +31,13 @@ function CollaborateurPage() {
       };
       fetchCollaborateurs();
     }
-  }, [collaboratorAddedOrUpdated]);
+  }, []);
+
+  const handleCollaboratorClick = (collaborateurId) => {
+    console.log('Selected collaborateurId:', collaborateurId);
+    setSelectedCollaborateurId(collaborateurId);
+    setShowOffreCollab(true); // Switch to render OffreCollabEmploye component
+  };
 
   const handlePrevious = () => {
     if (startIndex > 0) {
@@ -52,7 +57,11 @@ function CollaborateurPage() {
         {collaborateurs
           .slice(startIndex, startIndex + 6)
           .map((collaborateur, index) => (
-            <div key={index} className="collab-card">
+            <div
+              key={index}
+              className="collab-card"
+              onClick={() => handleCollaboratorClick(collaborateur.id_collaborateur)}
+            >
               <img
                 src={`http://localhost:5000/${collaborateur.logo}`}
                 alt={collaborateur.nom}
@@ -73,6 +82,12 @@ function CollaborateurPage() {
           className="nav-icon"
         />
       </div>
+
+      {showOffreCollab ? (
+        <OffreCollabEmploye collaborateurId={selectedCollaborateurId} />
+      ) : (
+        <OffreEmploye />
+      )}
     </div>
   );
 }

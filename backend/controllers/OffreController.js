@@ -284,20 +284,7 @@ exports.getEmployeeOfferById = async (req, res) => {
 
 exports.getAllOffresCollab = async (req, res) => {
   try {
-    const isAdmin = await Utilisateur.findOne({
-      where: {
-        id_utilisateur: req.userId,
-        type: 'admin',
-      },
-    });
-
-    if (!isAdmin) {
-      return res.status(403).json({
-        error: 'Permission denied. Only administrators can perform this action.',
-      });
-    }
-
-    const { collabId } = req.params; // Assuming collabId is passed as a parameter
+    const { collabId } = req.params; 
 
     const offres = await OffreModel.findAll({
       include: {
