@@ -1,0 +1,33 @@
+.reservation-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    z-index: 1000;
+  }
+  
+  .modal-user-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .modal-user-photo {
+    width: 50px; /* Adjust the photo size as needed */
+    height: 50px; /* Adjust the photo size as needed */
+    border-radius: 50%; /* Make the photo circular */
+    margin-right: 20px; /* Space between photo and text */
+  }
+  
+  .modal-user-details p {
+    margin: 0; /* Remove default margin */
+    font-size: 14px; /* Adjust text size as needed */
+  }
+  
+  .modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+  

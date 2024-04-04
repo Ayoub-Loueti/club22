@@ -2,17 +2,16 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './OffreEmployeDetails.css'; 
 import { useParams } from 'react-router-dom';
-/*import ReservationModal from '../../components/ReservationModel/ReservationModal';
- */
+import ReservationModal from '../../components/ReservationModel/ReservationModal';
+
 function OffreEmployeDetails() {
   const [offre, setOffre] = useState(null);
   const token = localStorage.getItem('login');
   const { offreId } = useParams();
   const [mainImageIndex, setMainImageIndex] = useState(0);
-  /*  const [isModalOpen, setIsModalOpen] = useState(false); // To control the modal visibility 
+  const [isModalOpen, setIsModalOpen] = useState(false); // To control the modal visibility 
   const user = JSON.parse(localStorage.getItem('user'));
   
-  */
   useEffect(() => {
     const fetchOffreDetails = async () => {
       try {
@@ -68,7 +67,10 @@ function OffreEmployeDetails() {
           <p className="offre-priceDetails"> {offre.prix} DT</p>
           <p className="offre-descriptionDetails">{offre.description}</p>
           <div className="offre-buttonsDetails">
-            <button className="offre-button-reserverDetails">Réserver</button>
+          <button className="offre-button-reserverDetails" onClick={() => setIsModalOpen(true)}>   
+          Réserver 
+          </button> 
+          <ReservationModal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)} user={user} offreId={offreId} />
             <button className="offre-button-adherantDetails">Adhérent</button>
           </div>
         </div>
@@ -89,4 +91,3 @@ function OffreEmployeDetails() {
 }
 
 export default OffreEmployeDetails;
-/* <button className="offre-buttonDetails offre-button-reserverDetails" onClick={() => setIsModalOpen(true)}>   Réserver </button> <ReservationModal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)} user={user} offreId={offreId} />*/
