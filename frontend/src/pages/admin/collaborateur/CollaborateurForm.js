@@ -120,90 +120,97 @@ function CollaborateurForm({
   };
 
   return (
-    <form className="collaborateur-container" onSubmit={handleSubmit}>
-      <label className="collaborateur-label">
+    <form className="offre-form-container" onSubmit={handleSubmit}>
+      <label>
         Nom:
         <input
           type="text"
           value={nom}
           onChange={(e) => setNom(e.target.value)}
-          className="collaborateur-input"
+          className="collab-form-input"
           required
         />
       </label>
-      <label className="collaborateur-label">
+      <label>
         Catégorie:
         <input
           type="text"
           value={type}
           onChange={(e) => setType(e.target.value)}
-          className="collaborateur-input"
+          className="collab-form-input"
           required
         />
       </label>
-      <label className="collaborateur-label">
+      <label>
         Adresse:
         <input
           type="text"
           value={adresse}
           onChange={(e) => setAdresse(e.target.value)}
-          className="collaborateur-input"
+          className="collab-form-input"
           required
         />
       </label>
-      <label className="collaborateur-label">
+      <label>
         Téléphone:
         <input
           type="text"
           value={tel}
           onChange={(e) => setTel(e.target.value)}
-          className="collaborateur-input"
+          className="collab-form-input"
           required
         />
       </label>
-      <label className="collaborateur-label">
+      <label>
         Email:
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="collaborateur-input"
+          className="collab-form-input"
           required
         />
       </label>
-      <label className="collaborateur-label">
+      <label>
         Site Web:
         <input
           type="text"
           value={siteWeb}
           onChange={(e) => setSiteWeb(e.target.value)}
-          className="collaborateur-input"
+          className="collab-form-input"
         />
       </label>
-      <label className="collaborateur-label">
+      <label>
         Logo:
-        <div>
-          <input
-            type="text"
-            value={logo}
-            onChange={(e) => setLogo(e.target.value)}
-            className="collaborateur-input"
-            disabled // Disable manual input for the logo URL
-          />
-          <button type="button" onClick={() => document.getElementById('fileInput').click()}>
-            Upload Logo
+        <div className="upload-btn-wrapper">
+          <button
+            type="button"
+            className="btn"
+            onClick={() => document.getElementById('fileInput').click()}
+          >
+          Importer Logo
           </button>
           <input
             id="fileInput"
             type="file"
             style={{ display: 'none' }}
             onChange={(e) => handleImageUpload(e.target.files[0])}
+            className="collab-form-input"
           />
-        </div>
+        </div>{' '}
       </label>
-      <button type="submit" className="form-collab-button">
-        {isUpdate ? 'Modifier Collaborateur' : 'Ajouter Collaborateur'}
-      </button>
+      <div className="formBcont">
+        <button
+          type="button"
+          className="collabCButton"
+          onClick={onRequestClose}
+        >
+          Annuler
+        </button>
+        <button type="submit" className="collabFButton">
+          {isUpdate ? 'MODIFIER' : 'AJOUTER '}
+        </button>
+      </div>
     </form>
   );
 }

@@ -1,3 +1,12 @@
+.offre-admin-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+  background-color: #fff; /* White background for readability */
+  color: #191f43; /* Deep navy blue for text */
+}
+
+
 .offre-cards-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -6,125 +15,119 @@
 }
 
 .offre-card {
-  border: 1px solid #ccc;
+  border: 1px solid #879eb9;
   border-radius: 10px;
-  padding: 10px;
+  padding: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
-}
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #f9f9f9; /* Slightly off-white for cards background */
 
+}
+.offre-card h2, p {
+  color: #191f43; /* Deep navy blue for text */
+}
 .offre-card:hover {
+  transform: translateY(-5px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .offre-card img {
-  max-width: 100%;
+  width: 100%;
   height: auto;
+  border-radius: 5px;
   transition: transform 0.5s ease;
 }
 
 .offre-card:hover img {
-  transform: scale(0.9); /* Decrease the size of the image on hover */
+  transform: scale(0.95);
 }
 
-
-.offre-card-title {
-  font-size: 1.2rem;
-  font-weight: bold;
+.offre-card h2{
   margin-bottom: 10px;
+         text-transform: uppercase; 
+
 }
 
-.offre-card-description {
-  margin-bottom: 10px;
-}
 
-.offre-card-actions {
-  display: flex;
-  justify-content: space-between;
-}
 
-.offre-card-button {
-  padding: 5px 10px;
+/* Add responsive design for smaller screens */
+@media (max-width: 768px) {
+  .offre-cards-container {
+    grid-template-columns: 1fr;
+  }
+}
+/* Primary Button (Add New Offer) */
+.add-offre-button {
+  padding: 10px 20px; /* Slightly larger for better visibility */
+  background-color: #c50f10; /* Vibrant red */
+  color: white;
   border: none;
   border-radius: 5px;
-  background-color: #007bff;
-  color: #fff;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.offre-card-button:hover {
-  background-color: #0056b3;
+.add-offre-button:hover {
+  background-color: #a30e0e; /* Slightly darker on hover */
 }
 
-.modal-content {
-  padding: 20px;
+/* Secondary Buttons (Edit, Delete) */
+.offre-card button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.modal-header {
+.offre-card button:first-child {
+  background-color: #879eb9; /* Soft blue for edit */
+  color: white;
+}
+
+.offre-card button:last-child {
+  background-color: #c50f10; /* Vibrant red for delete */
+  color: white;
+}
+
+.offre-card button:hover {
+  opacity: 0.9;
+}
+
+
+.offre-list-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  padding: 10px;}
+
+.offre-list-title {
+  color: #191f43; /* Deep navy blue for contrast */
 }
 
-.modal-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.modal-close {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2rem;
-  color: #777;
-  transition: color 0.3s ease;
-}
-
-.modal-close:hover {
-  color: #333;
-}
-
-.form-input {
-  margin-bottom: 20px;
-}
-
-.form-input label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.form-input input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+.offre-list-search-input {
+  padding: 8px 15px;
+  width: 40%; /* Or adjust based on your layout needs */
+  border: 2px solid #879eb9; /* Styled to match your color scheme */
+  border-radius: 20px; /* Rounded borders for a modern look */
+  outline: none; /* Removes the default focus outline */
   transition: border-color 0.3s ease;
 }
 
-.form-input input:focus {
-  outline: none;
-  border-color: #007bff;
+.offre-list-search-input:focus {
+  border-color: #c50f10; /* Changes border color on focus */
 }
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
+.text-after-colon {
+  color: #c50f10; /* Choose your preferred color */
 }
+.modifierOffreButton{
+   background-color: #879eb9; /* Your preferred button color */
+  color: white; /* Text color */
+    margin-right: 10px;
 
-.form-button {
-  padding: 8px 20px;
-  border: none;
-  border-radius: 5px;
-  background-color: #007bff;
-  color: #fff;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
 }
+.modifierOffreButton:hover{
+  background-color: darken(#879eb9, 10%); /* Slightly darker on hover */
 
-.form-button:hover {
-  background-color: #0056b3;
 }

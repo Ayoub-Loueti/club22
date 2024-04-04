@@ -1,0 +1,80 @@
+/* OffreForm.css */
+.offre-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: #ffffff; /* Fond blanc pour une apparence claire et propre */
+  border-radius: 10px;
+}
+
+.offre-form-container label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: #4A5568; /* Couleur gris foncé pour les labels */
+           text-transform: uppercase; 
+font-weight: bold;
+}
+
+.offre-form-container input[type="text"],
+.offre-form-container input[type="number"],
+.offre-form-container input[type="date"],
+.offre-form-container select,
+.offre-form-container textarea {
+  padding: 10px;
+  border-radius: 5px;
+  border: 2px solid #CBD5E0; /* Bordure plus claire pour un look raffiné */
+  background-color: #EDF2F7; /* Fond légèrement bleu pour les champs de saisie */
+  color: #2D3748; /* Couleur de texte foncé pour un contraste */
+}
+
+.offre-form-container input[type="file"] {
+  padding: 10px;
+  border-radius: 5px;
+  border: 2px dashed #CBD5E0; /* Bordure en pointillés dans une teinte légère */
+  background-color: #EDF2F7; /* Assorti au fond des autres champs de saisie */
+  color: #4A5568; /* Légèrement plus foncé pour les instructions du champ fichier */
+}
+
+.cancelBut, .subButton {
+  padding: 10px 30px; /* Augmente le padding pour des boutons plus larges */
+  border-radius: 5px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 20%;
+  font-weight: bold;
+           text-transform: uppercase; 
+
+}
+
+.subButton {
+  background-color: #c53030;
+}
+
+.subButton:hover {
+  background-color: #9b2c2c;
+}
+
+.cancelBut {
+  background-color: #191f43;
+}
+
+.cancelBut:hover {
+  background-color: #879eb9;
+}
+.formBut{
+ display: flex;
+  justify-content: center; /* Centre les boutons horizontalement */
+  gap: 20px;
+}
+
+/* Add responsiveness */
+@media (max-width: 768px) {
+  .offre-form-container {
+    width: 90%;
+    margin: 0 auto;
+  }
+}

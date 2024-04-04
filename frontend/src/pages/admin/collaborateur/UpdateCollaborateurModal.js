@@ -28,7 +28,13 @@ const customStyles = {
     backdropFilter: 'blur(3px)',
   },
 };
-
+const titleStyle = {
+  color: '#c50f10', // Bleu pour correspondre au reste du formulaire
+  fontWeight: 'bold', // En gras pour attirer l'attention
+  textAlign: 'center', // Centré pour un aspect esthétique
+  marginBottom: '20px', // Espace au-dessous du titre pour séparer du formulaire
+  fontSize: '24px', // Taille de police pour rendre le titre bien visible
+};
   const handleAddOrUpdateSuccess = () => {
     onSuccess(); // Call the onSuccess prop passed from ListCollaborateur
   };
@@ -40,7 +46,7 @@ const customStyles = {
       contentLabel="Modifier Collaborateur"
     >
       <div>
-        <h2>Modifier Collaborateur</h2>
+        <h2 style={titleStyle}>MODIFIER LE COLLABORATEUR</h2>
         <CollaborateurForm
           onRequestClose={onRequestClose}
           onSuccess={handleAddOrUpdateSuccess}

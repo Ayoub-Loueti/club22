@@ -1,70 +1,94 @@
-/* CSS personnalisé pour CollaborateurForm */
-.collaborateur-container {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
+/* CollaborateurForm.css */
+.collab-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   padding: 20px;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff; /* Fond blanc pour une apparence claire et propre */
+  border-radius: 10px;
 }
 
-.collaborateur-title {
-  text-align: center;
-  font-size: 24px;
-  color: #191f43;
-  margin-bottom: 20px;
+.collab-form-label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: #4A5568; /* Couleur gris foncé pour les labels */
+           text-transform: uppercase; 
+font-weight: bold;
 }
 
-.collaborateur-label {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 16px;
-  color: #333;
-}
-
-.collaborateur-input {
-  width: 90%;
+.collab-form-input,
+.collab-form-select,
+.collab-form-textarea {
   padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
   border-radius: 5px;
-  margin-bottom: 15px;
+  border: 2px solid #CBD5E0; /* Bordure plus claire pour un look raffiné */
+  background-color: #EDF2F7; /* Fond légèrement bleu pour les champs de saisie */
+  color: #2D3748; /* Couleur de texte foncé pour un contraste */
 }
 
-.collaborateur-input:focus {
-  outline: none;
-  border-color: #191f43;
+.upload-btn-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
 }
 
-.collaborateur-button {
-  width: 100%;
-  padding: 12px;
-  background-color: #191f43;
-  color: white;
+.btn {
+  border: 2px dashed #CBD5E0;
+  color: #4A5568;
+  background-color: #EDF2F7;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.upload-btn-wrapper input[type="file"] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
+
+.formBcont {
+display: flex;
+  justify-content: center; /* Centre les boutons horizontalement */
+  gap: 20px;
+}
+
+.collabCButton, .collabFButton {
+  padding: 10px 30px; /* Increase padding for wider buttons */
+  border-radius: 5px;
   border: none;
-  border-radius: 5px;
-  font-size: 16px;
+  color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
-}
-
-.collaborateur-button:hover {
-  background-color: #163172;
-}
-
-.form-collab-button {
-  padding: 8px 16px;
-  background-color: #163172;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-right: 10px;
+  width: auto; /* Adjust the width as necessary */
   font-weight: bold;
+  text-transform: uppercase;
 }
 
-.form-collab-button:hover {
-  background-color: #191f43; /* Plus sombre au survol */
+.collabCButton {
+  background-color: #c53030; /* Cancel button color */
+}
+
+.collabCButton:hover {
+  background-color: #9b2c2c; /* Darken on hover */
+}
+
+.collabFButton {
+  background-color: #3182ce; /* Submit button color */
+}
+
+.collabFButton:hover {
+  background-color: #2c5282; /* Darken on hover */
+}
+
+@media (max-width: 768px) {
+  .collab-form-container {
+    width: 90%;
+    margin: 0 auto; /* Center the form on smaller screens */
+  }
 }

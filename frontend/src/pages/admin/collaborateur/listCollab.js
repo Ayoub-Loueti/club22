@@ -6,6 +6,9 @@ import UpdateCollaborateurModal from './UpdateCollaborateurModal';
 import AddCollaborateurModal from './AddCollaborateurModal';
 import OffreCollab from '../offre/OffreCollab'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 function ListCollaborateur() {
   const [collaborateurs, setCollaborateurs] = useState([]);
@@ -13,7 +16,8 @@ function ListCollaborateur() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [collaboratorAddedOrUpdated, setCollaboratorAddedOrUpdated] = useState(false);
+  const [collaboratorAddedOrUpdated, setCollaboratorAddedOrUpdated] =
+    useState(false);
   const [startIndex, setStartIndex] = useState(0);
   const navigate = useNavigate();
   const token = localStorage.getItem('login');
@@ -21,11 +25,14 @@ function ListCollaborateur() {
   useEffect(() => {
     const fetchCollaborateurs = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/allCollaborateursAD', {
-          headers: {
-            Authorization: `Bearer ${JSON.parse(token).token}`,
-          },
-        });
+        const response = await axios.get(
+          'http://localhost:5000/allCollaborateursAD',
+          {
+            headers: {
+              Authorization: `Bearer ${JSON.parse(token).token}`,
+            },
+          }
+        );
         setCollaborateurs(response.data);
       } catch (error) {
         console.error('Error fetching collaborateurs:', error);
@@ -65,14 +72,40 @@ function ListCollaborateur() {
       setStartIndex(startIndex + 1);
     }
   };
+  const filteredCollaborateurs = collaborateurs.filter((collaborateur) =>
+    collaborateur.nom.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+    const scrollToRef = React.createRef();
+
+const handleViewOffers = () => {
+  // Assurez-vous que la référence existe et est actuellement montée dans le DOM
+  if (scrollToRef.current) {
+    // Fait défiler vers l'élément référencé
+    window.scrollTo({
+      top: scrollToRef.current.offsetTop, // Position Y de l'élément
+      behavior: 'smooth', // Option pour un défilement doux
+    });
+  }
+};
 
   return (
     <div className="listCollaborateur-container">
-      <button onClick={handleOpenModal} className="list-collab-button">
-        Ajouter Collaborateur
+      <h1 className="listCollaborateur-title">LISTE DES COLLABORATEURS</h1>
+
+      <button onClick={handleOpenModal} className="list-coll-button">
+        AJOUTER UN COLLABORATEUR
       </button>
-      <button className="voir-tous-button" onClick={() => navigate('/listCollaborateur')}>
-        Voirs tous
+      <button
+        className="list-coll-button"
+        onClick={() => navigate('/listCollaborateur')}
+      >
+        VOIR TOUS LES COLLABORATEURS
+      </button>
+      <button
+        onClick={() => navigate('/offreAdmin')}
+        className="list-coll-button"
+      >
+        GERER LES OFFRES
       </button>
       <AddCollaborateurModal
         isOpen={isModalOpen}
@@ -80,7 +113,6 @@ function ListCollaborateur() {
         onSuccess={handleAddOrUpdateSuccess}
       />
       <div className="listCollaborateur-header">
-        <h1 className="listCollaborateur-title">LISTE DES COLLABORATEURS</h1>
         <input
           type="text"
           className="listCollaborateur-search-input"
@@ -89,28 +121,80 @@ function ListCollaborateur() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
-      <div className="collaborateur-scroll-container">
-        {collaborateurs.slice(startIndex, startIndex + 4).map((collaborateur, index) => (
-          <div key={index} className="collaborateur-card">
-            <img src={`http://localhost:5000/${collaborateur.logo}`} alt={collaborateur.nom} />
-            <h3 className="collaborateur-card-title">{collaborateur.nom}</h3>
-            <p className="collaborateur-card-description">{collaborateur.type}</p>
-            <button onClick={() => handleUpdate(collaborateur.id_collaborateur)}>Modifier</button>
-            <button onClick={() => setSelectedCollaborateurId(collaborateur.id_collaborateur)}>Show Offres</button>
-          </div>
-        ))}
+      <div className="cards-and-navigation">
+        <button
+          className="prev"
+          onClick={handlePrevious}
+          disabled={startIndex === 0}
+        >
+          <FontAwesomeIcon icon={faArrowLeft} />
+        </button>
+
+        <div className="collaborateur-scroll-container">
+          {filteredCollaborateurs
+            .slice(startIndex, startIndex + 3)
+            .map((collaborateur, index) => (
+              <div key={index} className="collaborateur-card">
+                <img
+                  src={`http://localhost:5000/${collaborateur.logo}`}
+                  alt={collaborateur.nom}
+                />
+                <h3 className="collaborateur-card-title">
+                  {collaborateur.nom}
+                </h3>
+                <p className="collaborateur-card-description">
+                  Catégorie : {collaborateur.type}
+                </p>
+                <p className="collaborateur-card-description">
+                  Adresse : {collaborateur.adresse}
+                </p>
+                <p className="collaborateur-card-description">
+                  Télephone : {collaborateur.tel}
+                </p>
+                <p className="collaborateur-card-description">
+                  Email : {collaborateur.email}
+                </p>
+                <p className="collaborateur-card-description">
+                  Site Web : {collaborateur.siteWeb}
+                </p>
+                <button
+                  onClick={() => handleUpdate(collaborateur.id_collaborateur)}
+                >
+                  Modifier
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedCollaborateurId(collaborateur.id_collaborateur);
+                    handleViewOffers(); // Déclenche le défilement après la mise à jour de l'état
+                  }}
+                  className="offers"
+                >
+                  Voir ses Offres
+                </button>
+              </div>
+            ))}
+        </div>
+        <button
+          className="next"
+          onClick={handleNext}
+          disabled={startIndex + 4 >= collaborateurs.length}
+        >
+          <FontAwesomeIcon icon={faArrowRight} />
+        </button>
       </div>
-      <div className="navigation-buttons">
-        <button onClick={handlePrevious} disabled={startIndex === 0}>Previous</button>
-        <button onClick={handleNext} disabled={startIndex + 4 >= collaborateurs.length}>Next</button>
-      </div>
+
       <UpdateCollaborateurModal
         isOpen={isUpdateModalOpen}
         onRequestClose={() => setIsUpdateModalOpen(false)}
         onSuccess={handleAddOrUpdateSuccess}
         collaborateurId={selectedCollaborateurId}
       />
-      {selectedCollaborateurId && <OffreCollab collaborateurId={selectedCollaborateurId} />}
+      <div className="stylish-separator"></div>
+      {selectedCollaborateurId && (
+        <div ref={scrollToRef}>
+          <OffreCollab collaborateurId={selectedCollaborateurId} />
+        </div>
+      )}
     </div>
   );
 }

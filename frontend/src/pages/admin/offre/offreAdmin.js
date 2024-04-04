@@ -5,7 +5,7 @@ import './OffreAdmin.css';
 import AddOffreModal from './AddOffreModal';
 import UpdateOffreModal from './UpdateOffreModal';
 
-function OffreAdmin() {
+function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
   const [offres, setOffres] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOffreId, setSelectedOffreId] = useState(null);
@@ -14,35 +14,42 @@ function OffreAdmin() {
   const [offreAddedOrUpdated, setOffreAddedOrUpdated] = useState(false);
   const token = localStorage.getItem('login');
 
-  useEffect(() => {
-    const fetchOffres = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/allOffers', {
-          headers: {
-            Authorization: `Bearer ${JSON.parse(token).token}`,
-          },
-        });
-        // Add currentImageIndex property to each offre object
-        const updatedOffres = response.data.map(offre => ({
-          ...offre,
-          currentImageIndex: 0
-        }));
-        setOffres(updatedOffres);
-      } catch (error) {
-        console.error('Error fetching offres:', error);
-      }
-    };
+ useEffect(() => {
+   const fetchOffres = async () => {
+     const url = isCollabMode
+       ? `http://localhost:5000/allOffersCollab/${collaborateurId}`
+       : 'http://localhost:5000/allOffers';
 
-    fetchOffres();
-  }, [offreAddedOrUpdated, token]);
+     try {
+       const response = await axios.get(url, {
+         headers: {
+           Authorization: `Bearer ${JSON.parse(token).token}`,
+         },
+       });
+
+       const updatedOffres = response.data.map((offre) => ({
+         ...offre,
+         currentImageIndex: 0,
+       }));
+       setOffres(updatedOffres);
+     } catch (error) {
+       console.error('Error fetching offres:', error);
+     }
+   };
+
+   fetchOffres();
+ }, [isCollabMode, collaborateurId, offreAddedOrUpdated]);
 
   useEffect(() => {
     // Automatically switch to the next image for each offer every 5 seconds
     const intervalId = setInterval(() => {
-      setOffres(prevOffres => prevOffres.map(offre => ({
-        ...offre,
-        currentImageIndex: (offre.currentImageIndex + 1) % offre.lesImages.length
-      })));
+      setOffres((prevOffres) =>
+        prevOffres.map((offre) => ({
+          ...offre,
+          currentImageIndex:
+            (offre.currentImageIndex + 1) % offre.lesImages.length,
+        }))
+      );
     }, 5000);
 
     return () => clearInterval(intervalId); // Cleanup on component unmount
@@ -62,7 +69,7 @@ function OffreAdmin() {
   };
 
   const handleAddOrUpdateSuccess = () => {
-    setOffreAddedOrUpdated(prev => !prev);
+    setOffreAddedOrUpdated((prev) => !prev);
   };
 
   const handleDelete = async (offreId) => {
@@ -82,7 +89,7 @@ function OffreAdmin() {
             Authorization: `Bearer ${JSON.parse(token).token}`,
           },
         });
-        setOffreAddedOrUpdated(prev => !prev);
+        setOffreAddedOrUpdated((prev) => !prev);
         Swal.fire('Succès', 'Offre supprimée avec succès', 'success');
       } catch (error) {
         console.error("Erreur lors de la suppression de l'offre:", error);
@@ -90,12 +97,15 @@ function OffreAdmin() {
       }
     }
   };
-
+  const filteredOffres = offres.filter(
+    (offre) =>
+      offre.titre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      offre.description.toLowerCase().includes(searchTerm.toLowerCase())||
+           offre.prix.toString().toLowerCase().includes(searchTerm.toLowerCase()) 
+ 
+  );
   return (
     <div className="offre-admin-container">
-      <button onClick={handleOpenModal} className="add-offre-button">
-        Ajouter Offre
-      </button>
       <AddOffreModal
         isOpen={isModalOpen}
         onRequestClose={handleCloseModal}
@@ -109,6 +119,7 @@ function OffreAdmin() {
       />
       <div className="offre-list-header">
         <h1 className="offre-list-title">LISTE DES OFFRES</h1>
+
         <input
           type="text"
           className="offre-list-search-input"
@@ -116,22 +127,50 @@ function OffreAdmin() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+        <button onClick={handleOpenModal} className="add-offre-button">
+          AJOUTER UNE OFFRE
+        </button>
       </div>
       <div className="offre-cards-container">
-        {offres.map((offre, index) => (
+      
+        {filteredOffres.map((offre, index) => (
           <div key={index} className="offre-card">
             <h2>{offre.titre}</h2>
+            <img
+              src={`http://localhost:5000/${
+                offre.lesImages[offre.currentImageIndex]?.image
+              }`}
+              alt={`Image ${offre.currentImageIndex}`}
+            />
+
             <p>{offre.description}</p>
-            <p>Date de début: {offre.date_debut}</p>
-            <p>Date de fin: {offre.date_fin}</p>
-            <img src={`http://localhost:5000/${offre.lesImages[offre.currentImageIndex]?.image}`} alt={`Image ${offre.currentImageIndex}`} />
-            <p>Prix: {offre.prix}</p>
-            
-            <button onClick={() => handleUpdate(offre.id_offre)}>
-              Modifier
+            <p>
+              Prix:<span className="text-after-colon">{offre.prix}DT</span>
+            </p>
+
+            <p>
+              Offre valable de:{' '}
+              <span className="text-after-colon">{offre.date_debut}</span>
+            </p>
+            <p>
+              Jusqu'au:{' '}
+              <span className="text-after-colon">{offre.date_fin}</span>
+            </p>
+            <p>
+              Collaborateur:{' '}
+              <span className="text-after-colon">
+                {offre.collaborateur?.nom}
+              </span>
+            </p>
+
+            <button
+              onClick={() => handleUpdate(offre.id_offre)}
+              className="modifierOffreButton"
+            >
+              MODIFIER
             </button>
             <button onClick={() => handleDelete(offre.id_offre)}>
-              Supprimer
+              SUPPRIMER
             </button>
           </div>
         ))}

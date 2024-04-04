@@ -23,7 +23,13 @@ function UpdateOffreModal({ isOpen, onRequestClose, onSuccess, offreId }) {
       backdropFilter: 'blur(3px)',
     },
   };
-
+ const titleStyle = {
+   color: '#c50f10', // Bleu pour correspondre au reste du formulaire
+   fontWeight: 'bold', // En gras pour attirer l'attention
+   textAlign: 'center', // Centré pour un aspect esthétique
+   marginBottom: '20px', // Espace au-dessous du titre pour séparer du formulaire
+   fontSize: '24px', // Taille de police pour rendre le titre bien visible
+ };
   const handleAddOrUpdateSuccess = () => {
     onSuccess(); // Appel onSuccess pour rafraîchir la liste des offres
   };
@@ -36,7 +42,7 @@ function UpdateOffreModal({ isOpen, onRequestClose, onSuccess, offreId }) {
       contentLabel="Modifier Offre"
     >
       <div>
-        <h2>Modifier Offre</h2>
+        <h2 style={titleStyle}>MODIFIER L'OFFRE</h2>
         <OffreForm
           onRequestClose={onRequestClose}
           onSuccess={handleAddOrUpdateSuccess}

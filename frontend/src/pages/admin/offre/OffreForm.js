@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-
+import './OffreForm.css';
 function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
   const [titre, setTitre] = useState('');
   const [description, setDescription] = useState('');
@@ -204,9 +204,15 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
           onChange={handleImageChange}
         />
       </label>
-      <button type="submit">
-        {isUpdate ? 'Modifier Offre' : 'Ajouter Offre'}
+        <div className="formBut">
+      <button type="button" className="cancelBut" onClick={onRequestClose}>
+        Annuler
       </button>
+      <button type="submit" className="subButton">
+        {isUpdate ? 'Modifier ' : 'Ajouter '}
+      </button>
+        </div>
+
     </form>
   );
 }

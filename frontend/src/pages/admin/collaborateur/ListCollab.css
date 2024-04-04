@@ -1,93 +1,157 @@
 .listCollaborateur-container {
-    padding: 60px;
-  }
+  background-color: #f0f4f8;
   
-  .listCollaborateur-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .listCollaborateur-title {
-    color: #191f43;
-    font-size: 24px;
-    font-weight: 600;
-  }
-  
-  .listCollaborateur-search-input {
-    padding: 8px 12px;
-    font-size: 16px;
-    border: 2px solid #bbb;
-    border-radius: 20px;
-    width: 300px;
-    margin-top: -67px;
-    outline: none;
-    margin-left: auto;
-  }
-  
-  .listCollaborateur-search-input:focus {
-    border-color: #191f43;
-  }
-  
-  .collaborateur-scroll-container {
-    display: flex;
-    overflow-x: auto;
-  }
-  
-  .collaborateur-card {
-    width: 200px;
-    height: 380px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    padding: 20px;
-    transition: box-shadow 0.3s ease;
-    margin-right: 10px;
-    flex-shrink: 0;
-  }
-  
-  .collaborateur-card.active {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-  }
-  
-  .collaborateur-card img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 5px;
-    margin-bottom: 10px;
-  }
-  
-  .collaborateur-card-title {
-    font-size: 18px;
-    font-weight: bold;
-    color: #191f43;
-  }
-  
-  .collaborateur-card-description {
-    font-size: 14px;
-    color: #555;
-  }
-  
-  .navigation-buttons {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-  }
-  
-  .navigation-buttons button {
-    background-color: #191f43;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .navigation-buttons button:hover {
-    background-color: #163172;
-  }
-  
+}
+
+.listCollaborateur-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.listCollaborateur-title {
+  color: #191f43;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.listCollaborateur-search-input {
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 2px solid #bbb;
+  border-radius: 20px;
+  width: 300px;
+  margin-top: -67px;
+  outline: none;
+  margin-left: auto;
+  transition: border-color 0.3s ease;
+}
+
+.listCollaborateur-search-input:focus {
+  border-color: #3182ce;
+}
+
+.collaborateur-scroll-container {
+  display: flex;
+  overflow-x: auto;
+  justify-content: center; /* Centrer les cartes horizontalement */
+  align-items: center; /* Centrer les cartes verticalement */  padding: 0 20px;  overflow-y: visible;
+}
+
+.collaborateur-card {
+  width: 270px;
+  height: 420px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  padding: 20px;
+  margin-right: 10px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animation pour survol */
+  cursor: pointer;
+  margin: 0 10px;
+  margin-bottom: 4%;
+  margin-top: 4%;
+  border: 2px solid #cbd5e0; /* Bordure plus claire pour un look raffiné */
+}
+.collaborateur-card:hover {
+  transform: scale(1.04); /* Légère augmentation de la taille */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Ombre plus prononcée */
+}
+.collaborateur-card.active {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.collaborateur-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.collaborateur-card-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #191f43;
+  text-transform: uppercase;
+}
+
+.collaborateur-card-description {
+  font-size: 14px;
+  color: #555;
+}
+.cards-and-navigation {
+ position: relative; /* Le conteneur parent doit être positionné relativement */
+  display: flex;
+  justify-content: center; /* Centre le conteneur des cartes */
+  align-items: center; /* Centrage vertical, si nécessaire */
+}
+.prev{
+ position: absolute;
+  left: 2%; /* Décale le bouton de 2% du bord gauche */
+  top: 50%;
+  transform: translateY(-50%);}
+.next {
+  position: absolute;
+  right: 2%; /* Décale le bouton de 2% du bord droit */
+  top: 50%;
+  transform: translateY(-50%);}
+
+.prev, .next {
+  background-color: #191f43;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  /* Pas besoin de margin-top ici puisqu'on positionne absolument */
+}
+
+
+.stylish-separator {
+  height: 4px; /* Ligne plus fine */
+  background-image: linear-gradient(
+    to right,
+    #191f43,
+    #3182ce
+  ); /* Gradient moderne */
+  margin: 30px auto; /* Ajustement de l'espacement */
+}
+
+.list-coll-button {
+  padding: 8px 16px;
+  background-color: #879eb9;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.list-coll-button:hover {
+  background-color: #191f43; /* Plus sombre au survol */
+}
+/* Styles généraux pour les boutons à l'intérieur des cartes */
+.collaborateur-card button {
+  display: inline-block;
+  background-color: #879eb9; /* Couleur de fond */
+  color: #ffffff; /* Couleur du texte */
+  border: none;
+  padding: 8px 12px; /* Padding autour du texte */
+  margin: 4px; /* Marge externe pour espacer les boutons */
+  border-radius: 4px; /* Bordures arrondies */
+  cursor: pointer; /* Change le curseur en main pour indiquer la possibilité de cliquer */
+  transition: background-color 0.3s ease; /* Transition douce pour le survol */
+}
+
+
+
+/* Effet au survol pour les boutons */
+.collaborateur-card button:hover {
+  opacity: 0.8; /* Rend le bouton légèrement transparent au survol */
+}

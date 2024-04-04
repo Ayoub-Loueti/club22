@@ -20,6 +20,9 @@
   padding: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease;
+   min-height: 350px; /* Adjust based on your content */
+  display: flex;
+  flex-direction: column;
 }
 
 .offre-employee-card:hover {
@@ -27,8 +30,9 @@
 }
 
 .offre-employee-card img {
-  max-width: 100%;
-  height: auto;
+ width: 100%; /* ensures the image takes the full width of the card */
+  height: 200px; /* adjust based on your preference */
+  object-fit: cover; /* maintain aspect ratio without distortion */
   transition: transform 0.5s ease;
 }
 
@@ -37,10 +41,12 @@
 }
 
 .offre-employee-card h2 {
+           text-transform: uppercase; 
+
   font-weight: bold;
   margin-bottom: 10px;
   font-style: normal;
-  font-size: 25px;
+  font-size: 20px;
   line-height: 42px;
   color: rgba(25, 31, 67, 0.48);
 }
