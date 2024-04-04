@@ -50,7 +50,7 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
             (offre.currentImageIndex + 1) % offre.lesImages.length,
         }))
       );
-    }, 5000);
+    }, 4000);
 
     return () => clearInterval(intervalId); // Cleanup on component unmount
   }, []);
@@ -104,6 +104,7 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
            offre.prix.toString().toLowerCase().includes(searchTerm.toLowerCase()) 
  
   );
+  
   return (
     <div className="offre-admin-container">
       <AddOffreModal

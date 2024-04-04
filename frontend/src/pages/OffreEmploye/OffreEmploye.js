@@ -37,7 +37,22 @@ function OffreEmploye() {
   const handleVoirPlusClick = (offreId) => {
     navigate(`/OffrePageDetails/${offreId}`);
   };
-   
+     useEffect(() => {
+       // Définir un intervalle pour passer à l'image suivante toutes les 5 secondes
+       const intervalId = setInterval(() => {
+         setOffres((prevOffres) =>
+           prevOffres.map((offre) => {
+             // Calculer le nouvel index d'image, en bouclant si nécessaire
+             const newImageIndex =
+               (offre.currentImageIndex + 1) % offre.lesImages.length;
+             return { ...offre, currentImageIndex: newImageIndex };
+           })
+         );
+       }, 4000);
+
+       // Nettoyer l'intervalle à la destruction du composant
+       return () => clearInterval(intervalId);
+     }, []);
   return (
     <div className="offre-employee-container">
       <h1 className="offre-employee-title">Les Offres disponibles</h1>

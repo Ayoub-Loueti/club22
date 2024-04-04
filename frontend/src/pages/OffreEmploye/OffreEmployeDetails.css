@@ -10,6 +10,12 @@
   margin-bottom: 0px; /* Ajoute un espace en bas de l'image */
   border-radius: 1%;
 }
+.offre-detail-image {
+  width: 100%; /* Ajustez la largeur selon vos besoins */
+  max-width: 600px; /* Limitez la largeur maximale pour de grandes images */
+  height: auto; /* Gardez le ratio d'aspect */
+  margin-bottom: 20px; /* Espace entre les images */
+}
 
 .offre-cardDetails .offre-titleDetails {
   color: #191f43;
@@ -40,7 +46,7 @@
   margin-top: 10px; /* Ajoute un espace au-dessus des boutons */
 }
 
-.offre-cardDetails .offre-buttonDetails {
+.offre-cardDetails  {
   border-radius: 5px;
   padding: 10px 40px;
   cursor: pointer;
@@ -54,6 +60,13 @@
   font-weight: bold; /* Met le prix en gras */
   
   font-size: large;
+    border-radius: 5px;
+  padding: 10px 40px;
+    margin-right: 10px; 
+  cursor: pointer;
+  border: none; /* Supprime les contours */
+  outline: none; /* Supprime la mise en évidence du bouton lorsqu'il est cliqué */
+  
 }
 
 .offre-cardDetails .offre-button-adherantDetails {
@@ -61,12 +74,51 @@
   color: white;
   font-weight: bold; /* Met le prix en gras */
     font-size: large;
+      border-radius: 5px;
+  padding: 10px 40px;
+  cursor: pointer;
+  border: none; /* Supprime les contours */
+  outline: none; /* Supprime la mise en évidence du bouton lorsqu'il est cliqué */
 
 }
-.offre-buttonsDetails .offre-buttonDetails:first-child {
-  margin-right: 10px; /* Ajoute un espace entre le premier bouton et le second */
-}
+
 
 .offre-cardDetails .offre-details {
   margin-left: 20px; /* Ajoute un espace entre la photo et les textes */
+}
+ .offre-details {
+  margin-bottom: 10%; /* Ajoute un espace entre la photo et les textes */
+}
+.offre-additional-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 21px;
+  cursor: pointer;
+  justify-content: center; /* Centrer les images supplémentaires */
+  padding-top: 30px; /* Ajoute un espace au-dessus des images supplémentaires */
+  position: relative; /* Permet le déplacement relatif des images supplémentaires */
+  left: -11%; /* Déplace les images supplémentaires un peu à droite */
+  margin-bottom: 20px; /* Espace entre les images supplémentaires et l'image principale */
+}
+
+
+.offre-additional-image {
+  max-width: 110px; /* Taille fixe pour les images supplémentaires */
+  height: 80px;
+  border-radius: 3px; /* Bordures arrondies pour les images supplémentaires */
+   filter: grayscale(2%); /* Rend l'image entièrement grise */
+  opacity: 0.6; /* Rend l'image partiellement transparente */
+  transition: filter 0.3s ease, opacity 0.3s ease;
+}
+.offre-additional-image:hover, .offre-additional-image:focus {
+  filter: none; /* Retire le filtre gris */
+  opacity: 1; /* Restaure l'opacité complète */
+}
+.offre-main-image {
+  height: 430px; 
+  width: 35%; /* Met la photo à gauche */
+  margin-bottom: 0px; /* Ajoute un espace en bas de l'image */
+  border-radius: 1%;
+    object-fit: cover; /* Couvre l'espace sans distorsion, en coupant au besoin */
+
 }

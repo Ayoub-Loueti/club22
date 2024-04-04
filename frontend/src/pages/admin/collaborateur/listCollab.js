@@ -42,7 +42,7 @@ function ListCollaborateur() {
     if (token) {
       fetchCollaborateurs();
     }
-  }, [collaboratorAddedOrUpdated, token]);
+  }, [token, collaboratorAddedOrUpdated]);
 
   const handleUpdate = (collaborateurId) => {
     setSelectedCollaborateurId(collaborateurId);
@@ -67,14 +67,41 @@ function ListCollaborateur() {
     }
   };
 
-  const handleNext = () => {
-    if (startIndex + 4 < collaborateurs.length) {
-      setStartIndex(startIndex + 1);
-    }
-  };
-  const filteredCollaborateurs = collaborateurs.filter((collaborateur) =>
-    collaborateur.nom.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+const handleNext = () => {
+  // La taille de page est le nombre de collaborateurs que vous souhaitez afficher à la fois.
+  const pageSize = 3;
+  // Calculer le nombre total de pages.
+  const totalPages = Math.ceil(collaborateurs.length / pageSize);
+  // Calculer la page actuelle basée sur startIndex.
+  const currentPage = Math.ceil((startIndex + 1) / pageSize);
+  // S'assurer qu'on ne dépasse pas le nombre total de pages.
+  if (currentPage < totalPages) {
+    setStartIndex(startIndex + pageSize);
+  }
+};
+
+
+ const filteredCollaborateurs = collaborateurs.filter((collaborateur) => {
+   const nom = collaborateur.nom ? collaborateur.nom.toLowerCase() : ''; // Check if nom is not null
+   const type = collaborateur.type ? collaborateur.type.toLowerCase() : ''; // Check if type is not null
+   const adresse = collaborateur.adresse
+     ? collaborateur.adresse.toLowerCase()
+     : ''; // Check if adresse is not null
+   const tel = collaborateur.tel ? collaborateur.tel.toLowerCase() : ''; // Check if tel is not null
+   const email = collaborateur.email ? collaborateur.email.toLowerCase() : ''; // Check if email is not null
+   const siteWeb = collaborateur.siteWeb
+     ? collaborateur.siteWeb.toLowerCase()
+     : ''; // Check if siteWeb is not null
+
+   return (
+     nom.includes(searchTerm.toLowerCase()) ||
+     type.includes(searchTerm.toLowerCase()) ||
+     adresse.includes(searchTerm.toLowerCase()) ||
+     tel.includes(searchTerm.toLowerCase()) ||
+     email.includes(searchTerm.toLowerCase()) ||
+     siteWeb.includes(searchTerm.toLowerCase())
+   );
+ });
     const scrollToRef = React.createRef();
 
 const handleViewOffers = () => {
@@ -142,21 +169,21 @@ const handleViewOffers = () => {
                 <h3 className="collaborateur-card-title">
                   {collaborateur.nom}
                 </h3>
-                <p className="collaborateur-card-description">
-                  Catégorie : {collaborateur.type}
-                </p>
-                <p className="collaborateur-card-description">
-                  Adresse : {collaborateur.adresse}
-                </p>
-                <p className="collaborateur-card-description">
-                  Télephone : {collaborateur.tel}
-                </p>
-                <p className="collaborateur-card-description">
-                  Email : {collaborateur.email}
-                </p>
-                <p className="collaborateur-card-description">
-                  Site Web : {collaborateur.siteWeb}
-                </p>
+                 <p className="collaborateur-card-description">
+    Catégorie : <span className="description-value">{collaborateur.type}</span>
+  </p>
+  <p className="collaborateur-card-description">
+    Adresse : <span className="description-value">{collaborateur.adresse}</span>
+  </p>
+  <p className="collaborateur-card-description">
+    Télephone : <span className="description-value">{collaborateur.tel}</span>
+  </p>
+  <p className="collaborateur-card-description">
+    Email : <span className="description-value">{collaborateur.email}</span>
+  </p>
+  <p className="collaborateur-card-description">
+    Site Web : <span className="description-value">{collaborateur.siteWeb}</span>
+  </p>
                 <button
                   onClick={() => handleUpdate(collaborateur.id_collaborateur)}
                 >
@@ -177,7 +204,7 @@ const handleViewOffers = () => {
         <button
           className="next"
           onClick={handleNext}
-          disabled={startIndex + 4 >= collaborateurs.length}
+          disabled={startIndex + 3 >= collaborateurs.length}
         >
           <FontAwesomeIcon icon={faArrowRight} />
         </button>

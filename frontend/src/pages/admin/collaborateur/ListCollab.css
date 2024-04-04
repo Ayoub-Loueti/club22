@@ -81,6 +81,7 @@
 .collaborateur-card-description {
   font-size: 14px;
   color: #555;
+  font-weight: bold;
 }
 .cards-and-navigation {
  position: relative; /* Le conteneur parent doit être positionné relativement */
@@ -154,4 +155,8 @@
 /* Effet au survol pour les boutons */
 .collaborateur-card button:hover {
   opacity: 0.8; /* Rend le bouton légèrement transparent au survol */
+}
+.description-value {
+  color: #c53030; 
+  font-weight: bold;
 }
