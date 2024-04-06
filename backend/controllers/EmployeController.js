@@ -82,4 +82,27 @@ exports.createDemande = async (req, res) => {
     }
 };
 
+exports.isAdherant = async (req, res) => {
+    try {
+      const userId = req.userId; // Assuming userId is set by your authentication middleware
+  
+      const employe = await Employe.findOne({
+        include: [{
+          model: Utilisateur,
+          as: 'utilisateur',
+          where: { id_utilisateur: userId }
+        }]
+      });
+  
+      if (!employe) {
+        return res.status(404).send({ message: 'Employee not found' });
+      }
+  
+      return res.status(200).send({ adherant: employe.adherant });
+    } catch (error) {
+      console.error('Error checking adherant status:', error);
+      res.status(500).send({ message: 'Internal server error' });
+    }
+  };
+  
 module.exports = exports;

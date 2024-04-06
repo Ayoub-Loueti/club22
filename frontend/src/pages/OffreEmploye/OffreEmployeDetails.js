@@ -3,15 +3,18 @@ import axios from 'axios';
 import './OffreEmployeDetails.css'; 
 import { useParams } from 'react-router-dom';
 import ReservationModal from '../../components/ReservationModel/ReservationModal';
+import AdherantModal from '../../components/AdherantModal/AdherantModal';
 
 function OffreEmployeDetails() {
   const [offre, setOffre] = useState(null);
   const token = localStorage.getItem('login');
   const { offreId } = useParams();
   const [mainImageIndex, setMainImageIndex] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false); // To control the modal visibility 
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isAdherantModalOpen, setIsAdherantModalOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem('user'));
-  
+  const [isAdherant, setIsAdherant] = useState(null);
+
   useEffect(() => {
     const fetchOffreDetails = async () => {
       try {
@@ -30,6 +33,19 @@ function OffreEmployeDetails() {
       }
     };
 
+    const checkAdherantStatus = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/isAdherant', {
+          headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
+        });
+        setIsAdherant(response.data.adherant);
+      } catch (error) {
+        console.error("Error checking adherant status:", error);
+        setIsAdherant(false); // Assume non-adherant if there's an error
+      }
+    };
+
+    checkAdherantStatus();
     fetchOffreDetails();
   }, [offreId, token]);
 
@@ -71,7 +87,10 @@ function OffreEmployeDetails() {
           Réserver 
           </button> 
           <ReservationModal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)} user={user} offreId={offreId} />
-            <button className="offre-button-adherantDetails">Adhérent</button>
+          {isAdherant === false && (
+              <button className="offre-button-adherantDetails" onClick={() => setIsAdherantModalOpen(true)}>Adhérent</button>
+            )}
+              <AdherantModal isOpen={isAdherantModalOpen} onRequestClose={() => setIsAdherantModalOpen(false)} user={user} />
           </div>
         </div>
       </div>
