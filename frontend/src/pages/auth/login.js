@@ -7,6 +7,9 @@ import ooredoo1Image from '../../assets/ooredoo1.png';
 import ooredoo3Image from '../../assets/ooredoo3.png';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 function Login() {
   const [email, setEmail] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
@@ -16,6 +19,7 @@ function Login() {
   const [showConfirmationMessage, setShowConfirmationMessage] = useState(false);
   const navigate = useNavigate();
   const MySwal = withReactContent(Swal);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleForgotPassword = async () => {
     if (!email) {
@@ -146,6 +150,9 @@ navigate ('/insererNom')
    }
  };
 
+ const togglePasswordVisibility = () => {
+  setShowPassword(!showPassword);
+};
 
   return (
     <div className="login-page">
@@ -189,12 +196,15 @@ navigate ('/insererNom')
               <div className="form-group">
                 <h3 className="input-label">Mot de passe</h3>
                 <input
-                  type="password"
-                  value={motDePasse}
+                   type={showPassword ? "text" : "password"}
+                   value={motDePasse}
                   onChange={(e) => setMotDePasse(e.target.value)}
                   className="input-field"
                   required
                 />
+                 <span onClick={togglePasswordVisibility} style={{ cursor: 'pointer', position: 'absolute', right: '60px', top: '257px' }}>
+          <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} style={{ color: '#4F5475' }} />
+        </span>
               </div>
 
               <div className="form-group">

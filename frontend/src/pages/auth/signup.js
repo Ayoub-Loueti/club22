@@ -4,6 +4,9 @@ import ooredoo1Image from '../../assets/ooredoo1.png';
 import ooredoo3Image from '../../assets/ooredoo3.png';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 
 import {  useNavigate } from 'react-router-dom';
 
@@ -12,6 +15,8 @@ function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigate = useNavigate(); 
 
@@ -21,7 +26,9 @@ function Signup() {
   };
 
   const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
+    const newPassword = event.target.value;
+    setPassword(newPassword);
+    updatePasswordValidity(newPassword);
   };
 
   const handleConfirmPasswordChange = (event) => {
@@ -31,10 +38,14 @@ function Signup() {
  const handleSubmit = async (event) => {
    event.preventDefault();
 
-   if (password !== confirmPassword) {
-     Swal.fire('Erreur', 'Les mots de passe ne correspondent pas.', 'error');
-     return;
-   }
+   if (password !== confirmPassword || !isPasswordValid) {
+    Swal.fire(
+      'Erreur',
+      'Le mot de passe ne remplit pas toutes les conditions ou les mots de passe ne correspondent pas.',
+      'error'
+    );
+    return;
+  }
 
    try {
      await axios.post('http://localhost:5000/signup', {
@@ -64,8 +75,29 @@ navigate("/")
    }
  };
 
+ const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+ const [isPasswordValid, setIsPasswordValid] = useState(false);
 
+ const hasLength = (password) => password.length >= 12;
+ const hasUpperAndLower = (password) => /[A-Z]/.test(password) && /[a-z]/.test(password);
+ const hasNumber = (password) => /\d/.test(password);
 
+ const updatePasswordValidity = (password) => {
+  // Check all conditions and set the password validity
+  const isValid =
+    hasLength(password) &&
+    hasUpperAndLower(password) &&
+    hasNumber(password);
+  setIsPasswordValid(isValid);
+};
+
+const togglePasswordVisibility = () => {
+  setShowPassword(!showPassword);
+};
+
+const toggleConfirmPasswordVisibility = () => {
+  setShowConfirmPassword(!showConfirmPassword);
+};
 
   return (
     <div className="signup-container">
@@ -173,26 +205,50 @@ navigate("/")
                 />
               </div>
               <div className="form-group">
-                <h3 className="signup-input-label">Mot de passe</h3>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={handlePasswordChange}
-                  className="signup-input-field"
-                  required
-                />
+              <h3 className="signup-input-label">Mot de passe</h3>
+              <input
+               type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={handlePasswordChange}
+                onFocus={() => setIsPasswordFocused(true)}
+                onBlur={() => setIsPasswordFocused(false)}
+                className="signup-input-field"
+                required
+              />
+               <span onClick={togglePasswordVisibility} style={{ cursor: 'pointer', position: 'absolute', right: '60px', top: '257px' }}>
+          <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} style={{ color: '#4F5475' }} />
+        </span>
+              {isPasswordFocused && (
+                <div className="password-validation-popup">
+                  <p> <FontAwesomeIcon icon={faExclamationCircle} /> Passwords must have:</p>
+                  <ul>
+                    <li className={hasLength(password) ? 'valid' : 'invalid'}>
+                      <span className="icon"></span>12 or more characters
+                    </li>
+                    <li className={hasUpperAndLower(password) ? 'valid' : 'invalid'}>
+                      <span className="icon"></span>uppercase & lowercase
+                    </li>
+                    <li className={hasNumber(password) ? 'valid' : 'invalid'}>
+                      <span className="icon"></span>at least one number
+                    </li>
+                  </ul>
+                </div>
+              )}
               </div>
               <div className="form-group">
                 <h3 className="signup-input-label">
                   Confirmer votre mot de passe
                 </h3>
                 <input
-                  type="password"
-                  value={confirmPassword}
+                   type={showConfirmPassword ? "text" : "password"}
+                   value={confirmPassword}
                   onChange={handleConfirmPasswordChange}
                   className="signup-input-field"
                   required
                 />
+                 <span onClick={toggleConfirmPasswordVisibility} style={{ cursor: 'pointer', position: 'absolute', right: '60px', top: '344px' }}>
+          <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} style={{ color: '#4F5475' }} />
+        </span>
               </div>
 
               <button

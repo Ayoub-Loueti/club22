@@ -6,9 +6,7 @@ const Notification = require('../models/NotificationModel');
 const Image = require('../models/ImageModel');
 const Enregistrement = require('../models/EnregistrementModel');
 const multiImageUpload = require('../middleware/multiImageUpload');
-const Reponse = require('../models/ReponseModel');
-const LikeCom = require('../models/LikeComModel');
-const LikeRep = require('../models/LikeRepModel');
+const Offre = require('../models/OffreModel');
 const Client = require('../models/ClientModel');
 const Collaborateur = require ('../models/CollaborateurModel');
 const Mention = require ('../models/MentionModel');
@@ -47,39 +45,17 @@ exports.createPost = (req, res) => {
         }
 
         // Extract individual words from the post content (contenu)
-        const words = contenu.split(' ');
+        const offers = await Offre.findAll();
 
-        // Iterate over each word to check for mentions of collaborators
-        for (const word of words) {
-          // Search for collaborators where the word matches any field (nom, email, tel, etc.)
-          const collaborators = await Collaborateur.findAll({
-            where: {
-              [Sequelize.Op.or]: [
-                { nom: { [Sequelize.Op.like]: `%${word}%` } },
-                { email: { [Sequelize.Op.like]: `%${word}%` } },
-                { tel: { [Sequelize.Op.like]: `%${word}%` } },
-                { adresse: { [Sequelize.Op.like]: `%${word}%` } },
-                // Add other fields you want to search here
-              ],
-            },
-          });
-
-          // If any collaborators are found, associate the post with each one found
-          if (collaborators.length > 0) {
-            await Promise.all(collaborators.map(async (collaborator) => {
-              // Check if the collaborator's name is a full word in the post content
-              if (contenu.match(new RegExp(`\\b${collaborator.tel}\\b`, 'i'))
-              ||contenu.match(new RegExp(`\\b${collaborator.nom}\\b`, 'i'))
-              ||contenu.match(new RegExp(`\\b${collaborator.adresse}\\b`, 'i'))
-            ) {
-                await Mention.create({
-                  id_post: newPost.id_post,
-                  id_collaborateur: collaborator.id_collaborateur,
-                });
-              }
-            }));
+        // Iterate over each offer to check if its title is mentioned in the post content
+        await Promise.all(offers.map(async (offer) => {
+          if (contenu.includes(offer.titre) || contenu.includes(offer.description)) {
+            await Mention.create({
+              id_post: newPost.id_post,
+              id_offre: offer.id_offre,
+            });
           }
-        }
+        }));
         // Check if the id_utilisateur exists in the client table
         const existingClient = await Client.findOne({ where: { id_utilisateur } });
         if (existingClient) {
@@ -211,9 +187,16 @@ exports.getAllPosts = async (req, res) => {
               },
               include: [
                 {
-                  model: Collaborateur,
-                  as: 'collaborateur',
-                  attributes: ['id_collaborateur', 'nom', 'adresse', 'tel','email'],
+                  model: Offre,
+                  as: 'offre',
+                  attributes: ['id_offre', 'titre'],
+                  include: [
+                    {
+                      model: Collaborateur,
+                      as: 'collaborateur',
+                      attributes: ['id_collaborateur', 'nom'],
+                    },
+                  ],
                 },
               ],
             });
@@ -311,9 +294,16 @@ exports.getPostByIdWithDetails = async (req, res) => {
           },
           include: [
             {
-              model: Collaborateur,
-              as: 'collaborateur',
-              attributes: ['id_collaborateur', 'nom', 'adresse', 'tel','email'],
+              model: Offre,
+              as: 'offre',
+              attributes: ['id_offre', 'titre'],
+              include: [
+                {
+                  model: Collaborateur,
+                  as: 'collaborateur',
+                  attributes: ['id_collaborateur', 'nom'],
+                },
+              ],
             },
           ],
         });
@@ -393,9 +383,16 @@ exports.getAllPostsByUserWithDetails = async (req, res) => {
               },
               include: [
                 {
-                  model: Collaborateur,
-                  as: 'collaborateur',
-                  attributes: ['id_collaborateur', 'nom', 'adresse', 'tel','email'],
+                  model: Offre,
+                  as: 'offre',
+                  attributes: ['id_offre', 'titre'],
+                  include: [
+                    {
+                      model: Collaborateur,
+                      as: 'collaborateur',
+                      attributes: ['id_collaborateur', 'nom'],
+                    },
+                  ],
                 },
               ],
             });
@@ -488,9 +485,16 @@ exports.getPostsByType = async (req, res) => {
           },
           include: [
             {
-              model: Collaborateur,
-              as: 'collaborateur',
-              attributes: ['id_collaborateur', 'nom', 'adresse', 'tel','email'],
+              model: Offre,
+              as: 'offre',
+              attributes: ['id_offre', 'titre'],
+              include: [
+                {
+                  model: Collaborateur,
+                  as: 'collaborateur',
+                  attributes: ['id_collaborateur', 'nom'],
+                },
+              ],
             },
           ],
         });
@@ -632,9 +636,16 @@ exports.getEnregistrementsByUser = async (req, res) => {
             },
             include: [
               {
-                model: Collaborateur,
-                as: 'collaborateur',
-                attributes: ['id_collaborateur', 'nom', 'adresse', 'tel','email'],
+                model: Offre,
+                as: 'offre',
+                attributes: ['id_offre', 'titre'],
+                include: [
+                  {
+                    model: Collaborateur,
+                    as: 'collaborateur',
+                    attributes: ['id_collaborateur', 'nom'],
+                  },
+                ],
               },
             ],
           });

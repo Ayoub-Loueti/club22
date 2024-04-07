@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
-const CollaborateurModel = require('./CollaborateurModel');
+const OffreModel = require('./OffreModel');
 const PostModel = require('./PostModel');
 
 const MentionModel = sequelize.define('Mention', {
@@ -17,12 +17,12 @@ const MentionModel = sequelize.define('Mention', {
             key: 'id_post',
         },
     },
-    id_collaborateur: {
+    id_offre: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'collaborateur',
-            key: 'id_collaborateur',
+            model: 'offre',
+            key: 'id_offre',
         },
     }
 }, {
@@ -31,6 +31,6 @@ const MentionModel = sequelize.define('Mention', {
 });
 
 MentionModel.belongsTo(PostModel, { foreignKey: 'id_post', as: 'post' });
-MentionModel.belongsTo(CollaborateurModel, { foreignKey: 'id_collaborateur', as: 'collaborateur' });
+MentionModel.belongsTo(OffreModel, { foreignKey: 'id_offre', as: 'offre' });
 
 module.exports = MentionModel;

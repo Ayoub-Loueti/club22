@@ -651,14 +651,22 @@ const commentsToShow = isModalView ? comments : comments.slice(0, 2);
       {userInfo && userInfo.type === 'employe' && data.lesCollab.length > 0 && (
   <div className="lesCollab">
     <p>Les cordonnees du collaborateur : </p>
-    {data.lesCollab.map((collab) => (
-      <div key={collab.id_mention}>
-        <hr></hr>
-        <p>Nom: {collab.collaborateur.nom}</p>
-        <p>Telephone: {collab.collaborateur.tel}</p>
-        <p>Link pour reserver: <a>link bch treservi . com</a></p>
-      </div>
-    ))}
+    {data.lesCollab && data.lesCollab.length > 0 && (
+        <div className="postOffers">
+          {data.lesCollab.map((mention, index) => (
+            <div key={index} className="postOffer">
+              <hr></hr>
+              <strong>Collaborateur:</strong> {mention.offre.collaborateur.nom}
+              {mention.offre && (
+                <>
+                  <p><strong>Offre:</strong> {mention.offre.titre}</p>
+                  <NavLink to={`/OffrePageDetails/${mention.offre.id_offre}`}>Voir l'offre</NavLink>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
   </div>
 )}
       </div>
