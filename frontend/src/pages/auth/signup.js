@@ -203,7 +203,8 @@ const toggleConfirmPasswordVisibility = () => {
                   className="signup-input-field"
                   required
                   pattern="[^@\s]+@[^@\s]+\.[^@\s]+"
-                  title="Please include an '@' and a domain in the email address. e.g. user@example.com"
+                  title="Veuillez inclure un '@' et un domaine dans l'adresse e-mail. Par exemple : utilisateur@exemple.com"
+                  placeholder="utilisateur@exemple.com"
                 />
               </div>
               <div className="form-group">
