@@ -8,7 +8,11 @@ import OffreCollab from '../offre/OffreCollab'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import {
+  faArrowLeft,
+  faArrowRight,
+} from '@fortawesome/free-solid-svg-icons';
+import { FaArrowLeft } from 'react-icons/fa';
 
 function ListCollaborateur() {
   const [collaborateurs, setCollaborateurs] = useState([]);
@@ -26,7 +30,7 @@ function ListCollaborateur() {
     const fetchCollaborateurs = async () => {
       try {
         const response = await axios.get(
-          'http://localhost:5000/allCollaborateursAD',
+          'http://localhost:5000/allCollaborators',
           {
             headers: {
               Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -117,6 +121,9 @@ const handleViewOffers = () => {
 
   return (
     <div className="listCollaborateur-container">
+      <button className="retour-btn" onClick={() => window.history.back()}>
+        <FaArrowLeft /> Retour
+      </button>
       <h1 className="listCollaborateur-title">LISTE DES COLLABORATEURS</h1>
 
       <button onClick={handleOpenModal} className="list-coll-button">
@@ -163,27 +170,49 @@ const handleViewOffers = () => {
             .map((collaborateur, index) => (
               <div key={index} className="collaborateur-card">
                 <img
-                  src={`http://localhost:5000/${collaborateur.logo}`}
+                  src={
+                    collaborateur.logo
+                      ? `http://localhost:5000/${collaborateur.logo}`
+                      : 'https://png.pngtree.com/png-vector/20220119/ourmid/pngtree-crossed-image-icon-picture-not-available-sign-photo-sign-icon-vector-png-image_44027862.jpg'
+                  }
                   alt={collaborateur.nom}
                 />
+
                 <h3 className="collaborateur-card-title">
                   {collaborateur.nom}
                 </h3>
-                 <p className="collaborateur-card-description">
-    Catégorie : <span className="description-value">{collaborateur.type}</span>
-  </p>
-  <p className="collaborateur-card-description">
-    Adresse : <span className="description-value">{collaborateur.adresse}</span>
-  </p>
-  <p className="collaborateur-card-description">
-    Télephone : <span className="description-value">{collaborateur.tel}</span>
-  </p>
-  <p className="collaborateur-card-description">
-    Email : <span className="description-value">{collaborateur.email}</span>
-  </p>
-  <p className="collaborateur-card-description">
-    Site Web : <span className="description-value">{collaborateur.siteWeb}</span>
-  </p>
+                <p className="collaborateur-card-description">
+                  Catégorie :{' '}
+                  <span className="description-value">
+                    {collaborateur.type}
+                  </span>
+                </p>
+                <p className="collaborateur-card-description">
+                  Adresse :{' '}
+                  <span className="description-value">
+                    {collaborateur.adresse}
+                  </span>
+                </p>
+                <p className="collaborateur-card-description">
+                  Télephone :{' '}
+                  <span className="description-value">{collaborateur.tel}</span>
+                </p>
+                <p className="collaborateur-card-description">
+                  Email :{' '}
+                  <span className="description-value">
+                    {collaborateur.email}
+                  </span>
+                </p>
+                <p className="collaborateur-card-description">
+                  Site Web :{' '}
+                  <span className="description-value">
+                    {collaborateur.siteWeb &&
+                    collaborateur.siteWeb.trim() !== ''
+                      ? collaborateur.siteWeb
+                      : 'non disponible'}
+                  </span>
+                </p>
+
                 <button
                   onClick={() => handleUpdate(collaborateur.id_collaborateur)}
                 >

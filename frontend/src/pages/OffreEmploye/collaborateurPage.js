@@ -52,42 +52,49 @@ function CollaborateurPage() {
   };
 
   return (
-    <div className="PageCollaborateur-container">
-      <div className="collabora-scroll-container">
-        {collaborateurs
-          .slice(startIndex, startIndex + 6)
-          .map((collaborateur, index) => (
-            <div
-              key={index}
-              className="collab-card"
-              onClick={() => handleCollaboratorClick(collaborateur.id_collaborateur)}
-            >
-              <img
-                src={`http://localhost:5000/${collaborateur.logo}`}
-                alt={collaborateur.nom}
-              />
-            </div>
-          ))}
-      </div>
+    <div>
+      <button className="retour-btn" onClick={() => window.history.back()}>
+        <FaArrowLeft /> Retour
+      </button>
+      <div className="PageCollaborateur-container">
+        <div className="collabora-scroll-container">
+          {collaborateurs
+            .slice(startIndex, startIndex + 6)
+            .map((collaborateur, index) => (
+              <div
+                key={index}
+                className="collab-card"
+                onClick={() =>
+                  handleCollaboratorClick(collaborateur.id_collaborateur)
+                }
+              >
+                <img
+                  src={`http://localhost:5000/${collaborateur.logo}`}
+                  alt={collaborateur.nom}
+                />
+              </div>
+            ))}
+        </div>
 
-      <div className="navig-buttons">
-        <FaArrowLeft
-          onClick={handlePrevious}
-          disabled={startIndex === 0}
-          className="nav-icon"
-        />
-        <FaArrowRight
-          onClick={handleNext}
-          disabled={startIndex + 4 >= collaborateurs.length}
-          className="nav-icon"
-        />
-      </div>
+        <div className="navig-buttons">
+          <FaArrowLeft
+            onClick={handlePrevious}
+            disabled={startIndex === 0}
+            className="nav-icon"
+          />
+          <FaArrowRight
+            onClick={handleNext}
+            disabled={startIndex + 4 >= collaborateurs.length}
+            className="nav-icon"
+          />
+        </div>
 
-      {showOffreCollab ? (
-        <OffreCollabEmploye collaborateurId={selectedCollaborateurId} />
-      ) : (
-        <OffreEmploye />
-      )}
+        {showOffreCollab ? (
+          <OffreCollabEmploye collaborateurId={selectedCollaborateurId} />
+        ) : (
+          <OffreEmploye />
+        )}
+      </div>
     </div>
   );
 }

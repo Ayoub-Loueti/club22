@@ -81,6 +81,23 @@
   outline: none; /* Supprime la mise en évidence du bouton lorsqu'il est cliqué */
 
 }
+.retour-btn {
+  background-color: #f2f2f2; /* Couleur de fond */
+  color: #333; /* Couleur du texte */
+  padding: 10px 20px; /* Padding */
+  font-size: 16px; /* Taille du texte */
+  border: none; /* Pas de bordure */
+  cursor: pointer; /* Style du curseur */
+  border-radius: 5px; /* Bords arrondis */
+margin-top: 2%;
+margin-right: 90% ;
+margin-bottom: -30%
+;}
+
+.retour-btn:hover {
+  background-color: #e0e0e0; /* Couleur de fond au survol */
+}
+
 
 
 .offre-cardDetails .offre-details {

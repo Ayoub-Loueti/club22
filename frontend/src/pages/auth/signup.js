@@ -11,19 +11,55 @@ import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import {  useNavigate } from 'react-router-dom';
 
 function Signup() {
- 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isEmailValid, setIsEmailValid] = useState({
+      atSymbol: false,
+      dot: false,
+    });
+    const [isEmailFocused, setIsEmailFocused] = useState(false);
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+
+const validateEmail = (email) => {
+  const atSymbolPosition = email.indexOf('@');
+  let dotPositionAfterAt = -1;
+
+  if (atSymbolPosition > 0) {
+    dotPositionAfterAt = email.indexOf('.', atSymbolPosition + 1);
+  }
+
+  const isValidEmail =
+    atSymbolPosition > 0 && dotPositionAfterAt > atSymbolPosition + 1;
+
+  setIsEmailValid({
+    atSymbol: atSymbolPosition > 0,
+    dot: dotPositionAfterAt > atSymbolPosition + 1,
+  });
+
+  return isValidEmail; // Utilisez cette valeur pour la validation lors de la soumission
+};
+
+
 
 
   const handleEmailChange = (event) => {
-    setEmail(event.target.value);
+    const emailInput = event.target.value;
+    setEmail(emailInput);
+    validateEmail(emailInput);
   };
+
+  const handleEmailFocus = () => {
+    setIsEmailFocused(true);
+  };
+
+  const handleEmailBlur = () => {
+    setIsEmailFocused(false);
+  };
+
 
   const handlePasswordChange = (event) => {
     const newPassword = event.target.value;
@@ -35,69 +71,76 @@ function Signup() {
     setConfirmPassword(event.target.value);
   };
 
- const handleSubmit = async (event) => {
-   event.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-   if (password !== confirmPassword || !isPasswordValid) {
-    Swal.fire(
-      'Erreur',
-      'Le mot de passe ne remplit pas toutes les conditions ou les mots de passe ne correspondent pas.',
-      'error'
-    );
-    return;
-  }
+    if (password !== confirmPassword || !isPasswordValid) {
+      Swal.fire(
+        'Erreur',
+        'Le mot de passe ne remplit pas toutes les conditions ou les mots de passe ne correspondent pas.',
+        'error'
+      );
+      return;
+    }
+ if (!validateEmail(email)) {
+   Swal.fire(
+     'Erreur',
+     "L'email n'est pas valide. Assurez-vous qu'il contient un '@' suivi par au moins un caractère et un '.'",
+     'error'
+   );
+   return;
+ }
 
-   try {
-     await axios.post('http://localhost:5000/signup', {
-       email,
-       motDePasse: password,
-     });
-     Swal.fire(
-       'Succès',
-       'Email de vérification envoyé. Veuillez vérifier votre boite email.',
-       'success'
-     );
-navigate("/")
-   } catch (error) {
-     if (error.response && error.response.status === 400) {
-       Swal.fire(
-         'Erreur',
-         'Un utilisateur avec cet e-mail existe déjà.',
-         'error'
-       );
-     } else {
-       Swal.fire(
-         'Erreur',
-         "Erreur lors de l'inscription. Veuillez réessayer.",
-         'error'
-       );
-     }
-   }
- };
+    try {
+      await axios.post('http://localhost:5000/signup', {
+        email,
+        motDePasse: password,
+      });
+      Swal.fire(
+        'Succès',
+        'Email de vérification envoyé. Veuillez vérifier votre boite email.',
+        'success'
+      );
+      navigate('/');
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        Swal.fire(
+          'Erreur',
+          'Un utilisateur avec cet e-mail existe déjà.',
+          'error'
+        );
+      } else {
+        Swal.fire(
+          'Erreur',
+          "Erreur lors de l'inscription. Veuillez réessayer.",
+          'error'
+        );
+      }
+    }
+  };
 
- const [isPasswordFocused, setIsPasswordFocused] = useState(false);
- const [isPasswordValid, setIsPasswordValid] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
 
- const hasLength = (password) => password.length >= 12;
- const hasUpperAndLower = (password) => /[A-Z]/.test(password) && /[a-z]/.test(password);
- const hasNumber = (password) => /\d/.test(password);
+  const hasLength = (password) => password.length >= 12;
+  const hasUpperAndLower = (password) =>
+    /[A-Z]/.test(password) && /[a-z]/.test(password);
+  const hasNumber = (password) => /\d/.test(password);
 
- const updatePasswordValidity = (password) => {
-  // Check all conditions and set the password validity
-  const isValid =
-    hasLength(password) &&
-    hasUpperAndLower(password) &&
-    hasNumber(password);
-  setIsPasswordValid(isValid);
-};
+  const updatePasswordValidity = (password) => {
+    // Check all conditions and set the password validity
+    const isValid =
+      hasLength(password) && hasUpperAndLower(password) && hasNumber(password);
+    setIsPasswordValid(isValid);
+  };
 
-const togglePasswordVisibility = () => {
-  setShowPassword(!showPassword);
-};
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
-const toggleConfirmPasswordVisibility = () => {
-  setShowConfirmPassword(!showConfirmPassword);
-};
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
 
   return (
     <div className="signup-container">
@@ -200,55 +243,107 @@ const toggleConfirmPasswordVisibility = () => {
                   type="email"
                   value={email}
                   onChange={handleEmailChange}
+                  onFocus={handleEmailFocus}
+                  onBlur={handleEmailBlur}
+                  className="signup-input-field"
+                  required
+                />{' '}
+                {isEmailFocused && (
+                  <div className="email-validation-popup">
+                    <p>
+                      <FontAwesomeIcon icon={faExclamationCircle} /> L'email
+                      doit contenir :
+                    </p>
+                    <ul>
+                      <li
+                        className={isEmailValid.atSymbol ? 'valid' : 'invalid'}
+                      >
+                        <span className="icon"></span>Un symbole '@'
+                      </li>
+                      <li className={isEmailValid.dot ? 'valid' : 'invalid'}>
+                        <span className="icon"></span>Un point '.' après '@'
+                        avec au moins un caractère avant
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+              <div className="form-group">
+                <h3 className="signup-input-label">Mot de passe</h3>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={handlePasswordChange}
+                  onFocus={() => setIsPasswordFocused(true)}
+                  onBlur={() => setIsPasswordFocused(false)}
                   className="signup-input-field"
                   required
                 />
-              </div>
-              <div className="form-group">
-              <h3 className="signup-input-label">Mot de passe</h3>
-              <input
-               type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={handlePasswordChange}
-                onFocus={() => setIsPasswordFocused(true)}
-                onBlur={() => setIsPasswordFocused(false)}
-                className="signup-input-field"
-                required
-              />
-               <span onClick={togglePasswordVisibility} style={{ cursor: 'pointer', position: 'absolute', right: '60px', top: '257px' }}>
-          <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} style={{ color: '#4F5475' }} />
-        </span>
-              {isPasswordFocused && (
-                <div className="password-validation-popup">
-                  <p> <FontAwesomeIcon icon={faExclamationCircle} /> Passwords must have:</p>
-                  <ul>
-                    <li className={hasLength(password) ? 'valid' : 'invalid'}>
-                      <span className="icon"></span>12 or more characters
-                    </li>
-                    <li className={hasUpperAndLower(password) ? 'valid' : 'invalid'}>
-                      <span className="icon"></span>uppercase & lowercase
-                    </li>
-                    <li className={hasNumber(password) ? 'valid' : 'invalid'}>
-                      <span className="icon"></span>at least one number
-                    </li>
-                  </ul>
-                </div>
-              )}
+                <span
+                  onClick={togglePasswordVisibility}
+                  style={{
+                    cursor: 'pointer',
+                    position: 'absolute',
+                    right: '60px',
+                    top: '257px',
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={showPassword ? faEyeSlash : faEye}
+                    style={{ color: '#4F5475' }}
+                  />
+                </span>
+                {isPasswordFocused && (
+                  <div className="password-validation-popup">
+                    <p>
+                      {' '}
+                      <FontAwesomeIcon icon={faExclamationCircle} /> Le mot de
+                      passe doit avoir:
+                    </p>
+                    <ul>
+                      <li className={hasLength(password) ? 'valid' : 'invalid'}>
+                        <span className="icon"></span>12 caractères ou plus
+                      </li>
+                      <li
+                        className={
+                          hasUpperAndLower(password) ? 'valid' : 'invalid'
+                        }
+                      >
+                        <span className="icon"></span>des majuscules et des
+                        minuscules
+                      </li>
+                      <li className={hasNumber(password) ? 'valid' : 'invalid'}>
+                        <span className="icon"></span>au moins un chiffre
+                      </li>
+                    </ul>
+                  </div>
+                )}
               </div>
               <div className="form-group">
                 <h3 className="signup-input-label">
                   Confirmer votre mot de passe
                 </h3>
                 <input
-                   type={showConfirmPassword ? "text" : "password"}
-                   value={confirmPassword}
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  value={confirmPassword}
                   onChange={handleConfirmPasswordChange}
                   className="signup-input-field"
                   required
                 />
-                 <span onClick={toggleConfirmPasswordVisibility} style={{ cursor: 'pointer', position: 'absolute', right: '60px', top: '344px' }}>
-          <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} style={{ color: '#4F5475' }} />
-        </span>
+                <span
+                  onClick={toggleConfirmPasswordVisibility}
+                  style={{
+                    cursor: 'pointer',
+                    position: 'absolute',
+                    right: '60px',
+                    top: '344px',
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={showConfirmPassword ? faEyeSlash : faEye}
+                    style={{ color: '#4F5475' }}
+                  />
+                </span>
               </div>
 
               <button
@@ -315,8 +410,6 @@ const toggleConfirmPasswordVisibility = () => {
                   ></path>
                 </svg>
               </a>
-             
-
             </form>
           </div>
         </div>

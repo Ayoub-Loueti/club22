@@ -14,8 +14,8 @@ const customStyles = {
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
     borderRadius: '10px',
-    width: '50%', // Ajout d'une largeur de 80% pour la modal
-    maxHeight: '90vh',
+    width: '40%', // Ajout d'une largeur de 80% pour la modal
+    maxHeight: '80vh',
     overflow: 'auto',
   },
   overlay: {

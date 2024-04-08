@@ -4,6 +4,7 @@ import './OffreEmployeDetails.css';
 import { useParams } from 'react-router-dom';
 import ReservationModal from '../../components/ReservationModel/ReservationModal';
 import AdherantModal from '../../components/AdherantModal/AdherantModal';
+import { FaArrowLeft } from 'react-icons/fa';
 
 function OffreEmployeDetails() {
   const [offre, setOffre] = useState(null);
@@ -68,6 +69,10 @@ function OffreEmployeDetails() {
 
   return (
     <div>
+      <button className="retour-btn" onClick={() => window.history.back()}>
+        <FaArrowLeft /> Retour
+      </button>
+      
       <div className="offre-cardDetails">
         {/* Image principale en grand format en dessous */}
         {offre.lesImages.length > 0 && (
@@ -83,14 +88,31 @@ function OffreEmployeDetails() {
           <p className="offre-priceDetails"> {offre.prix} DT</p>
           <p className="offre-descriptionDetails">{offre.description}</p>
           <div className="offre-buttonsDetails">
-          <button className="offre-button-reserverDetails" onClick={() => setIsModalOpen(true)}>   
-          Réserver 
-          </button> 
-          <ReservationModal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)} user={user} offreId={offreId} />
-          {isAdherant === false && (
-              <button className="offre-button-adherantDetails" onClick={() => setIsAdherantModalOpen(true)}>Adhérent</button>
+            <button
+              className="offre-button-reserverDetails"
+              onClick={() => setIsModalOpen(true)}
+            >
+              Réserver
+            </button>
+            <ReservationModal
+              isOpen={isModalOpen}
+              onRequestClose={() => setIsModalOpen(false)}
+              user={user}
+              offreId={offreId}
+            />
+            {isAdherant === false && (
+              <button
+                className="offre-button-adherantDetails"
+                onClick={() => setIsAdherantModalOpen(true)}
+              >
+                Adhérent
+              </button>
             )}
-              <AdherantModal isOpen={isAdherantModalOpen} onRequestClose={() => setIsAdherantModalOpen(false)} user={user} />
+            <AdherantModal
+              isOpen={isAdherantModalOpen}
+              onRequestClose={() => setIsAdherantModalOpen(false)}
+              user={user}
+            />
           </div>
         </div>
       </div>

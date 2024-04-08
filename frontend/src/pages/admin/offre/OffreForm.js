@@ -128,9 +128,24 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    setImages(files);
+
+    // Si l'utilisateur sélectionne plus de 4 fichiers, informez-le et ne gardez que les 4 premiers
+    if (files.length > 4) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Trop de photos sélectionnées',
+        text: 'Seules les 4 premières photos seront prises en compte.',
+      });
+
+      // Réduire le tableau aux 4 premiers éléments
+      const firstFourFiles = files.slice(0, 4);
+      setImages(firstFourFiles);
+    } else {
+      setImages(files);
+    }
   };
 
+const today = new Date().toISOString().split('T')[0]; 
   return (
     <form className="offre-form-container" onSubmit={handleSubmit}>
       <label>
@@ -155,7 +170,8 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
         <input
           type="number"
           value={prix}
-          onChange={(e) => setPrix(parseFloat(e.target.value))}
+          onChange={(e) => setPrix(Math.max(0, parseFloat(e.target.value)))}
+          min="0"
           required
         />
       </label>
@@ -165,6 +181,7 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
           type="date"
           value={date_debut}
           onChange={(e) => setDateDebut(e.target.value)}
+          min={today}
           required
         />
       </label>
@@ -174,6 +191,7 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
           type="date"
           value={date_fin}
           onChange={(e) => setDateFin(e.target.value)}
+          min={date_debut || today}
           required
         />
       </label>
@@ -202,17 +220,17 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
           accept="image/*"
           multiple // Allow multiple file selection
           onChange={handleImageChange}
+          required
         />
       </label>
-        <div className="formBut">
-      <button type="button" className="cancelBut" onClick={onRequestClose}>
-        Annuler
-      </button>
-      <button type="submit" className="subButton">
-        {isUpdate ? 'Modifier ' : 'Ajouter '}
-      </button>
-        </div>
-
+      <div className="formBut">
+        <button type="button" className="cancelBut" onClick={onRequestClose}>
+          Annuler
+        </button>
+        <button type="submit" className="subButton">
+          {isUpdate ? 'Modifier ' : 'Ajouter '}
+        </button>
+      </div>
     </form>
   );
 }

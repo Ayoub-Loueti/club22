@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import './OffreAdmin.css';
 import AddOffreModal from './AddOffreModal';
 import UpdateOffreModal from './UpdateOffreModal';
+import { FaArrowLeft } from 'react-icons/fa';
 
 function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
   const [offres, setOffres] = useState([]);
@@ -106,77 +107,80 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
   );
   
   return (
-    <div className="offre-admin-container">
-      <AddOffreModal
-        isOpen={isModalOpen}
-        onRequestClose={handleCloseModal}
-        onSuccess={handleAddOrUpdateSuccess}
-      />
-      <UpdateOffreModal
-        isOpen={isUpdateModalOpen}
-        offreId={selectedOffreId}
-        onRequestClose={() => setIsUpdateModalOpen(false)}
-        onSuccess={handleAddOrUpdateSuccess}
-      />
-      <div className="offre-list-header">
-        <h1 className="offre-list-title">LISTE DES OFFRES</h1>
-
-        <input
-          type="text"
-          className="offre-list-search-input"
-          placeholder="Rechercher..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+   
+      <div className="offre-admin-container">
+           <button className="retour-btn" onClick={() => window.history.back()}>
+        <FaArrowLeft /> Retour
+      </button>
+        <AddOffreModal
+          isOpen={isModalOpen}
+          onRequestClose={handleCloseModal}
+          onSuccess={handleAddOrUpdateSuccess}
         />
-        <button onClick={handleOpenModal} className="add-offre-button">
-          AJOUTER UNE OFFRE
-        </button>
+        <UpdateOffreModal
+          isOpen={isUpdateModalOpen}
+          offreId={selectedOffreId}
+          onRequestClose={() => setIsUpdateModalOpen(false)}
+          onSuccess={handleAddOrUpdateSuccess}
+        />
+        <div className="offre-list-header">
+          <h1 className="offre-list-title">LISTE DES OFFRES</h1>
+
+          <input
+            type="text"
+            className="offre-list-search-input"
+            placeholder="Rechercher..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <button onClick={handleOpenModal} className="add-offre-button">
+            AJOUTER UNE OFFRE
+          </button>
+        </div>
+        <div className="offre-cards-container">
+          {filteredOffres.map((offre, index) => (
+            <div key={index} className="offre-card">
+              <h2>{offre.titre}</h2>
+              <img
+                src={`http://localhost:5000/${
+                  offre.lesImages[offre.currentImageIndex]?.image
+                }`}
+                alt={`Image ${offre.currentImageIndex}`}
+              />
+
+              <p>{offre.description}</p>
+              <p>
+                Prix:<span className="text-after-colon">{offre.prix}DT</span>
+              </p>
+
+              <p>
+                Offre valable de:{' '}
+                <span className="text-after-colon">{offre.date_debut}</span>
+              </p>
+              <p>
+                Jusqu'au:{' '}
+                <span className="text-after-colon">{offre.date_fin}</span>
+              </p>
+              <p>
+                Collaborateur:{' '}
+                <span className="text-after-colon">
+                  {offre.collaborateur?.nom}
+                </span>
+              </p>
+
+              <button
+                onClick={() => handleUpdate(offre.id_offre)}
+                className="modifierOffreButton"
+              >
+                MODIFIER
+              </button>
+              <button onClick={() => handleDelete(offre.id_offre)}>
+                SUPPRIMER
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="offre-cards-container">
-      
-        {filteredOffres.map((offre, index) => (
-          <div key={index} className="offre-card">
-            <h2>{offre.titre}</h2>
-            <img
-              src={`http://localhost:5000/${
-                offre.lesImages[offre.currentImageIndex]?.image
-              }`}
-              alt={`Image ${offre.currentImageIndex}`}
-            />
-
-            <p>{offre.description}</p>
-            <p>
-              Prix:<span className="text-after-colon">{offre.prix}DT</span>
-            </p>
-
-            <p>
-              Offre valable de:{' '}
-              <span className="text-after-colon">{offre.date_debut}</span>
-            </p>
-            <p>
-              Jusqu'au:{' '}
-              <span className="text-after-colon">{offre.date_fin}</span>
-            </p>
-            <p>
-              Collaborateur:{' '}
-              <span className="text-after-colon">
-                {offre.collaborateur?.nom}
-              </span>
-            </p>
-
-            <button
-              onClick={() => handleUpdate(offre.id_offre)}
-              className="modifierOffreButton"
-            >
-              MODIFIER
-            </button>
-            <button onClick={() => handleDelete(offre.id_offre)}>
-              SUPPRIMER
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
   );
 }
 

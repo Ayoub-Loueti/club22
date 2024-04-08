@@ -14,8 +14,8 @@ function UpdateOffreModal({ isOpen, onRequestClose, onSuccess, offreId }) {
       marginRight: '-50%',
       transform: 'translate(-50%, -50%)',
       borderRadius: '10px',
-      width: '50%',
-      maxHeight: '90vh',
+      width: '40%',
+      maxHeight: '80vh',
       overflow: 'auto',
     },
     overlay: {

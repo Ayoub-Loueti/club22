@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import './listCollaborateur.css';
 import UpdateCollaborateurModal from './UpdateCollaborateurModal';
 import AddCollaborateurModal from './AddCollaborateurModal';
+import { FaArrowLeft } from 'react-icons/fa';
 
 function ListCollaborateur() {
   const [collaborateurs, setCollaborateurs] = useState([]);
@@ -120,6 +121,9 @@ function ListCollaborateur() {
 
   return (
     <div className="listCollaborateur-container">
+      <button className="retour-btn" onClick={() => window.history.back()}>
+        <FaArrowLeft /> Retour
+      </button>
       <button onClick={handleOpenModal} className="list-collab-button">
         Ajouter Collaborateur
       </button>
@@ -163,12 +167,17 @@ function ListCollaborateur() {
               <td>{collaborateur.tel}</td>
               <td>{collaborateur.email}</td>
               <td>{collaborateur.siteWeb}</td>
-              <td><img
-              src={
-                 `http://localhost:5000/${collaborateur.logo}`
+              <td>
+                <img
+                  src={
+                    collaborateur.logo
+                      ? `http://localhost:5000/${collaborateur.logo}`
+                      : 'https://png.pngtree.com/png-vector/20220119/ourmid/pngtree-crossed-image-icon-picture-not-available-sign-photo-sign-icon-vector-png-image_44027862.jpg'
                   }
-              className="collaborateur-picturee"
-            /></td>
+                  alt={collaborateur.nom}
+                  className="collaborateur-picturee"
+                />
+              </td>
               <td>
                 <button
                   onClick={() => handleUpdate(collaborateur.id_collaborateur)}

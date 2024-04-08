@@ -70,7 +70,14 @@ function CollaborateurForm({
     e.preventDefault();
 
     const collaborateurData = { nom, type, adresse, tel, email, siteWeb, logo };
-
+  if (!/^\d+$/.test(tel)) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Erreur',
+      text: 'Le numéro de téléphone doit être numérique.',
+    });
+    return; // Ne pas soumettre le formulaire si la validation échoue
+  }
     try {
       let response;
       if (isUpdate) {
@@ -154,9 +161,16 @@ function CollaborateurForm({
       <label>
         Téléphone:
         <input
-          type="text"
+          type="tel"
           value={tel}
+          pattern="[0-9]*"
           onChange={(e) => setTel(e.target.value)}
+          onInvalid={(e) =>
+            e.target.setCustomValidity(
+              'Le numéro de téléphone doit être numérique.'
+            )
+          }
+          onInput={(e) => e.target.setCustomValidity('')}
           className="collab-form-input"
           required
         />
@@ -188,7 +202,7 @@ function CollaborateurForm({
             className="btn"
             onClick={() => document.getElementById('fileInput').click()}
           >
-          Importer Logo
+            Importer Logo
           </button>
           <input
             id="fileInput"
