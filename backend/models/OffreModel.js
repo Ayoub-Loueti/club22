@@ -36,6 +36,9 @@ const OffreModel = sequelize.define(
   remise: {
     type: DataTypes.INTEGER,
   },
+  etat: {
+    type: DataTypes.ENUM('hotel', 'autre'),
+  },
   },
   {
     tableName: 'offre',

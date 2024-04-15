@@ -53,7 +53,7 @@ function OffreEmployeDetails() {
   if (!offre) {
     return <div>Loading...</div>; // Affiche un message de chargement tant que les données de l'offre ne sont pas disponibles
   }
-  const { titre, description, date_debut, date_fin, prix, lesImages } = offre;
+  const { titre, description, date_debut, date_fin, prix, lesImages, remise  } = offre;
 
   const handleImageClick = (clickedIndex) => {
     setOffre((currentOffre) => {
@@ -84,6 +84,7 @@ function OffreEmployeDetails() {
         )}
 
         <div className="offre-details">
+          <div className="remise-badgee">{remise}%</div>
           <h2 className="offre-titleDetails">{offre.titre}</h2>
           <p className="offre-priceDetails"> {offre.prix} DT</p>
           <p className="offre-descriptionDetails">{offre.description}</p>
@@ -99,6 +100,8 @@ function OffreEmployeDetails() {
               onRequestClose={() => setIsModalOpen(false)}
               user={user}
               offreId={offreId}
+              prix={prix}
+              remise={remise}
             />
             {isAdherant === false && (
               <button

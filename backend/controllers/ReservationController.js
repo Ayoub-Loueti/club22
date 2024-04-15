@@ -9,11 +9,16 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs');
 
 exports.createReservation = async (req, res) => {
-  const {id_offre} = req.body;
+  const {id_offre,nombre, prix_totale} = req.body;
   const userId = req.userId;
 
   try {
-    // Find the id_employe corresponding to the userId
+    if (nombre <= 0 || prix_totale <= 0) {
+      return res.status(400).json({
+        error: 'Invalid number of people or total price. Both must be greater than zero.',
+      });
+    }
+    
     const isEmploye = await Utilisateur.findOne({
       where: {
         id_utilisateur: userId,
@@ -45,9 +50,12 @@ exports.createReservation = async (req, res) => {
 
     // Create the reservation
     const reservation = await Reservation.create({
-      id_offre: id_offre,
+      id_offre,
       id_employe: employe.id_employe,
+      nombre,
+      prix_totale,
       date_reservation: new Date(),
+      etat: 'en_cours',  // default status
     });
 
     res.status(201).json({ message: 'Reservation created successfully', reservation });

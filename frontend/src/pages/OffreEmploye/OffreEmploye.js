@@ -65,6 +65,7 @@ function OffreEmploye() {
               }`}
               alt={`Image ${offre.currentImageIndex}`}
             />
+            <div className="remise-badge">{offre.remise}%</div>
             <h2>{offre.titre}</h2>
             <button
               className="voirPlusOffre"

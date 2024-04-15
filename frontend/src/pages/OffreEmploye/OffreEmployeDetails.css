@@ -2,7 +2,8 @@
   display: flex;
   justify-content: center;
   align-items: center; /* Centrer les cartes verticalement */
-  margin-top: 100px; /* Ajoute un espace au-dessus de la carte */
+  margin-top: 100px;
+  position: relative; /* Ajoute un espace au-dessus de la carte */
 }
 
 .offre-cardDetails img {
@@ -138,4 +139,17 @@ margin-bottom: -30%
   border-radius: 1%;
     object-fit: cover; /* Couvre l'espace sans distorsion, en coupant au besoin */
 
+}
+
+.remise-badgee {
+  position: absolute; /* Position relative to nearest positioned ancestor */
+  top: -10px; /* 10px from the top of the container */
+  left: 720px; /* 10px from the right of the container */
+  background-color: #ED1C24; /* Bright red background */
+  color: white; /* White text */
+  border-radius: 50%; /* Rounded circle */
+  padding: 10px 15px; /* Vertical and horizontal padding */
+  font-size: 38px; /* Larger font size for visibility */
+  font-weight: bold; /* Bold font weight */
+  z-index: 10; /* Ensures it sits on top of other elements */
 }

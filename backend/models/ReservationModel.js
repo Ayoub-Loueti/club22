@@ -34,7 +34,13 @@ const ReservationModel = sequelize.define(
     },
     etat: {
       type: DataTypes.ENUM('en_cours', 'confirmer', 'annuler'),
-    }
+    },
+    nombre: {
+      type: DataTypes.INTEGER,
+    },
+    prix_totale: {
+      type: DataTypes.FLOAT,
+    },
   },
   {
     tableName: 'reservation',
