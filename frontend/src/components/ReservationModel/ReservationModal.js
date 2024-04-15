@@ -5,7 +5,7 @@ import './ReservationModal.css';
 
 Modal.setAppElement('#root');
 
-const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise }) => {
+const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise , type }) => {
     const [userInfo, setUserInfo] = useState(null);
     const [nombre, setNombre] = useState(1); // Start with 1 person as minimum
     

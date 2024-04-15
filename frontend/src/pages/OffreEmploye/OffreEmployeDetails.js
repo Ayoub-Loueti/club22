@@ -53,7 +53,7 @@ function OffreEmployeDetails() {
   if (!offre) {
     return <div>Loading...</div>; // Affiche un message de chargement tant que les données de l'offre ne sont pas disponibles
   }
-  const { titre, description, date_debut, date_fin, prix, lesImages, remise  } = offre;
+  const { titre, description, date_debut, date_fin, prix, lesImages, remise ,type } = offre;
 
   const handleImageClick = (clickedIndex) => {
     setOffre((currentOffre) => {
@@ -102,6 +102,7 @@ function OffreEmployeDetails() {
               offreId={offreId}
               prix={prix}
               remise={remise}
+              type={type}
             />
             {isAdherant === false && (
               <button
