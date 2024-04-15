@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './listClient.css'; // Assuming this is the correct path to your CSS file
-
+import NavAdmin from '../NavAdmin/navAdmin';
 function ListClient() {
   const [clients, setClients] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -94,102 +94,104 @@ function ListClient() {
      };
    };
   return (
-    <div className="list-client-container">
-      <div className="list-client-header">
-        <h1>LISTE DES CLIENTS</h1>
-        <div className="search-filter-container">
-          <input
-            type="text"
-            className="list-client-search-input"
-            placeholder="Rechercher..."
-            value={searchTerm}
-            onChange={handleSearchTermChange}
-          />
-          <button onClick={() => handleFilterChange('')}>Tous</button>
-          <button onClick={() => handleFilterChange('autorise')}>
-            Autorisé
-          </button>
-          <button onClick={() => handleFilterChange('En attente')}>
-            En attente
-          </button>
-          <button onClick={() => handleFilterChange('bloque')}>Bloqué</button>
+    <>
+    <NavAdmin/>
+      <div className="list-client-container">
+        <div className="list-client-header">
+          <h1>LISTE DES CLIENTS</h1>
+          <div className="search-filter-container">
+            <input
+              type="text"
+              className="list-client-search-input"
+              placeholder="Rechercher..."
+              value={searchTerm}
+              onChange={handleSearchTermChange}
+            />
+            <button onClick={() => handleFilterChange('')}>Tous</button>
+            <button onClick={() => handleFilterChange('autorise')}>
+              Autorisé
+            </button>
+            <button onClick={() => handleFilterChange('En attente')}>
+              En attente
+            </button>
+            <button onClick={() => handleFilterChange('bloque')}>Bloqué</button>
+          </div>
+          <div className="navigaate-container">
+            <button
+              className="list-client-navigate-button"
+              onClick={() => navigate('/listEmploye')}
+            >
+              Les Employés
+            </button>
+            <button
+              className="list-client-navigate-button"
+              onClick={() => navigate('/tousLesUtilisateurs')}
+            >
+              Tous Les Utilisateurs
+            </button>
+          </div>
         </div>
-        <div className="navigaate-container">
-          <button
-            className="list-client-navigate-button"
-            onClick={() => navigate('/listEmploye')}
-          >
-            Les Employés
-          </button>
-          <button
-            className="list-client-navigate-button"
-            onClick={() => navigate('/tousLesUtilisateurs')}
-          >
-            
-            Tous Les Utilisateurs
-          </button>
-        </div>
-      </div>
 
-      <table className="list-client-table">
-        <thead>
-          <tr>
-            <th>Photo</th>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>Email</th>
-            <th>Genre</th>
-            <th>Etat</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredClients.map((client) => (
-            <tr key={client.id_utilisateur}>
-              <td>
-                <img
-                  src={
-                    client.photo
-                      ? `http://localhost:5000/${client.photo}`
-                      : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
-                  }
-                  alt="Profil"
-                  className="profile-picture"
-                />
-              </td>
-              <td>
-                {client.nom.charAt(0).toUpperCase() + client.nom.slice(1)}
-              </td>
-              <td>
-                {client.prenom.charAt(0).toUpperCase() + client.prenom.slice(1)}
-              </td>
-              <td>{client.email}</td>
-              <td>
-                
-                {client.genre.charAt(0).toUpperCase() + client.genre.slice(1)}
-              </td>
-              <td>
-                <span style={getBadgeStyle(client.etat)}>
-                  {client.etat.charAt(0).toUpperCase() + client.etat.slice(1)}
-                </span>
-              </td>
-              <td>
-                {client.etat !== 'En attente' && (
-                  <button
-                    className={client.etat === 'bloque' ? 'unblock' : ''}
-                    onClick={() =>
-                      handleBlockUnblock(client.id_utilisateur, client.etat)
-                    }
-                  >
-                    {client.etat === 'autorise' ? 'Bloquer' : 'Débloquer'}
-                  </button>
-                )}
-              </td>
+        <table className="list-client-table">
+          <thead>
+            <tr>
+              <th>Photo</th>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Email</th>
+              <th>Genre</th>
+              <th>Etat</th>
+              <th>Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {filteredClients.map((client) => (
+              <tr key={client.id_utilisateur}>
+                <td>
+                  <img
+                    src={
+                      client.photo
+                        ? `http://localhost:5000/${client.photo}`
+                        : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+                    }
+                    alt="Profil"
+                    className="profile-picture"
+                  />
+                </td>
+                <td>
+                  {client.nom.charAt(0).toUpperCase() + client.nom.slice(1)}
+                </td>
+                <td>
+                  {client.prenom.charAt(0).toUpperCase() +
+                    client.prenom.slice(1)}
+                </td>
+                <td>{client.email}</td>
+                <td>
+                  {client.genre.charAt(0).toUpperCase() + client.genre.slice(1)}
+                </td>
+                <td>
+                  <span style={getBadgeStyle(client.etat)}>
+                    {client.etat.charAt(0).toUpperCase() + client.etat.slice(1)}
+                  </span>
+                </td>
+                <td>
+                  {client.etat !== 'En attente' && (
+                    <button
+                      className={client.etat === 'bloque' ? 'unblock' : ''}
+                      onClick={() =>
+                        handleBlockUnblock(client.id_utilisateur, client.etat)
+                      }
+                    >
+                      {client.etat === 'autorise' ? 'Bloquer' : 'Débloquer'}
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 
