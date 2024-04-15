@@ -18,5 +18,10 @@ router.get('/enregistrements', authenticate, postController.getEnregistrementsBy
 router.delete('/posts/:id_post/enregistrement', authenticate, postController.deleteEnregistrement);
 router.get('/posts/:id_post/is-saved', authenticate, postController.checkIfPostIsSaved);
 
+router.post('/signals', authenticate, postController.createSignal);
+router.get('/signaler/:id',authenticate, postController.getSignalerById);
+router.get('/signaler',authenticate, postController.getSignaler);
+router.delete('/signaler/:id',authenticate, postController.deleteSignaler);
+router.patch('/signaler/:id', authenticate, postController.updateSignalerStatus);
 
 module.exports = router;

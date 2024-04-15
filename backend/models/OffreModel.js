@@ -33,6 +33,9 @@ const OffreModel = sequelize.define(
           key: 'id_collaborateur',
       },
   },
+  remise: {
+    type: DataTypes.INTEGER,
+  },
   },
   {
     tableName: 'offre',

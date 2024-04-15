@@ -1,8 +1,32 @@
-.PostSide{
+.PostSide {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    /* height: 100vh;*/
     overflow: auto;
-    
+}
+
+.mini-navbar {
+    text-align: left; /* Aligns the navigation to the right */
+    padding-right: 1rem; /* Optional: Adds padding on the right for better spacing */
+}
+
+.mini-navbar button {
+    background: none;
+    border: none;
+    color: #333; /* Default text color */
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    transition: color 0.3s, font-weight 0.3s; /* Adds transition for font-weight */
+    font-weight: normal; /* Default font weight */
+}
+
+.mini-navbar button:hover {
+    color: #555; /* Darken text slightly on hover */
+    font-weight: bold; /* Make text bold on hover */
+}
+
+.mini-navbar button.active {
+    color: red; /* Active button text color */
+    font-weight: bold; /* Makes active text bold */
 }

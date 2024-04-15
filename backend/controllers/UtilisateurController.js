@@ -710,7 +710,7 @@ exports.getPoints = async (req, res) => {
       res.status(200).json({ points: client.points });
     } else {
       // If client record does not exist, send an appropriate message
-      res.status(404).json({ message: 'Points not found for this user' });
+      res.status(200).json({ message: 'Points not found for this user' });
     }
   } catch (error) {
     // If an error occurs, send a 500 status response with the error message

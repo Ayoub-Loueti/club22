@@ -10,6 +10,7 @@ const Offre = require('../models/OffreModel');
 const Client = require('../models/ClientModel');
 const Collaborateur = require ('../models/CollaborateurModel');
 const Mention = require ('../models/MentionModel');
+const Signaler = require('../models/SignalerModel');
 const { Op } = require('sequelize');
 const { sequelize } = require('../config/db');
 const { Sequelize } = require('sequelize'); 
@@ -710,6 +711,202 @@ exports.checkIfPostIsSaved = async (req, res) => {
         console.error('Error checking if post is saved:', error);
         return res.status(500).json({ message: 'Error checking if post is saved', error: error.message });
     }
+};
+
+//signaler
+
+exports.createSignal = async (req, res) => {
+  const { id_post, id_cmntr, id_reponse } = req.body;
+  const id_utilisateur = req.userId; 
+
+  try {
+      const newSignal = await Signaler.create({
+          id_post: id_post ,
+          id_cmntr: id_cmntr || 0,
+          id_reponse: id_reponse || 0,
+          id_utilisateur: id_utilisateur
+      });
+
+      return res.status(201).json({
+          message: 'Report submitted successfully',
+          signal: newSignal
+      });
+  } catch (error) {
+      console.error('Error submitting report:', error);
+      return res.status(500).json({
+          message: 'Error submitting report',
+          error: error.message
+      });
+  }
+};
+
+exports.getSignalerById = async (req, res) => {
+  const signalId = req.params.id;  // ID of the 'Signaler' from the URL parameter
+
+  try {
+      const signaler = await Signaler.findByPk(signalId, {
+          include: [{
+              model: Post,
+              as: 'post',
+              include: [{
+                  model: Utilisateur,
+                  as: 'utilisateur',
+                  attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+              }]
+          }]
+      });
+
+      if (!signaler) {
+          return res.status(404).json({ message: 'Signaler entry not found' });
+      }
+
+      // Extract the post details into a JSON object
+      const postDetails = signaler.post.toJSON();
+
+      // Fetch images associated with the post
+      const images = await Image.findAll({
+          where: { id_post: postDetails.id_post }
+      });
+      postDetails.lesImages = images;
+
+      // Fetch likes associated with the post
+      const likes = await Likes.findAll({
+          where: { id_post: postDetails.id_post },
+          include: [{
+              model: Utilisateur,
+              as: 'utilisateur',
+              attributes: ['id_utilisateur', 'nom', 'prenom', 'photo']
+          }]
+      });
+      postDetails.likes = likes.map(like => like.toJSON());
+
+      // Conditionally fetch and append comment details if `id_cmntr` is not zero
+      if (signaler.id_cmntr && signaler.id_cmntr !== 0) {
+          const commentaire = await Commentaire.findByPk(signaler.id_cmntr, {
+              include: [{
+                  model: Utilisateur,
+                  as: 'utilisateur',
+                  attributes: ['id_utilisateur', 'nom', 'prenom', 'photo']
+              }]
+          });
+
+          if (commentaire) {
+              postDetails.commentaires = [commentaire.toJSON()];  // Include detailed comment if exists
+          }
+      } else {
+          postDetails.commentaires = [];  // Include an empty array if no commentaire is associated
+      }
+
+      return res.status(200).json(postDetails);  // Send the detailed post including signaler data
+  } catch (error) {
+      console.error('Error fetching Signaler by ID:', error);
+      return res.status(500).json({ message: 'Error fetching Signaler', error: error.message });
+  }
+};
+
+exports.getSignaler = async (req, res) => {
+  try {
+      const signalers = await Signaler.findAll({
+          include: [{
+              model: Post,
+              as: 'post',
+              include: [{
+                  model: Utilisateur,
+                  as: 'utilisateur',
+                  attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+              }]
+          }]
+      });
+
+      if (!signalers.length) {
+          return res.status(404).json({ message: 'No Signaler entries found' });
+      }
+
+      const results = await Promise.all(signalers.map(async (signaler) => {
+          const signalerJson = signaler.toJSON();
+
+          // Fetch images associated with the post
+          const images = await Image.findAll({
+              where: { id_post: signalerJson.post.id_post }
+          });
+          signalerJson.post.lesImages = images.map(img => img.toJSON());
+
+          // Fetch likes associated with the post
+          const likes = await Likes.findAll({
+              where: { id_post: signalerJson.post.id_post },
+              include: [{
+                  model: Utilisateur,
+                  as: 'utilisateur',
+                  attributes: ['id_utilisateur', 'nom', 'prenom', 'photo']
+              }]
+          });
+          signalerJson.post.likes = likes.map(like => like.toJSON());
+
+          // Conditionally fetch and append comment details if `id_cmntr` is not zero
+          if (signalerJson.id_cmntr && signalerJson.id_cmntr !== 0) {
+              const commentaire = await Commentaire.findByPk(signalerJson.id_cmntr, {
+                  include: [{
+                      model: Utilisateur,
+                      as: 'utilisateur',
+                      attributes: ['id_utilisateur', 'nom', 'prenom', 'photo']
+                  }]
+              });
+
+              if (commentaire) {
+                  signalerJson.post.commentaire = commentaire.toJSON();
+              } else {
+                  signalerJson.post.commentaire = null;  // Set to null if no comment is associated
+              }
+          } else {
+              signalerJson.post.commentaire = null;  // Set to null if id_cmntr is zero
+          }
+
+          return signalerJson.post;  // return modified post object for each signaler
+      }));
+
+      return res.status(200).json(results);  // Send the array of detailed posts including signaler data
+  } catch (error) {
+      console.error('Error fetching all Signalers:', error);
+      return res.status(500).json({ message: 'Error fetching all Signalers', error: error.message });
+  }
+};
+
+exports.deleteSignaler = async (req, res) => {
+  const signalerId = req.params.id;  // ID of the 'Signaler' from the URL parameter
+
+  try {
+      const signaler = await Signaler.findByPk(signalerId);
+
+      if (!signaler) {
+          return res.status(404).json({ message: 'Signaler entry not found' });
+      }
+
+      await signaler.destroy();  // Delete the found signaler
+      return res.status(200).json({ message: 'Signaler deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting Signaler:', error);
+      return res.status(500).json({ message: 'Error deleting Signaler', error: error.message });
+  }
+};
+
+exports.updateSignalerStatus = async (req, res) => {
+  const signalerId  = req.params.id ; // Assuming you're passing the notification ID in the URL
+  const { isRead } = req.body; // Assuming you're passing the new status in the request body
+
+  try {
+      const notification = await Signaler.findByPk(signalerId);
+
+      if (!notification) {
+          return res.status(404).json({ message: 'signaler not found' });
+      }
+
+      await notification.update({ isRead });
+
+      return res.status(200).json({ message: 'Notification status updated successfully', notification });
+  } catch (error) {
+      console.error('Error updating notification status:', error);
+      return res.status(500).json({ message: 'Error updating notification status', error });
+  }
 };
 
 module.exports = exports;

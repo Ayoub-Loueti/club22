@@ -479,3 +479,22 @@ margin-left: 11%;
 .lesCollab a:hover {
   color: #0056b3; /* Darker blue color on hover */
 }
+
+.reportCommentIcon {
+  cursor: pointer;
+  color: #808080; /* Reddish color for the flag icon to indicate reporting */
+}
+
+.reportCommentIcon:hover {
+  color: #000000; /* Darker shade on hover */
+}
+
+.reportResponseIcon {
+  margin-left: 10px;
+  cursor: pointer;
+  color: #808080; /* Use a standard color for reporting icons */
+}
+
+.reportResponseIcon:hover {
+  color: #000000; /* A darker shade for hover to indicate interactivity */
+}

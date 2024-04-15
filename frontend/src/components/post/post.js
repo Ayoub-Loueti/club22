@@ -14,6 +14,8 @@ import {
   faTrash,
   faHeart,
   faComment,
+  faFlag,
+  faEllipsisV,
 } from '@fortawesome/free-solid-svg-icons';
 import { faBookmark as farBookmark } from '@fortawesome/free-regular-svg-icons'; // Importing the regular (outline) bookmark icon
 
@@ -587,6 +589,66 @@ const Post = (props) => {
   
 const commentsToShow = isModalView ? comments : comments.slice(0, 2);
 
+const handleReportPost = async () => {
+  try {
+    const response = await axios.post(
+      `http://localhost:5000/signals`,  // Ensure this is the correct API endpoint
+      {
+        id_post: data.id_post,  // Sending only the id_post as necessary
+        id_cmntr: 0,            // Assuming no comment is directly flagged from this action
+        id_reponse: 0           // Assuming no response is directly flagged from this action
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    Swal.fire('Reported!', 'The post has been reported successfully.', 'success');
+  } catch (error) {
+    console.error('Error reporting the post:', error);
+    Swal.fire('Failed!', 'There was a problem reporting the post.', 'error');
+  }
+};
+
+const handleReportComment = async (commentId) => {
+  try {
+    const response = await axios.post(
+      `http://localhost:5000/signals`, // Correct endpoint after checking backend routing
+      {
+        id_post: data.id_post,
+        id_cmntr: commentId,
+        id_reponse: 0  // Assuming this structure based on your previous messages
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    Swal.fire('Reported!', 'The comment has been reported successfully.', 'success');
+  } catch (error) {
+    console.error('Error reporting the comment:', error);
+    Swal.fire('Failed!', 'There was a problem reporting the comment.', 'error');
+  }
+};
+
+const handleReportResponse = async (commentId, responseId) => {
+  try {
+    const response = await axios.post(
+      `http://localhost:5000/signals`, // Correct endpoint after checking backend routing
+      {
+        id_post: data.id_post,
+        id_cmntr: commentId,   // ID of the comment to which the response is associated
+        id_reponse: responseId // ID of the response being reported
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    Swal.fire('Reported!', 'The response has been reported successfully.', 'success');
+  } catch (error) {
+    console.error('Error reporting the response:', error);
+    Swal.fire('Failed!', 'There was a problem reporting the response.', 'error');
+  }
+};
+
   return (
     <div className="Post">
       <div className="postHeader">
@@ -637,6 +699,12 @@ const commentsToShow = isModalView ? comments : comments.slice(0, 2);
         >
           <FontAwesomeIcon icon={isPostSaved ? faBookmark : farBookmark} />
         </button>
+        {userInfo &&
+          data.utilisateur.id_utilisateur.toString() != userId.toString() && (
+        <button onClick={handleReportPost} className="iconButton" >
+              <FontAwesomeIcon icon={faFlag} />
+        </button>
+          )}
       </div>
       <div className="postContent">
         {!isEditing ? (
@@ -804,6 +872,11 @@ const commentsToShow = isModalView ? comments : comments.slice(0, 2);
                   >
                     <FontAwesomeIcon icon={faComment} />
                   </button>
+                  {comment.utilisateur.id_utilisateur.toString() != userId.toString() &&(<FontAwesomeIcon
+                  icon={faFlag}
+                  className="reportCommentIcon"
+                  onClick={() => handleReportComment(comment.id_cmntr)}
+                  />)}
                 </div>
                 <div className="commentActionButtons">
                   {comment.utilisateur.id_utilisateur.toString() ===
@@ -978,6 +1051,10 @@ const commentsToShow = isModalView ? comments : comments.slice(0, 2);
                         >
                           {''} {reponse.nbr_likeRep} J'aime
                         </span>
+                        {reponse.utilisateur.id_utilisateur.toString() != userId.toString() && (
+                        <FontAwesomeIcon icon={faFlag} 
+                        className="reportResponseIcon" 
+                        onClick={() => handleReportResponse(comment.id_cmntr, reponse.id_reponse)} />)}
                       </div>
 
                       <div className="responseActions">
