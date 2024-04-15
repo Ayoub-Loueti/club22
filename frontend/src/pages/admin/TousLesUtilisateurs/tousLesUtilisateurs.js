@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './tousLesUtilisateurs.css';
-
+import NavAdmin from '../NavAdmin/navAdmin';
 function TousLesUtilisateurs() {
   const [utilisateurs, setUtilisateurs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -65,74 +65,77 @@ function TousLesUtilisateurs() {
    };
 
   return (
-    <div className="tousLesUtilisateurs-container">
-      <div className="tousLesUtilisateurs-header">
-        <h1>TOUS LES UTILISATEURS</h1>
-        <div className="navigation-buttons">
-          <button onClick={() => navigate('/listClient')}>Client</button>
-          <button onClick={() => navigate('/listEmploye')}>Employé</button>
+    <>
+      <NavAdmin />
+      <div className="tousLesUtilisateurs-container">
+        <div className="tousLesUtilisateurs-header">
+          <h1>TOUS LES UTILISATEURS</h1>
+          <div className="navigation-buttons">
+            <button onClick={() => navigate('/listClient')}>Client</button>
+            <button onClick={() => navigate('/listEmploye')}>Employé</button>
+          </div>
+          <input
+            type="text"
+            className="tousLesUtilisateurs-search-inpuut"
+            placeholder="Rechercher..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
-        <input
-          type="text"
-          className="tousLesUtilisateurs-search-inpuut"
-          placeholder="Rechercher..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
 
-      <table className="utilisateurs-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Photo</th>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>Email</th>
-            <th>Type</th>
-            <th>Etat</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredUsers.map((utilisateur, index) => (
-            <tr key={index}>
-              <td>{utilisateur.id_utilisateur}</td>
-              <td>
-                <img
-                  src={
-                    utilisateur.photo
-                      ? `http://localhost:5000/${utilisateur.photo}`
-                      : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
-                  }
-                  alt="Profil"
-                  className="profile-picture"
-                />
-              </td>
-              <td>
-                {utilisateur.nom.charAt(0).toUpperCase() +
-                  utilisateur.nom.slice(1)}
-              </td>
-              <td>
-                {utilisateur.prenom.charAt(0).toUpperCase() +
-                  utilisateur.prenom.slice(1)}
-              </td>
-              <td>{utilisateur.email}</td>
-              <td>
-                {' '}
-                {utilisateur.type.charAt(0).toUpperCase() +
-                  utilisateur.type.slice(1)}
-              </td>
-              <td>
-                <span style={getBadgeStyle(utilisateur.etat)}>
-                  {utilisateur.etat.charAt(0).toUpperCase() +
-                    utilisateur.etat.slice(1)}
-                </span>
-              </td>
+        <table className="utilisateurs-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Photo</th>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Email</th>
+              <th>Type</th>
+              <th>Etat</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {filteredUsers.map((utilisateur, index) => (
+              <tr key={index}>
+                <td>{utilisateur.id_utilisateur}</td>
+                <td>
+                  <img
+                    src={
+                      utilisateur.photo
+                        ? `http://localhost:5000/${utilisateur.photo}`
+                        : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+                    }
+                    alt="Profil"
+                    className="profile-picture"
+                  />
+                </td>
+                <td>
+                  {utilisateur.nom.charAt(0).toUpperCase() +
+                    utilisateur.nom.slice(1)}
+                </td>
+                <td>
+                  {utilisateur.prenom.charAt(0).toUpperCase() +
+                    utilisateur.prenom.slice(1)}
+                </td>
+                <td>{utilisateur.email}</td>
+                <td>
+                  {' '}
+                  {utilisateur.type.charAt(0).toUpperCase() +
+                    utilisateur.type.slice(1)}
+                </td>
+                <td>
+                  <span style={getBadgeStyle(utilisateur.etat)}>
+                    {utilisateur.etat.charAt(0).toUpperCase() +
+                      utilisateur.etat.slice(1)}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 

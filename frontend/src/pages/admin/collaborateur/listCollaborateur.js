@@ -6,7 +6,7 @@ import './listCollaborateur.css';
 import UpdateCollaborateurModal from './UpdateCollaborateurModal';
 import AddCollaborateurModal from './AddCollaborateurModal';
 import { FaArrowLeft } from 'react-icons/fa';
-
+import NavAdmin from '../NavAdmin/navAdmin';
 function ListCollaborateur() {
   const [collaborateurs, setCollaborateurs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -120,102 +120,105 @@ function ListCollaborateur() {
   };
 
   return (
-    <div className="listCollaborateur-container">
-      <button className="retour-btn" onClick={() => window.history.back()}>
-        <FaArrowLeft /> Retour
-      </button>
-      <button onClick={handleOpenModal} className="list-collab-button">
-        Ajouter Collaborateur
-      </button>
-      <AddCollaborateurModal
-        isOpen={isModalOpen}
-        onRequestClose={handleCloseModal}
-        onSuccess={handleAddOrUpdateSuccess}
-      />
-      <div className="listCollaborateur-header">
-        <h1 className="listCollaborateur-title">LISTE DES COLLABORATEURS</h1>
-        <input
-          type="text"
-          className="listCollaborateur-search-input"
-          placeholder="Rechercher..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+    <>
+      <NavAdmin />
+      <div className="listCollaborateur-container">
+        <button className="retour-btn" onClick={() => window.history.back()}>
+          <FaArrowLeft /> Retour
+        </button>
+        <button onClick={handleOpenModal} className="list-collab-button">
+          Ajouter Collaborateur
+        </button>
+        <AddCollaborateurModal
+          isOpen={isModalOpen}
+          onRequestClose={handleCloseModal}
+          onSuccess={handleAddOrUpdateSuccess}
+        />
+        <div className="listCollaborateur-header">
+          <h1 className="listCollaborateur-title">LISTE DES COLLABORATEURS</h1>
+          <input
+            type="text"
+            className="listCollaborateur-search-input"
+            placeholder="Rechercher..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        <table className="listCollaborateur-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Collaborateur</th>
+              <th>Catégorie</th>
+              <th>Adresse</th>
+              <th>Télephone</th>
+              <th>Email</th>
+              <th>Site Web</th>
+              <th>Logo</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredCollaborateurs.map((collaborateur, index) => (
+              <tr key={index}>
+                <td>{collaborateur.id_collaborateur}</td>
+                <td>{collaborateur.nom}</td>
+                <td>{collaborateur.type}</td>
+                <td>{collaborateur.adresse}</td>
+                <td>{collaborateur.tel}</td>
+                <td>{collaborateur.email}</td>
+                <td>{collaborateur.siteWeb}</td>
+                <td>
+                  <img
+                    src={
+                      collaborateur.logo
+                        ? `http://localhost:5000/${collaborateur.logo}`
+                        : 'https://png.pngtree.com/png-vector/20220119/ourmid/pngtree-crossed-image-icon-picture-not-available-sign-photo-sign-icon-vector-png-image_44027862.jpg'
+                    }
+                    alt={collaborateur.nom}
+                    className="collaborateur-picturee"
+                  />
+                </td>
+                <td>
+                  <button
+                    onClick={() => handleUpdate(collaborateur.id_collaborateur)}
+                    className="list-collab-button"
+                  >
+                    Modifier
+                  </button>
+                  {collaborateur.archiver ? (
+                    <button
+                      onClick={() =>
+                        handleUnarchive(collaborateur.id_collaborateur)
+                      }
+                      className="list-collab-button"
+                    >
+                      Désarchiver
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() =>
+                        handleArchive(collaborateur.id_collaborateur)
+                      }
+                      className="list-collab-button"
+                    >
+                      Archiver
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <UpdateCollaborateurModal
+          isOpen={isUpdateModalOpen}
+          onRequestClose={() => setIsUpdateModalOpen(false)}
+          onSuccess={handleAddOrUpdateSuccess}
+          collaborateurId={selectedCollaborateurId}
         />
       </div>
-
-      <table className="listCollaborateur-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Collaborateur</th>
-            <th>Catégorie</th>
-            <th>Adresse</th>
-            <th>Télephone</th>
-            <th>Email</th>
-            <th>Site Web</th>
-            <th>Logo</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredCollaborateurs.map((collaborateur, index) => (
-            <tr key={index}>
-              <td>{collaborateur.id_collaborateur}</td>
-              <td>{collaborateur.nom}</td>
-              <td>{collaborateur.type}</td>
-              <td>{collaborateur.adresse}</td>
-              <td>{collaborateur.tel}</td>
-              <td>{collaborateur.email}</td>
-              <td>{collaborateur.siteWeb}</td>
-              <td>
-                <img
-                  src={
-                    collaborateur.logo
-                      ? `http://localhost:5000/${collaborateur.logo}`
-                      : 'https://png.pngtree.com/png-vector/20220119/ourmid/pngtree-crossed-image-icon-picture-not-available-sign-photo-sign-icon-vector-png-image_44027862.jpg'
-                  }
-                  alt={collaborateur.nom}
-                  className="collaborateur-picturee"
-                />
-              </td>
-              <td>
-                <button
-                  onClick={() => handleUpdate(collaborateur.id_collaborateur)}
-                  className="list-collab-button"
-                >
-                  Modifier
-                </button>
-                {collaborateur.archiver ? (
-                  <button
-                    onClick={() =>
-                      handleUnarchive(collaborateur.id_collaborateur)
-                    }
-                    className="list-collab-button"
-                  >
-                    Désarchiver
-                  </button>
-                ) : (
-                  <button
-                    onClick={() =>
-                      handleArchive(collaborateur.id_collaborateur)
-                    }
-                    className="list-collab-button"
-                  >
-                    Archiver
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <UpdateCollaborateurModal
-        isOpen={isUpdateModalOpen}
-        onRequestClose={() => setIsUpdateModalOpen(false)}
-        onSuccess={handleAddOrUpdateSuccess}
-        collaborateurId={selectedCollaborateurId}
-      />
-    </div>
+    </>
   );
 }
 

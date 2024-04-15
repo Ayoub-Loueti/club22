@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './listEmployE.css'
+import './listEmployE.css';
+import NavAdmin from '../NavAdmin/navAdmin';
 function ListEmploye() {
   const [Employes, setEmployes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -89,104 +90,109 @@ function ListEmploye() {
      };
    };
   return (
-    <div className="list-Employe-container">
-      <div className="list-Employe-header">
-        <h1>LISTE DES EMPLOYES</h1>
-        <div className="search-filter-contaiiner">
-          <input
-            type="text"
-            className="list-Employe-search-input"
-            placeholder="Rechercher..."
-            value={searchTerm}
-            onChange={handleSearchTermChange}
-          />
-          <button onClick={() => handleFilterChange('')}>Tous</button>
-          <button onClick={() => handleFilterChange('autorise')}>
-            Autorisé
-          </button>
-          <button onClick={() => handleFilterChange('En attente')}>
-            En attente
-          </button>
-          <button onClick={() => handleFilterChange('bloque')}>Bloqué</button>
+    <>
+    <NavAdmin/>
+      <div className="list-Employe-container">
+        <div className="list-Employe-header">
+          <h1>LISTE DES EMPLOYES</h1>
+          <div className="search-filter-contaiiner">
+            <input
+              type="text"
+              className="list-Employe-search-input"
+              placeholder="Rechercher..."
+              value={searchTerm}
+              onChange={handleSearchTermChange}
+            />
+            <button onClick={() => handleFilterChange('')}>Tous</button>
+            <button onClick={() => handleFilterChange('autorise')}>
+              Autorisé
+            </button>
+            <button onClick={() => handleFilterChange('En attente')}>
+              En attente
+            </button>
+            <button onClick={() => handleFilterChange('bloque')}>Bloqué</button>
+          </div>
+
+          <div className="navigaate-container">
+            <button
+              className="list-Employe-navigate-button"
+              onClick={() => navigate('/listClient')}
+            >
+              Les Clients
+            </button>
+            <button
+              className="list-Employe-navigate-button"
+              onClick={() => navigate('/tousLesUtilisateurs')}
+            >
+              Tous Les Utilisateurs
+            </button>
+          </div>
         </div>
 
-        <div className="navigaate-container">
-          <button
-            className="list-Employe-navigate-button"
-            onClick={() => navigate('/listClient')}
-          >
-            Les Clients
-          </button>
-          <button
-            className="list-Employe-navigate-button"
-            onClick={() => navigate('/tousLesUtilisateurs')}
-          >
-            Tous Les Utilisateurs
-          </button>
-        </div>
-      </div>
-
-      <table className="list-Employe-table">
-        <thead>
-          <tr>
-            <th>Photo</th>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>Email</th>
-            <th>Genre</th>
-            <th>Etat</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredEmployes.map((Employe) => (
-            <tr key={Employe.id_utilisateur}>
-              <td>
-                <img
-                  src={
-                    Employe.photo
-                      ? `http://localhost:5000/${Employe.photo}`
-                      : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
-                  }
-                  alt="Profil"
-                  className="profile-picture"
-                />
-              </td>
-              <td>
-                {' '}
-                {Employe.nom.charAt(0).toUpperCase() + Employe.nom.slice(1)}
-              </td>
-              <td>
-                {Employe.prenom.charAt(0).toUpperCase() +
-                  Employe.prenom.slice(1)}{' '}
-              </td>
-              <td>{Employe.email}</td>
-              <td>
-                {' '}
-                {Employe.genre.charAt(0).toUpperCase() + Employe.genre.slice(1)}
-              </td>
-              <td>
-                <span style={getBadgeStyle(Employe.etat)}>
-                  {Employe.etat.charAt(0).toUpperCase() + Employe.etat.slice(1)}
-                </span>
-              </td>{' '}
-              <td>
-                {Employe.etat !== 'En attente' && (
-                  <button
-                    className={Employe.etat === 'bloque' ? 'unblock' : ''}
-                    onClick={() =>
-                      handleBlockUnblock(Employe.id_utilisateur, Employe.etat)
-                    }
-                  >
-                    {Employe.etat === 'autorise' ? 'Bloquer' : 'Débloquer'}
-                  </button>
-                )}
-              </td>
+        <table className="list-Employe-table">
+          <thead>
+            <tr>
+              <th>Photo</th>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Email</th>
+              <th>Genre</th>
+              <th>Etat</th>
+              <th>Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {filteredEmployes.map((Employe) => (
+              <tr key={Employe.id_utilisateur}>
+                <td>
+                  <img
+                    src={
+                      Employe.photo
+                        ? `http://localhost:5000/${Employe.photo}`
+                        : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+                    }
+                    alt="Profil"
+                    className="profile-picture"
+                  />
+                </td>
+                <td>
+                  {' '}
+                  {Employe.nom.charAt(0).toUpperCase() + Employe.nom.slice(1)}
+                </td>
+                <td>
+                  {Employe.prenom.charAt(0).toUpperCase() +
+                    Employe.prenom.slice(1)}{' '}
+                </td>
+                <td>{Employe.email}</td>
+                <td>
+                  {' '}
+                  {Employe.genre.charAt(0).toUpperCase() +
+                    Employe.genre.slice(1)}
+                </td>
+                <td>
+                  <span style={getBadgeStyle(Employe.etat)}>
+                    {Employe.etat.charAt(0).toUpperCase() +
+                      Employe.etat.slice(1)}
+                  </span>
+                </td>{' '}
+                <td>
+                  {Employe.etat !== 'En attente' && (
+                    <button
+                      className={Employe.etat === 'bloque' ? 'unblock' : ''}
+                      onClick={() =>
+                        handleBlockUnblock(Employe.id_utilisateur, Employe.etat)
+                      }
+                    >
+                      {Employe.etat === 'autorise' ? 'Bloquer' : 'Débloquer'}
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 
