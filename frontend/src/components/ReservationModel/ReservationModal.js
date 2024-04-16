@@ -5,12 +5,12 @@ import './ReservationModal.css';
 
 Modal.setAppElement('#root');
 
-const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise , type }) => {
+const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type, isAdherant }) => {
     const [userInfo, setUserInfo] = useState(null);
     const [nombre, setNombre] = useState(1); // Start with 1 person as minimum
     
-    // Calculate the discounted price
-    const discountedPrix = prix - (prix * (remise / 100));
+    // Calculate the discounted price based on adherant status
+    const discountedPrix = isAdherant ? prix - (prix * (remise / 100)) : prix;
     const prixTotal = discountedPrix * nombre; // Calculate directly in render
 
     useEffect(() => {
@@ -98,8 +98,11 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise , type
             </div>
             <div className="modal-reservation-details">
                 <p>Nombre de personnes: <button onClick={decrement}>-</button> {nombre} <button onClick={increment}>+</button></p>
-                <p>Prix total after {remise}% discount: {prixTotal.toFixed(2)} DT</p>
-            </div>
+                {isAdherant ? (
+                    <p>Prix total after {remise}% discount: {prixTotal.toFixed(2)} DT</p>
+                ) : (
+                    <p>Prix total: {prixTotal.toFixed(2)} DT</p>
+                )}            </div>
             <div className="modal-actions">
                 <button type="button" onClick={onRequestClose}>Annuler</button>
                 <button type="button" onClick={handleReservation}>Réserver</button>

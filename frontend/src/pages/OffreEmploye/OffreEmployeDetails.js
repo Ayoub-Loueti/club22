@@ -103,6 +103,7 @@ function OffreEmployeDetails() {
               prix={prix}
               remise={remise}
               type={type}
+              isAdherant={isAdherant}
             />
             {isAdherant === false && (
               <button
