@@ -30,7 +30,7 @@ const PostModel = sequelize.define(
       defaultValue: 0
     },
     type: {
-      type: DataTypes.ENUM('camping', 'voyage', 'autre'),
+      type: DataTypes.ENUM('hotel', 'voyage', 'autre'),
     }
   },
   {

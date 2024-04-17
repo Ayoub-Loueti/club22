@@ -1,4 +1,4 @@
-import React, { useState, useRef,useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './postShare.css';
 import {
   UilScenery,
@@ -16,58 +16,119 @@ const PostShare = () => {
   const imageRef = useRef();
   const [contenu, setContenu] = useState('');
   const token = JSON.parse(localStorage.getItem('login'))?.token;
-const [userInfo, setUserInfo] = useState(null);
-const [userId, setUserId] = useState(null); // Add this line
+  const [userInfo, setUserInfo] = useState(null);
+  const [userId, setUserId] = useState(null); // Add this line
+  const [type, setType] = useState('');
+  const [categorySelected, setCategorySelected] = useState(false);
+  useEffect(() => {
+    const token = localStorage.getItem('login');
+    const storedUserId = JSON.parse(localStorage.getItem('userId')); // Rename for clarity
+    setUserId(storedUserId);
 
-useEffect(() => {
-  const token = localStorage.getItem('login');
-  const storedUserId = JSON.parse(localStorage.getItem('userId')); // Rename for clarity
-  setUserId(storedUserId);
-
-  if (token && storedUserId) {
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5000/profil/${storedUserId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${JSON.parse(token).token}`,
-            },
-          }
-        );
-        setUserInfo(response.data.user);
-      } catch (error) {
-        console.error(
-          "Erreur lors de la récupération des données de l'utilisateur",
-          error
-        );
-      }
-    };
-    fetchUserData();
-  }
-}, []);
-const onImageChange = (event) => {
-  if (event.target.files) {
-    const files = Array.from(event.target.files).map(file =>
-      ({
+    if (token && storedUserId) {
+      const fetchUserData = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:5000/profil/${storedUserId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${JSON.parse(token).token}`,
+              },
+            }
+          );
+          setUserInfo(response.data.user);
+        } catch (error) {
+          console.error(
+            "Erreur lors de la récupération des données de l'utilisateur",
+            error
+          );
+        }
+      };
+      fetchUserData();
+    }
+  }, []);
+  const onImageChange = (event) => {
+    if (event.target.files) {
+      const files = Array.from(event.target.files).map((file) => ({
         image: URL.createObjectURL(file),
         file: file,
-      })
-    );
+      }));
 
-    setImage(files); // Set state with an array of files
+      setImage(files); // Set state with an array of files
+    }
+  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  let errorMessages = [];
+  if (!contenu.trim()) {
+    errorMessages.push('Veuillez saisir du contenu.');
+  }
+  if (type === '') {
+    errorMessages.push('Veuillez sélectionner une catégorie.');
+  }
+  if (contenu.length > 400) {
+    errorMessages.push("Vous ne pouvez saisir que jusqu'à 400 caractères.");
+  }
+
+  if (errorMessages.length > 0) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Oops...',
+      html: errorMessages.join('<br />'),
+    });
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('contenu', contenu);
+  formData.append('type', type);
+
+  // Check if `image` is not null and has length before proceeding
+  if (image && image.length > 0) {
+    image.forEach((img) => {
+      formData.append('photos', img.file);
+    });
+  }
+
+  try {
+    const response = await axios.post(
+      'http://localhost:5000/createPost',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log(response.data.message);
+        window.location.reload();
+
+    setContenu('');
+    setImage(null);
+    // Consider not reloading the page; instead update the state or UI based on response
+  } catch (error) {
+    console.error(
+      'Error submitting the post: ',
+      error.response ? error.response.data : error.message
+    );
+    Swal.fire({
+      icon: 'error',
+      title: 'Erreur',
+      text: 'Un problème est survenu lors de la publication.',
+    });
   }
 };
 
-
+  /*
 const handleSubmit = async (e) => {
   e.preventDefault();
-  if (!contenu.trim()) {
+  if (!contenu.trim() || type === '') {
     // Afficher un message indiquant que le message ne peut pas être vide
     Swal.fire({
       icon: 'warning',
       title: 'Oops...',
-      text: 'Veuillez saisir du contenu avant de partager.',
+      text: 'Veuillez saisir du contenu et sélectionner une catégorie avant de partager.',
     });
     return;
   }
@@ -83,8 +144,7 @@ const handleSubmit = async (e) => {
   }
   const formData = new FormData();
   formData.append('contenu', contenu);
-
-  // Append all selected files to formData
+  formData.append('type', type);
   if (image && image.length) {
       image.forEach(img => {
           formData.append('photos', img.file); // Use 'photos' as the name
@@ -110,14 +170,16 @@ const handleSubmit = async (e) => {
       console.error('Error submitting the post: ', error.response ? error.response.data : error.message);
   }
 };
+*/
 
+  const cancelImage = (index) => {
+    setImage(image.filter((file, i) => i !== index));
+  };
 
-const cancelImage = (index) => {
-  setImage(image.filter((file, i) => i !== index));
-};
-
-
-
+  const handleTypeChange = (e) => {
+    setType(e.target.value);
+    setCategorySelected(true); // Mettre à jour l'état pour indiquer qu'une catégorie a été sélectionnée
+  };
   return (
     <div className="PostShare">
       {userInfo ? (
@@ -144,6 +206,22 @@ const cancelImage = (index) => {
           value={contenu}
           onChange={(e) => setContenu(e.target.value)}
         />
+        <div className="seleccttContainer">
+          <select
+            id="type-select"
+            value={type}
+            onChange={handleTypeChange}
+            required
+            className="selectFieldd"
+          >
+            <option value="" disabled selected={!categorySelected}>
+              Sélectionnez une catégorie
+            </option>
+            <option value="hotel">Hôtel</option>
+            <option value="voyage">Voyage</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
         <div className="postOptions">
           <div
             className="option"

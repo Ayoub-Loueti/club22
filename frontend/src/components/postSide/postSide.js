@@ -50,7 +50,7 @@ const PostSide = () => {
         <button className={postType === 'tous' ? 'active' : ''} onClick={() => handlePostTypeChange('tous')}>
           Tous
         </button>
-        <button className={postType === 'comping' ? 'active' : ''} onClick={() => handlePostTypeChange('comping')}>
+        <button className={postType === 'hotel' ? 'active' : ''} onClick={() => handlePostTypeChange('hotel')}>
           Comping
         </button>
         <button className={postType === 'voyage' ? 'active' : ''} onClick={() => handlePostTypeChange('voyage')}>
