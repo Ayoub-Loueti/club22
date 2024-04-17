@@ -34,7 +34,7 @@
 .postManagementButtons {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  padding-left: 50%;
 }
 .postHeader .userName {
   font-weight: bold;
@@ -212,7 +212,8 @@ margin-left: 11%;
   display: flex;
   justify-content: center;
   align-items: center;
-
+  padding: 5px 10px;
+   margin: 0 0.3px;  
   border-radius: 4px; /* Optional: for rounded corners */
   transition: transform 0.2s, color 0.2s; /* Smooth transition for hover effects */
 }

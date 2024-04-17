@@ -586,68 +586,113 @@ const Post = (props) => {
       console.error('Error fetching likes:', error);
     }
   };
-  
-const commentsToShow = isModalView ? comments : comments.slice(0, 2);
 
-const handleReportPost = async () => {
-  try {
-    const response = await axios.post(
-      `http://localhost:5000/signals`,  // Ensure this is the correct API endpoint
-      {
-        id_post: data.id_post,  // Sending only the id_post as necessary
-        id_cmntr: 0,            // Assuming no comment is directly flagged from this action
-        id_reponse: 0           // Assuming no response is directly flagged from this action
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    Swal.fire('Reported!', 'The post has been reported successfully.', 'success');
-  } catch (error) {
-    console.error('Error reporting the post:', error);
-    Swal.fire('Failed!', 'There was a problem reporting the post.', 'error');
-  }
-};
+  const commentsToShow = isModalView ? comments : comments.slice(0, 2);
 
-const handleReportComment = async (commentId) => {
-  try {
-    const response = await axios.post(
-      `http://localhost:5000/signals`, // Correct endpoint after checking backend routing
-      {
-        id_post: data.id_post,
-        id_cmntr: commentId,
-        id_reponse: 0  // Assuming this structure based on your previous messages
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` },
+  const handleReportPost = async () => {
+    Swal.fire({
+      title: 'Êtes-vous sûr?',
+      text: 'Voulez-vous vraiment signaler ce post?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, signaler!',
+      cancelButtonText: 'Annuler',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.post(
+            `http://localhost:5000/signals`, // Verify the correct API endpoint
+            { id_post: data.id_post, id_cmntr: 0, id_reponse: 0 },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          Swal.fire(
+            'Signalé!',
+            'Le post a été signalé avec succès.',
+            'success'
+          );
+        } catch (error) {
+          console.error('Error reporting the post:', error);
+          Swal.fire('Échec!', 'Problème lors du signalement du post.', 'error');
+        }
       }
-    );
-    Swal.fire('Reported!', 'The comment has been reported successfully.', 'success');
-  } catch (error) {
-    console.error('Error reporting the comment:', error);
-    Swal.fire('Failed!', 'There was a problem reporting the comment.', 'error');
-  }
-};
+    });
+  };
 
-const handleReportResponse = async (commentId, responseId) => {
-  try {
-    const response = await axios.post(
-      `http://localhost:5000/signals`, // Correct endpoint after checking backend routing
-      {
-        id_post: data.id_post,
-        id_cmntr: commentId,   // ID of the comment to which the response is associated
-        id_reponse: responseId // ID of the response being reported
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` },
+  const handleReportComment = async (commentId) => {
+    Swal.fire({
+      title: 'Êtes-vous sûr?',
+      text: 'Voulez-vous vraiment signaler ce commentaire?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, signaler!',
+      cancelButtonText: 'Annuler',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.post(
+            `http://localhost:5000/signals`, // Check your endpoint
+            { id_post: data.id_post, id_cmntr: commentId, id_reponse: 0 },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          Swal.fire(
+            'Signalé!',
+            'Le commentaire a été signalé avec succès.',
+            'success'
+          );
+        } catch (error) {
+          console.error('Error reporting the comment:', error);
+          Swal.fire(
+            'Échec!',
+            'Problème lors du signalement du commentaire.',
+            'error'
+          );
+        }
       }
-    );
-    Swal.fire('Reported!', 'The response has been reported successfully.', 'success');
-  } catch (error) {
-    console.error('Error reporting the response:', error);
-    Swal.fire('Failed!', 'There was a problem reporting the response.', 'error');
-  }
-};
+    });
+  };
+
+  const handleReportResponse = async (commentId, responseId) => {
+    Swal.fire({
+      title: 'Êtes-vous sûr?',
+      text: 'Voulez-vous vraiment signaler cette réponse?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, signaler!',
+      cancelButtonText: 'Annuler',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.post(
+            `http://localhost:5000/signals`, // Check your endpoint
+            {
+              id_post: data.id_post,
+              id_cmntr: commentId,
+              id_reponse: responseId,
+            },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          Swal.fire(
+            'Signalé!',
+            'La réponse a été signalée avec succès.',
+            'success'
+          );
+        } catch (error) {
+          console.error('Error reporting the response:', error);
+          Swal.fire(
+            'Échec!',
+            'Problème lors du signalement de la réponse.',
+            'error'
+          );
+        }
+      }
+    });
+  };
 
   return (
     <div className="Post">
@@ -682,28 +727,28 @@ const handleReportResponse = async (commentId, responseId) => {
                     <FontAwesomeIcon icon={faPen} />
                   </button>
                   <button onClick={handleDeletePost} className="iconButton">
-                    <FontAwesomeIcon icon={faTrash} className="fa-solid" />
+                    <FontAwesomeIcon icon={faTrash} />
                   </button>
                 </>
               ) : (
                 <button onClick={handleSaveEdit} className="iconButton">
-                  <FontAwesomeIcon icon={faSave} className="saveIconn" />
+                  <FontAwesomeIcon icon={faSave} />
                 </button>
               )}
             </div>
           )}
         <button
           className="iconButton"
-          style={{ marginLeft: '-291px' }}
+          style={{ marginLeft: isEditing ? '0px' : 'auto' }}
           onClick={handleToggleSave}
         >
           <FontAwesomeIcon icon={isPostSaved ? faBookmark : farBookmark} />
         </button>
         {userInfo &&
           data.utilisateur.id_utilisateur.toString() != userId.toString() && (
-        <button onClick={handleReportPost} className="iconButton" >
+            <button onClick={handleReportPost} className="iconButton">
               <FontAwesomeIcon icon={faFlag} />
-        </button>
+            </button>
           )}
       </div>
       <div className="postContent">
@@ -716,55 +761,66 @@ const handleReportResponse = async (commentId, responseId) => {
             onChange={(e) => setEditContent(e.target.value)}
           />
         )}
-      {userInfo && userInfo.type === 'employe' && data.lesCollab.length > 0 && (
-  <div className="lesCollab">
-    <p>Les cordonnees du collaborateur : </p>
-    {data.lesCollab && data.lesCollab.length > 0 && (
-        <div className="postOffers">
-          {data.lesCollab.map((mention, index) => (
-            <div key={index} className="postOffer">
-              <hr></hr>
-              <strong>Collaborateur:</strong> {mention.offre.collaborateur.nom}
-              {mention.offre && (
-                <>
-                  <p><strong>Offre:</strong> {mention.offre.titre}</p>
-                  <NavLink to={`/OffrePageDetails/${mention.offre.id_offre}`}>Voir l'offre</NavLink>
-                </>
+        {userInfo &&
+          userInfo.type === 'employe' &&
+          data.lesCollab.length > 0 && (
+            <div className="lesCollab">
+              <p>Les cordonnees du collaborateur : </p>
+              {data.lesCollab && data.lesCollab.length > 0 && (
+                <div className="postOffers">
+                  {data.lesCollab.map((mention, index) => (
+                    <div key={index} className="postOffer">
+                      <hr></hr>
+                      <strong>Collaborateur:</strong>{' '}
+                      {mention.offre.collaborateur.nom}
+                      {mention.offre && (
+                        <>
+                          <p>
+                            <strong>Offre:</strong> {mention.offre.titre}
+                          </p>
+                          <NavLink
+                            to={`/OffrePageDetails/${mention.offre.id_offre}`}
+                          >
+                            Voir l'offre
+                          </NavLink>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
-          ))}
-        </div>
-      )}
-  </div>
-)}
+          )}
       </div>
       <div className="postImages">
-      {data.lesImages && data.lesImages.length > 0 && (
-  <>
-    <button onClick={showPreviousImage} className="navigationButton">
-      &#9664; {/* Left arrow */}
-    </button>
+        {data.lesImages && data.lesImages.length > 0 && (
+          <>
+            <button onClick={showPreviousImage} className="navigationButton">
+              &#9664; {/* Left arrow */}
+            </button>
 
-    {/* Check the file extension to determine whether to render an image or a video */}
-    {data.lesImages[currentImageIndex].pathImage.endsWith('.mp4') ? (
-      <video controls className="postImage">
-        <source src={`http://localhost:5000/${data.lesImages[currentImageIndex].pathImage}`} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-    ) : (
-      <img
-        src={`http://localhost:5000/${data.lesImages[currentImageIndex].pathImage}`}
-        alt="Post"
-        className="postImage"
-      />
-    )}
+            {/* Check the file extension to determine whether to render an image or a video */}
+            {data.lesImages[currentImageIndex].pathImage.endsWith('.mp4') ? (
+              <video controls className="postImage">
+                <source
+                  src={`http://localhost:5000/${data.lesImages[currentImageIndex].pathImage}`}
+                  type="video/mp4"
+                />
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <img
+                src={`http://localhost:5000/${data.lesImages[currentImageIndex].pathImage}`}
+                alt="Post"
+                className="postImage"
+              />
+            )}
 
-    <button onClick={showNextImage} className="navigationButton">
-      &#9654; {/* Right arrow */}
-    </button>
-  </>
-)}
-
+            <button onClick={showNextImage} className="navigationButton">
+              &#9654; {/* Right arrow */}
+            </button>
+          </>
+        )}
       </div>
       <div className="postReact">
         <img
@@ -872,11 +928,14 @@ const handleReportResponse = async (commentId, responseId) => {
                   >
                     <FontAwesomeIcon icon={faComment} />
                   </button>
-                  {comment.utilisateur.id_utilisateur.toString() != userId.toString() &&(<FontAwesomeIcon
-                  icon={faFlag}
-                  className="reportCommentIcon"
-                  onClick={() => handleReportComment(comment.id_cmntr)}
-                  />)}
+                  {comment.utilisateur.id_utilisateur.toString() !=
+                    userId.toString() && (
+                    <FontAwesomeIcon
+                      icon={faFlag}
+                      className="reportCommentIcon"
+                      onClick={() => handleReportComment(comment.id_cmntr)}
+                    />
+                  )}
                 </div>
                 <div className="commentActionButtons">
                   {comment.utilisateur.id_utilisateur.toString() ===
@@ -1051,10 +1110,19 @@ const handleReportResponse = async (commentId, responseId) => {
                         >
                           {''} {reponse.nbr_likeRep} J'aime
                         </span>
-                        {reponse.utilisateur.id_utilisateur.toString() != userId.toString() && (
-                        <FontAwesomeIcon icon={faFlag} 
-                        className="reportResponseIcon" 
-                        onClick={() => handleReportResponse(comment.id_cmntr, reponse.id_reponse)} />)}
+                        {reponse.utilisateur.id_utilisateur.toString() !=
+                          userId.toString() && (
+                          <FontAwesomeIcon
+                            icon={faFlag}
+                            className="reportResponseIcon"
+                            onClick={() =>
+                              handleReportResponse(
+                                comment.id_cmntr,
+                                reponse.id_reponse
+                              )
+                            }
+                          />
+                        )}
                       </div>
 
                       <div className="responseActions">
@@ -1106,5 +1174,4 @@ const handleReportResponse = async (commentId, responseId) => {
     </div>
   );
 };
-
 export default Post;

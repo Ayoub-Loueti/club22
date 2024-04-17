@@ -117,3 +117,41 @@
   object-fit: cover;
   
 }
+
+.seleccttContainer {
+  position: relative;
+  display: flex;
+  width: 47%;
+    margin-left: 100px ;
+}
+
+.selectFieldd {
+  display: block;
+  width: 100%;  /* Make select field full width of its container */
+  height: 40px; /* Fixed height for all select fields */
+  padding: 0 1.5rem; /* Padding for text inside select */
+  font-size: 15px; /* Larger font size for better readability */
+  border-radius: 8px; /* Rounded borders */
+  border: 1px solid var(--lightGray); /* Light gray border */
+  appearance: none; /* Remove default styling */
+  background-color: var(--inputColor);
+  color: var(--textColor);
+  cursor: pointer;
+}
+
+.selectFieldd:focus {
+  outline: none;
+  border-color: var(--primaryColor); /* Highlight with primary color on focus */
+}
+
+/* Icon for the select dropdown */
+.seleccttContainer::after {
+  content: '▼'; /* Dropdown arrow */
+  font-size: 12px;
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none; /* Prevents the icon from being clickable */
+  color: var(--darkGray);
+}
