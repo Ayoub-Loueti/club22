@@ -25,6 +25,8 @@ import ListReservation from './pages/admin/reservation/listReservation';
 import CollaborateurPage from './pages/OffreEmploye/collaborateurPage';
 import OffreEmploye from './pages/OffreEmploye/OffreEmploye';
 import OffreEmployeDetails from './pages/OffreEmploye/OffreEmployeDetails';
+import CollaborateurClickPage from './pages/OffreEmploye/collabClickPage';
+
 function App() {
   return (
     <React.StrictMode>
@@ -127,6 +129,15 @@ function App() {
                 <ProtectedRoute>
                   {' '}
                   <CollaborateurPage />{' '}
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/collabPage/:collabId"
+              element={
+                <ProtectedRoute>
+                  {' '}
+                  <CollaborateurClickPage />{' '}
                 </ProtectedRoute>
               }
             />

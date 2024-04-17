@@ -1,117 +1,136 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './listEmployE.css';
+import { MaterialReactTable, createMRTColumnHelper } from 'material-react-table';
+import { Box, Button } from '@mui/material';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import { mkConfig, generateCsv, download } from 'export-to-csv'; // Ensure this package is correctly installed
 import NavAdmin from '../NavAdmin/navAdmin';
-function ListEmploye() {
-  const [Employes, setEmployes] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState('');
+import './listEmployE.css';
+
+const columnHelper = createMRTColumnHelper();
+
+const ListEmploye = () => {
+  const [employees, setEmployees] = useState([]);
   const navigate = useNavigate();
   const token = localStorage.getItem('login');
 
   useEffect(() => {
-    fetchEmployes();
-  }, [filter]);
+    fetchEmployees();
+  }, []);
 
-  const fetchEmployes = async () => {
+  const fetchEmployees = async () => {
     try {
       const response = await axios.get('http://localhost:5000/listEmp', {
         headers: {
           Authorization: `Bearer ${JSON.parse(token).token}`,
         },
       });
-      const filteredData = filter
-        ? response.data.filter((Employe) => Employe.etat === filter)
-        : response.data;
-      setEmployes(filteredData);
+      setEmployees(response.data);
     } catch (error) {
-      console.error('Error fetching Employes:', error);
+      console.error('Error fetching employees:', error);
     }
   };
 
-  const handleSearchTermChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleFilterChange = (newFilter) => {
-    setFilter(newFilter);
-  };
-
   const handleBlockUnblock = async (id, etat) => {
-    const endpoint = etat === 'autorise' ? '/block/' : '/unblock/';
+    const endpoint = etat.toLowerCase() === 'autorise' ? '/block/' : '/unblock/';
     try {
       await axios.put(`http://localhost:5000${endpoint}${id}`, {}, {
         headers: {
           Authorization: `Bearer ${JSON.parse(token).token}`,
         },
       });
-      fetchEmployes(); // Refresh the list after the operation
+      fetchEmployees(); // Refresh the list after the operation
     } catch (error) {
       console.error('Error updating user state:', error);
     }
   };
 
-  const filteredEmployes = searchTerm
-    ? Employes.filter(
-        (Employe) =>
-          Employe.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          Employe.prenom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          Employe.email.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : Employes;
-   const getBadgeStyle = (etat) => {
-     let backgroundColor;
-     switch (
-       etat.toLowerCase() // Utilisation de toLowerCase pour une comparaison insensible à la casse
-     ) {
-       case 'autorise':
-         backgroundColor = '#34c38f';
-         break;
-       case 'en attente':
-         backgroundColor = '#ffecb3';
-         break;
-       case 'bloque':
-         backgroundColor = '#f8d7da';
-         break;
-       default:
-         backgroundColor = '#adb5bd';
-     }
+  const csvConfig = mkConfig({
+    filename: 'Employee_List',
+    fieldSeparator: ',',
+    quoteStrings: '"',
+    decimalSeparator: '.',
+    showLabels: true,
+    useTextFile: false,
+    useBom: true,
+    useKeysAsHeaders: true,
+    // headers: ['Column 1', 'Column 2', etc...] <-- Won't be needed as useKeysAsHeaders is true
+  });
 
-     return {
-       backgroundColor,
-       color: '#000',
-       padding: '0.25em 0.6em',
-       borderRadius: '50rem',
-       fontSize: '0.90rem',
-       minWidth: '75px',
-       textAlign: 'center',
-       display: 'inline-block', // Assure que le badge prend en compte la largeur et le padding
-     };
-   };
+  const columns = [
+    columnHelper.accessor('photo', {
+      header: 'Photo',
+      Cell: ({ cell }) => (
+        <img
+          src={cell.getValue() ? `http://localhost:5000/${cell.getValue()}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'}
+          alt="Employee"
+          style={{ width: 50, height: 50, borderRadius: '50%' }}
+        />
+      ),
+    }),
+    columnHelper.accessor('nom', {
+      header: 'Nom',
+    }),
+    columnHelper.accessor('prenom', {
+      header: 'Prénom',
+    }),
+    columnHelper.accessor('email', {
+      header: 'Email',
+    }),
+    columnHelper.accessor('genre', {
+      header: 'Genre',
+      Cell: ({ cell }) => cell.getValue().charAt(0).toUpperCase() + cell.getValue().slice(1),
+    }),
+    columnHelper.accessor('etat', {
+      header: 'État',
+      Cell: ({ cell }) => (
+        <div style={{
+          backgroundColor: cell.getValue().toLowerCase() === 'autorise' ? '#34c38f' :
+                           cell.getValue().toLowerCase() === 'bloque' ? '#f8d7da' : '#ffecb3',
+          borderRadius: '0.5rem', padding: '0.25em 0.6em', color: '#000', textAlign: 'center',
+        }}>
+          {cell.getValue().charAt(0).toUpperCase() + cell.getValue().slice(1)}
+        </div>
+      ),
+    }),
+  
+    columnHelper.accessor('id_utilisateur', {
+      header: 'Actions',
+      Cell: ({ row }) => (
+        row.original.etat !== 'En attente' && (
+          <Button
+            variant="contained"
+            color={row.original.etat.toLowerCase() === 'autorise' ? 'error' : 'success'}
+            onClick={() => handleBlockUnblock(row.original.id_utilisateur, row.original.etat)}
+            style={{ margin: '0 10px' }} // Apply inline styling for button margin
+          >
+            {row.original.etat.toLowerCase() === 'autorise' ? 'Bloquer' : 'Débloquer'}
+          </Button>
+        )
+      ),
+    }),
+  ];
+
+  const handleExportData = () => {
+    const dataToExport = employees.map(emp => ({
+      photo: emp.photo,
+      nom: emp.nom,
+      prenom: emp.prenom,
+      email: emp.email,
+      genre: emp.genre,
+      etat: emp.etat,
+    }));
+    const csv = generateCsv(csvConfig)(dataToExport);
+    download(csvConfig)(csv);
+  };
+
   return (
     <>
-    <NavAdmin/>
+         <NavAdmin/>
       <div className="list-Employe-container">
         <div className="list-Employe-header">
           <h1>LISTE DES EMPLOYES</h1>
-          <div className="search-filter-contaiiner">
-            <input
-              type="text"
-              className="list-Employe-search-input"
-              placeholder="Rechercher..."
-              value={searchTerm}
-              onChange={handleSearchTermChange}
-            />
-            <button onClick={() => handleFilterChange('')}>Tous</button>
-            <button onClick={() => handleFilterChange('autorise')}>
-              Autorisé
-            </button>
-            <button onClick={() => handleFilterChange('En attente')}>
-              En attente
-            </button>
-            <button onClick={() => handleFilterChange('bloque')}>Bloqué</button>
-          </div>
 
           <div className="navigaate-container">
             <button
@@ -128,72 +147,28 @@ function ListEmploye() {
             </button>
           </div>
         </div>
-
-        <table className="list-Employe-table">
-          <thead>
-            <tr>
-              <th>Photo</th>
-              <th>Nom</th>
-              <th>Prénom</th>
-              <th>Email</th>
-              <th>Genre</th>
-              <th>Etat</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredEmployes.map((Employe) => (
-              <tr key={Employe.id_utilisateur}>
-                <td>
-                  <img
-                    src={
-                      Employe.photo
-                        ? `http://localhost:5000/${Employe.photo}`
-                        : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
-                    }
-                    alt="Profil"
-                    className="profile-picture"
-                  />
-                </td>
-                <td>
-                  {' '}
-                  {Employe.nom.charAt(0).toUpperCase() + Employe.nom.slice(1)}
-                </td>
-                <td>
-                  {Employe.prenom.charAt(0).toUpperCase() +
-                    Employe.prenom.slice(1)}{' '}
-                </td>
-                <td>{Employe.email}</td>
-                <td>
-                  {' '}
-                  {Employe.genre.charAt(0).toUpperCase() +
-                    Employe.genre.slice(1)}
-                </td>
-                <td>
-                  <span style={getBadgeStyle(Employe.etat)}>
-                    {Employe.etat.charAt(0).toUpperCase() +
-                      Employe.etat.slice(1)}
-                  </span>
-                </td>{' '}
-                <td>
-                  {Employe.etat !== 'En attente' && (
-                    <button
-                      className={Employe.etat === 'bloque' ? 'unblock' : ''}
-                      onClick={() =>
-                        handleBlockUnblock(Employe.id_utilisateur, Employe.etat)
-                      }
-                    >
-                      {Employe.etat === 'autorise' ? 'Bloquer' : 'Débloquer'}
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <MaterialReactTable
+        muiTableHeadCellProps={{
+          sx: {
+            backgroundColor: '#191F43', 
+            color: 'white', 
+          }
+        }}
+          columns={columns}
+          data={employees}
+          getRowId={(row) => row.id_utilisateur}
+          muiSearchTextFieldProps={{ variant: 'outlined', label: 'Search Employees' }}
+          renderTopToolbarCustomActions={({ table }) => (
+            <Box sx={{ display: 'flex', gap: '16px', padding: '8px', flexWrap: 'wrap' }}>
+              <Button onClick={handleExportData} startIcon={<FileDownloadIcon />}>
+                Export Data
+              </Button>
+            </Box>
+          )}
+        />
       </div>
     </>
   );
-}
+};
 
 export default ListEmploye;

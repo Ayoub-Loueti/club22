@@ -174,3 +174,27 @@
     font-size: 16px; /* Ajustez la taille de la police selon les besoins */
     margin: 0 5px; /* Ajoute de l'espace entre les boutons */
 }
+
+.mrt-table .MuiButton-root {
+    margin-left: 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+  }
+  
+  .mrt-table .MuiButton-containedError {
+    background-color: #ff4136;
+  }
+  
+  .mrt-table .MuiButton-containedSuccess {
+    background-color: #2ecc40;
+  }
+
+  .mrt-table .MuiTableHead-root { /* This targets the table head root */
+    background-color: #191F43; /* Old table header blue color */
+  }
+  
+  .mrt-table .MuiTableCell-head { /* This targets the header cells */
+    color: white !important; /* Important might be necessary to override default styles */
+  }
+  

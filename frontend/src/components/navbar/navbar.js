@@ -16,6 +16,8 @@ function Navbar() {
   const [isVisible, setIsVisible] = useState(true);
   const [randomUsers, setRandomUsers] = useState([]);
   const [navbarExtensionColor, setNavbarExtensionColor] = useState('#f3f3f3'); // Default color
+  const [userInfo, setUserInfo] = useState(null);
+  const [userId, setUserId] = useState(null); // Add this line
 
   const navigate = useNavigate();
   // Current user's ID for navigation to the profile page
@@ -60,6 +62,34 @@ function Navbar() {
     fetchRandomUsers();
   }, []);
 
+  useEffect(() => {
+    const token = localStorage.getItem('login');
+    const storedUserId = JSON.parse(localStorage.getItem('userId')); // Rename for clarity
+    setUserId(storedUserId);
+
+    if (token && storedUserId) {
+      const fetchUserData = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:5000/profil/${storedUserId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${JSON.parse(token).token}`,
+              },
+            }
+          );
+          setUserInfo(response.data.user);
+        } catch (error) {
+          console.error(
+            "Erreur lors de la récupération des données de l'utilisateur",
+            error
+          );
+        }
+      };
+      fetchUserData();
+    }
+  }, []);
+
   return (
     <div>
       <div className="navbar-toggle" onClick={toggleNavbar}>
@@ -79,7 +109,12 @@ function Navbar() {
             className="navbar-iconnn"
             onClick={() => navigate(`/profil/${currentUserId}`)}
           />
-          <FontAwesomeIcon icon={faCalendar} className="navbar-iconnn" />
+          {userInfo && userInfo.type === 'employe' && (
+      <FontAwesomeIcon
+        icon={faCalendar}
+        className="navbar-iconnn"
+      />
+    )}
         </div>
 
         <div className="navbar-inner">

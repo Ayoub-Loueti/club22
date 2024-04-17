@@ -31,7 +31,7 @@ function NavbarHaut() {
   const menuRef = useRef();
   const notificationsRef = useRef();
   const [searchInput, setSearchInput] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState({ users: [], offers: [], collaborators: [] });
   const [userPoints, setUserPoints] = useState(null);
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false); // State to control the phone modal visibility
 
@@ -50,13 +50,13 @@ function NavbarHaut() {
     setSearchInput(inputValue);
   
     if (inputValue.length > 0) {
-      fetchUsersBySubstring(inputValue);
+      fetchUsersAndOffersBySubstring(inputValue);
     } else {
-      setSearchResults([]); // Clear results if input is cleared
+      setSearchResults({ users: [], offers: [],collaborators: [] }); // Clear results if input is cleared
     }
   };
 
-  const fetchUsersBySubstring = async (substring) => {
+  const fetchUsersAndOffersBySubstring = async (substring) => {
     const token = JSON.parse(localStorage.getItem('login')).token;
     try {
       const response = await axios.get(`http://localhost:5000/search?substring=${substring}`, {
@@ -64,9 +64,14 @@ function NavbarHaut() {
           Authorization: `Bearer ${token}`,
         },
       });
-      setSearchResults(response.data);
+      // Set the search results safely by ensuring both `users` and `offers` exist in the response data
+      setSearchResults({
+        users: Array.isArray(response.data.users) ? response.data.users : [],
+        offers: Array.isArray(response.data.offers) ? response.data.offers : [],
+        collaborators: Array.isArray(response.data.collaborators) ? response.data.collaborators : [],
+      });
     } catch (error) {
-      console.error('Error fetching users by substring', error);
+      console.error('Error fetching users and offers by substring', error);
     }
   };
 
@@ -371,24 +376,54 @@ const closePhoneModal = () => {
     <FontAwesomeIcon icon={faSearch} />
   </button>
 </form>
-{searchResults.length > 0 ? (
+{searchResults.users.length > 0 || searchResults.offers.length > 0 || searchResults.collaborators.length > 0 ? (
   <div className="search-results">
-    {searchResults.map((user) => (
-      <Link to={`/profil/${user.id_utilisateur}`} key={user.id_utilisateur} className="search-result-item" style={{ textDecoration: 'none' }}>
-        <img 
-          src={user.photo ? `http://localhost:5000/${user.photo}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'} 
-          alt={user.nom} 
-          className="user-photooo" 
-        />
-        <div>
-          {user.prenom} {user.nom}
-        </div>
-      </Link>
-    ))}
+    {searchResults.users.length > 0 && (
+      <>
+        <div className="search-results-title">Utilisateurs :</div>
+        {searchResults.users.map((user) => (
+          <Link to={`/profil/${user.id_utilisateur}`} key={user.id_utilisateur} className="search-result-item" style={{ textDecoration: 'none' }}>
+            <img 
+              src={user.photo ? `http://localhost:5000/${user.photo}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'} 
+              alt={user.nom} 
+              className="user-photooo" 
+            />
+            <div>
+              {user.prenom} {user.nom}
+            </div>
+          </Link>
+        ))}
+      </>
+    )}
+    {userInfo && userInfo.type === 'employe' && searchResults.offers.length > 0 && (
+      <>
+        <div className="search-results-title">Offres :</div>
+        {searchResults.offers.map((offer) => (
+          <div key={offer.id_offre} className="search-result-item" onClick={() => navigate(`/OffrePageDetails/${offer.id_offre}`)}>
+            <img src={`http://localhost:5000/${offer.images[0]}`} alt="Offer" className="user-photooo" />
+            <div>{offer.titre}</div>
+          </div>
+        ))}
+        
+      </>
+    )}
+    {userInfo && userInfo.type === 'employe' && searchResults.collaborators.length > 0 && (
+      <>
+        <div className="search-results-title">collaborators :</div>
+        {searchResults.collaborators.map((collab) => (
+          <div key={collab.id_collaborateur} className="search-result-item" onClick={() => navigate(`/collabPage/${collab.id_collaborateur}`)}>
+            <img src={collab.logo ? `http://localhost:5000/${collab.logo}` : 'default-image-path.jpg'} alt="Collab Logo" className="user-photooo" />
+              <div>{collab.nom}</div>
+          </div>
+        ))}
+        
+      </>
+    )}
   </div>
-): (
-  searchInput && <div className="search-results search-no-results-message">Il n'y a aucun utilisateur correspondant à votre recherche.</div>
+) : (
+  searchInput && <div className="search-results search-no-results-message">No users or offers or collabs match your search.</div>
 )}
+
  {userInfo && userInfo.type === 'client' && (
       <FontAwesomeIcon
         icon={faPhone}

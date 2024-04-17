@@ -24,8 +24,11 @@
   border: 2px solid #f1efef; /* Couleur de la bordure plus foncée */
 }
 
+.collab-card:hover,
 .collab-card.active {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 15px rgba(0, 0, 0, 0.3); /* Larger shadow */
+  transform: translateY(-5px); /* Move up */
+  border-color: #ccc; /* Darker border color when active/hover */
 }
 
 .collab-card img {
@@ -77,4 +80,22 @@
 
 .navig-buttons button:hover {
   background-color: #163172;
+}
+
+
+.navig-buttons .nav-icon {
+  color: #666;
+  cursor: pointer;
+}
+
+.navig-buttons .nav-icon:disabled {
+  color: #ccc;
+  cursor: default;
+}
+
+.navig-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
 }
