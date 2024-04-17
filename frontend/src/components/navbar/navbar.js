@@ -113,6 +113,7 @@ function Navbar() {
       <FontAwesomeIcon
         icon={faCalendar}
         className="navbar-iconnn"
+        onClick={() => navigate('/collabPage')}
       />
     )}
         </div>
