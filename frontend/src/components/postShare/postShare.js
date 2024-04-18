@@ -214,7 +214,7 @@ const handleSubmit = async (e) => {
             required
             className="selectFieldd"
           >
-            <option value="" disabled selected={!categorySelected}>
+            <option value="" disabled={categorySelected}>
               Sélectionnez une catégorie
             </option>
             <option value="hotel">Hôtel</option>

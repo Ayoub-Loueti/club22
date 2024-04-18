@@ -1,3 +1,4 @@
+//reservationmodel
 const express = require('express');
 const router = express.Router();
 const reservationController = require('../controllers/ReservationController');
@@ -20,6 +21,7 @@ router.put('/updateReservation/:id', authenticate, reservationController.updateR
 
 router.get('/reservation/pdf/:id', authenticate, reservationController.generateReservationPDF);
 
+router.post('/hotelReservation', authenticate, reservationController.createHotelReservation);
 
 module.exports = router;
 

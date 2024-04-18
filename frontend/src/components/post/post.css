@@ -72,7 +72,6 @@
   font-weight: bold; /* Rend le texte en gras */
   font-size: 16px; /* Ajuste la taille de la police */
   font-family: 'Helvetica Neue', sans-serif; /* Change la famille de polices */
-  margin-left: 10px; /* Ajoute un peu d'espace entre l'image et le nom */
 }
 /* comments css*/
 .comment {

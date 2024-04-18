@@ -625,7 +625,6 @@ exports.findUsersBySubstring = async (req, res) => {
       where: {
         [Op.or]: [
           { titre: { [Op.like]: `%${substring}%` } },
-          { description: { [Op.like]: `%${substring}%` } },
         ],
       },
       attributes: ['id_offre', 'titre', 'description', 'prix', 'remise', 'type'],

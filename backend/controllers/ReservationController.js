@@ -4,21 +4,22 @@ const Utilisateur = require('../models/UtilisateurModel');
 const Collaborateur = require('../models/CollaborateurModel');
 const Offre = require('../models/OffreModel');
 const Employe = require('../models/EmployeModel');
+const Hotel = require('../models/HotelModel');
 const { Op } = require('sequelize');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 
 exports.createReservation = async (req, res) => {
-  const {id_offre,nombre, prix_totale} = req.body;
+  const { id_offre, nombre, prix_totale, hotels } = req.body; // Extract hotels array from request body
   const userId = req.userId;
 
+  if (nombre <= 0 || prix_totale <= 0) {
+    return res.status(400).json({
+      error: 'Invalid number of people or total price. Both must be greater than zero.',
+    });
+  }
+
   try {
-    if (nombre <= 0 || prix_totale <= 0) {
-      return res.status(400).json({
-        error: 'Invalid number of people or total price. Both must be greater than zero.',
-      });
-    }
-    
     const isEmploye = await Utilisateur.findOne({
       where: {
         id_utilisateur: userId,
@@ -36,14 +37,7 @@ exports.createReservation = async (req, res) => {
       where: { id_utilisateur: userId },
     });
 
-
-    // Check if the offer exists
-    const offerExists = await Offre.findOne({
-      where: {
-        id_offre: id_offre,
-      },
-    });
-
+    const offerExists = await Offre.findOne({ where: { id_offre } });
     if (!offerExists) {
       return res.status(404).json({ error: 'Offer not found' });
     }
@@ -55,10 +49,22 @@ exports.createReservation = async (req, res) => {
       nombre,
       prix_totale,
       date_reservation: new Date(),
-      etat: 'en_cours',  // default status
+      etat: 'en_cours',
     });
 
-    res.status(201).json({ message: 'Reservation created successfully', reservation });
+    // Create associated hotel records
+    if (hotels && Array.isArray(hotels)) {
+      await Promise.all(hotels.map(hotel => {
+        return Hotel.create({
+          id_reservation: reservation.id_reservation,
+          nbr_adults: hotel.nbr_adults,
+          nbr_enfants: hotel.nbr_enfants,
+          prix: hotel.prix
+        });
+      }));
+    }
+
+    res.status(201).json({ message: 'Reservation and hotel details created successfully', reservation });
   } catch (error) {
     console.error('Error creating reservation:', error);
     res.status(500).json({ error: 'Failed to create reservation' });
@@ -353,5 +359,32 @@ exports.generateReservationPDF = async (req, res) => {
       res.status(500).json({ error: 'Failed to generate reservation PDF' });
   }
 };
+
+exports.createHotelReservation = async (req, res) => {
+  const { id_reservation, nbr_adults, nbr_enfants, prix } = req.body;
+
+  try {
+      const reservationExists = await Reservation.findByPk(id_reservation);
+      if (!reservationExists) {
+          return res.status(404).json({ message: "Reservation not found" });
+      }
+
+      const newHotel = await Hotel.create({
+          id_reservation,
+          nbr_adults,
+          nbr_enfants,
+          prix
+      });
+
+      return res.status(201).json({
+          message: "Hotel reservation created successfully",
+          hotel: newHotel
+      });
+  } catch (error) {
+      console.error('Error creating hotel reservation:', error);
+      res.status(500).json({ message: 'Failed to create hotel reservation', error: error.message });
+  }
+};
+
 
 module.exports = exports;
