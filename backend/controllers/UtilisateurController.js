@@ -8,7 +8,9 @@ const { Sequelize } = require('sequelize');
 const { sequelize } = require('../config/db'); // Ensure this import is correct
 const twilio = require('twilio');
 const Client = require('../models/ClientModel');
-
+const Offre = require('../models/OffreModel');
+const Collaborateur = require('../models/CollaborateurModel');
+const ImageOffre = require('../models/ImageOffreModel');
 const crypto = require('crypto');
 const Utilisateur = require('../models/UtilisateurModel');
 require('dotenv').config();
@@ -606,37 +608,58 @@ exports.findUsersBySubstring = async (req, res) => {
   const currentUserId = req.userId; // Assuming this is how you get the current user's ID
 
   try {
-    const users = await Utilisateur.findAll({
+    const userPromise = Utilisateur.findAll({
       where: {
         [Op.and]: [
-          { id_utilisateur: { [Op.ne]: currentUserId } }, // Exclude the current user's ID
-          { etat: 'autorise' }, // Include only users whose 'etat' is 'autorise'
-        ],
-        [Op.or]: [
-          {
-            nom: {
-              [Op.like]: `%${substring}%`
-            },
-          },
-          {
-            prenom: {
-              [Op.like]: `%${substring}%`
-            },
-          },
+          { id_utilisateur: { [Op.ne]: currentUserId } },
+          { etat: 'autorise' },
+          Sequelize.where(Sequelize.fn('concat', Sequelize.col('nom'), ' ', Sequelize.col('prenom')), {
+            [Op.like]: `%${substring}%` // Use Op.like for case-insensitive search
+          })
         ],
       },
-      attributes: ['id_utilisateur', 'nom', 'prenom', 'email', 'photo'], // Customize attributes as needed
+      attributes: ['id_utilisateur', 'nom', 'prenom', 'email', 'photo'],
     });
 
-    // If no users are found, return a friendly message instead of an error
-    if (users.length === 0) {
-      return res.status(200).json({ message: 'There are no users matching your search.' });
+    const offerPromise = Offre.findAll({
+      where: {
+        [Op.or]: [
+          { titre: { [Op.like]: `%${substring}%` } },
+          { description: { [Op.like]: `%${substring}%` } },
+        ],
+      },
+      attributes: ['id_offre', 'titre', 'description', 'prix', 'remise', 'type'],
+    });
+
+    const collabPromise = Collaborateur.findAll({
+      where: {
+        [Op.or]: [
+          { nom: { [Op.like]: `%${substring}%` } },
+         
+        ],
+      },
+      attributes: ['id_collaborateur', 'nom', 'logo']
+    });
+
+    const [users, offers, collaborators] = await Promise.all([userPromise, offerPromise, collabPromise]);
+
+    // Fetch images for each offer and map them
+    const offersWithImages = await Promise.all(offers.map(async (offer) => {
+      const images = await ImageOffre.findAll({
+        where: { id_offre: offer.id_offre },
+        attributes: ['image']
+      });
+      return { ...offer.dataValues, images: images.map(img => img.image) };
+    }));
+
+    if (users.length === 0 && offers.length === 0 && collaborators.length === 0) {
+      return res.status(200).json({ message: 'No users, offers, or collaborators found matching your search.' });
     }
 
-    return res.status(200).json(users);
+    return res.status(200).json({ users, offers: offersWithImages, collaborators });
   } catch (error) {
-    console.error('Error fetching users by substring:', error);
-    return res.status(500).json({ message: 'Error fetching users', error: error.message });
+    console.error('Error fetching users and offers by substring:', error);
+    return res.status(500).json({ message: 'Error fetching users and offers', error: error.message });
   }
 };
 

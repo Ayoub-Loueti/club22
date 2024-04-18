@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './collaborateurPage.css';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import { useParams } from 'react-router-dom'; // Import useParams
 import OffreEmploye from './OffreEmploye';
 import OffreCollabEmploye from './OffreCollabEmploye';
 
@@ -9,7 +10,9 @@ function CollaborateurPage() {
   const [collaborateurs, setCollaborateurs] = useState([]);
   const [selectedCollaborateurId, setSelectedCollaborateurId] = useState(null);
   const [startIndex, setStartIndex] = useState(0);
-  const [showOffreCollab, setShowOffreCollab] = useState(false); // State variable to control which component to render
+  const [showOffreCollab, setShowOffreCollab] = useState(false);
+
+  const { collabId } = useParams(); // Destructure collabId from useParams
 
   useEffect(() => {
     const token = localStorage.getItem('login');
@@ -25,18 +28,22 @@ function CollaborateurPage() {
             }
           );
           setCollaborateurs(response.data);
+          // Check if collabId is in the response data and select it
+          if (response.data.some(collab => collab.id_collaborateur.toString() === collabId)) {
+            setSelectedCollaborateurId(collabId);
+            setShowOffreCollab(true);
+          }
         } catch (error) {
           console.error('Error:', error);
         }
       };
       fetchCollaborateurs();
     }
-  }, []);
+  }, [collabId]); // Include collabId in the dependency array
 
   const handleCollaboratorClick = (collaborateurId) => {
-    console.log('Selected collaborateurId:', collaborateurId);
     setSelectedCollaborateurId(collaborateurId);
-    setShowOffreCollab(true); // Switch to render OffreCollabEmploye component
+    setShowOffreCollab(true);
   };
 
   const handlePrevious = () => {
@@ -63,8 +70,8 @@ function CollaborateurPage() {
             .map((collaborateur, index) => (
               <div
                 key={index}
-                className={`collab-card ${selectedCollaborateurId === collaborateur.id_collaborateur ? 'active' : ''}`}
-                onClick={() => handleCollaboratorClick(collaborateur.id_collaborateur)}
+                className={`collab-card ${selectedCollaborateurId === collaborateur.id_collaborateur.toString() ? 'active' : ''}`}
+                onClick={() => handleCollaboratorClick(collaborateur.id_collaborateur.toString())}
               >
                 <img
                   src={`http://localhost:5000/${collaborateur.logo}`}
@@ -78,12 +85,10 @@ function CollaborateurPage() {
         <div className="navig-buttons">
           <FaArrowLeft
             onClick={handlePrevious}
-            disabled={startIndex === 0}
             className="nav-icon"
           />
           <FaArrowRight
             onClick={handleNext}
-            disabled={startIndex + 4 >= collaborateurs.length}
             className="nav-icon"
           />
         </div>
