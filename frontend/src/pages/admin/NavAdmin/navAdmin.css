@@ -10,6 +10,7 @@
   background-color: #C50F10;
   overflow: hidden;
   transition: width 0.3s ease; /* Transition for expanding the navbar */
+  border-radius: 1%;
 }
 
 .adm-navbar.expanded {
@@ -35,11 +36,11 @@
    transition: background-color 0.2s ease; /* Smooth transition for all properties */
   width: 90px;
 margin-left: -3px;}
-
+/*
 .icon-and-tooltip:hover {
-  background-color: #cdcaca; /* Unified background color for icon and tooltip */
+  background-color: #cdcaca;
   }
-
+*/
 .adm-navbar-icon,
 .adm-tooltip {
   transition: color 0.3s ease;
@@ -50,19 +51,24 @@ margin-left: -3px;}
 .adm-tooltip {
   font-size: 14px;
   margin-left: 10px; /* Space between the icon and the tooltip */
-  margin-top: -30%;
+  margin-top: -25%;
   visibility: hidden; /* Hidden by default */
   opacity: 0;
   transition: visibility 0s, opacity 0.2s linear;
-   color: #191f43;
+   color: white;
    font-weight: bold;
 }
 
-.icon-and-tooltip:hover .adm-tooltip {
+.icon-and-tooltip:hover .adm-tooltip ,.icon-and-tooltip:hover .adm-navbar-icon {
   visibility: visible;
   opacity: 1;
-}
+     color: #191f43;
 
+}.adm-navbar.expanded .icon-and-tooltip:hover,
+.adm-navbar.expanded:hover .adm-tooltip {
+  visibility: visible; /* Make tooltips visible on navbar hover */
+  opacity: 1;
+}
 
 
 .adm-navbar-inner {
@@ -99,7 +105,7 @@ margin-left: -3px;}
 
 .adm-navbar-toggle {
   position: absolute;
-  left: 50px;
+  left: 60px;
   z-index: 2000;
   cursor: pointer;
   padding: 10px;

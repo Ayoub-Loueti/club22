@@ -10,6 +10,8 @@ import {
   faCalendar,
   faUser,
   faBars,
+  faUserPlus, 
+  faList,
 } from '@fortawesome/free-solid-svg-icons';
 
 function NavAdmin() {
@@ -59,9 +61,15 @@ function NavAdmin() {
   };
 
     const icons = [
-      { icon: faHouse, label: 'Home', path: '/Home' },
-      { icon: faUser, label: 'Profile', path: `/profile/${currentUserId}` },
-      { icon: faCalendar, label: 'Calendar', path: '' },
+      { icon: faHouse, label: 'Accueil', path: '/Home' },
+      { icon: faUser, label: 'Utilisateurs', path: `/tousLesUtilisateurs` },
+      { icon: faCalendar, label: 'Offres', path: '/OffreAdmin' },
+      { icon: faUserPlus, label: 'Collaborateurs', path: '/listCollab' },
+      {
+        icon: faList,
+        label: 'Details Collaborateurs',
+        path: '/listCollaborateur',
+      },
     ];
 
     const handleMouseEnter = () => {
