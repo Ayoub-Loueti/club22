@@ -42,27 +42,37 @@ const MyReservations = () => {
                 <Grid item xs={12} md={6}>
                     <Card raised sx={{ height: 550, overflowY: 'auto' }}>
                         <CardContent>
-                            {reservations.map((reservation) => (
-                                <Card key={reservation.id_reservation} variant="outlined" sx={{ mb: 2, p: 2, backgroundColor: '#F4F4F4' }}>
-                                    <Grid container spacing={2} alignItems="center">
-                                        <Grid item>
-                                            <Avatar alt="Hotel" src={`http://localhost:5000/${reservation.offre.collaborateur.logo}`} />
-                                        </Grid>
-                                        <Grid item xs>
-                                            <Typography variant="h6">{reservation.offre.titre}</Typography>
-                                            <Typography variant="body2">{reservation.offre.collaborateur.nom}</Typography>
-                                        </Grid>
-                                        <Grid item>
-                                            <Typography variant="body1" color="primary">{reservation.prix_totale} TND</Typography>
-                                        </Grid>
-                                    </Grid>
-                                    <Box display="flex" justifyContent="flex-end" mt={1}>
-                                        <Button size="small" variant="contained" sx={{ backgroundColor: '#5CA163', '&:hover': { backgroundColor: '#4B8A50' }, mr: 1 }}>Confirmer</Button>
-                                        <Button size="small" variant="contained" sx={{ backgroundColor: '#E3D97F', '&:hover': { backgroundColor: '#D0C170' }, mr: 1 }}>Modifier</Button>
-                                        <Button size="small" variant="contained" sx={{ backgroundColor: '#C50F10', '&:hover': { backgroundColor: '#B00C0E' } }}>Annuler</Button>
-                                    </Box>
-                                </Card>
-                            ))}
+                        {reservations.map((reservation) => (
+  <Card key={reservation.id_reservation} variant="outlined" sx={{ mb: 2, display: 'flex', backgroundColor: '#F4F4F4' }}>
+    {/* Image box */}
+    <Box
+      component="img"
+      sx={{
+        width: 150, // Set a fixed width for the image
+        height: 'auto',  // Height will be determined by the aspect ratio of the image
+        maxWidth: '100%',
+        maxHeight: 150, // Maximum height to match the card height
+        objectFit: 'cover', // This will cover the box area, you can use 'contain' if you don't want to crop the image
+      }}
+      src={`http://localhost:5000/${reservation.offre.images[0]}`} // Adjust according to your data structure
+      alt="Offre"
+    />
+    {/* Content box */}
+    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexGrow: 1, padding: 2 }}>
+      <Box>
+        <Typography variant="h6">{reservation.offre.titre}</Typography>
+        <Typography variant="body2">{reservation.offre.collaborateur.nom}</Typography>
+        <Typography variant="body1" color="primary">{reservation.prix_totale} TND</Typography>
+      </Box>
+      <Box display="flex" justifyContent="flex-end">
+        <Button size="small" variant="contained" sx={{ backgroundColor: '#5CA163', '&:hover': { backgroundColor: '#4B8A50' }, mr: 1 }}>Confirmer</Button>
+        <Button size="small" variant="contained" sx={{ backgroundColor: '#E3D97F', '&:hover': { backgroundColor: '#D0C170' }, mr: 1 }}>Modifier</Button>
+        <Button size="small" variant="contained" sx={{ backgroundColor: '#C50F10', '&:hover': { backgroundColor: '#B00C0E' } }}>Annuler</Button>
+      </Box>
+    </Box>
+  </Card>
+))}
+
                         </CardContent>
                     </Card>
                 </Grid>
