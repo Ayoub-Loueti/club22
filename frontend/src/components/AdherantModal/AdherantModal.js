@@ -1,171 +1,132 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Modal from 'react-modal';
-import './AdherantModal.css';
 import Swal from 'sweetalert2';
+import Modal from 'react-modal';
+import { Button, TextField, Checkbox, FormControlLabel, Typography, Avatar, Box } from '@mui/material';
 
 Modal.setAppElement('#root');
 
-const DemandeModal = ({ isOpen, onRequestClose, userId }) => {
-  const [description, setDescription] = useState('');
-  const [userInfo, setUserInfo] = useState(null);
-  const [isAdherant, setIsAdherant] = useState(false);
-  const [error, setError] = useState('');
-  const [acceptedTerms, setAcceptedTerms] = useState(false); // New state for tracking checkbox
-
-  useEffect(() => {
-    const token = localStorage.getItem('login');
-    const storedUserId = JSON.parse(localStorage.getItem('userId'));
-
-    const fetchUserData = async () => {
-      if (token && storedUserId) {
-        try {
-          const response = await axios.get(
-            `http://localhost:5000/profil/${storedUserId}`,
-            { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } }
-          );
-          setUserInfo(response.data.user);
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      }
-    };
-
-    const fetchIsAdherant = async () => {
-      if (token && storedUserId) {
-        try {
-          const response = await axios.get(
-            `http://localhost:5000/isAdherant`,
-            { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } }
-          );
-          setIsAdherant(response.data.adherant);
-        } catch (error) {
-          console.error("Error fetching adherant status:", error);
-        }
-      }
-    };
-
-    fetchUserData();
-    fetchIsAdherant();
-  }, [isOpen]);
-
-  const handleDemande = async () => {
-    const token = JSON.parse(localStorage.getItem('login'))?.token;
-    if (!token) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'You need to be logged in to submit a request.',
-      });
-      return;
-    }
-
-    try {
-      await axios.post('http://localhost:5000/demandes', { description }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      Swal.fire(
-        'Request Submitted!',
-        'Your demande has been successfully submitted.',
-        'success'
-      ).then((result) => {
-        if (result.isConfirmed || result.isDismissed) {
-          onRequestClose();
-        }
-      });
-    } catch (err) {
-      // Handling specific error response if demande already sent or other errors
-      if (err.response && err.response.status === 409) { // Assuming 409 status code for conflict/duplicate
-        Swal.fire({
-          icon: 'error',
-          title: 'Already Submitted',
-          text: 'You have already submitted a demande. Please wait for processing.',
-        });
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Submission Failed',
-          text: 'Failed to submit your demande. Please try again.',
-        });
-      }
-      console.error("Failed to submit demande:", err.response?.data || err.message);
-    }
-  };
-
-  const customStyles = {
+const customStyles = {
     content: {
-      top: '50%',
-      left: '50%',
-      right: 'auto',
-      bottom: 'auto',
-      marginRight: '-50%',
-      transform: 'translate(-50%, -50%)',
-      width: '40%',
-      border: '1px solid #ccc',
-      background: '#fff',
-      overflow: 'auto',
-      borderRadius: '10px',
-      outline: 'none',
-      padding: '20px',
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
+        border: '1px solid #ccc',
+        background: '#fff',
+        overflow: 'auto',
+        borderRadius: '4px',
+        outline: 'none',
+        padding: '20px',
+        width: '520px',  // Adjust width as needed
     },
     overlay: {
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      backdropFilter: 'blur(3px)',
-    },
-  };
+        backgroundColor: 'rgba(0, 0, 0, 0.75)'
+    }
+};
 
-  return (
-    <Modal
-      isOpen={isOpen}
-      onRequestClose={onRequestClose}
-      style={customStyles}
-      contentLabel="Demande Modal"
-    >
-      {error && <p className="error">{error}</p>}
-      <div>
-        <h2>{isAdherant ? "Annulation du contrat adhérant" : "Demande pour devenir un adhérant"}</h2>
-        {userInfo && (
-          <>
-            <img 
-            src={userInfo.photo ? `http://localhost:5000/${userInfo.photo}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'} 
-            alt="User" 
-            className="modal-user-photo"  />
-            
-            <h3>{userInfo.nom} {userInfo.prenom}</h3>
-            <p>{userInfo.email}</p>
-          </>
-        )}
-        <textarea
-          placeholder="Entrez la description de votre demande ici"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        ></textarea>
-        <div className="terms-container" style={{ height: '150px', overflowY: 'scroll', marginBottom: '10px', border: '1px solid #ccc', padding: '10px', borderRadius: '5px' }}>
-          <p>Termes et Conditions d'Utilisation
+const DemandeModal = ({ isOpen, onRequestClose, userId }) => {
+    const [description, setDescription] = useState('');
+    const [userInfo, setUserInfo] = useState(null);
+    const [isAdherant, setIsAdherant] = useState(false);
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
 
-En cochant cette case, vous acceptez les termes et conditions suivants : Vous vous engagez à utiliser cette plateforme dans le respect des lois et règlements en vigueur. Vous garantissez la véracité et l'exactitude des informations fournies lors de vos demandes. Notre service se réserve le droit de modifier, à tout moment et sans préavis, les services proposés ainsi que les présents termes et conditions. Il est de votre responsabilité de consulter régulièrement ces termes et conditions pour vous tenir informé des éventuelles modifications. Toute utilisation du service après modification des termes et conditions vaut acceptation de votre part des nouvelles conditions. Nous nous engageons à protéger vos données personnelles et à respecter votre vie privée conformément à notre politique de confidentialité. Vous avez le droit de demander l'accès, la rectification ou la suppression de vos données personnelles en nous contactant directement.
+    useEffect(() => {
+        const token = localStorage.getItem('login');
+        const storedUserId = JSON.parse(localStorage.getItem('userId'));
 
-Ces termes et conditions sont régis et interprétés conformément aux lois du pays de l'opérateur de la plateforme. Tout litige relatif à l'interprétation ou à l'exécution de ces termes et conditions sera soumis à la juridiction exclusive des tribunaux du pays de l'opérateur.
+        if (token && storedUserId) {
+            const fetchData = async () => {
+                try {
+                    const headers = { Authorization: `Bearer ${JSON.parse(token).token}` };
 
-En acceptant ces termes, vous confirmez avoir lu, compris et accepté d'être lié par ces termes et conditions, y compris toute modification future. Si vous n'êtes pas d'accord avec ces termes et conditions, vous ne devez pas utiliser ce service.
-</p>
-          {/* Add more paragraphs as needed */}
-        </div>
-        <label>
-          <input
-            type="checkbox"
-            checked={acceptedTerms}
-            onChange={(e) => setAcceptedTerms(e.target.checked)}
-          />
-          J'ai lu et j'accepte les termes et conditions
-        </label>
-        <div className="modal-actions">
-          <button onClick={onRequestClose}>Annuler</button>
-          <button onClick={handleDemande} disabled={!acceptedTerms}>Soumettre la Demande</button>
-        </div>
-      </div>
-    </Modal>
-  );
+                    const userResponse = await axios.get(`http://localhost:5000/profil/${storedUserId}`, { headers });
+                    setUserInfo(userResponse.data.user);
+
+                    const adherantResponse = await axios.get(`http://localhost:5000/isAdherant`, { headers });
+                    setIsAdherant(adherantResponse.data.adherant);
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                    Swal.fire('Error', 'Failed to fetch data.', 'error');
+                }
+            };
+            fetchData();
+        }
+    }, [isOpen]);
+
+    const handleDemande = async () => {
+        if (!description.trim()) {
+            Swal.fire('Validation Error', 'Please enter a description for your demande.', 'info');
+            return;
+        }
+        if (!acceptedTerms) {
+            Swal.fire('Terms and Conditions', 'You must accept the terms and conditions to proceed.', 'warning');
+            return;
+        }
+
+        const token = JSON.parse(localStorage.getItem('login'))?.token;
+        try {
+            await axios.post('http://localhost:5000/demandes', { userId, description }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            Swal.fire('Success', 'Your demande has been successfully submitted.', 'success').then(result => {
+                if (result.isConfirmed || result.isDismissed) {
+                    onRequestClose();
+                }
+            });
+        } catch (error) {
+            Swal.fire('Failed', 'Your demande could not be submitted. Please try again.', 'error');
+            console.error("Failed to submit demande:", error.response?.data || error.message);
+        }
+    };
+
+    return (
+        <Modal
+            isOpen={isOpen}
+            onRequestClose={onRequestClose}
+            style={customStyles}
+            contentLabel="Demande Modal"
+        >
+            <Typography variant="h6" component="h2">
+                {isAdherant ? "Annulation du contrat adhérant" : "Demande pour devenir un adhérant"}
+            </Typography>
+            {userInfo && (
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 2 }}>
+                    <Avatar src={userInfo.photo ? `http://localhost:5000/${userInfo.photo}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'} alt="User" sx={{ width: 56, height: 56, marginBottom: 2 }} />
+                    <Typography variant="subtitle1">{userInfo.nom} {userInfo.prenom}</Typography>
+                    <Typography variant="body2">{userInfo.email}</Typography>
+                </Box>
+            )}
+            <TextField
+                fullWidth
+                multiline
+                rows={4}
+                placeholder="Entrez la description de votre demande ici"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                margin="normal"
+            />
+            <Typography component="div" variant="body2" sx={{ maxHeight: '150px', overflowY: 'auto', border: '1px solid #ccc', padding: 2, borderRadius: 1, my: 2 }}>
+                <strong>Terms and Conditions:</strong> By checking this box, you agree to the terms and conditions set forth by our platform. These include, but are not limited to, the following:
+                <ol>
+                    <li>Adherence to local and international laws.</li>
+                    <li>Accurate and truthful declaration of information.</li>
+                    <li>Understanding that terms may change without notice.</li>
+                    <li>Your data will be handled per our privacy policy.</li>
+                </ol>
+            </Typography>
+            <FormControlLabel
+                control={<Checkbox checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} />}
+                label="I have read and accept the terms and conditions."
+            />
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                <Button onClick={onRequestClose}>Cancel</Button>
+                <Button onClick={handleDemande} disabled={!acceptedTerms} variant="contained" color="primary">Submit</Button>
+            </Box>
+        </Modal>
+    );
 };
 
 export default DemandeModal;
