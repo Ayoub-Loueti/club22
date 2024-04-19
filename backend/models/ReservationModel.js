@@ -41,6 +41,9 @@ const ReservationModel = sequelize.define(
     prix_totale: {
       type: DataTypes.FLOAT,
     },
+    typeR: {
+      type: DataTypes.ENUM('hotel', 'autre'),
+    },
   },
   {
     tableName: 'reservation',

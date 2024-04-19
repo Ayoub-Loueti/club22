@@ -138,7 +138,8 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
                 nbr_enfants: room.children,
                 prix: room.prix
             })) : [],
-            nombre: type !== 'hotel' ? nombre : undefined,
+            nombre: type !== 'hotel' ? nombre : rooms.length,
+            typeR: type ,
             prix_totale: type === 'hotel' ? rooms.reduce((acc, room) => acc + room.prix, 0).toFixed(2) : (nombre * calculateRoomPrice(1, 0, prix, isAdherant)).toFixed(2)
         };
 

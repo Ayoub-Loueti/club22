@@ -10,7 +10,7 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs');
 
 exports.createReservation = async (req, res) => {
-  const { id_offre, nombre, prix_totale, hotels } = req.body; // Extract hotels array from request body
+  const { id_offre, nombre, prix_totale, hotels ,typeR} = req.body; // Extract hotels array from request body
   const userId = req.userId;
 
   if (nombre <= 0 || prix_totale <= 0) {
@@ -50,6 +50,7 @@ exports.createReservation = async (req, res) => {
       prix_totale,
       date_reservation: new Date(),
       etat: 'en_cours',
+      typeR,
     });
 
     // Create associated hotel records
@@ -361,29 +362,3 @@ exports.generateReservationPDF = async (req, res) => {
 };
 
 module.exports = exports;
-
-/*exports.createHotelReservation = async (req, res) => {
-  const { id_reservation, nbr_adults, nbr_enfants, prix } = req.body;
-
-  try {
-      const reservationExists = await Reservation.findByPk(id_reservation);
-      if (!reservationExists) {
-          return res.status(404).json({ message: "Reservation not found" });
-      }
-
-      const newHotel = await Hotel.create({
-          id_reservation,
-          nbr_adults,
-          nbr_enfants,
-          prix
-      });
-
-      return res.status(201).json({
-          message: "Hotel reservation created successfully",
-          hotel: newHotel
-      });
-  } catch (error) {
-      console.error('Error creating hotel reservation:', error);
-      res.status(500).json({ message: 'Failed to create hotel reservation', error: error.message });
-  }
-};*/
