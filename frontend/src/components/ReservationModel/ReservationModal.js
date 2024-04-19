@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Modal from 'react-modal';
-import './ReservationModal.css';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, IconButton, Avatar, TextField } from '@mui/material';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-Modal.setAppElement('#root');
-
-const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete, isAdherant, remise }) => {
+const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete }) => {
     const incrementAdults = () => {
-        if (room.adults < 4) {
-            updateRoom(room.id, 'adults', room.adults + 1);
-        }
+        updateRoom(room.id, 'adults', room.adults + 1);
     };
 
     const decrementAdults = () => {
@@ -17,30 +15,57 @@ const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete, isAdherant, remi
     };
 
     const incrementChildren = () => {
-        if (room.children < 3) {
-            updateRoom(room.id, 'children', room.children + 1);
-        }
+        updateRoom(room.id, 'children', room.children + 1);
     };
 
     const decrementChildren = () => {
         updateRoom(room.id, 'children', Math.max(0, room.children - 1));
     };
 
-    const calculateDisplayPrice = (price) => {
-        if (isAdherant) {
-            return (price * (1 - remise / 100)).toFixed(2);
-        }
-        return price.toFixed(2);
-    };
-
     return (
-        <div className="room-details">
-            <h3>Room {room.id}</h3>
-            <p>Adult(s): <button onClick={decrementAdults} disabled={room.adults <= 1}>-</button> {room.adults} <button onClick={incrementAdults} disabled={room.adults >= 4}>+</button></p>
-            <p>Child(ren): <button onClick={decrementChildren} disabled={room.children <= 0}>-</button> {room.children} <button onClick={incrementChildren} disabled={room.children >= 3}>+</button></p>
-            <p>Room price: {calculateDisplayPrice(room.prix)} DT</p>
-            {canDelete && <button onClick={() => deleteRoom(room.id)}>Remove Room</button>}
-        </div>
+        <Box sx={{ mb: 2, bgcolor: 'background.paper', p: 2, borderRadius: 'borderRadius', display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography variant="h6" gutterBottom component="div">
+                    Chambre {room.id}
+                </Typography>
+                {canDelete && (
+                    <IconButton onClick={() => deleteRoom(room.id)} color="error">
+                        <DeleteIcon />
+                    </IconButton>
+                )}
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <IconButton onClick={decrementAdults} disabled={room.adults <= 1} color="primary">
+                    <RemoveCircleOutlineIcon />
+                </IconButton>
+                <TextField
+                    size="small"
+                    value={room.adults}
+                    inputProps={{ readOnly: true, style: { textAlign: 'center' } }}
+                    sx={{ width: '60px', mx: 1 }}
+                />
+                <IconButton onClick={incrementAdults} disabled={room.adults >= 4} color="primary">
+                    <AddCircleOutlineIcon />
+                </IconButton>
+                <Typography sx={{ ml: 2 }}>Adult(s)</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <IconButton onClick={decrementChildren} disabled={room.children <= 0} color="primary">
+                    <RemoveCircleOutlineIcon />
+                </IconButton>
+                <TextField
+                    size="small"
+                    value={room.children}
+                    inputProps={{ readOnly: true, style: { textAlign: 'center' } }}
+                    sx={{ width: '60px', mx: 1 }}
+                />
+                <IconButton onClick={incrementChildren} disabled={room.children >= 3} color="primary">
+                    <AddCircleOutlineIcon />
+                </IconButton>
+                <Typography sx={{ ml: 2 }}>Enfants</Typography>
+            </Box>
+            <Typography variant="body1">Prix de chambre : {room.prix.toFixed(2)} DT</Typography>
+        </Box>
     );
 };
 
@@ -54,7 +79,7 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
 
         let totalCost = basePrice + priceIncrease;
         if (isAdherant) {
-            totalCost -= totalCost * (remise / 100);
+            totalCost *= (1 - remise / 100);
         }
 
         return totalCost;
@@ -133,52 +158,21 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
     const incrementNombre = () => setNombre(nombre + 1);
     const decrementNombre = () => setNombre(Math.max(1, nombre - 1));
 
-    const customStyles = {
-        content: {
-            top: '50%',
-            left: '50%',
-            right: 'auto',
-            bottom: 'auto',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-            width: '40%',
-            border: '1px solid #ccc',
-            background: '#fff',
-            overflow: 'auto',
-            borderRadius: '10px',
-            outline: 'none',
-            padding: '20px',
-        },
-        overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            backdropFilter: 'blur(3px)',
-        },
-    };
-
     return (
-        <Modal
-            isOpen={isOpen}
-            onRequestClose={onRequestClose}
-            style={customStyles}
-            contentLabel="Reservation Modal"
-        >
-            <div className="modal-user-info">
+        <Dialog open={isOpen} onClose={onRequestClose} maxWidth="sm" fullWidth>
+            <DialogTitle>Reservation Details</DialogTitle>
+            <DialogContent dividers>
                 {userInfo && (
-                    <>
-                        <img
-                            src={userInfo.photo ? `http://localhost:5000/${userInfo.photo}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'}
-                            alt="User"
-                            className="modal-user-photo"
-                        />
-                        <div className="modal-user-details">
-                            <p>Nom: {userInfo.nom}</p>
-                            <p>Prénom: {userInfo.prenom}</p>
-                            <p>Email: {userInfo.email}</p>
-                        </div>
-                    </>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                        <Avatar src={userInfo.photo ? `http://localhost:5000/${userInfo.photo}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'} alt="User" sx={{ width: 56, height: 56, mr: 2 }} />
+                        <Box>
+                            <Typography variant="subtitle1">{userInfo.nom} {userInfo.prenom}</Typography>
+                            <Typography variant="body2">{userInfo.email}</Typography>
+                        </Box>
+                    </Box>
                 )}
-            </div>
-            {type === 'hotel' ? (
+                <Box sx={{ maxHeight: '40vh', overflowY: 'auto' }}>
+                {type === 'hotel' ? (
                 rooms.map((room, index) => (
                     <RoomDetails
                         key={room.id}
@@ -189,17 +183,38 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
                     />
                 ))
             ) : (
-                <div className="nombre-people">
-                    <p>Nombre de personnes: <button onClick={decrementNombre}>-</button> {nombre} <button onClick={incrementNombre}>+</button></p>
-                </div>
+                <>
+                <br></br>
+                <TextField
+                            label="Nombre des personnes"
+                            type="number"
+                            InputProps={{
+                                endAdornment: (
+                                    <React.Fragment>
+                                        <IconButton onClick={decrementNombre}><RemoveCircleOutlineIcon /></IconButton>
+                                        <IconButton onClick={incrementNombre}><AddCircleOutlineIcon /></IconButton>
+                                    </React.Fragment>
+                                )
+                            }}
+                            value={nombre}
+                            variant="outlined"
+                            fullWidth
+                        />
+                        </>
             )}
-            {type === 'hotel' && <button onClick={handleAddRoom}>+ Add another room</button>}
-            <p>Total Price: {type === 'hotel' ? rooms.reduce((acc, room) => acc + room.prix, 0).toFixed(2) : (nombre * calculateRoomPrice(1, 0, prix, isAdherant)).toFixed(2)} DT</p>
-            <div className="modal-actions">
-                <button onClick={onRequestClose}>Cancel</button>
-                <button onClick={handleReservation}>Reserve</button>
-            </div>
-        </Modal>
+            </Box>
+                <Typography variant="h6" sx={{ mt: 2 }}>Prix totale: {type === 'hotel' ? rooms.reduce((acc, room) => acc + room.prix, 0).toFixed(2) : (nombre * calculateRoomPrice(1, 0, prix, isAdherant)).toFixed(2)} DT</Typography>
+                {type === 'hotel' && (
+                    <Button startIcon={<AddCircleOutlineIcon />} onClick={handleAddRoom} sx={{ mt: 2 }}>
+                        Ajouter une chambre
+                    </Button>
+                )}
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={onRequestClose}>Annuler</Button>
+                <Button onClick={handleReservation} variant="contained" color="primary">Reserve</Button>
+            </DialogActions>
+        </Dialog>
     );
 };
 

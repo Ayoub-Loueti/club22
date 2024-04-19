@@ -360,7 +360,9 @@ exports.generateReservationPDF = async (req, res) => {
   }
 };
 
-exports.createHotelReservation = async (req, res) => {
+module.exports = exports;
+
+/*exports.createHotelReservation = async (req, res) => {
   const { id_reservation, nbr_adults, nbr_enfants, prix } = req.body;
 
   try {
@@ -384,7 +386,4 @@ exports.createHotelReservation = async (req, res) => {
       console.error('Error creating hotel reservation:', error);
       res.status(500).json({ message: 'Failed to create hotel reservation', error: error.message });
   }
-};
-
-
-module.exports = exports;
+};*/

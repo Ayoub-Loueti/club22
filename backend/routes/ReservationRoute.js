@@ -21,7 +21,7 @@ router.put('/updateReservation/:id', authenticate, reservationController.updateR
 
 router.get('/reservation/pdf/:id', authenticate, reservationController.generateReservationPDF);
 
-router.post('/hotelReservation', authenticate, reservationController.createHotelReservation);
+//router.post('/hotelReservation', authenticate, reservationController.createHotelReservation);
 
 module.exports = router;
 
