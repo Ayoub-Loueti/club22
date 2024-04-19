@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './collaborateurPage.css';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
-import { useParams } from 'react-router-dom'; // Import useParams
+import { useParams } from 'react-router-dom'; // Continue using useParams to capture URL params
 import OffreEmploye from './OffreEmploye';
 import OffreCollabEmploye from './OffreCollabEmploye';
+import NavbarHaut from '../../components/navbar/navbarHaut';
 
 function CollaborateurPage() {
   const [collaborateurs, setCollaborateurs] = useState([]);
@@ -29,7 +30,7 @@ function CollaborateurPage() {
           );
           setCollaborateurs(response.data);
           // Check if collabId is in the response data and select it
-          if (response.data.some(collab => collab.id_collaborateur.toString() === collabId)) {
+          if (collabId && response.data.some(collab => collab.id_collaborateur.toString() === collabId)) {
             setSelectedCollaborateurId(collabId);
             setShowOffreCollab(true);
           }
@@ -44,6 +45,7 @@ function CollaborateurPage() {
   const handleCollaboratorClick = (collaborateurId) => {
     setSelectedCollaborateurId(collaborateurId);
     setShowOffreCollab(true);
+    window.history.pushState({}, '', `/collabPage/${collaborateurId}`); // Manually update URL without useHistory
   };
 
   const handlePrevious = () => {
@@ -58,48 +60,62 @@ function CollaborateurPage() {
     }
   };
 
+  const handleViewAllOffers = () => {
+    setShowOffreCollab(false);
+    setSelectedCollaborateurId(null);
+    window.history.pushState({}, '', '/collabPage'); // Manually update URL to general offers view
+  };
+
   return (
-    <div>
-      <button className="retour-btn" onClick={() => window.history.back()}>
-        <FaArrowLeft /> Retour
-      </button>
-      <div className="PageCollaborateur-container">
-        <div className="collabora-scroll-container">
-          {collaborateurs
-            .slice(startIndex, startIndex + 6)
-            .map((collaborateur, index) => (
-              <div
-                key={index}
-                className={`collab-card ${selectedCollaborateurId === collaborateur.id_collaborateur.toString() ? 'active' : ''}`}
-                onClick={() => handleCollaboratorClick(collaborateur.id_collaborateur.toString())}
-              >
-                <img
-                  src={`http://localhost:5000/${collaborateur.logo}`}
-                  alt={collaborateur.nom}
-                />
-                <div className="collab-card-title">{collaborateur.nom}</div>
-              </div>
-            ))}
-        </div>
-
-        <div className="navig-buttons">
-          <FaArrowLeft
-            onClick={handlePrevious}
-            className="nav-icon"
-          />
-          <FaArrowRight
-            onClick={handleNext}
-            className="nav-icon"
-          />
-        </div>
-
-        {showOffreCollab ? (
-          <OffreCollabEmploye collaborateurId={selectedCollaborateurId} />
-        ) : (
-          <OffreEmploye />
+    <>
+      <NavbarHaut />
+      <div>
+        <button className="retour-btn" onClick={() => window.history.back()}>
+          <FaArrowLeft /> Retour
+        </button>
+        {showOffreCollab && (
+          <button className="voir-tous-btn" onClick={handleViewAllOffers}>
+            Voir tous les offres
+          </button>
         )}
+        <div className="PageCollaborateur-container">
+          <div className="collabora-scroll-container">
+            {collaborateurs
+              .slice(startIndex, startIndex + 6)
+              .map((collaborateur, index) => (
+                <div
+                  key={index}
+                  className={`collab-card ${selectedCollaborateurId === collaborateur.id_collaborateur.toString() ? 'active' : ''}`}
+                  onClick={() => handleCollaboratorClick(collaborateur.id_collaborateur.toString())}
+                >
+                  <img
+                    src={`http://localhost:5000/${collaborateur.logo}`}
+                    alt={collaborateur.nom}
+                  />
+                  <div className="collab-card-title">{collaborateur.nom}</div>
+                </div>
+              ))}
+          </div>
+
+          <div className="navig-buttons">
+            <FaArrowLeft
+              onClick={handlePrevious}
+              className="nav-icon"
+            />
+            <FaArrowRight
+              onClick={handleNext}
+              className="nav-icon"
+            />
+          </div>
+
+          {showOffreCollab ? (
+            <OffreCollabEmploye collaborateurId={selectedCollaborateurId} />
+          ) : (
+            <OffreEmploye />
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

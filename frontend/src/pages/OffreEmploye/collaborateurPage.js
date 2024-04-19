@@ -4,12 +4,13 @@ import './collaborateurPage.css';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import OffreEmploye from './OffreEmploye';
 import OffreCollabEmploye from './OffreCollabEmploye';
+import NavbarHaut from '../../components/navbar/navbarHaut';
 
 function CollaborateurPage() {
   const [collaborateurs, setCollaborateurs] = useState([]);
   const [selectedCollaborateurId, setSelectedCollaborateurId] = useState(null);
   const [startIndex, setStartIndex] = useState(0);
-  const [showOffreCollab, setShowOffreCollab] = useState(false); // State variable to control which component to render
+  const [showOffreCollab, setShowOffreCollab] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('login');
@@ -18,11 +19,7 @@ function CollaborateurPage() {
         try {
           const response = await axios.get(
             'http://localhost:5000/allCollaborateursEmploye',
-            {
-              headers: {
-                Authorization: `Bearer ${JSON.parse(token).token}`,
-              },
-            }
+            { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } }
           );
           setCollaborateurs(response.data);
         } catch (error) {
@@ -34,9 +31,8 @@ function CollaborateurPage() {
   }, []);
 
   const handleCollaboratorClick = (collaborateurId) => {
-    console.log('Selected collaborateurId:', collaborateurId);
     setSelectedCollaborateurId(collaborateurId);
-    setShowOffreCollab(true); // Switch to render OffreCollabEmploye component
+    setShowOffreCollab(true);
   };
 
   const handlePrevious = () => {
@@ -51,50 +47,48 @@ function CollaborateurPage() {
     }
   };
 
+  const handleViewAllOffers = () => {
+    setShowOffreCollab(false);
+    setSelectedCollaborateurId(null);
+  };
+
   return (
-    <div>
-      <button className="retour-btn" onClick={() => window.history.back()}>
-        <FaArrowLeft /> Retour
-      </button>
-      <div className="PageCollaborateur-container">
-        <div className="collabora-scroll-container">
-          {collaborateurs
-            .slice(startIndex, startIndex + 6)
-            .map((collaborateur, index) => (
+    <>
+      <NavbarHaut />
+      <div>
+        <button className="retour-btn" onClick={handleViewAllOffers}>
+          <FaArrowLeft /> Retour
+        </button>
+        {showOffreCollab && (
+          <button className="voir-tous-btn" onClick={handleViewAllOffers}>
+            Voir tous les offres
+          </button>
+        )}
+        <div className="PageCollaborateur-container">
+          <div className="collabora-scroll-container">
+            {collaborateurs.slice(startIndex, startIndex + 6).map((collaborateur, index) => (
               <div
                 key={index}
                 className={`collab-card ${selectedCollaborateurId === collaborateur.id_collaborateur ? 'active' : ''}`}
                 onClick={() => handleCollaboratorClick(collaborateur.id_collaborateur)}
               >
-                <img
-                  src={`http://localhost:5000/${collaborateur.logo}`}
-                  alt={collaborateur.nom}
-                />
+                <img src={`http://localhost:5000/${collaborateur.logo}`} alt={collaborateur.nom} />
                 <div className="collab-card-title">{collaborateur.nom}</div>
               </div>
             ))}
+          </div>
+          <div className="navig-buttons">
+            <FaArrowLeft onClick={handlePrevious} className="nav-icon" disabled={startIndex === 0} />
+            <FaArrowRight onClick={handleNext} className="nav-icon" disabled={startIndex + 4 >= collaborateurs.length} />
+          </div>
+          {showOffreCollab ? (
+            <OffreCollabEmploye collaborateurId={selectedCollaborateurId} />
+          ) : (
+            <OffreEmploye />
+          )}
         </div>
-
-        <div className="navig-buttons">
-          <FaArrowLeft
-            onClick={handlePrevious}
-            disabled={startIndex === 0}
-            className="nav-icon"
-          />
-          <FaArrowRight
-            onClick={handleNext}
-            disabled={startIndex + 4 >= collaborateurs.length}
-            className="nav-icon"
-          />
-        </div>
-
-        {showOffreCollab ? (
-          <OffreCollabEmploye collaborateurId={selectedCollaborateurId} />
-        ) : (
-          <OffreEmploye />
-        )}
       </div>
-    </div>
+    </>
   );
 }
 

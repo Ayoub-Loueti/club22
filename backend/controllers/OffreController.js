@@ -297,7 +297,7 @@ exports.getAllOffresCollab = async (req, res) => {
     });
 
     if (!offres.length) {
-      return res.status(404).json({ message: 'No offres found for the collaborator' });
+      return res.status(204).json({ message: 'No offres found for the collaborator' });
     }
 
     const offreDetails = await Promise.all(

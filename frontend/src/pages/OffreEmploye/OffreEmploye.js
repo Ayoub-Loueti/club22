@@ -1,7 +1,9 @@
+//tous les offres
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './OffreEmploye.css'; 
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../../components/navbar/navbar';
 
 function OffreEmploye() {
   const [offres, setOffres] = useState([]);
@@ -54,6 +56,8 @@ function OffreEmploye() {
        return () => clearInterval(intervalId);
      }, []);
   return (
+    <>
+    <Navbar />
     <div className="offre-employee-container">
       <h1 className="offre-employee-title">Les Offres disponibles</h1>
       <div className="offre-employee-cards-container">
@@ -77,6 +81,7 @@ function OffreEmploye() {
         ))}
       </div>
     </div>
+    </>
   );
 }
 

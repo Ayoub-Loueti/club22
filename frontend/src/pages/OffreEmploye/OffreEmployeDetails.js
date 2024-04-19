@@ -5,6 +5,8 @@ import { useParams } from 'react-router-dom';
 import ReservationModal from '../../components/ReservationModel/ReservationModal';
 import AdherantModal from '../../components/AdherantModal/AdherantModal';
 import { FaArrowLeft } from 'react-icons/fa';
+import Navbar from '../../components/navbar/navbar';
+import NavbarHaut from '../../components/navbar/navbarHaut';
 
 function OffreEmployeDetails() {
   const [offre, setOffre] = useState(null);
@@ -68,6 +70,9 @@ function OffreEmployeDetails() {
   };
 
   return (
+    <>
+    <Navbar />
+      <NavbarHaut />
     <div>
       <button className="retour-btn" onClick={() => window.history.back()}>
         <FaArrowLeft /> Retour
@@ -133,6 +138,7 @@ function OffreEmployeDetails() {
         ))}
       </div>
     </div>
+    </>
   );
 }
 
