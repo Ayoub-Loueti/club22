@@ -361,4 +361,65 @@ exports.generateReservationPDF = async (req, res) => {
   }
 };
 
+exports.getMyReservations = async (req, res) => {
+  const userId = req.userId; // Extract user ID from the request, set by authentication middleware
+
+  try {
+      const employe = await Employe.findOne({
+          where: {
+              id_utilisateur: userId,
+          },
+      });
+
+      if (!employe) {
+          return res.status(404).json({ error: 'Employee not found' });
+      }
+
+      const reservations = await Reservation.findAll({
+          where: {
+              id_employe: employe.id_employe,
+          },
+          include: [{
+              model: Offre,
+              as: 'offre',
+              include: [{
+                  model: Collaborateur,
+                  as: 'collaborateur',
+              }]
+          }]
+      });
+
+      if (!reservations.length) {
+          return res.status(404).json({ message: 'No reservations found' });
+      }
+
+      const reservationsWithDetails = await Promise.all(reservations.map(async (reservation) => {
+          const reservationJson = reservation.toJSON();
+
+          if (reservation.typeR === 'hotel') {
+              // Fetch hotel details only for 'hotel' type reservations
+              const hotels = await Hotel.findAll({
+                  where: { id_reservation: reservation.id_reservation },
+                  attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix']
+              });
+
+              // Calculate total number of people (adults + children)
+              const totalPeople = hotels.reduce((acc, hotel) => acc + hotel.nbr_adults + hotel.nbr_enfants, 0);
+              reservationJson.nombreTotal = totalPeople;
+              reservationJson.rooms = hotels;
+          } else {
+              reservationJson.nombreTotal = reservation.nombre; // Use the simple count for 'autre' types
+          }
+
+          return reservationJson;
+      }));
+
+      res.status(200).json(reservationsWithDetails);
+  } catch (error) {
+      console.error('Error fetching reservations:', error);
+      res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+};
+
+
 module.exports = exports;

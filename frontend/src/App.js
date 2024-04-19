@@ -26,6 +26,7 @@ import CollaborateurPage from './pages/OffreEmploye/collaborateurPage';
 import OffreEmploye from './pages/OffreEmploye/OffreEmploye';
 import OffreEmployeDetails from './pages/OffreEmploye/OffreEmployeDetails';
 import CollaborateurClickPage from './pages/OffreEmploye/collabClickPage';
+import MyReservations from './pages/OffreEmploye/myReservation';
 
 function App() {
   return (
@@ -102,6 +103,15 @@ function App() {
                 <ProtectedRoute>
                   {' '}
                   <ListCollab />{' '}
+                </ProtectedRoute>
+              }
+            />
+              <Route
+              path="/MesReservations"
+              element={
+                <ProtectedRoute>
+                  {' '}
+                  <MyReservations />{' '}
                 </ProtectedRoute>
               }
             />
