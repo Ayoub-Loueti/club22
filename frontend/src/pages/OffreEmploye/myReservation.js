@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Grid, Card, CardContent, Typography, Avatar, Button, Box } from '@mui/material';
+import Swal from 'sweetalert2';
+import { Grid, Card, CardContent, Typography, Button, Box } from '@mui/material';
 import Navbar from '../../components/navbar/navbar';
 import NavbarHaut from '../../components/navbar/navbarHaut';
 
@@ -9,29 +10,68 @@ const MyReservations = () => {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        // Fetch reservations from the backend
+        const token = JSON.parse(localStorage.getItem('login'))?.token;
         const fetchReservations = async () => {
-            const token = JSON.parse(localStorage.getItem('login'))?.token;
-
             try {
                 const response = await axios.get('http://localhost:5000/myReservations', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { Authorization: `Bearer ${token}` },
                 });
                 setReservations(response.data);
             } catch (err) {
-                if (err.response?.status === 401) {
-                    setError('You are not authorized to view this data.');
-                } else {
-                    setError('An error occurred while fetching reservations.');
-                }
+                setError('An error occurred while fetching reservations.');
                 console.error('Error fetching reservations:', err);
             }
         };
-
         fetchReservations();
     }, []);
+
+    const confirmReservation = async (id) => {
+        const token = JSON.parse(localStorage.getItem('login'))?.token;
+        try {
+            const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to confirm this reservation?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, confirm it!',
+                cancelButtonText: 'No, cancel!',
+                reverseButtons: true
+            });
+            if (result.isConfirmed) {
+                await axios.put(`http://localhost:5000/reservation/${id}/confirmer`, {}, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                Swal.fire('Confirmed!', 'The reservation has been confirmed.', 'success');
+                setReservations(reservations.map(r => r.id_reservation === id ? { ...r, etat: 'confirmed' } : r));
+            }
+        } catch (err) {
+            Swal.fire('Failed!', 'There was an error confirming the reservation.', 'error');
+        }
+    };
+
+    const cancelReservation = async (id) => {
+        const token = JSON.parse(localStorage.getItem('login'))?.token;
+        try {
+            const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to cancel this reservation?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, cancel it!',
+                cancelButtonText: 'No, keep it',
+                reverseButtons: true
+            });
+            if (result.isConfirmed) {
+                await axios.put(`http://localhost:5000/reservation/${id}/annuler`, {}, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                Swal.fire('Cancelled!', 'The reservation has been cancelled.', 'success');
+                setReservations(reservations.map(r => r.id_reservation === id ? { ...r, etat: 'cancelled' } : r));
+            }
+        } catch (err) {
+            Swal.fire('Failed!', 'There was an error cancelling the reservation.', 'error');
+        }
+    };
 
     return (
         <>
@@ -48,13 +88,13 @@ const MyReservations = () => {
     <Box
       component="img"
       sx={{
-        width: 150, // Set a fixed width for the image
-        height: 'auto',  // Height will be determined by the aspect ratio of the image
+        width: 150,
+        height: 'auto',
         maxWidth: '100%',
-        maxHeight: 150, // Maximum height to match the card height
-        objectFit: 'cover', // This will cover the box area, you can use 'contain' if you don't want to crop the image
+        maxHeight: 150,
+        objectFit: 'cover',
       }}
-      src={`http://localhost:5000/${reservation.offre.images[0]}`} // Adjust according to your data structure
+      src={`http://localhost:5000/${reservation.offre.images[0]}`}
       alt="Offre"
     />
     {/* Content box */}
@@ -64,15 +104,25 @@ const MyReservations = () => {
         <Typography variant="body2">{reservation.offre.collaborateur.nom}</Typography>
         <Typography variant="body1" color="primary">{reservation.prix_totale} TND</Typography>
       </Box>
-      <Box display="flex" justifyContent="flex-end">
-        <Button size="small" variant="contained" sx={{ backgroundColor: '#5CA163', '&:hover': { backgroundColor: '#4B8A50' }, mr: 1 }}>Confirmer</Button>
-        <Button size="small" variant="contained" sx={{ backgroundColor: '#E3D97F', '&:hover': { backgroundColor: '#D0C170' }, mr: 1 }}>Modifier</Button>
-        <Button size="small" variant="contained" sx={{ backgroundColor: '#C50F10', '&:hover': { backgroundColor: '#B00C0E' } }}>Annuler</Button>
-      </Box>
+      {/* Conditionally render the buttons for 'en_cours' state */}
+      {reservation.etat === 'en_cours' && (
+        <Box display="flex" justifyContent="flex-end">
+          <Button size="small" variant="contained" 
+          sx={{ backgroundColor: '#5CA163', '&:hover': { backgroundColor: '#4B8A50' }, mr: 1 }} 
+          onClick={() => confirmReservation(reservation.id_reservation)} >
+            Confirmer
+            </Button>
+          <Button size="small" variant="contained" sx={{ backgroundColor: '#E3D97F', '&:hover': { backgroundColor: '#D0C170' }, mr: 1 }}>Modifier</Button>
+          <Button size="small" variant="contained" 
+          sx={{ backgroundColor: '#C50F10', '&:hover': { backgroundColor: '#B00C0E' } }}
+          onClick={() => cancelReservation(reservation.id_reservation)}>
+            Annuler
+            </Button>
+        </Box>
+      )}
     </Box>
   </Card>
 ))}
-
                         </CardContent>
                     </Card>
                 </Grid>

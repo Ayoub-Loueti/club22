@@ -406,13 +406,23 @@ exports.getMyReservations = async (req, res) => {
       return offerWithImages;
     }));
 
+    // Sort reservations, putting 'en_cours' at the beginning
+    reservations.sort((a, b) => {
+      if (a.etat === 'en_cours' && b.etat !== 'en_cours') {
+        return -1;
+      }
+      if (a.etat !== 'en_cours' && b.etat === 'en_cours') {
+        return 1;
+      }
+      return 0; // If both are 'en_cours' or both are not, keep original order
+    });
+
     res.status(200).json(reservations);
   } catch (error) {
     console.error('Error fetching reservations:', error);
     res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 };
-
 
 
 module.exports = exports;
