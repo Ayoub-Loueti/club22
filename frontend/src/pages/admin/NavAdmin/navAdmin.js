@@ -12,6 +12,15 @@ import {
   faBars,
   faUserPlus, 
   faList,
+  faUserCircle,
+  faUserAlt,
+  faUserAltSlash,
+  faUserAstronaut,
+  faUserFriends,
+  faUsersViewfinder,
+  faUserCog,
+  faUserShield,
+  faUsersRectangle,
 } from '@fortawesome/free-solid-svg-icons';
 
 function NavAdmin() {
@@ -62,13 +71,22 @@ function NavAdmin() {
 
     const icons = [
       { icon: faHouse, label: 'Accueil', path: '/Home' },
-      { icon: faUser, label: 'Utilisateurs', path: `/tousLesUtilisateurs` },
+      {
+        icon: faUserGroup,
+        label: 'Utilisateurs',
+        path: `/tousLesUtilisateurs`,
+      },
       { icon: faCalendar, label: 'Offres', path: '/OffreAdmin' },
       { icon: faUserPlus, label: 'Collaborateurs', path: '/listCollab' },
       {
         icon: faList,
         label: 'Details Collaborateurs',
         path: '/listCollaborateur',
+      },
+      {
+        icon: faUsersRectangle,
+        label: 'Demandes Adhésion',
+        path: '/adminAdherant',
       },
     ];
 

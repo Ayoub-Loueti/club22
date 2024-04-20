@@ -1,0 +1,141 @@
+.admin-panel-card {
+  display: flex;
+  justify-content: space-between;
+  width: 70%;
+  padding: 20px;
+  margin-bottom: -4%;
+  background-color: white;
+  border-radius: 10px;
+  margin-top: 5%;
+margin-left: 13%;
+}
+
+.profile-info-adh {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centrer horizontalement */
+}
+
+.profile-info-adh p {
+  margin-bottom: 5px;
+}
+
+.profile-pictureADH {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.admin-panel-card2-adh {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center; /* Centrer horizontalement */
+  width: 65%;
+  padding: 20px;
+  background-color: #d5d5d5;
+  border-radius: 20px;
+}
+
+.admin-panel-card1-adh {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center; /* Centrer horizontalement */
+  width: 25%;
+  padding: 20px;
+  background-color: #d5d5d5;
+  border-radius: 20px;
+}
+
+.profile-info-adh p:first-child {
+  text-transform: uppercase; /* Convertir en majuscules */
+  color: #414141;
+  font-weight: bold; /* Texte en gras */
+  font-size: 1.2em; /* Taille de police plus grande */
+}
+
+.profile-info-adh p:nth-child(2) {
+  color: #4682b4; /* Couleur bleue */
+}
+
+.demande-info-adh {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px; /* Espacement vers le haut */
+}
+
+.demande-info-adh p {
+  margin-bottom: 10px; /* Espacement entre les paragraphes */
+}
+
+.demande-info-adh p:nth-child(1) {
+  color: #4682b4; /* Bleu */
+ 
+}
+
+.demande-info-adh p:nth-child(2) {
+  color: #191F43; 
+  font-weight: bold;
+  font-size: 16px;
+
+}
+
+/* Container for action buttons to ensure inline display */
+.action-buttons {
+    display: flex;
+    justify-content: right; /* Adjust this to 'start' if you want buttons closer to each other */
+    align-items: center;
+    width: 100%; /* Takes full width of the parent container */
+    padding-top: 10px; /* Space above the buttons */
+    margin-left: 220px;
+}
+
+.ButtonAdh {
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    border: none;
+    color: white;
+    text-align: center;
+    margin-right: 10px; /* Adds margin to the right of each button */
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.ButtonAdh-adh-approve {
+    background-color: #879EB9; /* Matching style for consistency */
+        margin-top: 40px;
+
+}
+ .ButtonAdh-download {
+    background-color: #191F43; /* Matching style for consistency */
+        margin-top: 40px;
+
+}
+.ButtonAdh-adh-approve:hover {
+    background-color: #B3C7D9; /* Darker on hover */
+    transform: scale(1.05);
+}
+ .ButtonAdh-download:hover {
+    background-color: #293082; 
+    transform: scale(1.05);
+}
+.ButtonAdh-adh-revoke {
+    background-color: #f44336; /* Red for revoke */
+    margin-top: 40px;
+        margin-left: 120px;
+
+}
+
+.ButtonAdh-adh-revoke:hover {
+    background-color: #da3830; /* Darker red on hover */
+    transform: scale(1.05);
+  
+}
+
+.hidden-for-pdf {
+  display: none !important;
+}

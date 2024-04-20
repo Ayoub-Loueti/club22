@@ -27,6 +27,7 @@ import OffreEmploye from './pages/OffreEmploye/OffreEmploye';
 import OffreEmployeDetails from './pages/OffreEmploye/OffreEmployeDetails';
 import CollaborateurClickPage from './pages/OffreEmploye/collabClickPage';
 import MyReservations from './pages/OffreEmploye/myReservation';
+import AdminPanel from './pages/admin/adherant/adminAdherant';
 
 function App() {
   return (
@@ -106,7 +107,16 @@ function App() {
                 </ProtectedRoute>
               }
             />
-              <Route
+            <Route
+              path="/adminAdherant"
+              element={
+                <ProtectedRoute>
+                  {' '}
+                  <AdminPanel />{' '}
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/MesReservations"
               element={
                 <ProtectedRoute>

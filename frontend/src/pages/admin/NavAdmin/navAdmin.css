@@ -7,7 +7,7 @@
   position: fixed;
   left: 0;
   top: 0;
-  background-color: #C50F10;
+  background-color: #e7e7e7;
   overflow: hidden;
   transition: width 0.3s ease; /* Transition for expanding the navbar */
   border-radius: 1%;
@@ -55,14 +55,14 @@ margin-left: -3px;}
   visibility: hidden; /* Hidden by default */
   opacity: 0;
   transition: visibility 0s, opacity 0.2s linear;
-   color: white;
+   color: #191f43;
    font-weight: bold;
 }
 
 .icon-and-tooltip:hover .adm-tooltip ,.icon-and-tooltip:hover .adm-navbar-icon {
   visibility: visible;
   opacity: 1;
-     color: #191f43;
+     color: #879EB9;
 
 }.adm-navbar.expanded .icon-and-tooltip:hover,
 .adm-navbar.expanded:hover .adm-tooltip {
@@ -129,7 +129,7 @@ margin-left: -3px;}
   width: 19px; /* Définit une largeur fixe pour toutes les icônes */
   height: 19px; /* Définit une hauteur fixe pour toutes les icônes */
   margin-bottom: 26px; /* Espacement vertical uniforme */
-  color: white; /* Assure la visibilité contre l'arrière-plan du navbar */
+  color: #191f43; /* Assure la visibilité contre l'arrière-plan du navbar */
   font-size: 23px;
   cursor: pointer;
 }

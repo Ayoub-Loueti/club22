@@ -241,42 +241,33 @@ exports.getAllEmploye = async (req, res) => {
 exports.updateEmployeAdherant = async (req, res) => {
   const { employeId } = req.params;
 
+  console.log(`Attempting to update employe with ID: ${employeId}`);
+
   try {
-    // Check if the user making the request is an administrator
-    const isAdmin = await Utilisateur.findOne({
-      where: {
-        id_utilisateur: req.userId,
-        type: 'admin',
-      },
-    });
-
-    if (!isAdmin) {
-      return res.status(403).json({
-        error: 'Permission denied. Only administrators can perform this action.',
-      });
-    }
-
-    // Find the employe by ID
-    const employe = await Employe.findOne({
-      where: {
-        id_utilisateur: employeId,
-      },
-    });
+    const employe = await Employe.findByPk(employeId);
+    console.log('Employe details:', employe);
 
     if (!employe) {
+      console.error(`No employe found with ID: ${employeId}`);
       return res.status(404).json({ error: 'Employe not found' });
     }
 
-    // Update the adherant field only if it's false
     if (!employe.adherant) {
-      await employe.update({ adherant: true });
-      return res.status(200).json({ message: 'Employe adherant status updated successfully' });
+      employe.adherant = true;
+      await employe.save();
+      console.log(`Employe adherant status updated to: ${employe.adherant}`);
+      return res
+        .status(200)
+        .json({ message: 'Employe adherant status updated successfully' });
     } else {
+      console.log('Employe is already an adherant.');
       return res.status(400).json({ error: 'Employe is already an adherant' });
     }
   } catch (error) {
-    console.error('Failed to update employe adherant status:', error);
-    res.status(500).json({ error: 'Failed to update employe adherant status' });
+    console.error('Error updating employe adherant status:', error);
+    return res
+      .status(500)
+      .json({ error: 'Failed to update employe adherant status' });
   }
 };
 
@@ -284,66 +275,74 @@ exports.updateEmployeNonAdherant = async (req, res) => {
   const { employeId } = req.params;
 
   try {
-    // Check if the user making the request is an administrator
+    const isAdmin = await Utilisateur.findOne({
+      where: { id_utilisateur: req.userId, type: 'admin' },
+    });
+    if (!isAdmin) {
+      return res
+        .status(403)
+        .json({
+          error:
+            'Permission denied. Only administrators can perform this action.',
+        });
+    }
+
+    const employe = await Employe.findByPk(employeId);
+    if (!employe) {
+      return res.status(404).json({ error: 'Employe not found' });
+    }
+
+    if (employe.adherant) {
+      await employe.update({ adherant: false });
+      return res
+        .status(200)
+        .json({ message: 'Employe non-adherant status updated successfully' });
+    } else {
+      return res
+        .status(400)
+        .json({ error: 'Employe is already a non-adherant' });
+    }
+  } catch (error) {
+    console.error('Failed to update employe non-adherant status:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+exports.getAllDemandes = async (req, res) => {
+  try {
     const isAdmin = await Utilisateur.findOne({
       where: {
         id_utilisateur: req.userId,
         type: 'admin',
       },
     });
-
     if (!isAdmin) {
       return res.status(403).json({
-        error: 'Permission denied. Only administrators can perform this action.',
+        error: 'Permission denied. Only administrators can view demandes.',
       });
     }
-
-    // Find the employe by ID
-    const employe = await Employe.findOne({
-      where: {
-        id_utilisateur: employeId,
-      },
+    const demandes = await Demande.findAll({
+      include: [
+        {
+          model: Employe,
+          as: 'employe',
+          include: [
+            {
+              model: Utilisateur,
+              as: 'utilisateur', // This must be correctly defined in your model relationships
+            },
+          ],
+        },
+      ],
     });
-
-    if (!employe) {
-      return res.status(404).json({ error: 'Employe not found' });
-    }
-
-    // Update the adherant field only if it's false
-    if (employe.adherant) {
-      await employe.update({ adherant: false });
-      return res.status(200).json({ message: 'Employe adherant status updated successfully' });
-    } else {
-      return res.status(400).json({ error: 'Employe is already an non adherant' });
-    }
+    res.status(200).json(demandes);
   } catch (error) {
-    console.error('Failed to update employe adherant status:', error);
-    res.status(500).json({ error: 'Failed to update employe adherant status' });
+    console.error('Error fetching demandes:', error);
+    res.status(500).json({ error: 'Failed to get demandes' });
   }
 };
 
-exports.getAllDemandes = async (req, res) => {
-  try {
-      // Check if the user making the request is an admin
-      const isAdmin = await Utilisateur.findOne({
-          where: {
-              id_utilisateur: req.userId,
-              type: 'admin',
-          },
-      });
 
-      if (!isAdmin) {
-          return res.status(403).json({
-              error: 'Permission denied. Only administrators can view demandes.',
-          });
-      }
-
-      const demandes = await Demande.findAll();
-      res.status(200).json(demandes);
-  } catch (error) {
-      console.error('Error fetching demandes:', error);
-      res.status(500).json({ error: 'Failed to get demandes' });
-  }
-};
 
 module.exports = exports;
