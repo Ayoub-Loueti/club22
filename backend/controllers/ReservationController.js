@@ -385,6 +385,10 @@ exports.getMyReservations = async (req, res) => {
             // Ensure other necessary models are included as needed
           ],
         },
+        {
+          model: Employe,
+          as: 'employe',
+        }
         // Ensure other necessary models are included as needed
       ],
     });

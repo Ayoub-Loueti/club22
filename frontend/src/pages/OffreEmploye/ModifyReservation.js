@@ -8,50 +8,50 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete }) => {
-  const incrementAdults = () => updateRoom(room.id, 'adults', room.adults + 1);
-  const decrementAdults = () => updateRoom(room.id, 'adults', Math.max(1, room.adults - 1));
-  const incrementChildren = () => updateRoom(room.id, 'children', room.children + 1);
-  const decrementChildren = () => updateRoom(room.id, 'children', Math.max(0, room.children - 1));
+const RoomDetails = ({ roomNumber, room, updateRoom, deleteRoom, canDelete, adherent, remise }) => {
+  const incrementAdults = () => updateRoom(room.id_hotel, 'nbr_adults', room.nbr_adults + 1);
+  const decrementAdults = () => updateRoom(room.id_hotel, 'nbr_adults', Math.max(1, room.nbr_adults - 1));
+  const incrementChildren = () => updateRoom(room.id_hotel, 'nbr_enfants', room.nbr_enfants + 1);
+  const decrementChildren = () => updateRoom(room.id_hotel, 'nbr_enfants', Math.max(0, room.nbr_enfants - 1));
 
   return (
     <Box sx={{ mb: 2, bgcolor: 'background.paper', p: 2, borderRadius: 'borderRadius', display: 'flex', flexDirection: 'column', gap: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography variant="h6" gutterBottom component="div">
-          Chambre {room.id}
+          Chambre {roomNumber}
         </Typography>
         {canDelete && (
-          <IconButton onClick={() => deleteRoom(room.id)} color="error">
+          <IconButton onClick={() => deleteRoom(room.id_hotel)} color="error">
             <DeleteIcon />
           </IconButton>
         )}
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <IconButton onClick={decrementAdults} disabled={room.adults <= 1} color="primary">
+        <IconButton onClick={decrementAdults} disabled={room.nbr_adults <= 1} color="primary">
           <RemoveCircleOutlineIcon />
         </IconButton>
         <TextField
           size="small"
-          value={room.adults}
+          value={room.nbr_adults}
           inputProps={{ readOnly: true, style: { textAlign: 'center' } }}
           sx={{ width: '60px', mx: 1 }}
         />
-        <IconButton onClick={incrementAdults} disabled={room.adults >= 4} color="primary">
+        <IconButton onClick={incrementAdults} color="primary">
           <AddCircleOutlineIcon />
         </IconButton>
         <Typography sx={{ ml: 2 }}>Adult(s)</Typography>
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <IconButton onClick={decrementChildren} disabled={room.children <= 0} color="primary">
+        <IconButton onClick={decrementChildren} disabled={room.nbr_enfants <= 0} color="primary">
           <RemoveCircleOutlineIcon />
         </IconButton>
         <TextField
           size="small"
-          value={room.children}
+          value={room.nbr_enfants}
           inputProps={{ readOnly: true, style: { textAlign: 'center' } }}
           sx={{ width: '60px', mx: 1 }}
         />
-        <IconButton onClick={incrementChildren} disabled={room.children >= 3} color="primary">
+        <IconButton onClick={incrementChildren} color="primary">
           <AddCircleOutlineIcon />
         </IconButton>
         <Typography sx={{ ml: 2 }}>Enfants</Typography>
@@ -64,32 +64,62 @@ const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete }) => {
 const ModifyReservation = ({ isOpen, onRequestClose, reservationData }) => {
   const [rooms, setRooms] = useState(reservationData.rooms || []);
   const [nombre, setNombre] = useState(reservationData.nombre || 1);
+  const [prixTotal, setPrixTotal] = useState(reservationData.prix_totale);
+  const token = localStorage.getItem('login');
+  const adherent = reservationData.employe.adherant;
+  const remise = reservationData.offre.remise / 100;
+
+  const calculateRoomPrice = (adults, children, basePrice) => {
+    let priceIncrease = (adults - 1) * (basePrice * 0.4) + children * (basePrice * 0.2);
+    let totalPrice = basePrice + priceIncrease;
+    if (adherent) {
+      totalPrice *= (1 - remise);
+    }
+    return totalPrice;
+  };
 
   const updateRoom = (roomId, field, value) => {
     const updatedRooms = rooms.map(room => {
-      if (room.id === roomId) {
-        return { ...room, [field]: value };
+      if (room.id_hotel === roomId) {
+        const newRoom = { ...room, [field]: value };
+        newRoom.prix = calculateRoomPrice(newRoom.nbr_adults, newRoom.nbr_enfants, reservationData.offre.prix);
+        return newRoom;
       }
       return room;
     });
     setRooms(updatedRooms);
+    updateTotalPrice(updatedRooms);
   };
 
   const deleteRoom = (roomId) => {
-    const filteredRooms = rooms.filter(room => room.id !== roomId);
+    const filteredRooms = rooms.filter(room => room.id_hotel !== roomId);
     setRooms(filteredRooms);
+    updateTotalPrice(filteredRooms);
+  };
+
+  const updateTotalPrice = (updatedRooms) => {
+    const newTotalPrice = updatedRooms.reduce((acc, room) => acc + room.prix, 0);
+    setPrixTotal(newTotalPrice);
   };
 
   const handleSaveChanges = async () => {
+    const updatedRooms = rooms.map(room => ({
+      id_hotel: room.id_hotel,
+      nbr_adults: room.nbr_adults,
+      nbr_enfants: room.nbr_enfants,
+      prix: room.prix
+    }));
+
     const updatedData = {
       nombre: nombre,
-      rooms: rooms,
-      // Calculating total price
-      prix_totale: rooms.reduce((acc, room) => acc + room.prix, 0)
+      prix_totale: prixTotal,
+      hotels: updatedRooms
     };
 
     try {
-      const response = await axios.put(`http://localhost:5000/reservation/${reservationData.id}`, updatedData);
+      const response = await axios.put(`http://localhost:5000/updateReservation/${reservationData.id_reservation}`, updatedData, {
+        headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
+      });
       console.log('Update successful:', response.data);
       onRequestClose();
     } catch (error) {
@@ -105,22 +135,32 @@ const ModifyReservation = ({ isOpen, onRequestClose, reservationData }) => {
           rooms.map((room, index) => (
             <RoomDetails
               key={index}
+              roomNumber={index + 1}
               room={room}
               updateRoom={updateRoom}
               deleteRoom={deleteRoom}
               canDelete={rooms.length > 1}
+              adherent={adherent}
+              remise={remise}
             />
           ))
         ) : (
+          <>
+          <br />
           <TextField
             label="Nombre des personnes"
             type="number"
             fullWidth
             variant="outlined"
             value={nombre}
-            onChange={(e) => setNombre(Number(e.target.value))}
+            onChange={(e) => {
+              setNombre(Number(e.target.value));
+              setPrixTotal(Number(e.target.value) * reservationData.offre.prix * (adherent ? (1 - remise) : 1));
+            }}
           />
+          </>
         )}
+        <Typography variant="h6" sx={{ mt: 2 }}>Total Price: {prixTotal.toFixed(2)} DT</Typography>
       </DialogContent>
       <DialogActions>
         <Button onClick={onRequestClose}>Cancel</Button>
