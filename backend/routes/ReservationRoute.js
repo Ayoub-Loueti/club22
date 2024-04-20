@@ -17,10 +17,15 @@ router.get('/reservation/:id', authenticate, reservationController.getReservatio
 //router.get('/myReservations', authenticate, reservationController.getUserReservations); 
 router.put('/reservation/:id/annuler', authenticate, reservationController.annulerReservation);
 router.put('/reservation/:id/confirmer', authenticate, reservationController.confirmationReservation);
-router.put('/updateReservation/:id', authenticate, reservationController.updateReservation);
+//router.put('/updateReservation/:id', authenticate, reservationController.updateReservation);
 
 router.get('/reservation/pdf/:id', authenticate, reservationController.generateReservationPDF);
 router.get('/myReservations', authenticate, reservationController.getMyReservations);
+router.put('/updateReservation/:id', authenticate, reservationController.modifyReservation);
+
+//hotel
+
+router.put('/hotel/:hotelId/modify', authenticate, reservationController.modifyHotelDetails);
 
 module.exports = router;
 

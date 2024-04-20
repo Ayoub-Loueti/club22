@@ -382,10 +382,10 @@ exports.getMyReservations = async (req, res) => {
           as: 'offre',
           include: [
             { model: Collaborateur, as: 'collaborateur' },
-            // Include other necessary models, if any
+            // Ensure other necessary models are included as needed
           ],
         },
-        // Include other necessary models, if any
+        // Ensure other necessary models are included as needed
       ],
     });
 
@@ -395,26 +395,37 @@ exports.getMyReservations = async (req, res) => {
         attributes: ['image'],
       });
 
-      const offerWithImages = {
-        ...reservation.get({ plain: true }), // Use plain: true to get a plain JSON object
+      const reservationJson = {
+        ...reservation.toJSON(),
         offre: {
-          ...reservation.offre.get({ plain: true }),
+          ...reservation.offre.toJSON(),
           images: images.map(img => img.image),
         },
       };
 
-      return offerWithImages;
+      // Here's where we add the rooms details for hotel-type reservations
+      if (reservation.typeR === 'hotel') {
+        const hotels = await Hotel.findAll({
+          where: { id_reservation: reservation.id_reservation },
+          attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix']
+        });
+
+        const totalPeople = hotels.reduce((acc, hotel) => acc + hotel.nbr_adults + hotel.nbr_enfants, 0);
+        reservationJson.nombreTotal = totalPeople;
+        reservationJson.rooms = hotels;
+      } else {
+        // For non-hotel type reservations, use the reservation's nombre value
+        reservationJson.nombreTotal = reservation.nombre;
+      }
+
+      return reservationJson;
     }));
 
-    // Sort reservations, putting 'en_cours' at the beginning
+    // Optionally sort reservations to have 'en_cours' first
     reservations.sort((a, b) => {
-      if (a.etat === 'en_cours' && b.etat !== 'en_cours') {
-        return -1;
-      }
-      if (a.etat !== 'en_cours' && b.etat === 'en_cours') {
-        return 1;
-      }
-      return 0; // If both are 'en_cours' or both are not, keep original order
+      if (a.etat === 'en_cours' && b.etat !== 'en_cours') return -1;
+      if (a.etat !== 'en_cours' && b.etat === 'en_cours') return 1;
+      return 0;
     });
 
     res.status(200).json(reservations);
@@ -424,5 +435,93 @@ exports.getMyReservations = async (req, res) => {
   }
 };
 
+exports.modifyReservation = async (req, res) => {
+  const { id } = req.params;  // Correctly extracting the 'id' parameter
+  const { nombre, prix_totale, hotels } = req.body;
+
+  try {
+    const reservation = await Reservation.findByPk(id);  // Use 'id' not 'id_reservation'
+    if (!reservation) {
+      return res.status(404).json({ error: 'Reservation not found.' });
+    }
+
+    await reservation.update({ nombre, prix_totale });
+
+    // Update hotel details if any
+    if (hotels && Array.isArray(hotels)) {
+      for (const hotel of hotels) {
+        const existingHotel = await Hotel.findByPk(hotel.id_hotel);
+        if (existingHotel) {
+          await existingHotel.update({
+            nbr_adults: hotel.nbr_adults,
+            nbr_enfants: hotel.nbr_enfants,
+            prix: hotel.prix,
+          });
+        } else {
+          // Handle the case where the hotel doesn't exist
+          return res.status(404).json({ error: 'Hotel not found for id: ' + hotel.id_hotel });
+        }
+      }
+    }
+
+    return res.status(200).json({ message: 'Reservation updated successfully', reservation });
+  } catch (error) {
+    console.error('Error updating reservation:', error);
+    res.status(500).json({ error: 'Failed to update reservation', details: error.message });
+  }
+};
+
+//hotel
+exports.modifyHotelDetails = async (req, res) => {
+  const { hotelId } = req.params; 
+  const { nbr_adults, nbr_enfants, prix, prix_totale } = req.body; 
+  const userId = req.userId; 
+
+  try {
+    // Retrieve the hotel along with associated reservation and employee details
+    const hotel = await Hotel.findByPk(hotelId, {
+      include: [{
+        model: Reservation,
+        as: 'reservation',
+        include: [{
+          model: Employe,  // Assuming 'Employe' is correctly related in ReservationModel
+          as: 'employe'
+        }]
+      }]
+    });
+
+    if (!hotel) {
+      return res.status(404).json({ message: 'Hotel not found' });
+    }
+
+    // Authorization check: ensure the logged-in user is the employee who made the reservation
+    if (hotel.reservation.employe.id_utilisateur !== userId) {
+      return res.status(403).json({ message: 'User not authorized to update this hotel details' });
+    }
+
+    // Apply updates only for provided values
+    if (nbr_adults !== undefined) hotel.nbr_adults = nbr_adults;
+    if (nbr_enfants !== undefined) hotel.nbr_enfants = nbr_enfants;
+    if (prix !== undefined) hotel.prix = prix;
+
+    await hotel.save();
+
+    // Optionally update the total price of the reservation
+    if (prix_totale !== undefined) {
+      const reservation = await Reservation.findByPk(hotel.id_reservation);
+      if (!reservation) {
+        return res.status(404).json({ message: 'Associated reservation not found' });
+      }
+
+      reservation.prix_totale = prix_totale;
+      await reservation.save();
+    }
+
+    return res.status(200).json({ message: 'Hotel and reservation details updated successfully', hotel });
+  } catch (error) {
+    console.error('Error updating hotel details:', error);
+    return res.status(500).json({ message: 'Error updating hotel details', error: error.message });
+  }
+};
 
 module.exports = exports;

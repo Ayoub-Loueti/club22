@@ -4,10 +4,15 @@ import Swal from 'sweetalert2';
 import { Grid, Card, CardContent, Typography, Button, Box } from '@mui/material';
 import Navbar from '../../components/navbar/navbar';
 import NavbarHaut from '../../components/navbar/navbarHaut';
+import ShowReservationDialog from './ShowReservationDialog'; // Import the dialog component
+import ModifyReservation from './ModifyReservation';  // Import the ModifyReservation component
 
 const MyReservations = () => {
     const [reservations, setReservations] = useState([]);
     const [error, setError] = useState('');
+    const [selectedReservation, setSelectedReservation] = useState(null);
+    const [showDialog, setShowDialog] = useState(false);
+    const [modifyDialogOpen, setModifyDialogOpen] = useState(false);  // State to control the ModifyReservation modal
 
     useEffect(() => {
         const token = JSON.parse(localStorage.getItem('login'))?.token;
@@ -25,7 +30,8 @@ const MyReservations = () => {
         fetchReservations();
     }, []);
 
-    const confirmReservation = async (id) => {
+    const confirmReservation = async (event, id) => {
+        event.stopPropagation();
         const token = JSON.parse(localStorage.getItem('login'))?.token;
         try {
             const result = await Swal.fire({
@@ -49,7 +55,8 @@ const MyReservations = () => {
         }
     };
 
-    const cancelReservation = async (id) => {
+    const cancelReservation = async (event, id) => {
+        event.stopPropagation();
         const token = JSON.parse(localStorage.getItem('login'))?.token;
         try {
             const result = await Swal.fire({
@@ -73,6 +80,24 @@ const MyReservations = () => {
         }
     };
 
+    const handleOpenDialog = (reservation) => {
+        setSelectedReservation(reservation);
+        setShowDialog(true);
+    };
+    
+    const handleCloseDialog = () => {
+        setShowDialog(false);
+    };
+
+    const handleModifyDialogOpen = (reservation) => {
+        setSelectedReservation(reservation);
+        setModifyDialogOpen(true);
+    };
+
+    const handleModifyDialogClose = () => {
+        setModifyDialogOpen(false);
+    };
+
     return (
         <>
             <Navbar />
@@ -82,50 +107,64 @@ const MyReservations = () => {
                 <Grid item xs={12} md={6}>
                     <Card raised sx={{ height: 550, overflowY: 'auto' }}>
                         <CardContent>
-                        {reservations.map((reservation) => (
-  <Card key={reservation.id_reservation} variant="outlined" sx={{ mb: 2, display: 'flex', backgroundColor: '#F4F4F4' }}>
-    {/* Image box */}
-    <Box
-      component="img"
-      sx={{
-        width: 150,
-        height: 'auto',
-        maxWidth: '100%',
-        maxHeight: 150,
-        objectFit: 'cover',
-      }}
-      src={`http://localhost:5000/${reservation.offre.images[0]}`}
-      alt="Offre"
-    />
-    {/* Content box */}
-    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexGrow: 1, padding: 2 }}>
-      <Box>
-        <Typography variant="h6">{reservation.offre.titre}</Typography>
-        <Typography variant="body2">{reservation.offre.collaborateur.nom}</Typography>
-        <Typography variant="body1" color="primary">{reservation.prix_totale} TND</Typography>
-      </Box>
-      {/* Conditionally render the buttons for 'en_cours' state */}
-      {reservation.etat === 'en_cours' && (
-        <Box display="flex" justifyContent="flex-end">
-          <Button size="small" variant="contained" 
-          sx={{ backgroundColor: '#5CA163', '&:hover': { backgroundColor: '#4B8A50' }, mr: 1 }} 
-          onClick={() => confirmReservation(reservation.id_reservation)} >
-            Confirmer
-            </Button>
-          <Button size="small" variant="contained" sx={{ backgroundColor: '#E3D97F', '&:hover': { backgroundColor: '#D0C170' }, mr: 1 }}>Modifier</Button>
-          <Button size="small" variant="contained" 
-          sx={{ backgroundColor: '#C50F10', '&:hover': { backgroundColor: '#B00C0E' } }}
-          onClick={() => cancelReservation(reservation.id_reservation)}>
-            Annuler
-            </Button>
-        </Box>
-      )}
-    </Box>
-  </Card>
-))}
+                            {reservations.map((reservation) => (
+                                <Card key={reservation.id_reservation} variant="outlined" sx={{ mb: 2, display: 'flex', backgroundColor: '#F4F4F4', cursor: 'pointer' }} onClick={() => handleOpenDialog(reservation)}>
+                                    <Box
+                                        component="img"
+                                        sx={{
+                                            width: 150,
+                                            height: 'auto',
+                                            maxWidth: '100%',
+                                            maxHeight: 150,
+                                            objectFit: 'cover',
+                                        }}
+                                        src={`http://localhost:5000/${reservation.offre.images[0]}`}
+                                        alt="Offre"
+                                    />
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexGrow: 1, padding: 2 }}>
+                                        <Box>
+                                            <Typography variant="h6">{reservation.offre.titre}</Typography>
+                                            <Typography variant="body2">{reservation.offre.collaborateur.nom}</Typography>
+                                            <Typography variant="body1" color="primary">{reservation.prix_totale} TND</Typography>
+                                        </Box>
+                                        {reservation.etat === 'en_cours' && (
+                                            <Box display="flex" justifyContent="flex-end">
+                                                <Button size="small" variant="contained"
+                                                    sx={{ backgroundColor: '#5CA163', '&:hover': { backgroundColor: '#4B8A50' }, mr: 1 }}
+                                                    onClick={(event) => confirmReservation(event, reservation.id_reservation)}>
+                                                    Confirmer
+                                                </Button>
+                                                    <Button size="small" variant="contained" 
+                                                    sx={{ backgroundColor: '#E3D97F', '&:hover': { backgroundColor: '#D0C170' }, mr: 1 }}
+                                                    onClick={(event) => { event.stopPropagation(); handleModifyDialogOpen(reservation); }}>
+                                                    Modify
+                                                </Button>                                                <Button size="small" variant="contained"
+                                                    sx={{ backgroundColor: '#C50F10', '&:hover': { backgroundColor: '#B00C0E' } }}
+                                                    onClick={(event) => cancelReservation(event, reservation.id_reservation)}>
+                                                    Annuler
+                                                </Button>
+                                            </Box>
+                                        )}
+                                    </Box>
+                                </Card>
+                            ))}
                         </CardContent>
                     </Card>
                 </Grid>
+                {selectedReservation && (
+                    <>
+                        <ShowReservationDialog
+                            reservation={selectedReservation}
+                            open={showDialog}
+                            onClose={handleCloseDialog}
+                        />
+                        <ModifyReservation
+                            isOpen={modifyDialogOpen}
+                            onRequestClose={handleModifyDialogClose}
+                            reservationData={selectedReservation}
+                        />
+                    </>
+                )}
                 <Grid item xs={12} md={6}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} style={{ marginBottom: 20 }}>
