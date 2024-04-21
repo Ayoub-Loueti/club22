@@ -720,25 +720,41 @@ exports.createSignal = async (req, res) => {
   const id_utilisateur = req.userId; 
 
   try {
-      const newSignal = await Signaler.create({
-          id_post: id_post ,
-          id_cmntr: id_cmntr || 0,
-          id_reponse: id_reponse || 0,
-          id_utilisateur: id_utilisateur
-      });
+    // Check if a similar signal already exists
+    const signalExists = await Signaler.findOne({
+      where: {
+        id_post: id_post,
+        id_cmntr: id_cmntr || 0,
+        id_reponse: id_reponse || 0,
+        id_utilisateur: id_utilisateur
+      }
+    });
 
-      return res.status(201).json({
-          message: 'Report submitted successfully',
-          signal: newSignal
-      });
+    if (signalExists) {
+      return res.status(409).json({ message: 'Signal already exists' });
+    }
+
+    // Create a new signal
+    const newSignal = await Signaler.create({
+      id_post: id_post,
+      id_cmntr: id_cmntr || 0,
+      id_reponse: id_reponse || 0,
+      id_utilisateur: id_utilisateur
+    });
+
+    return res.status(201).json({
+      message: 'Report submitted successfully',
+      signal: newSignal
+    });
   } catch (error) {
-      console.error('Error submitting report:', error);
-      return res.status(500).json({
-          message: 'Error submitting report',
-          error: error.message
-      });
+    console.error('Error submitting report:', error);
+    return res.status(500).json({
+      message: 'Error submitting report',
+      error: error.message
+    });
   }
 };
+
 
 exports.getSignalerById = async (req, res) => {
   const signalId = req.params.id;  // ID of the 'Signaler' from the URL parameter

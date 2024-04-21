@@ -590,7 +590,7 @@ const Post = (props) => {
   const commentsToShow = isModalView ? comments : comments.slice(0, 2);
 
   const handleReportPost = async () => {
-    Swal.fire({
+    const { value: result } = await Swal.fire({
       title: 'Êtes-vous sûr?',
       text: 'Voulez-vous vraiment signaler ce post?',
       icon: 'warning',
@@ -599,29 +599,30 @@ const Post = (props) => {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Oui, signaler!',
       cancelButtonText: 'Annuler',
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await axios.post(
-            `http://localhost:5000/signals`, // Verify the correct API endpoint
-            { id_post: data.id_post, id_cmntr: 0, id_reponse: 0 },
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          Swal.fire(
-            'Signalé!',
-            'Le post a été signalé avec succès.',
-            'success'
-          );
-        } catch (error) {
+    });
+  
+    if (result) {
+      try {
+        const response = await axios.post(
+          `http://localhost:5000/signals`, // Verify the correct API endpoint
+          { id_post: data.id_post, id_cmntr: 0, id_reponse: 0 },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+  
+        Swal.fire('Signalé!', 'Le post a été signalé avec succès.', 'success');
+      } catch (error) {
+        if (error.response && error.response.status === 409) {
+          Swal.fire('Attention!', 'Ce post a déjà été signalé.', 'warning');
+        } else {
           console.error('Error reporting the post:', error);
           Swal.fire('Échec!', 'Problème lors du signalement du post.', 'error');
         }
       }
-    });
-  };
+    }
+  };  
 
   const handleReportComment = async (commentId) => {
-    Swal.fire({
+    const { value: result } = await Swal.fire({
       title: 'Êtes-vous sûr?',
       text: 'Voulez-vous vraiment signaler ce commentaire?',
       icon: 'warning',
@@ -630,33 +631,29 @@ const Post = (props) => {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Oui, signaler!',
       cancelButtonText: 'Annuler',
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await axios.post(
-            `http://localhost:5000/signals`, // Check your endpoint
-            { id_post: data.id_post, id_cmntr: commentId, id_reponse: 0 },
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          Swal.fire(
-            'Signalé!',
-            'Le commentaire a été signalé avec succès.',
-            'success'
-          );
-        } catch (error) {
+    });
+  
+    if (result) {
+      try {
+        const response = await axios.post(
+          `http://localhost:5000/signals`,
+          { id_post: data.id_post, id_cmntr: commentId, id_reponse: 0 },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        Swal.fire('Signalé!', 'Le commentaire a été signalé avec succès.', 'success');
+      } catch (error) {
+        if (error.response && error.response.status === 409) {
+          Swal.fire('Attention!', 'Ce commentaire a déjà été signalé.', 'warning');
+        } else {
           console.error('Error reporting the comment:', error);
-          Swal.fire(
-            'Échec!',
-            'Problème lors du signalement du commentaire.',
-            'error'
-          );
+          Swal.fire('Échec!', 'Problème lors du signalement du commentaire.', 'error');
         }
       }
-    });
-  };
+    }
+  };  
 
   const handleReportResponse = async (commentId, responseId) => {
-    Swal.fire({
+    const { value: result } = await Swal.fire({
       title: 'Êtes-vous sûr?',
       text: 'Voulez-vous vraiment signaler cette réponse?',
       icon: 'warning',
@@ -665,34 +662,26 @@ const Post = (props) => {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Oui, signaler!',
       cancelButtonText: 'Annuler',
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await axios.post(
-            `http://localhost:5000/signals`, // Check your endpoint
-            {
-              id_post: data.id_post,
-              id_cmntr: commentId,
-              id_reponse: responseId,
-            },
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          Swal.fire(
-            'Signalé!',
-            'La réponse a été signalée avec succès.',
-            'success'
-          );
-        } catch (error) {
+    });
+  
+    if (result) {
+      try {
+        const response = await axios.post(
+          `http://localhost:5000/signals`,
+          { id_post: data.id_post, id_cmntr: commentId, id_reponse: responseId },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        Swal.fire('Signalé!', 'La réponse a été signalée avec succès.', 'success');
+      } catch (error) {
+        if (error.response && error.response.status === 409) {
+          Swal.fire('Attention!', 'Cette réponse a déjà été signalée.', 'warning');
+        } else {
           console.error('Error reporting the response:', error);
-          Swal.fire(
-            'Échec!',
-            'Problème lors du signalement de la réponse.',
-            'error'
-          );
+          Swal.fire('Échec!', 'Problème lors du signalement de la réponse.', 'error');
         }
       }
-    });
-  };
+    }
+  };  
 
   return (
     <div className="Post">
