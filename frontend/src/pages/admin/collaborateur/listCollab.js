@@ -121,7 +121,7 @@ const handleViewOffers = () => {
 
   return (
     <>
-    <NavAdmin/>
+      <NavAdmin />
       <div className="listCollaborateur-container">
         <button className="retour-btn" onClick={() => window.history.back()}>
           <FaArrowLeft /> Retour
@@ -211,9 +211,21 @@ const handleViewOffers = () => {
                     Site Web :{' '}
                     <span className="description-value">
                       {collaborateur.siteWeb &&
-                      collaborateur.siteWeb.trim() !== ''
-                        ? collaborateur.siteWeb
-                        : 'non disponible'}
+                      collaborateur.siteWeb.trim() !== '' ? (
+                        <a
+                          href={
+                            collaborateur.siteWeb.startsWith('http')
+                              ? collaborateur.siteWeb
+                              : `https://${collaborateur.siteWeb}`
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {collaborateur.siteWeb}
+                        </a>
+                      ) : (
+                        'non disponible'
+                      )}
                     </span>
                   </p>
 

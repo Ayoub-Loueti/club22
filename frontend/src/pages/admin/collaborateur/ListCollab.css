@@ -35,8 +35,10 @@
 .collaborateur-scroll-container {
   display: flex;
   overflow-x: auto;
-  justify-content: center; /* Centrer les cartes horizontalement */
-  align-items: center; /* Centrer les cartes verticalement */  padding: 0 20px;  overflow-y: visible;
+  justify-content: start; /* Align to the start of the container */
+  align-items: center; 
+  padding: 0 20px; 
+  overflow-y: visible;
 }
 
 .collaborateur-card {
@@ -49,7 +51,6 @@
   margin-right: 10px;
   flex-shrink: 0;
   transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animation pour survol */
-  cursor: pointer;
   margin: 0 10px;
   margin-bottom: 4%;
   margin-top: 4%;
@@ -159,4 +160,39 @@
 .description-value {
   color: #c53030; 
   font-weight: bold;
+}
+.collaborateur-card-title,
+.collaborateur-card-description {
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide text overflow */
+  text-overflow: ellipsis; /* Add ellipsis when text overflows */
+  width: 100%; /* Ensure the text spans the entire width of the card */
+}
+
+
+.description-value a {
+  color: #007bff; /* Bootstrap default link color */
+  text-decoration: none; /* Optional: removes underline from links */
+}
+
+.description-value a:hover, .description-value a:focus {
+  text-decoration: underline; /* Adds underline on hover/focus for better visibility */
+  color: #0056b3; /* Darker shade of blue for hover state */
+}
+.no-offers-card {
+  padding: 20px;
+  margin-top: 20px;
+  background-color: #f8d7da; /* light red */
+  color: #721c24; /* dark red */
+  text-align: center;
+  border-radius: 5px;
+  border: 1px solid #f5c6cb; /* slightly lighter red */
+}
+.no-offers-message {
+  padding: 20px;
+  background-color: #f8d7da; /* Light red background for the message */
+  color: #721c24; /* Dark red text color */
+  text-align: center;
+  border-radius: 4px;
+  margin-top: 20px;
 }
