@@ -4,61 +4,8 @@ const CollaborateurModel = require('../models/CollaborateurModel');
 const ImageOffre = require('../models/ImageOffreModel');
 const multiImageUpload = require('../middleware/multiImageUpload');
 
-exports.createOffre = async (req, res) => {
-  try {
-    const isAdmin = await Utilisateur.findOne({
-      where: {
-        id_utilisateur: req.userId,
-        type: 'admin',
-      },
-    });
 
-    if (!isAdmin) {
-      return res.status(403).json({
-        error: 'Permission denied. Only administrators can perform this action.',
-      });
-    }
-
-    multiImageUpload(req, res, async (error) => {
-      if (error) {
-        return res.status(500).json({ message: error.message });
-      } 
-      
-      try {
-        const { titre, description, date_debut, date_fin, prix, id_collaborateur } = req.body;
-
-        const offre = await OffreModel.create({
-          titre,
-          description,
-          date_debut,
-          date_fin,
-          prix,
-          id_collaborateur,
-        });
-
-        if (req.files && req.files.length > 0) {
-          await Promise.all(req.files.map(file => {
-            const image = file.path; // Path where the file is saved
-            return ImageOffre.create({
-              image,
-              id_offre: offre.id_offre,
-            });
-          }));
-        }
-
-        res.status(201).json({ offre });
-      } catch (error) {
-        console.error('Error creating offre:', error);
-        res.status(500).json({ error: 'Failed to create offre' });
-      }
-    });
-  } catch (error) {
-    console.error('Error checking admin status:', error);
-    res.status(500).json({ error: 'Failed to create offre' });
-  }
-};
-  
-exports.updateOffre = async (req, res) => {
+  exports.getOfferImages = async (req, res) => {
     const { offreId } = req.params;
     try {
       const isAdmin = await Utilisateur.findOne({
@@ -67,26 +14,118 @@ exports.updateOffre = async (req, res) => {
           type: 'admin',
         },
       });
-  
       if (!isAdmin) {
-        return res.status(403).json({
-          error:
-            'Permission denied. Only administrators can perform this action.',
-        });
+        return res
+          .status(403)
+          .json({
+            error:
+              'Permission denied. Only administrators can access offer images.',
+          });
       }
-  
-      const offre = await OffreModel.findByPk(offreId);
-  
-      if (!offre) {
-        return res.status(404).json({ error: 'Offre not found' });
+
+      const images = await ImageOffre.findAll({
+        where: { id_offre: offreId },
+        attributes: ['image'], // Ensure this is the correct field name in your model
+      });
+
+      if (!images.length) {
+        return res
+          .status(404)
+          .json({ message: 'No images found for this offer' });
       }
-  
-      await offre.update(req.body);
-      res.status(200).json({ message: 'Offre updated successfully' });
+
+      res.status(200).json(images.map((img) => img.image)); // Modify as necessary to match your file path handling
     } catch (error) {
-      res.status(500).json({ error: 'Failed to update offre' });
+      console.error('Failed to get offer images:', error);
+      res.status(500).json({ error: 'Failed to retrieve offer images' });
     }
+  };
+
+// Creation of an offer
+exports.createOffre = async (req, res) => {
+  try {
+    const isAdmin = await Utilisateur.findOne({
+      where: { id_utilisateur: req.userId, type: 'admin' },
+    });
+
+    if (!isAdmin) {
+      return res.status(403).json({ error: 'Permission denied. Only administrators can perform this action.' });
+    }
+
+    const { titre, description, date_debut, date_fin, prix, id_collaborateur } = req.body;
+    const offre = await OffreModel.create({
+      titre,
+      description,
+      date_debut,
+      date_fin,
+      prix,
+      id_collaborateur,
+    });
+
+    if (req.files && req.files.length > 0) {
+      const imageUploads = req.files.map(file => {
+        const imagePath = file.path;  // Assumes path handling is already set
+        return ImageOffre.create({ image: imagePath, id_offre: offre.id_offre });
+      });
+      await Promise.all(imageUploads);
+    }
+
+    res.status(201).json({ message: 'Offre created successfully', offre });
+  } catch (error) {
+    console.error('Error creating offre:', error);
+    res.status(500).json({ error: 'Failed to create offre', details: error.message });
+  }
 };
+
+// Updating an offer
+exports.updateOffre = async (req, res) => {
+  const { offreId } = req.params;
+  try {
+    const isAdmin = await Utilisateur.findOne({
+      where: { id_utilisateur: req.userId, type: 'admin' },
+    });
+
+    if (!isAdmin) {
+      return res.status(403).json({ error: 'Permission denied. Only administrators can perform this action.' });
+    }
+
+    const offre = await OffreModel.findByPk(offreId);
+    if (!offre) {
+      return res.status(404).json({ error: 'Offre not found' });
+    }
+
+    const updateData = {
+      titre: req.body.titre,
+      description: req.body.description,
+      prix: req.body.prix,
+      date_debut: req.body.date_debut,
+      date_fin: req.body.date_fin,
+      id_collaborateur: req.body.id_collaborateur,
+    };
+
+    await offre.update(updateData);
+
+    if (req.files && req.files.length > 0) {
+      const existingImages = await ImageOffre.findAll({ where: { id_offre: offreId } });
+      const deletions = existingImages.map(img => img.destroy());
+      await Promise.all(deletions);
+
+      const imageUploads = req.files.map(file => {
+        const imagePath = file.path;  // Assumes path handling is already set
+        return ImageOffre.create({ image: imagePath, id_offre: offre.id_offre });
+      });
+      await Promise.all(imageUploads);
+    }
+
+    res.status(200).json({ message: 'Offre updated successfully', data: offre });
+  } catch (error) {
+    console.error('Update failed:', error);
+    res.status(500).json({ error: 'Failed to update offre', details: error.message });
+  }
+};
+
+
+
   
 exports.deleteOffre = async (req, res) => {
     const { offreId } = req.params;

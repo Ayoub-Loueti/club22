@@ -5,7 +5,8 @@ import './OffreAdmin.css';
 import AddOffreModal from './AddOffreModal';
 import UpdateOffreModal from './UpdateOffreModal';
 import { FaArrowLeft } from 'react-icons/fa';
-
+import '../NavAdmin/navAdmin';
+import NavAdmin from '../NavAdmin/navAdmin';
 function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
   const [offres, setOffres] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -107,11 +108,12 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
   );
   
   return (
-   
+    <>
+  <NavAdmin/>
       <div className="offre-admin-container">
-           <button className="retour-btn" onClick={() => window.history.back()}>
-        <FaArrowLeft /> Retour
-      </button>
+        <button className="retour-btn" onClick={() => window.history.back()}>
+          <FaArrowLeft /> Retour
+        </button>
         <AddOffreModal
           isOpen={isModalOpen}
           onRequestClose={handleCloseModal}
@@ -140,47 +142,51 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
         <div className="offre-cards-container">
           {filteredOffres.map((offre, index) => (
             <div key={index} className="offre-card">
-              <h2>{offre.titre}</h2>
-              <img
-                src={`http://localhost:5000/${
-                  offre.lesImages[offre.currentImageIndex]?.image
-                }`}
-                alt={`Image ${offre.currentImageIndex}`}
-              />
+              <div className="offre-card-content">
+                <h2>{offre.titre}</h2>
+                <img
+                  src={`http://localhost:5000/${
+                    offre.lesImages[offre.currentImageIndex]?.image
+                  }`}
+                  alt={`Image ${offre.currentImageIndex}`}
+                />
 
-              <p>{offre.description}</p>
-              <p>
-                Prix:<span className="text-after-colon">{offre.prix}DT</span>
-              </p>
+                <p>{offre.description}</p>
+                <p>
+                  Prix:<span className="text-after-colon">{offre.prix}DT</span>
+                </p>
 
-              <p>
-                Offre valable de:{' '}
-                <span className="text-after-colon">{offre.date_debut}</span>
-              </p>
-              <p>
-                Jusqu'au:{' '}
-                <span className="text-after-colon">{offre.date_fin}</span>
-              </p>
-              <p>
-                Collaborateur:{' '}
-                <span className="text-after-colon">
-                  {offre.collaborateur?.nom}
-                </span>
-              </p>
-
-              <button
-                onClick={() => handleUpdate(offre.id_offre)}
-                className="modifierOffreButton"
-              >
-                MODIFIER
-              </button>
-              <button onClick={() => handleDelete(offre.id_offre)}>
-                SUPPRIMER
-              </button>
+                <p>
+                  Offre valable de:{' '}
+                  <span className="text-after-colon">{offre.date_debut}</span>
+                </p>
+                <p>
+                  Jusqu'au:{' '}
+                  <span className="text-after-colon">{offre.date_fin}</span>
+                </p>
+                <p>
+                  Collaborateur:{' '}
+                  <span className="text-after-colon">
+                    {offre.collaborateur?.nom}
+                  </span>
+                </p>
+              </div>
+              <div className="offre-card-actions">
+                <button
+                  onClick={() => handleUpdate(offre.id_offre)}
+                  className="modifierOffreButton"
+                >
+                  MODIFIER
+                </button>
+                <button onClick={() => handleDelete(offre.id_offre)}>
+                  SUPPRIMER
+                </button>
+              </div>{' '}
             </div>
           ))}
         </div>
       </div>
+    </>
   );
 }
 

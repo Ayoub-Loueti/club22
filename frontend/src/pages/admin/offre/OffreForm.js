@@ -11,139 +11,103 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
   const [collaborateurs, setCollaborateurs] = useState([]);
   const [selectedCollaborateur, setSelectedCollaborateur] = useState('');
   const [images, setImages] = useState([]);
+const [initialDataLoaded, setInitialDataLoaded] = useState(false);
 
   const token = localStorage.getItem('login');
+ useEffect(() => {
+   const headers = { Authorization: `Bearer ${JSON.parse(token).token}` };
 
-  useEffect(() => {
-    const fetchOffre = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5000/offer/${offreId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${JSON.parse(token).token}`,
-            },
-          }
-        );
-        const {
-          titre,
-          description,
-          prix,
-          date_debut,
-          date_fin,
-          id_collaborateur,
-        } = response.data;
-        setTitre(titre);
-        setDescription(description);
-        setPrix(prix);
-        setDateDebut(date_debut);
-        setDateFin(date_fin);
-        setSelectedCollaborateur(id_collaborateur); // Set the selected collaborateur ID
-      } catch (error) {
-        console.error('Error fetching offre data:', error);
-      }
-    };
+   if (isUpdate) {
+     axios
+       .get(`http://localhost:5000/offer/${offreId}`, { headers })
+       .then((response) => {
+         const {
+           titre,
+           description,
+           prix,
+           date_debut,
+           date_fin,
+           id_collaborateur,
+         } = response.data;
+         setTitre(titre);
+         setDescription(description);
+         setPrix(prix);
+         setDateDebut(date_debut.split('T')[0]);
+         setDateFin(date_fin.split('T')[0]);
+         setSelectedCollaborateur(id_collaborateur);
+         setInitialDataLoaded(true);
+       })
+       .catch((error) => console.error('Error fetching offer data:', error));
+   }
 
-    if (isUpdate) {
-      fetchOffre();
-    }
+   axios
+     .get('http://localhost:5000/allCollaborators', { headers })
+     .then((response) => {
+       setCollaborateurs(response.data);
+     })
+     .catch((error) => console.error('Error fetching collaborators:', error));
+ }, [isUpdate, offreId, token]);
 
-    // Fetch collaborateurs for the dropdown list
-    const fetchCollaborateurs = async () => {
-      try {
-        const response = await axios.get(
-          'http://localhost:5000/allCollaborators',
-          {
-            headers: {
-              Authorization: `Bearer ${JSON.parse(token).token}`,
-            },
-          }
-        );
-        setCollaborateurs(response.data);
-      } catch (error) {
-        console.error('Error fetching collaborateurs:', error);
-      }
-    };
+ const handleImageChange = (e) => {
+   const files = Array.from(e.target.files);
+   if (files.length > 4) {
+     Swal.fire(
+       'Warning',
+       'Only the first 4 photos will be considered.',
+       'warning'
+     );
+     files.splice(4); // Limit to first 4 files
+   }
+   setImages(files);
+ };
 
-    fetchCollaborateurs();
-  }, [isUpdate, offreId, token]);
+ const handleSubmit = async (e) => {
+   e.preventDefault();
+   const formData = new FormData();
+   formData.append('titre', titre);
+   formData.append('description', description);
+   formData.append('prix', prix);
+   formData.append('date_debut', date_debut);
+   formData.append('date_fin', date_fin);
+   formData.append('id_collaborateur', selectedCollaborateur);
+ images.forEach((image, index) => {
+   formData.append('photos', image, image.name || `image_${index}.jpg`);
+ });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    const formData = new FormData();
-    formData.append('titre', titre);
-    formData.append('description', description);
-    formData.append('prix', prix);
-    formData.append('date_debut', date_debut);
-    formData.append('date_fin', date_fin);
-    formData.append('id_collaborateur', selectedCollaborateur);
-    images.forEach((image) => {
-      formData.append('photos', image);
-    });
 
-    try {
-      let response;
-      if (isUpdate) {
-        response = await axios.put(
-          `http://localhost:5000/offer/${offreId}`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${JSON.parse(token).token}`,
-              'Content-Type': 'multipart/form-data',
-            },
-          }
-        );
-      } else {
-        response = await axios.post('http://localhost:5000/offer', formData, {
-          headers: {
-            Authorization: `Bearer ${JSON.parse(token).token}`,
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-      }
+   try {
+     const config = {
+       headers: {
+         'Content-Type': 'multipart/form-data',
+         Authorization: `Bearer ${JSON.parse(token).token}`,
+       },
+     };
+     const url = isUpdate
+       ? `http://localhost:5000/offer/${offreId}`
+       : 'http://localhost:5000/offer';
+     const method = isUpdate ? 'put' : 'post';
+     
+     const response = await axios[method](url, formData, config);
 
-      console.log(response.data.message); // Confirmation message
-      Swal.fire({
-        icon: 'success',
-        title: 'Succès',
-        text: isUpdate
-          ? "L'offre a été mise à jour avec succès."
-          : "L'offre a été ajoutée avec succès.",
-      });
-      onSuccess();
-      onRequestClose(); // Close the modal after adding/updating
-    } catch (error) {
-      console.error('Error:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Erreur',
-        text: `Une erreur est survenue lors de ${
-          isUpdate ? 'la mise à jour' : "l'ajout"
-        } de l'offre.`,
-      });
-    }
-  };
-
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-
-    // Si l'utilisateur sélectionne plus de 4 fichiers, informez-le et ne gardez que les 4 premiers
-    if (files.length > 4) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Trop de photos sélectionnées',
-        text: 'Seules les 4 premières photos seront prises en compte.',
-      });
-
-      // Réduire le tableau aux 4 premiers éléments
-      const firstFourFiles = files.slice(0, 4);
-      setImages(firstFourFiles);
-    } else {
-      setImages(files);
-    }
-  };
+     Swal.fire(
+       'Success',
+       `The offer has been ${isUpdate ? 'updated' : 'added'} successfully.`,
+       'success'
+     );
+     onSuccess();
+     onRequestClose();
+   } catch (error) {
+     console.error('Error:', error);
+     Swal.fire(
+       'Error',
+       `An error occurred during the offer ${
+         isUpdate ? 'update' : 'addition'
+       }.`,
+       'error'
+     );
+   }
+ };
 
 const today = new Date().toISOString().split('T')[0]; 
   return (
@@ -181,7 +145,7 @@ const today = new Date().toISOString().split('T')[0];
           type="date"
           value={date_debut}
           onChange={(e) => setDateDebut(e.target.value)}
-          min={today}
+          min={isUpdate && initialDataLoaded ? undefined : today}
           required
         />
       </label>
@@ -218,9 +182,9 @@ const today = new Date().toISOString().split('T')[0];
         <input
           type="file"
           accept="image/*"
-          multiple // Allow multiple file selection
+          multiple
           onChange={handleImageChange}
-          required
+          required={!isUpdate || !initialDataLoaded}
         />
       </label>
       <div className="formBut">

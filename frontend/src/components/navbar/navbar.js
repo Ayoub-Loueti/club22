@@ -11,6 +11,8 @@ import {
   faUser,
   faBars,
   faClipboardList,
+  faHouseChimneyUser,
+  faHouseUser,
 } from '@fortawesome/free-solid-svg-icons';
 
 function Navbar() {
@@ -122,6 +124,13 @@ function Navbar() {
               icon={faClipboardList}
               className="navbar-iconnn"
               onClick={() => navigate('/mesReservations')}
+            />
+          )}
+          {userInfo && userInfo.type === 'admin' && (
+            <FontAwesomeIcon
+              icon={faHouseUser}
+              className="navbar-iconnn"
+              onClick={() => navigate('/tousLesUtilisateurs')}
             />
           )}
         </div>
