@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button,
@@ -7,6 +7,7 @@ import {
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Swal from 'sweetalert2';
 
 const RoomDetails = ({ roomNumber, room, updateRoom, deleteRoom, canDelete, adherent, remise }) => {
   const incrementAdults = () => updateRoom(room.id_hotel, 'nbr_adults', room.nbr_adults + 1);
@@ -63,11 +64,17 @@ const RoomDetails = ({ roomNumber, room, updateRoom, deleteRoom, canDelete, adhe
 
 const ModifyReservation = ({ isOpen, onRequestClose, reservationData }) => {
   const [rooms, setRooms] = useState(reservationData.rooms || []);
+  const [deletedRooms, setDeletedRooms] = useState([]);
   const [nombre, setNombre] = useState(reservationData.nombre || 1);
   const [prixTotal, setPrixTotal] = useState(reservationData.prix_totale);
   const token = localStorage.getItem('login');
   const adherent = reservationData.employe.adherant;
   const remise = reservationData.offre.remise / 100;
+
+  useEffect(() => {
+    // Update total price whenever rooms or deletedRooms change
+    updateTotalPrice(rooms);
+  }, [rooms, deletedRooms]);
 
   const calculateRoomPrice = (adults, children, basePrice) => {
     let priceIncrease = (adults - 1) * (basePrice * 0.4) + children * (basePrice * 0.2);
@@ -92,9 +99,10 @@ const ModifyReservation = ({ isOpen, onRequestClose, reservationData }) => {
   };
 
   const deleteRoom = (roomId) => {
-    const filteredRooms = rooms.filter(room => room.id_hotel !== roomId);
-    setRooms(filteredRooms);
-    updateTotalPrice(filteredRooms);
+    const updatedRooms = rooms.filter(room => room.id_hotel !== roomId);
+    const deletedRoom = rooms.find(room => room.id_hotel === roomId);
+    setRooms(updatedRooms);
+    setDeletedRooms([...deletedRooms, deletedRoom]); // Add the deleted room to deletedRooms
   };
 
   const updateTotalPrice = (updatedRooms) => {
@@ -109,23 +117,33 @@ const ModifyReservation = ({ isOpen, onRequestClose, reservationData }) => {
       nbr_enfants: room.nbr_enfants,
       prix: room.prix
     }));
-
+  
     const updatedData = {
       nombre: nombre,
       prix_totale: prixTotal,
       hotels: updatedRooms
     };
-
+  
     try {
+      // Delete any rooms marked for deletion
+      await Promise.all(deletedRooms.map(async deletedRoom => {
+        await axios.delete(`http://localhost:5000/hotel/${deletedRoom.id_hotel}`, {
+          headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
+        });
+      }));
+  
+      // Update the reservation with the modified data
       const response = await axios.put(`http://localhost:5000/updateReservation/${reservationData.id_reservation}`, updatedData, {
         headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
       });
-      console.log('Update successful:', response.data);
-      onRequestClose();
+      Swal.fire('Updated!', 'Your reservation has been updated successfully.', 'success');
+      onRequestClose();  // Assuming this method closes the dialog
     } catch (error) {
+      Swal.fire('Failed!', 'Failed to update the reservation.', 'error');
       console.error('Failed to update reservation:', error);
     }
   };
+  
 
   return (
     <Dialog open={isOpen} onClose={onRequestClose} maxWidth="sm" fullWidth>
@@ -160,8 +178,8 @@ const ModifyReservation = ({ isOpen, onRequestClose, reservationData }) => {
           />
           </>
         )}
-        <Typography variant="h6" sx={{ mt: 2 }}>Total Price: {prixTotal.toFixed(2)} DT</Typography>
       </DialogContent>
+      <Typography variant="h6" sx={{ mt: 2 }}>&nbsp;&nbsp;&nbsp;&nbsp;Total Price: {prixTotal.toFixed(2)} DT</Typography>
       <DialogActions>
         <Button onClick={onRequestClose}>Cancel</Button>
         <Button onClick={handleSaveChanges} color="primary">Save Changes</Button>

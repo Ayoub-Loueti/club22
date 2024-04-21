@@ -25,7 +25,7 @@ router.put('/updateReservation/:id', authenticate, reservationController.modifyR
 
 //hotel
 
-router.put('/hotel/:hotelId/modify', authenticate, reservationController.modifyHotelDetails);
+router.delete('/hotel/:id', authenticate, reservationController.deleteHotel);
 
 module.exports = router;
 

@@ -10,6 +10,7 @@ import {
   faCalendar,
   faUser,
   faBars,
+  faClipboardList,
 } from '@fortawesome/free-solid-svg-icons';
 
 function Navbar() {
@@ -110,12 +111,19 @@ function Navbar() {
             onClick={() => navigate(`/profil/${currentUserId}`)}
           />
           {userInfo && userInfo.type === 'employe' && (
-      <FontAwesomeIcon
-        icon={faCalendar}
-        className="navbar-iconnn"
-        onClick={() => navigate('/collabPage')}
-      />
-    )}
+            <FontAwesomeIcon
+              icon={faCalendar}
+              className="navbar-iconnn"
+              onClick={() => navigate('/collabPage')}
+            />
+          )}
+          {userInfo && userInfo.type === 'employe' && (
+            <FontAwesomeIcon
+              icon={faClipboardList}
+              className="navbar-iconnn"
+              onClick={() => navigate('/mesReservations')}
+            />
+          )}
         </div>
 
         <div className="navbar-inner">

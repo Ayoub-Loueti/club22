@@ -476,56 +476,24 @@ exports.modifyReservation = async (req, res) => {
 };
 
 //hotel
-exports.modifyHotelDetails = async (req, res) => {
-  const { hotelId } = req.params; 
-  const { nbr_adults, nbr_enfants, prix, prix_totale } = req.body; 
-  const userId = req.userId; 
+
+exports.deleteHotel = async (req, res) => {
+  const { id } = req.params; // This is the hotel ID to be deleted
 
   try {
-    // Retrieve the hotel along with associated reservation and employee details
-    const hotel = await Hotel.findByPk(hotelId, {
-      include: [{
-        model: Reservation,
-        as: 'reservation',
-        include: [{
-          model: Employe,  // Assuming 'Employe' is correctly related in ReservationModel
-          as: 'employe'
-        }]
-      }]
-    });
+    const hotel = await Hotel.findByPk(id);
 
     if (!hotel) {
-      return res.status(404).json({ message: 'Hotel not found' });
+      return res.status(404).json({ error: 'Hotel not found' });
     }
 
-    // Authorization check: ensure the logged-in user is the employee who made the reservation
-    if (hotel.reservation.employe.id_utilisateur !== userId) {
-      return res.status(403).json({ message: 'User not authorized to update this hotel details' });
-    }
-
-    // Apply updates only for provided values
-    if (nbr_adults !== undefined) hotel.nbr_adults = nbr_adults;
-    if (nbr_enfants !== undefined) hotel.nbr_enfants = nbr_enfants;
-    if (prix !== undefined) hotel.prix = prix;
-
-    await hotel.save();
-
-    // Optionally update the total price of the reservation
-    if (prix_totale !== undefined) {
-      const reservation = await Reservation.findByPk(hotel.id_reservation);
-      if (!reservation) {
-        return res.status(404).json({ message: 'Associated reservation not found' });
-      }
-
-      reservation.prix_totale = prix_totale;
-      await reservation.save();
-    }
-
-    return res.status(200).json({ message: 'Hotel and reservation details updated successfully', hotel });
+    await hotel.destroy(); // Deletes the hotel from the database
+    return res.status(200).json({ message: 'Hotel deleted successfully' });
   } catch (error) {
-    console.error('Error updating hotel details:', error);
-    return res.status(500).json({ message: 'Error updating hotel details', error: error.message });
+    console.error('Error deleting hotel:', error);
+    res.status(500).json({ error: 'Failed to delete hotel', details: error.message });
   }
 };
+
 
 module.exports = exports;
