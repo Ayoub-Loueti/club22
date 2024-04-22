@@ -5,12 +5,14 @@ import axios from 'axios';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import './PhoneNumberModal.css'; // Make sure the path is correct based on your project structure
-
+import Swal from 'sweetalert2'; 
+import withReactContent from 'sweetalert2-react-content';
 Modal.setAppElement('#root');
 
 const PhoneNumberModal = ({ isOpen, onRequestClose }) => {
   const [value, setValue] = useState('');
   const [error, setError] = useState('');
+ const MySwal = withReactContent(Swal);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -23,9 +25,21 @@ const PhoneNumberModal = ({ isOpen, onRequestClose }) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       onRequestClose(); // Close the modal on success
+       MySwal.fire({
+         icon: 'success',
+         title: 'SMS envoyé avec succès!',
+         showConfirmButton: false,
+         timer: 1500, // Fermer automatiquement après 1.5 secondes
+       });
     } catch (error) {
       console.error('Error sending SMS:', error);
       setError('Failed to send SMS. Please try again.');
+       MySwal.fire({
+         icon: 'error',
+         title: "Échec de l'envoi du SMS",
+         text: 'Veuillez réessayer.',
+         confirmButtonText: 'OK',
+       });
     }
   };
 
@@ -56,8 +70,15 @@ const PhoneNumberModal = ({ isOpen, onRequestClose }) => {
 
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose} style={customStyles}>
-      <h2 style={{ textAlign: 'center' }}>Enter Your Phone Number</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <h2 style={{ textAlign: 'center' }}>Entrer votre numero téléphone :</h2>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
         <PhoneInput
           international
           defaultCountry="TN"
@@ -65,11 +86,11 @@ const PhoneNumberModal = ({ isOpen, onRequestClose }) => {
           onChange={setValue}
           className="PhoneInput" // Here we apply our custom styles
         />
-        {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
-        <button
-          type="submit"
-        >
-          Send SMS
+        {error && (
+          <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>
+        )}
+        <button type="submit" className="phonenumb-but">
+          Envoyer SMS
         </button>
       </form>
     </Modal>
