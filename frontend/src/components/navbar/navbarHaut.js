@@ -367,77 +367,118 @@ const isHomePage = location.pathname.includes('/Home');
     <div className={`navbar-horizontal ${(isProfilePage || isHomePage) ? '' : 'hide-search-bar'}`}>
       {!isProfilePage && !isHomePage && <div> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>}
       <form className="searchh-formm" onSubmit={(e) => e.preventDefault()}>
-  <input
-    type="text"
-    name="search"
-    placeholder="Recherche..."
-    id="search-input-navbar"
-    className="searchh-inputt"
-    value={searchInput}
-    onChange={handleSearchChange}
-  />
-  <button type="submit" className="search-iconn">
-    <FontAwesomeIcon icon={faSearch} />
-  </button>
-</form>
-{searchResults.users.length > 0 || searchResults.offers.length > 0 || searchResults.collaborators.length > 0 ? (
-  <div className="search-results">
-    {searchResults.users.length > 0 && (
-      <>
-        <div className="search-results-title">Utilisateurs :</div>
-        {searchResults.users.map((user) => (
-          <Link to={`/profil/${user.id_utilisateur}`} key={user.id_utilisateur} className="search-result-item" style={{ textDecoration: 'none' }}>
-            <img 
-              src={user.photo ? `http://localhost:5000/${user.photo}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'} 
-              alt={user.nom} 
-              className="user-photooo" 
-            />
-            <div>
-              {user.prenom} {user.nom}
-            </div>
-          </Link>
-        ))}
-      </>
-    )}
-    {userInfo && userInfo.type === 'employe' && searchResults.offers.length > 0 && (
-      <>
-        <div className="search-results-title">Offres :</div>
-        {searchResults.offers.map((offer) => (
-          <div key={offer.id_offre} className="search-result-item" onClick={() => navigate(`/OffrePageDetails/${offer.id_offre}`)}>
-            <img src={`http://localhost:5000/${offer.images[0]}`} alt="Offer" className="user-photooo" />
-            <div>{offer.titre}</div>
+        <input
+          type="text"
+          name="search"
+          placeholder="Recherche..."
+          id="search-input-navbar"
+          className="searchh-inputt"
+          value={searchInput}
+          onChange={handleSearchChange}
+        />
+        <button type="submit" className="search-iconn">
+          <FontAwesomeIcon icon={faSearch} />
+        </button>
+      </form>
+      {searchResults.users.length > 0 ||
+      searchResults.offers.length > 0 ||
+      searchResults.collaborators.length > 0 ? (
+        <div className="search-results">
+          {searchResults.users.length > 0 && (
+            <>
+              <div className="search-results-title">Utilisateurs :</div>
+              {searchResults.users.map((user) => (
+                <Link
+                  to={`/profil/${user.id_utilisateur}`}
+                  key={user.id_utilisateur}
+                  className="search-result-item"
+                  style={{ textDecoration: 'none' }}
+                >
+                  <img
+                    src={
+                      user.photo
+                        ? `http://localhost:5000/${user.photo}`
+                        : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+                    }
+                    alt={user.nom}
+                    className="user-photooo"
+                  />
+                  <div>
+                    {user.prenom} {user.nom}
+                  </div>
+                </Link>
+              ))}
+            </>
+          )}
+          {userInfo &&
+            userInfo.type === 'employe' &&
+            searchResults.offers.length > 0 && (
+              <>
+                <div className="search-results-title">Offres :</div>
+                {searchResults.offers.map((offer) => (
+                  <div
+                    key={offer.id_offre}
+                    className="search-result-item"
+                    onClick={() =>
+                      navigate(`/OffrePageDetails/${offer.id_offre}`)
+                    }
+                  >
+                    <img
+                      src={`http://localhost:5000/${offer.images[0]}`}
+                      alt="Offer"
+                      className="user-photooo"
+                    />
+                    <div>{offer.titre}</div>
+                  </div>
+                ))}
+              </>
+            )}
+          {userInfo &&
+            userInfo.type === 'employe' &&
+            searchResults.collaborators.length > 0 && (
+              <>
+                <div className="search-results-title">collaborators :</div>
+                {searchResults.collaborators.map((collab) => (
+                  <div
+                    key={collab.id_collaborateur}
+                    className="search-result-item"
+                    onClick={() =>
+                      navigate(`/collabPage/${collab.id_collaborateur}`)
+                    }
+                  >
+                    <img
+                      src={
+                        collab.logo
+                          ? `http://localhost:5000/${collab.logo}`
+                          : 'default-image-path.jpg'
+                      }
+                      alt="Collab Logo"
+                      className="user-photooo"
+                    />
+                    <div>{collab.nom}</div>
+                  </div>
+                ))}
+              </>
+            )}
+        </div>
+      ) : (
+        searchInput && (
+          <div className="search-results search-no-results-message">
+            No users or offers or collabs match your search.
           </div>
-        ))}
-        
-      </>
-    )}
-    {userInfo && userInfo.type === 'employe' && searchResults.collaborators.length > 0 && (
-      <>
-        <div className="search-results-title">collaborators :</div>
-        {searchResults.collaborators.map((collab) => (
-          <div key={collab.id_collaborateur} className="search-result-item" onClick={() => navigate(`/collabPage/${collab.id_collaborateur}`)}>
-            <img src={collab.logo ? `http://localhost:5000/${collab.logo}` : 'default-image-path.jpg'} alt="Collab Logo" className="user-photooo" />
-              <div>{collab.nom}</div>
-          </div>
-        ))}
-        
-      </>
-    )}
-  </div>
-) : (
-  searchInput && <div className="search-results search-no-results-message">No users or offers or collabs match your search.</div>
-)}
+        )
+      )}
 
- {userInfo && userInfo.type === 'client' && (
-      <FontAwesomeIcon
-        icon={faPhone}
-        className="navbar-icon"
-        onClick={openPhoneModal}
-      />
-    )}
-{userPoints !== null && userInfo && userInfo.type === 'client' && (
-          <span className="points">{userPoints} points</span>
-        )}
+      {userInfo && userInfo.type === 'client' && (
+        <FontAwesomeIcon
+          icon={faPhone}
+          className="phone-icon"
+          onClick={openPhoneModal}
+        />
+      )}
+      {userPoints !== null && userInfo && userInfo.type === 'client' && (
+        <span className="points">{userPoints} points</span>
+      )}
       <div className="icon-containerr">
         <FontAwesomeIcon
           icon={faBell}
@@ -467,9 +508,9 @@ const isHomePage = location.pathname.includes('/Home');
               postId={selectedPostId}
             />
             <PhoneNumberModal
-        isOpen={isPhoneModalOpen}
-        onRequestClose={closePhoneModal}
-      />
+              isOpen={isPhoneModalOpen}
+              onRequestClose={closePhoneModal}
+            />
           </>
         ) : (
           <>

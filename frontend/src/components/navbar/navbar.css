@@ -445,12 +445,21 @@ body {
 .points {
   position: absolute;
   top: 10px;
-  left: 1100px; /* Adjust as needed */
+  left: 1240px; /* Adjust as needed */
   background-color: #4299e1; /* Match the color with your theme */
   color: #ffffff;
   padding: 4px 8px;
   border-radius: 50%;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.phone-icon {
+  font-size: 27px;
+  margin-right: 1.5%;
+    color: #191f43; /* Couleur de l'icône de recherche */
+  background-color: transparent; /* Fond transparent */
+  border: none; /* Pas de bordure */
+  cursor: pointer; /* Curseur de type pointer */
+  margin-top: 1px;
 }
