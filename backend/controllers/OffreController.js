@@ -52,7 +52,16 @@ exports.createOffre = async (req, res) => {
       return res.status(403).json({ error: 'Permission denied. Only administrators can perform this action.' });
     }
 
-    const { titre, description, date_debut, date_fin, prix, id_collaborateur ,type} = req.body;
+    const {
+      titre,
+      description,
+      date_debut,
+      date_fin,
+      prix,
+      id_collaborateur,
+      type,
+      remise,
+    } = req.body;
     const offre = await OffreModel.create({
       titre,
       description,
@@ -60,7 +69,8 @@ exports.createOffre = async (req, res) => {
       date_fin,
       prix,
       id_collaborateur,
-      type
+      type,
+      remise,
     });
 
     if (req.files && req.files.length > 0) {
@@ -103,6 +113,7 @@ exports.updateOffre = async (req, res) => {
       date_fin: req.body.date_fin,
       id_collaborateur: req.body.id_collaborateur,
       type:req.body.type,
+      remise:req.body.remise
     };
 
     await offre.update(updateData);

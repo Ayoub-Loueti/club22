@@ -11,6 +11,7 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
   const [date_fin, setDateFin] = useState('');
   const [collaborateurs, setCollaborateurs] = useState([]);
   const [type, setType] = useState(''); // Corrected: Initialize as a scalar
+const [remise, setRemise] = useState('');
 
   const [selectedCollaborateur, setSelectedCollaborateur] = useState('');
   const [images, setImages] = useState([]);
@@ -76,12 +77,12 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
    formData.append('date_debut', date_debut);
    formData.append('date_fin', date_fin);
    formData.append('id_collaborateur', selectedCollaborateur);
-  formData.append('type', document.getElementById('type').value);  
- images.forEach((image, index) => {
-   formData.append('photos', image, image.name || `image_${index}.jpg`);
- });
+   formData.append('type', document.getElementById('type').value);
+   formData.append('remise', remise || null); // Append remise if it's provided
 
-
+   images.forEach((image, index) => {
+     formData.append('photos', image, image.name || `image_${index}.jpg`);
+   });
 
    try {
      const config = {
@@ -94,14 +95,14 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
        ? `http://localhost:5000/offer/${offreId}`
        : 'http://localhost:5000/offer';
      const method = isUpdate ? 'put' : 'post';
-     
+
      const response = await axios[method](url, formData, config);
 
-       Swal.fire(
-         'Succès',
-         `L'offre a été ${isUpdate ? 'mise à jour' : 'ajoutée'} avec succès.`,
-         'success'
-       );
+     Swal.fire(
+       'Succès',
+       `L'offre a été ${isUpdate ? 'mise à jour' : 'ajoutée'} avec succès.`,
+       'success'
+     );
      onSuccess();
      onRequestClose();
    } catch (error) {
@@ -133,7 +134,7 @@ const today = new Date().toISOString().split('T')[0];
         <select
           id="type"
           name="type"
-          value={type} 
+          value={type}
           onChange={(e) => setType(e.target.value)}
           required
         >
@@ -161,6 +162,16 @@ const today = new Date().toISOString().split('T')[0];
           min="0"
           required
         />
+        <label>
+          Remise (%):
+          <input
+            type="number"
+            value={remise}
+            onChange={(e) => setRemise(e.target.value)}
+            min="0"
+            max="100" // Assuming remise cannot be more than 100%
+          />
+        </label>
       </label>
       <label>
         Date de début:

@@ -159,7 +159,12 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
                 <p>
                   Prix:<span className="text-after-colon">{offre.prix}DT</span>
                 </p>
-
+                {offre.remise > 0 && (
+                  <p>
+                    Remise:{' '}
+                    <span className="text-after-colon">{offre.remise}%</span>
+                  </p>
+                )}
                 <p>
                   Offre valable de:{' '}
                   <span className="text-after-colon">{offre.date_debut}</span>
