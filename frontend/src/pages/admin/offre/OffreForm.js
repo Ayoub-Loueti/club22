@@ -9,6 +9,8 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
   const [date_debut, setDateDebut] = useState('');
   const [date_fin, setDateFin] = useState('');
   const [collaborateurs, setCollaborateurs] = useState([]);
+    const [type, setType] = useState([]);
+
   const [selectedCollaborateur, setSelectedCollaborateur] = useState('');
   const [images, setImages] = useState([]);
 const [initialDataLoaded, setInitialDataLoaded] = useState(false);
@@ -28,6 +30,7 @@ const [initialDataLoaded, setInitialDataLoaded] = useState(false);
            date_debut,
            date_fin,
            id_collaborateur,
+           type
          } = response.data;
          setTitre(titre);
          setDescription(description);
@@ -35,6 +38,8 @@ const [initialDataLoaded, setInitialDataLoaded] = useState(false);
          setDateDebut(date_debut.split('T')[0]);
          setDateFin(date_fin.split('T')[0]);
          setSelectedCollaborateur(id_collaborateur);
+                  setType(type);
+
          setInitialDataLoaded(true);
        })
        .catch((error) => console.error('Error fetching offer data:', error));
@@ -70,6 +75,7 @@ const [initialDataLoaded, setInitialDataLoaded] = useState(false);
    formData.append('date_debut', date_debut);
    formData.append('date_fin', date_fin);
    formData.append('id_collaborateur', selectedCollaborateur);
+  formData.append('type', document.getElementById('type').value);  
  images.forEach((image, index) => {
    formData.append('photos', image, image.name || `image_${index}.jpg`);
  });
@@ -121,6 +127,22 @@ const today = new Date().toISOString().split('T')[0];
           required
         />
       </label>
+      <div>
+        <label htmlFor="type">Catégorie :</label>
+        <select
+          id="type"
+          name="type"
+          value={type} 
+          onChange={(e) => setType(e.target.value)}
+          required
+        >
+          <option value="voyage">Voyage</option>
+          <option value="hotel">Hotel</option>
+          <option value="activité">Activité</option>
+          <option value="autre">Autre</option>
+        </select>
+      </div>
+
       <label>
         Description:
         <textarea

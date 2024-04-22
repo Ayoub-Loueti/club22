@@ -109,7 +109,7 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
   
   return (
     <>
-  <NavAdmin/>
+      <NavAdmin />
       <div className="offre-admin-container">
         <button className="retour-btn" onClick={() => window.history.back()}>
           <FaArrowLeft /> Retour
@@ -152,6 +152,10 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
                 />
 
                 <p>{offre.description}</p>
+                <p>
+                  Catégorie:{' '}
+                  <span className="text-after-colon">{offre.type}</span>
+                </p>
                 <p>
                   Prix:<span className="text-after-colon">{offre.prix}DT</span>
                 </p>

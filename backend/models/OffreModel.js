@@ -29,16 +29,17 @@ const OffreModel = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-          model: 'collaborateur',
-          key: 'id_collaborateur',
+        model: 'collaborateur',
+        key: 'id_collaborateur',
       },
-  },
-  remise: {
-    type: DataTypes.INTEGER,
-  },
-  type: {
-    type: DataTypes.ENUM('hotel', 'autre'),
-  },
+    },
+    remise: {
+      type: DataTypes.INTEGER,
+    },
+    type: {
+      type: DataTypes.ENUM('voyage', 'hotel', 'activité', 'autre'),
+      allowNull: false,
+    },
   },
   {
     tableName: 'offre',

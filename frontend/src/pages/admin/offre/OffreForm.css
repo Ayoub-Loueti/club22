@@ -79,3 +79,21 @@ font-weight: bold;
     margin: 0 auto;
   }
 }
+
+.offre-form-container label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: #4A5568;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.offre-form-container select {
+  padding: 10px; /* Increase padding for the select dropdown */
+  border-radius: 5px;
+  border: 2px solid #CBD5E0;
+  background-color: #EDF2F7;
+  color: #2D3748;
+  width: 100%; /* Make the select dropdown full width */
+}
