@@ -47,14 +47,29 @@ const PostSide = () => {
       <PostShare />
       {/* Mini navbar */}
       <div className="mini-navbar">
-        <button className={postType === 'tous' ? 'active' : ''} onClick={() => handlePostTypeChange('tous')}>
+        <button
+          className={postType === 'tous' ? 'active' : ''}
+          onClick={() => handlePostTypeChange('tous')}
+        >
           Tous
         </button>
-        <button className={postType === 'hotel' ? 'active' : ''} onClick={() => handlePostTypeChange('hotel')}>
-          Hotel
+        <button
+          className={postType === 'hotel' ? 'active' : ''}
+          onClick={() => handlePostTypeChange('hotel')}
+        >
+          Hotels
         </button>
-        <button className={postType === 'voyage' ? 'active' : ''} onClick={() => handlePostTypeChange('voyage')}>
-          Voyage
+        <button
+          className={postType === 'voyage' ? 'active' : ''}
+          onClick={() => handlePostTypeChange('voyage')}
+        >
+          Voyages
+        </button>
+        <button
+          className={postType === 'activité' ? 'active' : ''}
+          onClick={() => handlePostTypeChange('activité')}
+        >
+          Activités
         </button>
       </div>
       {/* Posts component */}

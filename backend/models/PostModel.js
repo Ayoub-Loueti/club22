@@ -3,39 +3,39 @@ const sequelize = require('../config/db');
 const UtilisateurModel = require('./UtilisateurModel');
 
 const PostModel = sequelize.define(
-  'Post', 
+  'Post',
   {
     id_post: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true
+      autoIncrement: true,
     },
     contenu: {
       type: DataTypes.STRING,
     },
     date_post: {
       type: DataTypes.DATE,
-      allowNull: false 
+      allowNull: false,
     },
     id_utilisateur: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'utilisateur', 
-        key: 'id_utilisateur', 
+        model: 'utilisateur',
+        key: 'id_utilisateur',
       },
     },
     nbr_likes: {
       type: DataTypes.INTEGER,
-      defaultValue: 0
+      defaultValue: 0,
     },
     type: {
-      type: DataTypes.ENUM('hotel', 'voyage', 'autre'),
-    }
+      type: DataTypes.ENUM('hotel', 'voyage', 'activité', 'autre'),
+    },
   },
   {
     tableName: 'post',
-    timestamps: false 
+    timestamps: false,
   }
 );
 

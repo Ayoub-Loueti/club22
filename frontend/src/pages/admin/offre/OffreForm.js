@@ -57,8 +57,8 @@ const [initialDataLoaded, setInitialDataLoaded] = useState(false);
    const files = Array.from(e.target.files);
    if (files.length > 4) {
      Swal.fire(
-       'Warning',
-       'Only the first 4 photos will be considered.',
+       'Attention',
+       'Seules les 4 premières photos seront prises en compte.',
        'warning'
      );
      files.splice(4); // Limit to first 4 files
@@ -96,20 +96,20 @@ const [initialDataLoaded, setInitialDataLoaded] = useState(false);
      
      const response = await axios[method](url, formData, config);
 
-     Swal.fire(
-       'Success',
-       `The offer has been ${isUpdate ? 'updated' : 'added'} successfully.`,
-       'success'
-     );
+       Swal.fire(
+         'Succès',
+         `L'offre a été ${isUpdate ? 'mise à jour' : 'ajoutée'} avec succès.`,
+         'success'
+       );
      onSuccess();
      onRequestClose();
    } catch (error) {
-     console.error('Error:', error);
+     console.error('Erreur:', error);
      Swal.fire(
-       'Error',
-       `An error occurred during the offer ${
-         isUpdate ? 'update' : 'addition'
-       }.`,
+       'Erreur',
+       `Une erreur s'est produite lors de la ${
+         isUpdate ? 'mise à jour' : "l'ajout"
+       } de l'offre.`,
        'error'
      );
    }
