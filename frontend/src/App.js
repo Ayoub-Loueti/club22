@@ -28,6 +28,7 @@ import OffreEmployeDetails from './pages/OffreEmploye/OffreEmployeDetails';
 import CollaborateurClickPage from './pages/OffreEmploye/collabClickPage';
 import MyReservations from './pages/OffreEmploye/myReservation';
 import AdminPanel from './pages/admin/adherant/adminAdherant';
+import AdminSignalsPage from './pages/admin/signal/AdminSignalsPage';
 
 function App() {
   return (
@@ -113,6 +114,15 @@ function App() {
                 <ProtectedRoute>
                   {' '}
                   <AdminPanel />{' '}
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/adminSignal"
+              element={
+                <ProtectedRoute>
+                  {' '}
+                  <AdminSignalsPage />{' '}
                 </ProtectedRoute>
               }
             />
