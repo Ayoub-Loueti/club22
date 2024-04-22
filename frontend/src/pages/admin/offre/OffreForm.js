@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import './OffreForm.css';
+
 function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
   const [titre, setTitre] = useState('');
   const [description, setDescription] = useState('');
@@ -9,50 +10,50 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
   const [date_debut, setDateDebut] = useState('');
   const [date_fin, setDateFin] = useState('');
   const [collaborateurs, setCollaborateurs] = useState([]);
-    const [type, setType] = useState([]);
+  const [type, setType] = useState(''); // Corrected: Initialize as a scalar
 
   const [selectedCollaborateur, setSelectedCollaborateur] = useState('');
   const [images, setImages] = useState([]);
-const [initialDataLoaded, setInitialDataLoaded] = useState(false);
+  const [initialDataLoaded, setInitialDataLoaded] = useState(false);
 
   const token = localStorage.getItem('login');
- useEffect(() => {
-   const headers = { Authorization: `Bearer ${JSON.parse(token).token}` };
+  useEffect(() => {
+    const headers = { Authorization: `Bearer ${JSON.parse(token).token}` };
 
-   if (isUpdate) {
-     axios
-       .get(`http://localhost:5000/offer/${offreId}`, { headers })
-       .then((response) => {
-         const {
-           titre,
-           description,
-           prix,
-           date_debut,
-           date_fin,
-           id_collaborateur,
-           type
-         } = response.data;
-         setTitre(titre);
-         setDescription(description);
-         setPrix(prix);
-         setDateDebut(date_debut.split('T')[0]);
-         setDateFin(date_fin.split('T')[0]);
-         setSelectedCollaborateur(id_collaborateur);
-                  setType(type);
+    if (isUpdate) {
+      axios
+        .get(`http://localhost:5000/offer/${offreId}`, { headers })
+        .then((response) => {
+          const {
+            titre,
+            description,
+            prix,
+            date_debut,
+            date_fin,
+            id_collaborateur,
+            type  // Assuming 'type' is returned as a scalar value from the API
+          } = response.data;
+          setTitre(titre);
+          setDescription(description);
+          setPrix(prix);
+          setDateDebut(date_debut.split('T')[0]);
+          setDateFin(date_fin.split('T')[0]);
+          setSelectedCollaborateur(id_collaborateur);
+          setType(type);  // Corrected: Setting scalar value
 
-         setInitialDataLoaded(true);
-       })
-       .catch((error) => console.error('Error fetching offer data:', error));
-   }
+          setInitialDataLoaded(true);
+        })
+        .catch((error) => console.error('Error fetching offer data:', error));
+    }
 
-   axios
-     .get('http://localhost:5000/allCollaborators', { headers })
-     .then((response) => {
-       setCollaborateurs(response.data);
-     })
-     .catch((error) => console.error('Error fetching collaborators:', error));
- }, [isUpdate, offreId, token]);
-
+    axios
+      .get('http://localhost:5000/allCollaborators', { headers })
+      .then((response) => {
+        setCollaborateurs(response.data);
+      })
+      .catch((error) => console.error('Error fetching collaborators:', error));
+  }, [isUpdate, offreId, token]);
+  
  const handleImageChange = (e) => {
    const files = Array.from(e.target.files);
    if (files.length > 4) {

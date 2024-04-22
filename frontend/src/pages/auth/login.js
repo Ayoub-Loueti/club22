@@ -90,15 +90,33 @@ navigate ('/insererNom')
             confirmButtonText: 'Ok',
           });
         }
-        // Account is not authorized to log in
-        else if (error.response.data.error.includes('n’est pas autorisé')) {
-          Swal.fire({
-            title: 'Compte Non Autorisé',
-            text: 'Le compte utilisateur n’est pas autorisé à se connecter.',
-            icon: 'error',
-            confirmButtonText: 'Ok',
-          });
-        }
+else if (error.response.data.error.includes('n’est pas autorisé')) {
+  Swal.fire({
+    title: 'Compte Non Autorisé',
+    html: `
+      <p>Le compte utilisateur n’est pas autorisé à se connecter.</p>
+      <button id="resendEmailBtn" class="swal2-confirm swal2-styled"
+        style="border: 0; display: block; margin: 10px auto; padding: 10px 20px;">
+        Renvoyer l'email (${countdown})
+      </button>
+    `,
+    icon: 'error',
+    showConfirmButton: false,  // Hide the default confirm button
+    didOpen: () => {
+      const btn = document.getElementById('resendEmailBtn');
+      btn.disabled = resendDisabled;
+      btn.addEventListener('click', () => {
+        handleResendEmail();
+        btn.innerText = 'Renvoyer l\'email (' + countdown + ')';
+      });
+    },
+    willClose: () => {
+      if (document.getElementById('resendEmailBtn')) {
+        document.getElementById('resendEmailBtn').removeEventListener('click', handleResendEmail);
+      }
+    }
+  });
+}
         // Incorrect password or other login errors
         else {
           Swal.fire({
