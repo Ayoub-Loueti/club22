@@ -86,6 +86,19 @@
   margin-right: auto; /* Mettre à auto pour déplacer la barre de recherche à gauche */
 }
 
+.hide-search-bar .searchh-formm {
+  display: none; /* Hide the search bar */
+}
+
+.khat {
+  border-left: 1px solid transparent; /* Make the line transparent */
+  width: 1px; /* Adjust width as needed */
+  height: 100%; /* Match the height of the navbar */
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .searchh-inputt {
   color: #191f43; /* Change la couleur du texte en blanc */
   border-radius: 20px; /* Arrondi des bords de l'input */

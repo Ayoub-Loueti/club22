@@ -58,6 +58,8 @@ function OffreCollabEmploye({ collaborateurId }) {
     navigate(`/OffrePageDetails/${offreId}`);
   };
 
+  const filteredOffres = offres.filter(offre => filter === 'tous' || offre.type === filter);
+
   return (
     <>
       <Navbar />
@@ -74,7 +76,7 @@ function OffreCollabEmploye({ collaborateurId }) {
           <div className="error-message"><h2>{error}</h2></div>
         ) : (
           <div className="offre-employee-cards-container">
-            {offres.length > 0 ? offres.map((offre, index) => (
+            {filteredOffres.length > 0 ? filteredOffres.map((offre, index) => (
               <div key={index} className="offre-employee-card">
                 <img
                   src={`http://localhost:5000/${offre.lesImages[offre.currentImageIndex]?.image}`}
