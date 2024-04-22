@@ -1,6 +1,6 @@
 /* CSS personnalisé pour la page listCollaborateur */
 .listCollaborateur-container {
-  padding: 20px;
+  padding: 50px;
 }
 
 .listCollaborateur-header {
@@ -90,6 +90,12 @@
 .navigation-buttons button:hover {
   background-color: #163172;
 }
+.listCollaborateur-table th, .listCollaborateur-table td {
+  padding: 12px;
+  text-align: center;
+  white-space: normal; /* Allows text wrapping */
+}
+
 .list-collab-button {
   padding: 8px 16px;
   background-color: #163172;
@@ -100,6 +106,7 @@
   transition: background-color 0.3s;
   margin-right: 10px;
   font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .list-collab-button:hover {
@@ -111,4 +118,20 @@
   height: 80px; 
   object-fit: cover; /* Maintain aspect ratio */
   border-radius: 5px; /* Add border radius for rounded corners */
+}
+
+.collabo-butt {
+    padding: 8px 16px;
+
+  background-color: #163172;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+align-items: center;  font-weight: bold;
+justify-content: center;}
+
+.collabo-butt:hover {
+  background-color: #191f43; /* Plus sombre au survol */
 }

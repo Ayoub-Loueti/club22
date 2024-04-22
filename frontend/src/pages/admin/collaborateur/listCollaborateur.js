@@ -123,10 +123,8 @@ function ListCollaborateur() {
     <>
       <NavAdmin />
       <div className="listCollaborateur-container">
-        <button className="retour-btn" onClick={() => window.history.back()}>
-          <FaArrowLeft /> Retour
-        </button>
-        <button onClick={handleOpenModal} className="list-collab-button">
+      
+        <button onClick={handleOpenModal} className="collabo-butt">
           Ajouter Collaborateur
         </button>
         <AddCollaborateurModal
@@ -134,16 +132,7 @@ function ListCollaborateur() {
           onRequestClose={handleCloseModal}
           onSuccess={handleAddOrUpdateSuccess}
         />
-        <div className="listCollaborateur-header">
-          <h1 className="listCollaborateur-title">LISTE DES COLLABORATEURS</h1>
-          <input
-            type="text"
-            className="listCollaborateur-search-input"
-            placeholder="Rechercher..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
+        
 
         <table className="listCollaborateur-table">
           <thead>
@@ -168,7 +157,7 @@ function ListCollaborateur() {
                 <td>{collaborateur.adresse}</td>
                 <td>{collaborateur.tel}</td>
                 <td>{collaborateur.email}</td>
-                <td>{collaborateur.siteWeb}</td>
+                <td>{collaborateur.siteWeb || 'Non disponible'}</td>
                 <td>
                   <img
                     src={
