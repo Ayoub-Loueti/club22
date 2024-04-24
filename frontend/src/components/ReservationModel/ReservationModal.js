@@ -160,62 +160,103 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
     const decrementNombre = () => setNombre(Math.max(1, nombre - 1));
 
     return (
-        <Dialog open={isOpen} onClose={onRequestClose} maxWidth="sm" fullWidth>
-            <DialogTitle>Reservation Details</DialogTitle>
-            <DialogContent dividers>
-                {userInfo && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <Avatar src={userInfo.photo ? `http://localhost:5000/${userInfo.photo}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'} alt="User" sx={{ width: 56, height: 56, mr: 2 }} />
-                        <Box>
-                            <Typography variant="subtitle1">{userInfo.nom} {userInfo.prenom}</Typography>
-                            <Typography variant="body2">{userInfo.email}</Typography>
-                        </Box>
-                    </Box>
-                )}
-                <Box sx={{ maxHeight: '40vh', overflowY: 'auto' }}>
-                {type === 'hotel' ? (
-                rooms.map((room, index) => (
-                    <RoomDetails
-                        key={room.id}
-                        room={room}
-                        updateRoom={updateRoom}
-                        deleteRoom={handleRemoveRoom}
-                        canDelete={rooms.length > 1}
-                    />
-                ))
+      <Dialog open={isOpen} onClose={onRequestClose} maxWidth="sm" fullWidth>
+        <DialogTitle>Reservation Details</DialogTitle>
+        <DialogContent dividers>
+          {userInfo && (
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <Avatar
+                src={
+                  userInfo.photo
+                    ? `http://localhost:5000/${userInfo.photo}`
+                    : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+                }
+                alt="User"
+                sx={{ width: 56, height: 56, mr: 2 }}
+              />
+              <Box>
+                <Typography variant="subtitle1">
+                  {userInfo.nom} {userInfo.prenom}
+                </Typography>
+                <Typography variant="body2">{userInfo.email}</Typography>
+              </Box>
+            </Box>
+          )}
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            Prix: {prix.toFixed(2)} DT
+          </Typography>
+
+          <Box sx={{ maxHeight: '40vh', overflowY: 'auto' }}>
+            {type === 'hotel' ? (
+              rooms.map((room, index) => (
+                <RoomDetails
+                  key={room.id}
+                  room={room}
+                  updateRoom={updateRoom}
+                  deleteRoom={handleRemoveRoom}
+                  canDelete={rooms.length > 1}
+                />
+              ))
             ) : (
-                <>
+              <>
                 <br></br>
                 <TextField
-                            label="Nombre des personnes"
-                            type="number"
-                            InputProps={{
-                                endAdornment: (
-                                    <React.Fragment>
-                                        <IconButton onClick={decrementNombre}><RemoveCircleOutlineIcon /></IconButton>
-                                        <IconButton onClick={incrementNombre}><AddCircleOutlineIcon /></IconButton>
-                                    </React.Fragment>
-                                )
-                            }}
-                            value={nombre}
-                            variant="outlined"
-                            fullWidth
-                        />
-                        </>
+                  label="Nombre des personnes"
+                  type="number"
+                  InputProps={{
+                    endAdornment: (
+                      <React.Fragment>
+                        <IconButton onClick={decrementNombre}>
+                          <RemoveCircleOutlineIcon />
+                        </IconButton>
+                        <IconButton onClick={incrementNombre}>
+                          <AddCircleOutlineIcon />
+                        </IconButton>
+                      </React.Fragment>
+                    ),
+                  }}
+                  value={nombre}
+                  variant="outlined"
+                  fullWidth
+                />
+              </>
             )}
-            </Box>
-                <Typography variant="h6" sx={{ mt: 2 }}>Prix totale: {type === 'hotel' ? rooms.reduce((acc, room) => acc + room.prix, 0).toFixed(2) : (nombre * calculateRoomPrice(1, 0, prix, isAdherant)).toFixed(2)} DT</Typography>
-                {type === 'hotel' && (
-                    <Button startIcon={<AddCircleOutlineIcon />} onClick={handleAddRoom} sx={{ mt: 2 }}>
-                        Ajouter une chambre
-                    </Button>
-                )}
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={onRequestClose}>Annuler</Button>
-                <Button onClick={handleReservation} variant="contained" color="primary">Reserve</Button>
-            </DialogActions>
-        </Dialog>
+          </Box>
+          {remise > 0 && (
+            <Typography variant="h6" sx={{ mt: 1 }}>
+              Remise si tu es adhérant: {remise}%
+            </Typography>
+          )}
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            Prix totale:{' '}
+            {type === 'hotel'
+              ? rooms.reduce((acc, room) => acc + room.prix, 0).toFixed(2)
+              : (nombre * calculateRoomPrice(1, 0, prix, isAdherant)).toFixed(
+                  2
+                )}{' '}
+            DT
+          </Typography>
+          {type === 'hotel' && (
+            <Button
+              startIcon={<AddCircleOutlineIcon />}
+              onClick={handleAddRoom}
+              sx={{ mt: 2 }}
+            >
+              Ajouter une chambre
+            </Button>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onRequestClose}>Annuler</Button>
+          <Button
+            onClick={handleReservation}
+            variant="contained"
+            color="primary"
+          >
+            Reserve
+          </Button>
+        </DialogActions>
+      </Dialog>
     );
 };
 
