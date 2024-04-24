@@ -1,6 +1,9 @@
 const Utilisateur = require('../models/UtilisateurModel');
 const Employe = require('../models/EmployeModel');
 const Demande = require('../models/DemandeModel');
+const Commentaire = require('../models/CommentairesModel');
+const Reponse = require('../models/ReponseModel');
+const Post = require('../models/PostModel'); 
 
 exports.getAllUsers = async (req, res) => {
   try {
@@ -343,6 +346,79 @@ exports.getAllDemandes = async (req, res) => {
   }
 };
 
+exports.deletePostAdmin = async (req, res) => {
+  const { id } = req.params; // Post ID from URL parameters
 
+  const isAdmin = await Utilisateur.findOne({
+    where: {
+      id_utilisateur: req.userId,
+      type: 'admin',
+    },
+  });
+
+  if (!isAdmin) {
+      return res.status(403).json({ message: "Only administrators can delete posts." });
+  }
+
+  try {
+      const deleted = await Post.destroy({ where: { id_post: id } });
+      if (deleted) {
+          return res.status(200).json({ message: "Post deleted successfully." });
+      }
+      return res.status(404).json({ message: "Post not found." });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+exports.deleteCommentAdmin = async (req, res) => {
+  const { id } = req.params; // Comment ID from URL parameters
+
+  const isAdmin = await Utilisateur.findOne({
+    where: {
+      id_utilisateur: req.userId,
+      type: 'admin',
+    },
+  });
+
+  if (!isAdmin) {
+      return res.status(403).json({ message: "Only administrators can delete comments." });
+  }
+
+  try {
+      const deleted = await Commentaire.destroy({ where: { id_cmntr: id } });
+      if (deleted) {
+          return res.status(200).json({ message: "Comment deleted successfully." });
+      }
+      return res.status(404).json({ message: "Comment not found." });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+exports.deleteResponseAdmin = async (req, res) => {
+  const { id } = req.params; // Response ID from URL parameters
+
+  const isAdmin = await Utilisateur.findOne({
+    where: {
+      id_utilisateur: req.userId,
+      type: 'admin',
+    },
+  });
+
+  if (!isAdmin) {
+      return res.status(403).json({ message: "Only administrators can delete responses." });
+  }
+
+  try {
+      const deleted = await Reponse.destroy({ where: { id_reponse: id } });
+      if (deleted) {
+          return res.status(200).json({ message: "Response deleted successfully." });
+      }
+      return res.status(404).json({ message: "Response not found." });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
 
 module.exports = exports;

@@ -16,4 +16,8 @@ router.put('/employes/:employeId/adherant', authenticate, adminController.update
 router.put('/employes/:employeId/nonAdherant', authenticate, adminController.updateEmployeNonAdherant);
 router.get('/demandes', authenticate, adminController.getAllDemandes);
 
+router.delete('/post/:id/admin', authenticate, adminController.deletePostAdmin);
+router.delete('/comment/:id/admin', authenticate, adminController.deleteCommentAdmin);
+router.delete('/response/:id/admin', authenticate, adminController.deleteResponseAdmin);
+
 module.exports = router;

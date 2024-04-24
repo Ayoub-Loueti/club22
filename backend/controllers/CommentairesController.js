@@ -87,14 +87,14 @@ exports.modifyComment = async (req, res) => {
   };
   
 exports.deleteComment = async (req, res) => {
-    const { id_cmntr } = req.params; // Comment ID from URL parameters
-    const userId = req.userId; // User ID from the request, typically set after authentication
+    const { id_cmntr } = req.params; 
+    const userId = req.userId; 
   
     try {
         const comment = await Commentaire.findByPk(id_cmntr, {
             include: [{
                 model: Post,
-                as: 'post', // Make sure this alias matches how you've set it up in associations
+                as: 'post',
             }]
         });
   
@@ -106,18 +106,15 @@ exports.deleteComment = async (req, res) => {
             return res.status(403).json({ message: 'User not authorized to delete this comment' });
         }
   
-        // Find and delete the associated notification
         await Notification.destroy({
           where: { id_cmntr: id_cmntr }
       });
   
         await comment.destroy();
   
-        // If the comment is associated with a post, check the notification count before decrementing for the post owner
         if (comment.post && comment.post.id_utilisateur) {
             const postOwner = await Utilisateur.findByPk(comment.post.id_utilisateur);
             if (postOwner && postOwner.nbr_notifs > 0) {
-                // Only decrement if nbr_notifs is greater than 0
                 await postOwner.decrement('nbr_notifs', { by: 1 });
             }
         }
@@ -130,7 +127,7 @@ exports.deleteComment = async (req, res) => {
   };
 
 exports.getComments = async (req, res) => {
-    const postId = req.params.postId; // Extract the post ID from the path
+    const postId = req.params.postId; 
     const userId = req.userId;
   
     try {
@@ -146,7 +143,6 @@ exports.getComments = async (req, res) => {
       const commentsWithLikes = await Promise.all(commentss.map(async (comment) => {
         const commentJson = comment.toJSON();
   
-        // Check like status for each comment
         const likeStatus = await LikeCom.findOne({
           where: {
             id_cmntr: comment.id_cmntr,
@@ -155,7 +151,6 @@ exports.getComments = async (req, res) => {
         });
         commentJson.isComLikedByCurrentUser = !!likeStatus;
   
-        // Fetch and attach responses
         const reponses = await Reponse.findAll({
           where: { id_cmntr: comment.id_cmntr },
           include: [
@@ -167,7 +162,6 @@ exports.getComments = async (req, res) => {
           ],
         });
   
-        // Enrich responses with like status
         commentJson.reponses = await Promise.all(reponses.map(async (reponse) => {
           const reponseJson = reponse.toJSON();
           const likeStatusResponse = await LikeRep.findOne({
@@ -189,6 +183,44 @@ exports.getComments = async (req, res) => {
       return res.status(500).json({ message: 'Error fetching comments', error: error.message });
     }
   };
+
+  exports.getCommentById = async (req, res) => {
+    const { id_cmntr } = req.params;
+
+    try {
+        const comment = await Commentaire.findByPk(id_cmntr, {
+            include: [{
+                model: Utilisateur,
+                as: 'utilisateur',
+                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+            }],
+        });
+
+        if (!comment) {
+            return res.status(404).json({ message: 'Comment not found' });
+        }
+
+        const commentJson = comment.toJSON();
+
+        const responses = await Reponse.findAll({
+            where: { id_cmntr: comment.id_cmntr },
+            include: [{
+                model: Utilisateur,
+                as: 'utilisateur',
+                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+            }],
+        });
+
+        commentJson.responses = responses.map(response => {
+            return { ...response.toJSON() }; 
+        });
+
+        return res.status(200).json(commentJson);
+    } catch (error) {
+        console.error('Error fetching comment:', error);
+        return res.status(500).json({ message: 'Error fetching comment', error: error.message });
+    }
+};
 
   // reponses 
   
@@ -334,6 +366,31 @@ exports.updateReply = async (req, res) => {
         console.error('Error updating reply:', error);
         return res.status(500).json({ message: 'Error updating reply', error: error.message });
     }
+};
+
+exports.getReplyById = async (req, res) => {
+  const { id_reponse } = req.params; // ID of the reply from URL parameters
+  const userId = req.userId; // User ID from the request, typically set after authentication
+
+  try {
+      const reply = await Reponse.findByPk(id_reponse, {
+          include: [{
+              model: Utilisateur,
+              as: 'utilisateur',
+              attributes: ['id_utilisateur', 'nom', 'prenom', 'photo']
+          }]
+      });
+
+      if (!reply) {
+          return res.status(404).json({ message: 'Reply not found' });
+      }
+
+      const replyJson = reply.toJSON();
+      return res.status(200).json(replyJson);
+  } catch (error) {
+      console.error('Error fetching reply:', error);
+      return res.status(500).json({ message: 'Error fetching reply', error: error.message });
+  }
 };
 
 module.exports = exports;

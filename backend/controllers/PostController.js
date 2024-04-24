@@ -755,135 +755,47 @@ exports.createSignal = async (req, res) => {
   }
 };
 
-
-exports.getSignalerById = async (req, res) => {
-  const signalId = req.params.id;  // ID of the 'Signaler' from the URL parameter
+exports.getAllSignaler = async (req, res) => {
+  const userId = req.userId; // Ensure you have access to the userId, typically set from the auth middleware
 
   try {
-      const signaler = await Signaler.findByPk(signalId, {
-          include: [{
-              model: Post,
-              as: 'post',
-              include: [{
-                  model: Utilisateur,
-                  as: 'utilisateur',
-                  attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-              }]
-          }]
-      });
-
-      if (!signaler) {
-          return res.status(404).json({ message: 'Signaler entry not found' });
+      // First, verify if the current user is an admin
+      const currentUser = await Utilisateur.findByPk(userId);
+      if (!currentUser || currentUser.type !== 'admin') {
+          return res.status(403).json({ message: 'Access denied. Only admins can perform this operation.' });
       }
 
-      // Extract the post details into a JSON object
-      const postDetails = signaler.post.toJSON();
-
-      // Fetch images associated with the post
-      const images = await Image.findAll({
-          where: { id_post: postDetails.id_post }
-      });
-      postDetails.lesImages = images;
-
-      // Fetch likes associated with the post
-      const likes = await Likes.findAll({
-          where: { id_post: postDetails.id_post },
-          include: [{
-              model: Utilisateur,
-              as: 'utilisateur',
-              attributes: ['id_utilisateur', 'nom', 'prenom', 'photo']
-          }]
-      });
-      postDetails.likes = likes.map(like => like.toJSON());
-
-      // Conditionally fetch and append comment details if `id_cmntr` is not zero
-      if (signaler.id_cmntr && signaler.id_cmntr !== 0) {
-          const commentaire = await Commentaire.findByPk(signaler.id_cmntr, {
-              include: [{
+      // Fetch all Signaler entries with related Post and Utilisateur information
+      const allSignalerEntries = await Signaler.findAll({
+          include: [
+              {
+                  model: Post,
+                  as: 'post',
+                  include: [
+                      {
+                          model: Utilisateur,
+                          as: 'utilisateur',
+                          attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+                      }
+                  ],
+                  attributes: ['id_post', 'id_utilisateur' ,'contenu', 'type']
+              },
+              {
                   model: Utilisateur,
                   as: 'utilisateur',
                   attributes: ['id_utilisateur', 'nom', 'prenom', 'photo']
-              }]
-          });
-
-          if (commentaire) {
-              postDetails.commentaires = [commentaire.toJSON()];  // Include detailed comment if exists
-          }
-      } else {
-          postDetails.commentaires = [];  // Include an empty array if no commentaire is associated
-      }
-
-      return res.status(200).json(postDetails);  // Send the detailed post including signaler data
-  } catch (error) {
-      console.error('Error fetching Signaler by ID:', error);
-      return res.status(500).json({ message: 'Error fetching Signaler', error: error.message });
-  }
-};
-
-exports.getSignaler = async (req, res) => {
-  try {
-      const signalers = await Signaler.findAll({
-          include: [{
-              model: Post,
-              as: 'post',
-              include: [{
-                  model: Utilisateur,
-                  as: 'utilisateur',
-                  attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-              }]
-          }]
-      });
-
-      if (!signalers.length) {
-          return res.status(404).json({ message: 'No Signaler entries found' });
-      }
-
-      const results = await Promise.all(signalers.map(async (signaler) => {
-          const signalerJson = signaler.toJSON();
-
-          // Fetch images associated with the post
-          const images = await Image.findAll({
-              where: { id_post: signalerJson.post.id_post }
-          });
-          signalerJson.post.lesImages = images.map(img => img.toJSON());
-
-          // Fetch likes associated with the post
-          const likes = await Likes.findAll({
-              where: { id_post: signalerJson.post.id_post },
-              include: [{
-                  model: Utilisateur,
-                  as: 'utilisateur',
-                  attributes: ['id_utilisateur', 'nom', 'prenom', 'photo']
-              }]
-          });
-          signalerJson.post.likes = likes.map(like => like.toJSON());
-
-          // Conditionally fetch and append comment details if `id_cmntr` is not zero
-          if (signalerJson.id_cmntr && signalerJson.id_cmntr !== 0) {
-              const commentaire = await Commentaire.findByPk(signalerJson.id_cmntr, {
-                  include: [{
-                      model: Utilisateur,
-                      as: 'utilisateur',
-                      attributes: ['id_utilisateur', 'nom', 'prenom', 'photo']
-                  }]
-              });
-
-              if (commentaire) {
-                  signalerJson.post.commentaire = commentaire.toJSON();
-              } else {
-                  signalerJson.post.commentaire = null;  // Set to null if no comment is associated
               }
-          } else {
-              signalerJson.post.commentaire = null;  // Set to null if id_cmntr is zero
-          }
+          ]
+      });
 
-          return signalerJson.post;  // return modified post object for each signaler
-      }));
+      if (!allSignalerEntries.length) {
+          return res.status(404).json({ message: 'No signals found' });
+      }
 
-      return res.status(200).json(results);  // Send the array of detailed posts including signaler data
+      return res.status(200).json(allSignalerEntries);
   } catch (error) {
-      console.error('Error fetching all Signalers:', error);
-      return res.status(500).json({ message: 'Error fetching all Signalers', error: error.message });
+      console.error('Error fetching signals:', error);
+      return res.status(500).json({ message: 'Error fetching signals', error: error.message });
   }
 };
 
