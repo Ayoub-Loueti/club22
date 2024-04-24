@@ -17,6 +17,8 @@ import Navbar from './components/navbar/navbar';
 import NavbarHaut from './components/navbar/navbarHaut';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
+import ClientRestrictedRoute from './components/ClientRestrictedRoute'; 
+import AdminRestrictedRoute  from './components/AdminRestrictedRoute'; 
 import Home from './pages/home/home';
 import ListCollaborateur from './pages/admin/collaborateur/listCollaborateur';
 import ListCollab from './pages/admin/collaborateur/listCollab';
@@ -76,8 +78,10 @@ function App() {
               path="/listClient"
               element={
                 <ProtectedRoute>
+                  <AdminRestrictedRoute>
                   {' '}
                   <ListClient />{' '}
+                  </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
             />
@@ -85,8 +89,10 @@ function App() {
               path="/listEmploye"
               element={
                 <ProtectedRoute>
+                   <AdminRestrictedRoute>
                   {' '}
                   <ListEmploye />{' '}
+                  </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
             />
@@ -94,8 +100,10 @@ function App() {
               path="/listCollaborateur"
               element={
                 <ProtectedRoute>
+                  <AdminRestrictedRoute>
                   {' '}
                   <ListCollaborateur />{' '}
+                  </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
             />
@@ -103,8 +111,10 @@ function App() {
               path="/listCollab"
               element={
                 <ProtectedRoute>
+                  <AdminRestrictedRoute>
                   {' '}
                   <ListCollab />{' '}
+                  </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
             />
@@ -112,8 +122,10 @@ function App() {
               path="/adminAdherant"
               element={
                 <ProtectedRoute>
+                  <AdminRestrictedRoute>
                   {' '}
                   <AdminPanel />{' '}
+                  </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
             />
@@ -121,8 +133,10 @@ function App() {
               path="/adminSignal"
               element={
                 <ProtectedRoute>
+                  <AdminRestrictedRoute>
                   {' '}
                   <AdminSignalsPage />{' '}
+                  </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
             />
@@ -130,8 +144,10 @@ function App() {
               path="/MesReservations"
               element={
                 <ProtectedRoute>
+                   <ClientRestrictedRoute>
                   {' '}
                   <MyReservations />{' '}
+                  </ClientRestrictedRoute>
                 </ProtectedRoute>
               }
             />
@@ -139,8 +155,10 @@ function App() {
               path="/OffreAdmin"
               element={
                 <ProtectedRoute>
+                  <AdminRestrictedRoute>
                   {' '}
                   <OffreAdmin />{' '}
+                  </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
             />
@@ -148,8 +166,10 @@ function App() {
               path="/listReservation"
               element={
                 <ProtectedRoute>
+                  <AdminRestrictedRoute>
                   {' '}
                   <ListReservation />{' '}
+                  </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
             />
@@ -157,8 +177,10 @@ function App() {
               path="/collabPage"
               element={
                 <ProtectedRoute>
+                  <ClientRestrictedRoute>
                   {' '}
                   <CollaborateurPage />{' '}
+                  </ClientRestrictedRoute>
                 </ProtectedRoute>
               }
             />
@@ -166,8 +188,10 @@ function App() {
               path="/collabPage/:collabId"
               element={
                 <ProtectedRoute>
+                  <ClientRestrictedRoute>
                   {' '}
                   <CollaborateurClickPage />{' '}
+                  </ClientRestrictedRoute>
                 </ProtectedRoute>
               }
             />
@@ -175,8 +199,10 @@ function App() {
               path="/offrePage"
               element={
                 <ProtectedRoute>
+                   <ClientRestrictedRoute>
                   {' '}
                   <OffreEmploye />{' '}
+                  </ClientRestrictedRoute>
                 </ProtectedRoute>
               }
             />
@@ -184,8 +210,10 @@ function App() {
               path="/offrePageDetails/:offreId"
               element={
                 <ProtectedRoute>
+                   <ClientRestrictedRoute>
                   {' '}
                   <OffreEmployeDetails />{' '}
+                  </ClientRestrictedRoute>
                 </ProtectedRoute>
               }
             />
@@ -199,7 +227,9 @@ function App() {
               path="/tousLesUtilisateurs"
               element={
                 <ProtectedRoute>
+                  <AdminRestrictedRoute>
                   <TousLesUtilisateurs />
+                  </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
             />

@@ -226,7 +226,7 @@ exports.googleAuthCallback = (req, res, next) => {
     });
 
     // Redirect to the /load page with the token as a query parameter
-    res.redirect(`http://localhost:3000/load?token=${userToken}&userId=${user.id_utilisateur}`);
+    res.redirect(`http://localhost:3000/load?token=${userToken}&userId=${user.id_utilisateur}&type=${user.type}`);
   })(req, res, next); // Make sure to pass req, res, next to the inner function
 };
 
