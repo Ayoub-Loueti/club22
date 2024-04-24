@@ -137,6 +137,7 @@ const AdminPanel = () => {
          canvasWidth,
          canvasHeight
        );
+       
        pdf.save(`demande-${dem.id_demande}.pdf`);
      } catch (error) {
        console.error('Failed to generate PDF:', error);
@@ -151,7 +152,7 @@ const AdminPanel = () => {
 
   return (
     <>
-    <NavAdmin/>
+      <NavAdmin />
       <h2
         style={{
           textAlign: 'center',
@@ -192,31 +193,43 @@ const AdminPanel = () => {
                   dem.date_demande
                 ).toLocaleString()}`}</p>
                 <p>{dem.description}</p>
-                <div className="action-buttons">
-                  <button
-                    className={`ButtonAdh ${
-                      dem.employe.adherant
-                        ? 'ButtonAdh-adh-revoke'
-                        : 'ButtonAdh-adh-approve'
-                    }`}
-                    onClick={() =>
-                      handleUpdateAdherant(
-                        dem.employe.id_employe,
-                        dem.employe.adherant
-                      )
-                    }
-                  >
-                    {dem.employe.adherant ? 'Révoquer' : 'Approuver'}
-                  </button>
-                  {!dem.employe.adherant && (
+                <div className="signature-and-actions">
+                  <div className="signature-container">
+                    <p className="signature-title">Signature:</p>
+                    {dem.signature && (
+                      <img
+                        src={dem.signature}
+                        alt="Signature"
+                        className="sig"
+                      />
+                    )}
+                  </div>
+                  <div className="action-buttons">
                     <button
-                      className="ButtonAdh ButtonAdh-download"
-                      onClick={() => downloadPdf(dem)}
+                      className={`ButtonAdh ${
+                        dem.employe.adherant
+                          ? 'ButtonAdh-adh-revoke'
+                          : 'ButtonAdh-adh-approve'
+                      }`}
+                      onClick={() =>
+                        handleUpdateAdherant(
+                          dem.employe.id_employe,
+                          dem.employe.adherant
+                        )
+                      }
                     >
-                      Télécharger
+                      {dem.employe.adherant ? 'Révoquer' : 'Approuver'}
                     </button>
-                  )}
-                </div>{' '}
+                    {!dem.employe.adherant && (
+                      <button
+                        className="ButtonAdh ButtonAdh-download"
+                        onClick={() => downloadPdf(dem)}
+                      >
+                        Télécharger
+                      </button>
+                    )}
+                  </div>{' '}
+                </div>
               </div>
             </div>
           </div>

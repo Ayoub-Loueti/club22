@@ -5,7 +5,7 @@ const Utilisateur = require('../models/UtilisateurModel');
 exports.createDemande = async (req, res) => {
     try {
         const userId = req.userId;
-        const { description } = req.body;
+        const { description, signature } = req.body;
 
         const isEmploye = await Utilisateur.findOne({
             where: {
@@ -45,10 +45,11 @@ exports.createDemande = async (req, res) => {
 
             // If no existing demande, create one
             const demande = await Demande.create({
-                id_employe: employe.id_employe,
-                titre: defaultTitle,
-                description:description,
-                date_demande: new Date(),
+              id_employe: employe.id_employe,
+              titre: defaultTitle,
+              description: description,
+              signature:signature,
+              date_demande: new Date(),
             });
 
             return res.status(201).json({ demande });
@@ -68,10 +69,11 @@ exports.createDemande = async (req, res) => {
 
             // If no existing demande, create one
             const demande = await Demande.create({
-                id_employe: employe.id_employe,
-                titre: defaultTitle,
-                description:description,
-                date_demande: new Date(),
+              id_employe: employe.id_employe,
+              titre: defaultTitle,
+              description: description,
+              signature: signature,
+              date_demande: new Date(),
             });
 
             return res.status(201).json({ demande });

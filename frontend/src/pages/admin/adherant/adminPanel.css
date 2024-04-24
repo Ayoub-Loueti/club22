@@ -71,26 +71,15 @@ margin-left: 13%;
   margin-bottom: 10px; /* Espacement entre les paragraphes */
 }
 
-.demande-info-adh p:nth-child(1) {
-  color: #4682b4; /* Bleu */
- 
-}
 
-.demande-info-adh p:nth-child(2) {
-  color: #191F43; 
-  font-weight: bold;
-  font-size: 16px;
 
-}
 
 /* Container for action buttons to ensure inline display */
 .action-buttons {
     display: flex;
-    justify-content: right; /* Adjust this to 'start' if you want buttons closer to each other */
     align-items: center;
     width: 100%; /* Takes full width of the parent container */
     padding-top: 10px; /* Space above the buttons */
-    margin-left: 220px;
 }
 
 .ButtonAdh {
@@ -138,4 +127,28 @@ margin-left: 13%;
 
 .hidden-for-pdf {
   display: none !important;
+}
+
+.signature-and-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 300px;
+}
+
+.signature-container {
+  margin-right: 100%;
+  text-align: left;
+  
+}
+
+.signature-title {
+  margin-bottom: 5px; /* Spacing between the titlaaaaaae and the image */
+  font-size: 14px; /* Smaller font size for the title */
+  color: #191F43; /* Font color matching the admin panel theme */
+}
+
+.sig {
+  max-width: 100px; /* Adjust width as necessary */
+  border-radius: 5px;
 }
