@@ -118,7 +118,11 @@ const handleViewOffers = () => {
     });
   }
 };
-
+const getEmailLink = (collaborateur) => {
+  const subject = encodeURIComponent('From Ooredoo Club2');
+  const body = encodeURIComponent('Hello cher collab');
+  return `mailto:${collaborateur.email}?subject=${subject}&body=${body}`;
+};
   return (
     <>
       <NavAdmin />
@@ -204,7 +208,11 @@ const handleViewOffers = () => {
                   <p className="collaborateur-card-description">
                     Email :{' '}
                     <span className="description-value">
-                      {collaborateur.email}
+                      {collaborateur.email && (
+                        <a href={getEmailLink(collaborateur)}>
+                          {collaborateur.email}
+                        </a>
+                      )}
                     </span>
                   </p>
                   <p className="collaborateur-card-description">
