@@ -66,8 +66,8 @@ const handleSubmit = async (e) => {
   if (type === '') {
     errorMessages.push('Veuillez sélectionner une catégorie.');
   }
-  if (contenu.length > 400) {
-    errorMessages.push("Vous ne pouvez saisir que jusqu'à 400 caractères.");
+  if (contenu.length > 600) {
+    errorMessages.push("Vous ne pouvez saisir que jusqu'à 600 caractères.");
   }
 
   if (errorMessages.length > 0) {
@@ -219,7 +219,7 @@ const handleSubmit = async (e) => {
             </option>
             <option value="hotel">Hôtel</option>
             <option value="voyage">Voyage</option>
-            <option value="activité">activité</option>
+            <option value="activité">Activité</option>
 
             <option value="autre">Autre</option>
           </select>

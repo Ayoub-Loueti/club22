@@ -3,4 +3,6 @@
     flex-direction: column;
     gap: 1rem;
      width: 600px; /* Exemple de largeur maximale */
+             min-height: 600px; 
+
 }

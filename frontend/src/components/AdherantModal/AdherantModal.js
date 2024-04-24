@@ -7,24 +7,24 @@ import { Button, TextField, Checkbox, FormControlLabel, Typography, Avatar, Box 
 Modal.setAppElement('#root');
 
 const customStyles = {
-    content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
-        border: '1px solid #ccc',
-        background: '#fff',
-        overflow: 'auto',
-        borderRadius: '4px',
-        outline: 'none',
-        padding: '20px',
-        width: '520px',  // Adjust width as needed
-    },
-    overlay: {
-        backgroundColor: 'rgba(0, 0, 0, 0.75)'
-    }
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    border: '1px solid #ccc',
+    background: '#fff',
+    overflow: 'auto',
+    borderRadius: '4px',
+    outline: 'none',
+    padding: '20px',
+    width: '520px',
+  },
+  overlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+  },
 };
 
 const DemandeModal = ({ isOpen, onRequestClose, userId }) => {

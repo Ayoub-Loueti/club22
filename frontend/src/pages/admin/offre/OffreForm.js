@@ -32,7 +32,8 @@ const [remise, setRemise] = useState('');
             date_debut,
             date_fin,
             id_collaborateur,
-            type  // Assuming 'type' is returned as a scalar value from the API
+            type,
+            remise
           } = response.data;
           setTitre(titre);
           setDescription(description);
@@ -40,7 +41,8 @@ const [remise, setRemise] = useState('');
           setDateDebut(date_debut.split('T')[0]);
           setDateFin(date_fin.split('T')[0]);
           setSelectedCollaborateur(id_collaborateur);
-          setType(type);  // Corrected: Setting scalar value
+          setType(type);  
+          setRemise(remise ? remise.toString().padStart(2, '0') : ''); 
 
           setInitialDataLoaded(true);
         })
@@ -68,8 +70,17 @@ const [remise, setRemise] = useState('');
    setImages(files);
  };
 
- const handleSubmit = async (e) => {
-   e.preventDefault();
+
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (parseInt(remise, 10) < 1 || parseInt(remise, 10) > 100) {
+    Swal.fire(
+      'Remise invalide',
+      'Veuillez saisir une remise entre 1 et 100.',
+      'error'
+    );
+    return;
+  }
    const formData = new FormData();
    formData.append('titre', titre);
    formData.append('description', description);
@@ -78,8 +89,7 @@ const [remise, setRemise] = useState('');
    formData.append('date_fin', date_fin);
    formData.append('id_collaborateur', selectedCollaborateur);
    formData.append('type', document.getElementById('type').value);
-   formData.append('remise', remise || null); // Append remise if it's provided
-
+  formData.append('remise', remise === '' ? 0 : parseInt(remise, 10));
    images.forEach((image, index) => {
      formData.append('photos', image, image.name || `image_${index}.jpg`);
    });
@@ -116,6 +126,14 @@ const [remise, setRemise] = useState('');
      );
    }
  };
+const handleRemiseChange = (e) => {
+  let value = parseInt(e.target.value, 10);
+  if (isNaN(value) || value < 1 || value > 100) {
+    setRemise('');
+  } else {
+    setRemise(value.toString().padStart(2, '0'));
+  }
+};
 
 const today = new Date().toISOString().split('T')[0]; 
   return (
@@ -163,13 +181,12 @@ const today = new Date().toISOString().split('T')[0];
           required
         />
         <label>
-          Remise (%):
+          Remise (Entre 1% et 100%):
           <input
-            type="number"
+            type="text" // Use text type to maintain zero padding
             value={remise}
-            onChange={(e) => setRemise(e.target.value)}
-            min="0"
-            max="100" // Assuming remise cannot be more than 100%
+            onChange={handleRemiseChange}
+            maxLength="3" // Limit length to 3 to avoid over 100
           />
         </label>
       </label>

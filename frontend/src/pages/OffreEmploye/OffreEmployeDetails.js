@@ -71,73 +71,77 @@ function OffreEmployeDetails() {
 
   return (
     <>
-    <Navbar />
+      <Navbar />
       <NavbarHaut />
-    <div>
-      <button className="retour-btn" onClick={() => window.history.back()}>
-        <FaArrowLeft /> Retour
-      </button>
-      
-      <div className="offre-cardDetails">
-        {/* Image principale en grand format en dessous */}
-        {offre.lesImages.length > 0 && (
-          <img
-            src={`http://localhost:5000/${offre.lesImages[0].image}`}
-            alt="Image principale"
-            className="offre-main-image"
-          />
-        )}
+      <div>
+        <button className="retour-btn" onClick={() => window.history.back()}>
+          <FaArrowLeft /> Retour
+        </button>
 
-        <div className="offre-details">
-          <div className="remise-badgee">{remise}%</div>
-          <h2 className="offre-titleDetails">{offre.titre}</h2>
-          <p className="offre-priceDetails"> {offre.prix} DT</p>
-          <p className="offre-descriptionDetails">{offre.description}</p>
-          <div className="offre-buttonsDetails">
-            <button
-              className="offre-button-reserverDetails"
-              onClick={() => setIsModalOpen(true)}
-            >
-              Réserver
-            </button>
-            <ReservationModal
-              isOpen={isModalOpen}
-              onRequestClose={() => setIsModalOpen(false)}
-              user={user}
-              offreId={offreId}
-              prix={prix}
-              remise={remise}
-              type={type}
-              isAdherant={isAdherant}
+        <div className="offre-cardDetails">
+          {/* Image principale en grand format en dessous */}
+          {offre.lesImages.length > 0 && (
+            <img
+              src={`http://localhost:5000/${offre.lesImages[0].image}`}
+              alt="Image principale"
+              className="offre-main-image"
             />
-            {isAdherant === false && (
-              <button
-                className="offre-button-adherantDetails"
-                onClick={() => setIsAdherantModalOpen(true)}
-              >
-                Adhérent
-              </button>
+          )}
+
+          <div className="offre-details">
+            {offre.remise > 0 && (
+              <div className="remise-badgee">
+                {offre.remise.toString().padStart(2, '0')}%
+              </div>
             )}
-            <AdherantModal
-              isOpen={isAdherantModalOpen}
-              onRequestClose={() => setIsAdherantModalOpen(false)}
-              user={user}
-            />
+            <h2 className="offre-titleDetails">{offre.titre}</h2>
+            <p className="offre-priceDetails"> {offre.prix} DT</p>
+            <p className="offre-descriptionDetails">{offre.description}</p>
+            <div className="offre-buttonsDetails">
+              <button
+                className="offre-button-reserverDetails"
+                onClick={() => setIsModalOpen(true)}
+              >
+                Réserver
+              </button>
+              <ReservationModal
+                isOpen={isModalOpen}
+                onRequestClose={() => setIsModalOpen(false)}
+                user={user}
+                offreId={offreId}
+                prix={prix}
+                remise={remise}
+                type={type}
+                isAdherant={isAdherant}
+              />
+              {isAdherant === false && (
+                <button
+                  className="offre-button-adherantDetails"
+                  onClick={() => setIsAdherantModalOpen(true)}
+                >
+                  Adhérent
+                </button>
+              )}
+              <AdherantModal
+                isOpen={isAdherantModalOpen}
+                onRequestClose={() => setIsAdherantModalOpen(false)}
+                user={user}
+              />
+            </div>
           </div>
         </div>
+        <div className="offre-additional-images">
+          {offre.lesImages.slice(1).map((image, index) => (
+            <img
+              key={index}
+              src={`http://localhost:5000/${image.image}`}
+              alt={`Image supplémentaire ${index + 1}`}
+              className="offre-additional-image"
+              onClick={() => handleImageClick(index + 1)} // Notez l'index + 1 ici
+            />
+          ))}
+        </div>
       </div>
-      <div className="offre-additional-images">
-        {offre.lesImages.slice(1).map((image, index) => (
-          <img
-            key={index}
-            src={`http://localhost:5000/${image.image}`}
-            alt={`Image supplémentaire ${index + 1}`}
-            className="offre-additional-image"
-            onClick={() => handleImageClick(index + 1)} // Notez l'index + 1 ici
-          />
-        ))}
-      </div>
-    </div>
     </>
   );
 }

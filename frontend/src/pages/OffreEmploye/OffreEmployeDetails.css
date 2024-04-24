@@ -2,14 +2,13 @@
   display: flex;
   justify-content: center;
   align-items: center; /* Centrer les cartes verticalement */
-  margin-top: 100px;
   position: relative; /* Ajoute un espace au-dessus de la carte */
 }
 
 .offre-cardDetails img {
   width: 35%; /* Met la photo à gauche */
-  margin-bottom: 0px; /* Ajoute un espace en bas de l'image */
-  border-radius: 1%;
+  margin-bottom: 20px;  border-radius: 1%;
+
 }
 .offre-detail-image {
   width: 100%; /* Ajustez la largeur selon vos besoins */
@@ -18,12 +17,11 @@
   margin-bottom: 20px; /* Espace entre les images */
 }
 
-.offre-cardDetails .offre-titleDetails {
+.offre-titleDetails {
   color: #191f43;
-  font-size: 24px; /* En grand */
   margin-bottom: 5px; /* Ajoute un espace en bas du titre */
   text-align: left;
-      font-size: 40px;
+      font-size: 30px;
        text-transform: uppercase; 
 
 }
@@ -32,25 +30,51 @@
   color: #c50f10;
   font-weight: bold; /* Met le prix en gras */
   text-align: left;
-        font-size: 30px;
+        font-size: 20px;
 }
 
 .offre-cardDetails .offre-descriptionDetails {
-  margin-top: 10px;
-    text-align: left;
-
+   width: 350px;  
+    max-width: 350px;  
+    height: 190px;  
+    overflow-y: auto; 
+    text-align: justify;  
+    margin: 20px 0;
+    padding: 10px; 
+    box-sizing: border-box;  
+}
+/* General styles for the scrollbar */
+.offre-cardDetails .offre-descriptionDetails::-webkit-scrollbar {
+    width: 6px;  /* Thickness of the scrollbar */
 }
 
-.offre-cardDetails .offre-buttonsDetails {
-  display: flex;
+/* Styling the track (part the thumb slides within) */
+.offre-cardDetails .offre-descriptionDetails::-webkit-scrollbar-track {
+    background: #f0f0f0;  /* Light grey background on the track */
+    border-radius: 10px;  /* Rounded corners for the track */
+}
+
+/* Styling the thumb (the part that can be dragged) */
+.offre-cardDetails .offre-descriptionDetails::-webkit-scrollbar-thumb {
+    background-color: #ED1C24;  /* Dark grey thumb */
+    border-radius: 10px;  /* Rounded corners for the thumb */
+    border: 2px solid #f0f0f0;  /* Slight border for the thumb with track color to create padding effect */
+}
+
+/* Styling the thumb when it is hovered or clicked */
+.offre-cardDetails .offre-descriptionDetails::-webkit-scrollbar-thumb:hover {
+    background-color: #879eb9;  /* Darker grey when hovered */
+}
+
+
+.offre-buttonsDetails {
   justify-content: space-between;
-  margin-top: 10px; /* Ajoute un espace au-dessus des boutons */
+      margin-top: 60px;
 }
 
 .offre-cardDetails  {
   border-radius: 5px;
   padding: 10px 40px;
-  cursor: pointer;
   border: none; /* Supprime les contours */
   outline: none; /* Supprime la mise en évidence du bouton lorsqu'il est cliqué */
 }
@@ -90,7 +114,7 @@
   border: none; /* Pas de bordure */
   cursor: pointer; /* Style du curseur */
   border-radius: 5px; /* Bords arrondis */
-margin-top: 2%;
+margin-top: 0.3%;
 margin-right: 70% ;
 margin-bottom: -30%
 ;}
@@ -105,7 +129,7 @@ margin-bottom: -30%
   margin-left: 20px; /* Ajoute un espace entre la photo et les textes */
 }
  .offre-details {
-  margin-bottom: 10%; /* Ajoute un espace entre la photo et les textes */
+  margin-bottom: 20px; 
 }
 .offre-additional-images {
   display: flex;
@@ -151,5 +175,4 @@ margin-bottom: -30%
   padding: 10px 15px; /* Vertical and horizontal padding */
   font-size: 38px; /* Larger font size for visibility */
   font-weight: bold; /* Bold font weight */
-  z-index: 10; /* Ensures it sits on top of other elements */
 }

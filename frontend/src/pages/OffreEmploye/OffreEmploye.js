@@ -58,10 +58,14 @@ function OffreEmploye() {
     <>
       <Navbar />
       <div className="offre-employee-container">
-        <h1 className="offre-employee-title">Les Offres disponibles</h1>
+        <h1 className="offre-employee-title">LES OFFRES DISPONIBLES</h1>
         <div className="filters">
-          {['tous', 'hotel', 'voyage', 'activité'].map(f => (
-            <button key={f} onClick={() => setFilter(f)} className={filter === f ? "active" : ""}>
+          {['tous', 'hotel', 'voyage', 'activité'].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={filter === f ? 'active' : ''}
+            >
               {f.toUpperCase()}
             </button>
           ))}
@@ -70,10 +74,16 @@ function OffreEmploye() {
           {filteredOffres.map((offre, index) => (
             <div key={index} className="offre-employee-card">
               <img
-                src={`http://localhost:5000/${offre.lesImages[offre.currentImageIndex]?.image}`}
+                src={`http://localhost:5000/${
+                  offre.lesImages[offre.currentImageIndex]?.image
+                }`}
                 alt={`Image ${offre.currentImageIndex}`}
               />
-              <div className="remise-badge">{offre.remise}%</div>
+              {offre.remise > 0 && (
+                <div className="remise-badge">
+                  {offre.remise.toString().padStart(2, '0')}%
+                </div>
+              )}
               <h2>{offre.titre}</h2>
               <button
                 className="voirPlusOffre"

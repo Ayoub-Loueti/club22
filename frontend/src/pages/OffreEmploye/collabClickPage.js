@@ -70,12 +70,10 @@ function CollaborateurPage() {
     <>
       <NavbarHaut />
       <div>
-        <button className="retour-btn" onClick={() => window.history.back()}>
-          <FaArrowLeft /> Retour
-        </button>
+      
         {showOffreCollab && (
           <button className="voir-tous-btn" onClick={handleViewAllOffers}>
-            Voir tous les offres
+            Tous les offres
           </button>
         )}
         <div className="PageCollaborateur-container">

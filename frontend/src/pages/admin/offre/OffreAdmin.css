@@ -133,3 +133,31 @@
   background-color: darken(#879eb9, 10%); /* Slightly darker on hover */
 
 }
+.offDes {
+  max-height: 90px;  /* Limit height to a small fixed value */
+  overflow-y: auto;  /* Enable vertical scrollbar when necessary */
+  text-align: justify;  /* Justify text for better alignment */
+  padding: 10px;  /* Padding inside the box */
+  margin: 10px 0;  /* Margin for spacing around the description box */
+  box-sizing: border-box;  /* Include padding in the box's dimension calculation */
+}
+
+/* Styling scrollbar within .offDes */
+.offDes::-webkit-scrollbar {
+  width: 6px;  /* Scrollbar width */
+}
+
+.offDes::-webkit-scrollbar-track {
+  background: #f0f0f0;  /* Light grey track */
+  border-radius: 10px;
+}
+
+.offDes::-webkit-scrollbar-thumb {
+  background-color: #ED1C24;  /* Dark grey thumb */
+  border-radius: 10px;
+  border: 2px solid #f0f0f0;  /* Light grey border around the thumb */
+}
+
+.offDes::-webkit-scrollbar-thumb:hover {
+  background-color: #879eb9;  /* Blue when hovered */
+}

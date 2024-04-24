@@ -150,8 +150,7 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
                   }`}
                   alt={`Image ${offre.currentImageIndex}`}
                 />
-
-                <p>{offre.description}</p>
+                <div className="offDes">{offre.description}</div>{' '}
                 <p>
                   Catégorie:{' '}
                   <span className="text-after-colon">{offre.type}</span>
@@ -162,7 +161,10 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
                 {offre.remise > 0 && (
                   <p>
                     Remise:{' '}
-                    <span className="text-after-colon">{offre.remise}%</span>
+                    <span className="text-after-colon">
+                      {' '}
+                      {offre.remise.toString().padStart(2, '0')}%
+                    </span>
                   </p>
                 )}
                 <p>

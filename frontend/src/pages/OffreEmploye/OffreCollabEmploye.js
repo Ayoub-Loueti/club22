@@ -64,35 +64,49 @@ function OffreCollabEmploye({ collaborateurId }) {
     <>
       <Navbar />
       <div className="offre-employee-container">
-        <h1 className="offre-employee-title">Les Offres disponibles</h1>
+        <h1 className="offre-employee-title">LES OFFRES DISPONIBLES</h1>
         <div className="filters">
-          {['tous', 'hotel', 'voyage', 'activité'].map(f => (
-            <button key={f} onClick={() => setFilter(f)} className={filter === f ? "active" : ""}>
+          {['tous', 'hotel', 'voyage', 'activité'].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={filter === f ? 'active' : ''}
+            >
               {f.toUpperCase()}
             </button>
           ))}
         </div>
         {error ? (
-          <div className="error-message"><h2>{error}</h2></div>
+          <div className="error-message">
+            <h2>{error}</h2>
+          </div>
         ) : (
           <div className="offre-employee-cards-container">
-            {filteredOffres.length > 0 ? filteredOffres.map((offre, index) => (
-              <div key={index} className="offre-employee-card">
-                <img
-                  src={`http://localhost:5000/${offre.lesImages[offre.currentImageIndex]?.image}`}
-                  alt={`Image ${offre.currentImageIndex + 1} of ${offre.titre}`}
-                />
-                <div className="remise-badge">{offre.remise}%</div>
-                <h2>{offre.titre}</h2>
-                <button
-                  className="voirPlusOffre"
-                  onClick={() => handleVoirPlusClick(offre.id_offre)}
-                >
-                  VOIR PLUS
-                </button>
+            {filteredOffres.length > 0 ? (
+              filteredOffres.map((offre, index) => (
+                <div key={index} className="offre-employee-card">
+                  <img
+                    src={`http://localhost:5000/${
+                      offre.lesImages[offre.currentImageIndex]?.image
+                    }`}
+                    alt={`Image ${offre.currentImageIndex + 1} of ${
+                      offre.titre
+                    }`}
+                  />
+                  <div className="remise-badge">{offre.remise}%</div>
+                  <h2>{offre.titre}</h2>
+                  <button
+                    className="voirPlusOffre"
+                    onClick={() => handleVoirPlusClick(offre.id_offre)}
+                  >
+                    VOIR PLUS
+                  </button>
+                </div>
+              ))
+            ) : (
+              <div className="no-offres-message">
+                <h2>Il n'y a pas d'offres à ce moment.</h2>
               </div>
-            )) : (
-              <div className="no-offres-message"><h2>Il n'y a pas d'offres à ce moment.</h2></div>
             )}
           </div>
         )}
