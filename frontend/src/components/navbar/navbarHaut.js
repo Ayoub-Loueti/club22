@@ -256,6 +256,7 @@ function NavbarHaut() {
       });
       localStorage.removeItem('login');
       localStorage.removeItem('userId');
+      localStorage.removeItem('userType');
       navigate('/');
     } catch (error) {
       console.error('Logout failed:', error);
