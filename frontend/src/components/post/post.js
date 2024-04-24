@@ -1033,8 +1033,13 @@ const Post = (props) => {
                 comment.reponses.map((reponse) => (
                   <div key={reponse.id_reponse} className="response">
                     <div>
+                    
                       <img
-                        src={`http://localhost:5000/${reponse.utilisateur.photo}`}
+                        src={
+                          reponse.utilisateur.photo
+                            ? `http://localhost:5000/${reponse.utilisateur.photo}`
+                            : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+                        }
                         alt="Profile"
                         className="responseUserPhoto"
                       />

@@ -142,7 +142,6 @@ margin-left: 11%;
   border-radius: 25px; /* Augmentation du rayon de la bordure */
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
   text-align: left;
-  word-wrap: break-word; /* Permet au texte de se couper correctement s'il est trop long */
 }
 .responseContent {
   padding: 0.25rem 1rem 0.25rem 1rem; /* Réduction du rembourrage et ajout d'espace à droite */
@@ -150,7 +149,6 @@ margin-left: 11%;
   border-radius: 25px; /* Augmentation du rayon de la bordure */
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
   text-align: left;
-  word-wrap: break-word; /* Permet au texte de se couper correctement s'il est trop long */
   max-width: 80%; /* Ajustement de la largeur maximale pour être plus étroit */
   margin: 0 auto; /* Centrage du contenu si moins large que le max-width */
 }
@@ -158,11 +156,19 @@ margin-left: 11%;
   font-size: 12px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   color: #37474f;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-all;
 }
 .responseText {
   font-size: 12px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   color: #37474f;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-all;
 }
 .commentContentt {
   padding: 0.25rem 1rem 0.25rem 1rem; /* Réduction du rembourrage et ajout d'espace à droite */
@@ -293,8 +299,9 @@ margin-left: 11%;
   border-radius: 25px; /* Conserve les bordures arrondies du commentaire original */
   background-color: #cfd8dc; /* Fond blanc pour indiquer l'état d'édition */
   box-sizing: border-box; /* S'assure que la largeur et la hauteur incluent le padding et la bordure */
-  resize: none; /* Empêche le redimensionnement pour les éléments textarea */
-}
+  resize: vertical;  
+  word-wrap: break-word;
+  overflow-wrap: break-word;}
 
 .editResponseInput {
   max-width: 80%; 
@@ -305,8 +312,9 @@ margin-left: 11%;
   font-family: Verdana, Geneva, Tahoma, sans-serif; /* Utilise la même famille de polices */
   border-radius: 25px; /* Conserve les bordures arrondies du commentaire original */
   background-color: #cfd8dc; /* Fond blanc pour indiquer l'état d'édition */
-  resize: none; /* Empêche le redimensionnement pour les éléments textarea */
-}
+  resize: vertical;  
+  word-wrap: break-word;
+  overflow-wrap: break-word;}
 .editResponseInput:focus {
   outline: 2px solid #191f43; /* Indique le focus avec une bordure bleue */
 }
