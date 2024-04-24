@@ -35,11 +35,14 @@ const PostSaved = () => {
   };
 
   return (
-    <div className="PostSaved">
+    <div className="PostSaved custom-scroll">
+      
       {savedPosts.length > 0 ? (
         <Posts posts={savedPosts} openModalForPost={openModalForPost} />
       ) : (
-        <p className="no-posts-message">You have not saved any posts.</p>
+        <p className="no-posts-msg">
+          Vous n'avez enregistré aucune publication.
+        </p>
       )}
       <PostModal
         isOpen={isModalOpen}
