@@ -837,4 +837,35 @@ exports.updateSignalerStatus = async (req, res) => {
   }
 };
 
+exports.updateAllSignalerOpen = async (req, res) => {
+  try {
+      await Signaler.update({ isOpen: true }, {
+          where: {} 
+      });
+
+      return res.status(200).json({ message: 'All signals have been updated successfully' });
+  } catch (error) {
+      console.error('Error updating all signals:', error);
+      return res.status(500).json({ message: 'Error updating signals', error: error.message });
+  }
+};
+
+exports.getSignalsCount = async (req, res) => {
+  try {
+      const count = await Signaler.count({
+          where: {
+              isOpen: false  // Assuming this maps correctly to your database field
+          }
+      });
+
+      return res.status(200).json({
+          message: 'Unresolved signals count retrieved successfully',
+          count: count
+      });
+  } catch (error) {
+      console.error('Error fetching unresolved signals count:', error);
+      return res.status(500).json({ message: 'Error fetching signals count', error: error.message });
+  }
+};
+
 module.exports = exports;

@@ -40,6 +40,11 @@ const SignalerModel = sequelize.define(
         allowNull: false,
         defaultValue: false,
       },
+    isOpen: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
   },
   {
     tableName: 'signaler',
