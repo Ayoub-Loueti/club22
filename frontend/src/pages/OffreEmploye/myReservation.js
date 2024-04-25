@@ -9,13 +9,15 @@ import ModifyReservation from './ModifyReservation';  // Import the ModifyReserv
 
 const MyReservations = () => {
     const [reservations, setReservations] = useState([]);
+    const [boxDReservations, setBoxDReservations] = useState([]); // State for BoxD Reservations
     const [error, setError] = useState('');
     const [selectedReservation, setSelectedReservation] = useState(null);
     const [showDialog, setShowDialog] = useState(false);
-    const [modifyDialogOpen, setModifyDialogOpen] = useState(false);  // State to control the ModifyReservation modal
+    const [modifyDialogOpen, setModifyDialogOpen] = useState(false);
 
     useEffect(() => {
         const token = JSON.parse(localStorage.getItem('login'))?.token;
+        
         const fetchReservations = async () => {
             try {
                 const response = await axios.get('http://localhost:5000/myReservations', {
@@ -27,7 +29,20 @@ const MyReservations = () => {
                 console.error('Error fetching reservations:', err);
             }
         };
+
+        const fetchBoxDReservations = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/myReservationsBoxD', {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setBoxDReservations(response.data); // Setting the BoxD reservations
+            } catch (err) {
+                console.error('Error fetching BoxD reservations:', err);
+            }
+        };
+
         fetchReservations();
+        fetchBoxDReservations();
     }, []);
 
     const confirmReservation = async (event, id) => {
@@ -96,6 +111,17 @@ const MyReservations = () => {
 
     const handleModifyDialogClose = () => {
         setModifyDialogOpen(false);
+    };
+
+    const getCardBackgroundColor = (etat) => {
+        switch (etat) {
+            case 'reparation':
+                return '#ADD8E6'; // Light blue color for 'reparation' state
+            case 'en_cours':
+                return '#F4F4F4'; // Original gray color for 'en_cours' state
+            default:
+                return '#F4F4F4'; // Default color for other states
+        }
     };
 
     return (
@@ -168,12 +194,37 @@ const MyReservations = () => {
                 <Grid item xs={12} md={6}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} style={{ marginBottom: 20 }}>
-                            <Card raised sx={{ height: 250 }}>
-                                <CardContent>Box 2 (Top Right)</CardContent>
-                            </Card>
+                        <Card raised sx={{ height: 290, overflowY: 'auto' }}>
+                        <CardContent>
+                            {boxDReservations.map((reservation) => (
+                                <Card key={reservation.id_reservation} variant="outlined" sx={{ mb: 2, display: 'flex', backgroundColor: getCardBackgroundColor(reservation.etat), cursor: 'pointer' }} onClick={() => handleOpenDialog(reservation)}>
+                                    <Box
+                                        component="img"
+                                        sx={{
+                                            width: 150,
+                                            height: 'auto',
+                                            maxWidth: '100%',
+                                            maxHeight: 150,
+                                            objectFit: 'cover',
+                                        }}
+                                        src={`http://localhost:5000/${reservation.offre.images[0]}`}
+                                        alt="Offre"
+                                    />
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexGrow: 1, padding: 2 }}>
+                                        <Box>
+                                            <Typography variant="h6">{reservation.offre.titre}</Typography>
+                                            <Typography variant="body2">{reservation.offre.collaborateur.nom}</Typography>
+                                            <Typography variant="body1" color="primary">{reservation.prix_totale} TND</Typography>
+                                        </Box>
+                                       
+                                    </Box>
+                                </Card>
+                            ))}
+                        </CardContent>
+                    </Card>
                         </Grid>
                         <Grid item xs={12}>
-                            <Card raised sx={{ height: 250 }}>
+                            <Card raised sx={{ height: 290 }}>
                                 <CardContent>Box 3 (Bottom Right)</CardContent>
                             </Card>
                         </Grid>

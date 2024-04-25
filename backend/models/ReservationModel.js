@@ -33,7 +33,7 @@ const ReservationModel = sequelize.define(
       },
     },
     etat: {
-      type: DataTypes.ENUM('en_cours', 'confirmer', 'annuler'),
+      type: DataTypes.ENUM('en_cours','confirmer','annuler','reparation','accepter','refuser'),
     },
     nombre: {
       type: DataTypes.INTEGER,

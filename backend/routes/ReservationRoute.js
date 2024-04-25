@@ -21,6 +21,7 @@ router.put('/reservation/:id/confirmer', authenticate, reservationController.con
 
 router.get('/reservation/pdf/:id', authenticate, reservationController.generateReservationPDF);
 router.get('/myReservations', authenticate, reservationController.getMyReservations);
+router.get('/myReservationsBoxD', authenticate, reservationController.getMyReservationsBoxD);
 router.put('/updateReservation/:id', authenticate, reservationController.modifyReservation);
 
 //hotel
