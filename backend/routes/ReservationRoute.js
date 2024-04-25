@@ -12,16 +12,22 @@ const Offre = require('../models/OffreModel');
 const Employe = require('../models/EmployeModel');
 
 router.post('/reservation',authenticate, reservationController.createReservation);
-router.get('/reservations', authenticate , reservationController.getAllReservations);
+router.get('/reservationsDe', authenticate , reservationController.getReservationDemande);
+router.get('/reservationsRe', authenticate , reservationController.getReservationReponse);
 router.get('/reservation/:id', authenticate, reservationController.getReservationById);
 //router.get('/myReservations', authenticate, reservationController.getUserReservations); 
 router.put('/reservation/:id/annuler', authenticate, reservationController.annulerReservation);
 router.put('/reservation/:id/confirmer', authenticate, reservationController.confirmationReservation);
+router.put('/reservation/:id/reparer', authenticate, reservationController.reparationReservation);
+router.put('/reservation/:id/accepter', authenticate, reservationController.acceptationReservation);
+router.put('/reservation/:id/refuser', authenticate, reservationController.refuserReservation);
+
 //router.put('/updateReservation/:id', authenticate, reservationController.updateReservation);
 
 router.get('/reservation/pdf/:id', authenticate, reservationController.generateReservationPDF);
 router.get('/myReservations', authenticate, reservationController.getMyReservations);
 router.get('/myReservationsBoxD', authenticate, reservationController.getMyReservationsBoxD);
+router.get('/myReservationsBoxT', authenticate, reservationController.getMyReservationsBoxT);
 router.put('/updateReservation/:id', authenticate, reservationController.modifyReservation);
 
 //hotel

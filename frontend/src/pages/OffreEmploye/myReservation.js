@@ -10,6 +10,7 @@ import ModifyReservation from './ModifyReservation';  // Import the ModifyReserv
 const MyReservations = () => {
     const [reservations, setReservations] = useState([]);
     const [boxDReservations, setBoxDReservations] = useState([]); // State for BoxD Reservations
+    const [boxTReservations, setBoxTReservations] = useState([]); // State for BoxD Reservations
     const [error, setError] = useState('');
     const [selectedReservation, setSelectedReservation] = useState(null);
     const [showDialog, setShowDialog] = useState(false);
@@ -41,8 +42,20 @@ const MyReservations = () => {
             }
         };
 
+        const fetchBoxTReservations = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/myReservationsBoxT', {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setBoxTReservations(response.data); // Setting the BoxD reservations
+            } catch (err) {
+                console.error('Error fetching BoxD reservations:', err);
+            }
+        };
+
         fetchReservations();
         fetchBoxDReservations();
+        fetchBoxTReservations();
     }, []);
 
     const confirmReservation = async (event, id) => {
@@ -117,13 +130,17 @@ const MyReservations = () => {
         switch (etat) {
             case 'reparation':
                 return '#ADD8E6'; // Light blue color for 'reparation' state
+            case 'refuser':
+                return '#FF6347'; // Tomato red, a beautiful shade for 'refuser' state
+            case 'accepter':
+                return '#70CD32'; // Lime green, a bright and positive color for 'accepter' state
             case 'en_cours':
-                return '#F4F4F4'; // Original gray color for 'en_cours' state
+                return '#F4F4F4'; // Default light grey color for 'in progress' state
             default:
                 return '#F4F4F4'; // Default color for other states
         }
     };
-
+    
     return (
         <>
             <Navbar />
@@ -131,52 +148,150 @@ const MyReservations = () => {
             {error && <Typography color="error" sx={{ m: 2 }}>{error}</Typography>}
             <Grid container spacing={2} style={{ margin: 20 }}>
                 <Grid item xs={12} md={6}>
-                    <Card raised sx={{ height: 550, overflowY: 'auto' }}>
-                        <CardContent>
-                            {reservations.map((reservation) => (
-                                <Card key={reservation.id_reservation} variant="outlined" sx={{ mb: 2, display: 'flex', backgroundColor: '#F4F4F4', cursor: 'pointer' }} onClick={() => handleOpenDialog(reservation)}>
-                                    <Box
-                                        component="img"
-                                        sx={{
-                                            width: 150,
-                                            height: 'auto',
-                                            maxWidth: '100%',
-                                            maxHeight: 150,
-                                            objectFit: 'cover',
-                                        }}
-                                        src={`http://localhost:5000/${reservation.offre.images[0]}`}
-                                        alt="Offre"
-                                    />
-                                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexGrow: 1, padding: 2 }}>
-                                        <Box>
-                                            <Typography variant="h6">{reservation.offre.titre}</Typography>
-                                            <Typography variant="body2">{reservation.offre.collaborateur.nom}</Typography>
-                                            <Typography variant="body1" color="primary">{reservation.prix_totale} TND</Typography>
-                                        </Box>
-                                        {reservation.etat === 'en_cours' && (
-                                            <Box display="flex" justifyContent="flex-end">
-                                                <Button size="small" variant="contained"
-                                                    sx={{ backgroundColor: '#5CA163', '&:hover': { backgroundColor: '#4B8A50' }, mr: 1 }}
-                                                    onClick={(event) => confirmReservation(event, reservation.id_reservation)}>
-                                                    Confirmer
-                                                </Button>
-                                                    <Button size="small" variant="contained" 
-                                                    sx={{ backgroundColor: '#E3D97F', '&:hover': { backgroundColor: '#D0C170' }, mr: 1 }}
-                                                    onClick={(event) => { event.stopPropagation(); handleModifyDialogOpen(reservation); }}>
-                                                    Modify
-                                                </Button>                                                <Button size="small" variant="contained"
-                                                    sx={{ backgroundColor: '#C50F10', '&:hover': { backgroundColor: '#B00C0E' } }}
-                                                    onClick={(event) => cancelReservation(event, reservation.id_reservation)}>
-                                                    Annuler
-                                                </Button>
-                                            </Box>
-                                        )}
-                                    </Box>
-                                </Card>
-                            ))}
-                        </CardContent>
+                    <Grid container spacing={2}>
+                    <Grid item xs={12} style={{ marginBottom: 20 }}>
+             <Box sx={{ mb: 2 }}>
+            <Typography variant="h5" sx={{ mb: 1 }}>
+            Premiere phase
+            </Typography>
+            <Card raised sx={{ height: 290, overflowY: 'auto' }}>
+            <CardContent>
+                {reservations.map((reservation) => (
+                    <Card key={reservation.id_reservation} variant="outlined" sx={{ mb: 2, display: 'flex', backgroundColor: '#F4F4F4', cursor: 'pointer' }} onClick={() => handleOpenDialog(reservation)}>
+                        <Box
+                            component="img"
+                            sx={{
+                                width: 150,
+                                height: 'auto',
+                                maxWidth: '100%',
+                                maxHeight: 150,
+                                objectFit: 'cover',
+                            }}
+                            src={`http://localhost:5000/${reservation.offre.images[0]}`}
+                            alt="Offre"
+                        />
+                        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexGrow: 1, padding: 2 }}>
+                            <Box>
+                                <Typography variant="h6">{reservation.offre.titre}</Typography>
+                                <Typography variant="body2">{reservation.offre.collaborateur.nom}</Typography>
+                                <Typography variant="body1" color="primary">{reservation.prix_totale} TND</Typography>
+                                {reservation.etat === 'annuler' && (
+                                    <Typography style={{ color: 'red', fontWeight: 'bold' }}>
+                                        Reservation annulée
+                                    </Typography>
+                                )}
+                            </Box>
+                            {reservation.etat === 'en_cours' && (
+                                <Box display="flex" justifyContent="flex-end">
+                                    <Button size="small" variant="contained"
+                                        sx={{ backgroundColor: '#5CA163', '&:hover': { backgroundColor: '#4B8A50' }, mr: 1 }}
+                                        onClick={(event) => confirmReservation(event, reservation.id_reservation)}>
+                                        Confirmer
+                                    </Button>
+                                    <Button size="small" variant="contained" 
+                                        sx={{ backgroundColor: '#E3D97F', '&:hover': { backgroundColor: '#D0C170' }, mr: 1 }}
+                                        onClick={(event) => { event.stopPropagation(); handleModifyDialogOpen(reservation); }}>
+                                        Modify
+                                    </Button>
+                                    <Button size="small" variant="contained"
+                                        sx={{ backgroundColor: '#C50F10', '&:hover': { backgroundColor: '#B00C0E' } }}
+                                        onClick={(event) => cancelReservation(event, reservation.id_reservation)}>
+                                        Annuler
+                                    </Button>
+                                </Box>
+                            )}
+                        </Box>
                     </Card>
+                ))}
+            </CardContent>
+        </Card>
+    </Box>
+</Grid>
+                        <Grid item xs={12}>
+                        <Box sx={{ mb: 2 }}>
+                        <Typography variant="h5" sx={{ mb: 1 }}>
+                        Deuxieme Phase
+                        </Typography>
+                        <Card raised sx={{ height: 290, overflowY: 'auto' }}>
+                     <CardContent>
+                {boxDReservations.map((reservation) => (
+                    <Card key={reservation.id_reservation} variant="outlined" sx={{ mb: 2, display: 'flex', backgroundColor: getCardBackgroundColor(reservation.etat), cursor: 'pointer' }} onClick={() => handleOpenDialog(reservation)}>
+                        <Box
+                            component="img"
+                            sx={{
+                                width: 150,
+                                height: 'auto',
+                                maxWidth: '100%',
+                                maxHeight: 150,
+                                objectFit: 'cover',
+                            }}
+                            src={`http://localhost:5000/${reservation.offre.images[0]}`}
+                            alt="Offre"
+                        />
+                        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexGrow: 1, padding: 2 }}>
+                            <Box>
+                                <Typography variant="h6">{reservation.offre.titre}</Typography>
+                                <Typography variant="body2">{reservation.offre.collaborateur.nom}</Typography>
+                                <Typography variant="body1" color="primary">{reservation.prix_totale} TND</Typography>
+                                {reservation.etat === 'reparation' && (
+                                    <Typography style={{ color: 'red', fontWeight: 'bold' }}>
+                                        Demande envoyée au collaborateur
+                                    </Typography>
+                                )}
+                            </Box>
+                        </Box>
+                    </Card>
+                ))}
+            </CardContent>
+                         </Card>
+                         </Box>
+                        </Grid>
+                    </Grid>
                 </Grid>
+                <Grid item xs={12} md={6}>
+    <Box sx={{ mb: 2 }}>
+        <Typography variant="h5" sx={{ mb: 1 }}>
+            Resultat
+        </Typography>
+        <Card raised sx={{ height: 670, overflowY: 'auto' }}>
+        <CardContent>
+                {boxTReservations.map((reservation) => (
+                    <Card key={reservation.id_reservation} variant="outlined" sx={{ mb: 2, display: 'flex', backgroundColor: getCardBackgroundColor(reservation.etat), cursor: 'pointer' }} onClick={() => handleOpenDialog(reservation)}>
+                        <Box
+                            component="img"
+                            sx={{
+                                width: 150,
+                                height: 'auto',
+                                maxWidth: '100%',
+                                maxHeight: 150,
+                                objectFit: 'cover',
+                            }}
+                            src={`http://localhost:5000/${reservation.offre.images[0]}`}
+                            alt="Offre"
+                        />
+                        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexGrow: 1, padding: 2 }}>
+                            <Box>
+                                <Typography variant="h6">{reservation.offre.titre}</Typography>
+                                <Typography variant="body2">{reservation.offre.collaborateur.nom}</Typography>
+                                <Typography variant="body1" color="primary">{reservation.prix_totale} TND</Typography>
+                                {reservation.etat === 'accepter' && (
+                                    <Typography style={{ color: 'black', fontWeight: 'bold' }}>
+                                        Réservation acceptée avec succès
+                                    </Typography>
+                                )}
+                                {reservation.etat === 'refuser' && (
+                                    <Typography style={{ color: 'black', fontWeight: 'bold' }}>
+                                        Réservation a été refusée
+                                    </Typography>
+                                )}
+                            </Box>
+                        </Box>
+                    </Card>
+                ))}
+            </CardContent>
+        </Card>
+    </Box>
+</Grid>
                 {selectedReservation && (
                     <>
                         <ShowReservationDialog
@@ -191,45 +306,6 @@ const MyReservations = () => {
                         />
                     </>
                 )}
-                <Grid item xs={12} md={6}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} style={{ marginBottom: 20 }}>
-                        <Card raised sx={{ height: 290, overflowY: 'auto' }}>
-                        <CardContent>
-                            {boxDReservations.map((reservation) => (
-                                <Card key={reservation.id_reservation} variant="outlined" sx={{ mb: 2, display: 'flex', backgroundColor: getCardBackgroundColor(reservation.etat), cursor: 'pointer' }} onClick={() => handleOpenDialog(reservation)}>
-                                    <Box
-                                        component="img"
-                                        sx={{
-                                            width: 150,
-                                            height: 'auto',
-                                            maxWidth: '100%',
-                                            maxHeight: 150,
-                                            objectFit: 'cover',
-                                        }}
-                                        src={`http://localhost:5000/${reservation.offre.images[0]}`}
-                                        alt="Offre"
-                                    />
-                                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexGrow: 1, padding: 2 }}>
-                                        <Box>
-                                            <Typography variant="h6">{reservation.offre.titre}</Typography>
-                                            <Typography variant="body2">{reservation.offre.collaborateur.nom}</Typography>
-                                            <Typography variant="body1" color="primary">{reservation.prix_totale} TND</Typography>
-                                        </Box>
-                                       
-                                    </Box>
-                                </Card>
-                            ))}
-                        </CardContent>
-                    </Card>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Card raised sx={{ height: 290 }}>
-                                <CardContent>Box 3 (Bottom Right)</CardContent>
-                            </Card>
-                        </Grid>
-                    </Grid>
-                </Grid>
             </Grid>
         </>
     );
