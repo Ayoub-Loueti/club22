@@ -22,5 +22,7 @@ router.post('/signals', authenticate, postController.createSignal);
 router.get('/signals', authenticate, postController.getAllSignaler);
 router.delete('/signaler/:id',authenticate, postController.deleteSignaler);
 router.patch('/signaler/:id', authenticate, postController.updateSignalerStatus);
+router.patch('/updateAllSignalerOpen',authenticate, postController.updateAllSignalerOpen);
+router.get('/signalsCount', authenticate, postController.getSignalsCount);
 
 module.exports = router;

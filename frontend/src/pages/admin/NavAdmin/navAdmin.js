@@ -24,13 +24,14 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 function NavAdmin() {
-  const [isVisible, setIsVisible] = useState(false); // Set default to true to mirror the second navbar
+  const [isVisible, setIsVisible] = useState(false); 
   const [randomUsers, setRandomUsers] = useState([]);
   const [navbarExtensionColor, setNavbarExtensionColor] = useState('#f3f3f3');
   const navigate = useNavigate();
   const [currentUserId, setCurrentUserId] = useState(null);
   const [expanded, setExpanded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [signalsCount, setSignalsCount] = useState(0);
 
   useEffect(() => {
     const storedUserId = JSON.parse(localStorage.getItem('userId'));
@@ -69,6 +70,42 @@ function NavAdmin() {
     
   };
 
+  useEffect(() => {
+    const fetchSignalsCount = async () => {
+      const storedToken = localStorage.getItem('login') ? JSON.parse(localStorage.getItem('login')).token : null;
+      if (storedToken) {
+        const headers = { Authorization: `Bearer ${storedToken}` };
+        try {
+          const response = await axios.get('http://localhost:5000/signalsCount', { headers });
+          setSignalsCount(response.data.count);
+        } catch (error) {
+          console.error('Error fetching signals count:', error);
+        }
+      }
+    };
+  
+    fetchSignalsCount();
+  }, []); 
+  
+  const updateAllSignalsToOpen = async () => {
+  const storedToken = localStorage.getItem('login') ? JSON.parse(localStorage.getItem('login')).token : null;
+  if (!storedToken) {
+    console.error('No token found, user might not be authenticated');
+    return;
+  }
+  const headers = { Authorization: `Bearer ${storedToken}` };
+
+  try {
+    const response = await axios.patch('http://localhost:5000/updateAllSignalerOpen', {}, { headers });
+    if (response.status === 200) {
+      console.log('All signals have been updated to open');
+      // Optionally perform any state updates or call other functions to reflect changes
+    }
+  } catch (error) {
+    console.error('Error updating signals to open:', error);
+  }
+};
+
     const icons = [
       { icon: faHouse, label: 'Accueil', path: '/Home' },
       {
@@ -87,6 +124,11 @@ function NavAdmin() {
         icon: faUsersRectangle,
         label: 'Demandes Adhésion',
         path: '/adminAdherant',
+      },
+      {
+        icon: faUserShield,
+        label: signalsCount > 0 ? `Signaler (${signalsCount})` : 'Signaler',
+        path: '/adminSignal'
       },
     ];
 
@@ -117,7 +159,12 @@ function NavAdmin() {
             <div
               key={index}
               className="adm-icon-wrapper"
-              onClick={() => navigate(item.path)}
+              onClick={() => {
+                if (item.label.includes('Signaler')) {
+                  updateAllSignalsToOpen(); 
+                }
+                navigate(item.path);
+              }}
             >
               <div className="icon-and-tooltip">
                 <FontAwesomeIcon icon={item.icon} className="adm-navbar-icon" />
