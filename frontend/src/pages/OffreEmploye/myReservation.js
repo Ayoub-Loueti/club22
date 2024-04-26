@@ -207,8 +207,12 @@ const MyReservations = () => {
             <NavbarHaut />
             {error && <Typography color="error" sx={{ m: 2 }}>{error}</Typography>}
             <Grid container spacing={2} style={{ margin: 20 }}>
+
+
                 <Grid item xs={12} md={6}>
                     <Grid container spacing={2}>
+
+
                     <Grid item xs={12}>
                         <Box sx={{ mb: 2 }}>
                             <Typography variant="h5" sx={{ mb: 1 }}>
@@ -267,6 +271,8 @@ const MyReservations = () => {
                             </Card>
                         </Box>
                     </Grid>
+
+
                     <Grid item xs={12}>
                         <Box sx={{ mb: 2 }}>
                             <Typography variant="h5" sx={{ mb: 1 }}>
@@ -307,7 +313,9 @@ const MyReservations = () => {
                         </Box>
                     </Grid>
                 </Grid>
-            </Grid>
+                </Grid>
+
+
 
             <Grid item xs={12} md={6}>
                 <Box sx={{ mb: 2 }}>
@@ -337,9 +345,6 @@ const MyReservations = () => {
                                             <Typography variant="body1" color="primary">{reservation.prix_totale} TND</Typography>
                                             {reservation.etat === 'accepter' && (
                                                 <>
-                                                    <Typography style={{ color: 'black', fontWeight: 'bold' }}>
-                                                        Réservation acceptée avec succès
-                                                    </Typography>
                                                     {renderStars(reservation)}
                                                 </>
                                             )}
@@ -356,6 +361,9 @@ const MyReservations = () => {
                     </Card>
                 </Box>
             </Grid>
+
+
+
             {selectedReservation && (
                 <>
                     <ShowReservationDialog
@@ -370,7 +378,7 @@ const MyReservations = () => {
                     />
                 </>
             )}
-        </Grid>
+            </Grid>
     </>
 );
 };

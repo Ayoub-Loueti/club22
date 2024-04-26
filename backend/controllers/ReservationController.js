@@ -1009,7 +1009,7 @@ exports.getVoteByOffreAndEmployee = async (req, res) => {
       });
 
       if (!evaluation) {
-          return res.status(404).json({ error: 'Evaluation not found for the specified offer and employee.' });
+          return res.status(200).json({ message: 'Evaluation not found for the specified offer and employee.' });
       }
 
       // Return the found evaluation
