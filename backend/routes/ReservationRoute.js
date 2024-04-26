@@ -34,6 +34,12 @@ router.put('/updateReservation/:id', authenticate, reservationController.modifyR
 
 router.delete('/hotel/:id', authenticate, reservationController.deleteHotel);
 
+//vote
+
+router.post('/evaluation', authenticate, reservationController.createEvaluation);
+router.get('/offerVotes/:offreId',authenticate, reservationController.getOffreVote);
+router.get('/evaluation/vote/:offreId', authenticate, reservationController.getVoteByOffreAndEmployee);
+
 module.exports = router;
 
 /*

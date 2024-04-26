@@ -9,6 +9,7 @@ const ImageOffre = require('../models/ImageOffreModel');
 const { Op } = require('sequelize');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
+const Evaluation = require('../models/EvaluationModel');
 
 exports.createReservation = async (req, res) => {
   const { id_offre, nombre, prix_totale, hotels ,typeR} = req.body; // Extract hotels array from request body
@@ -891,5 +892,136 @@ exports.deleteHotel = async (req, res) => {
   }
 };
 
+//vote
+
+exports.createEvaluation = async (req, res) => {
+  const { id_offre, vote } = req.body;
+  const userId = req.userId; // Assumed to be set by your authentication middleware
+
+  try {
+      // Retrieve the employe ID using the user ID from the token
+      const employe = await Employe.findOne({
+          where: { id_utilisateur: userId }
+      });
+
+      if (!employe) {
+          return res.status(404).json({ error: 'Employee not found.' });
+      }
+
+      const id_employe = employe.id_employe;
+
+      // Check if the id_offre and id_employe exist together in a reservation
+      const existingReservation = await Reservation.findOne({
+          where: {
+              id_offre: id_offre,
+              id_employe: id_employe
+          }
+      });
+
+      if (!existingReservation) {
+          return res.status(404).json({ error: 'No reservation found with the provided employee and offer IDs.' });
+      }
+
+      // Check if an evaluation already exists with the same id_offre and id_employe
+      const existingEvaluation = await Evaluation.findOne({
+          where: {
+              id_offre: id_offre,
+              id_employe: id_employe
+          }
+      });
+
+      if (existingEvaluation) {
+          // Update the existing evaluation's vote
+          await existingEvaluation.update({ vote: vote });
+          return res.status(200).json({ message: 'Evaluation updated successfully', evaluation: existingEvaluation });
+      }
+
+      // Create a new evaluation if it does not exist
+      const newEvaluation = await Evaluation.create({
+          id_offre: id_offre,
+          id_employe: id_employe,
+          vote: vote
+      });
+
+      res.status(201).json({ message: 'Evaluation created successfully', evaluation: newEvaluation });
+  } catch (error) {
+      console.error('Failed to create or update evaluation:', error);
+      res.status(500).json({ error: 'Failed to create or update evaluation', details: error.message });
+  }
+};
+
+exports.getOffreVote = async (req, res) => {
+  const { offreId } = req.params;  // Getting the offer ID from the request parameters
+
+  try {
+      // First, check if the offre exists to provide a meaningful error if it doesn't
+      const offre = await Offre.findByPk(offreId);
+      if (!offre) {
+          return res.status(404).json({ error: 'Offer not found.' });
+      }
+
+      // Retrieve all evaluations for the given offre ID
+      const evaluations = await Evaluation.findAll({
+          where: { id_offre: offreId }
+      });
+
+      const totalVotes = evaluations.reduce((sum, evaluation) => sum + evaluation.vote, 0);
+      const numberOfEvaluations = evaluations.length;
+      const averageVotes = numberOfEvaluations > 0 ? (totalVotes / numberOfEvaluations).toFixed(2) : 0;
+
+      // Construct response with total votes, number of evaluations, and average votes
+      const response = {
+          id_offre: offreId,
+          totalVotes: totalVotes,
+          numberOfEvaluations: numberOfEvaluations,
+          averageVotes: parseFloat(averageVotes)  // Ensure the response is a number even if it was calculated as zero
+      };
+
+      res.status(200).json(response);
+  } catch (error) {
+      console.error('Failed to get votes for offre:', error);
+      res.status(500).json({ error: 'Failed to retrieve offer votes', details: error.message });
+  }
+};
+
+exports.getVoteByOffreAndEmployee = async (req, res) => {
+  const { offreId } = req.params; // Getting the offer ID from the request parameters
+  const userId = req.userId; // Assumed to be set by your authentication middleware
+
+  try {
+      // Retrieve the employe ID using the user ID from the token
+      const employe = await Employe.findOne({
+          where: { id_utilisateur: userId }
+      });
+
+      if (!employe) {
+          return res.status(404).json({ error: 'Employee not found.' });
+      }
+
+      const id_employe = employe.id_employe;
+
+      // Retrieve the specific evaluation for the given offre ID and employe ID
+      const evaluation = await Evaluation.findOne({
+          where: {
+              id_offre: offreId,
+              id_employe: id_employe
+          }
+      });
+
+      if (!evaluation) {
+          return res.status(404).json({ error: 'Evaluation not found for the specified offer and employee.' });
+      }
+
+      // Return the found evaluation
+      res.status(200).json({
+          id_offre: offreId,
+          id_employe: id_employe,
+          vote: evaluation.vote
+      });
+  } catch (error) {
+      console.error('Failed to get vote:', error);
+      res.status(500).json({ error: 'Failed to retrieve vote', details: error.message });
+  }
+};
 
 module.exports = exports;
