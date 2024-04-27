@@ -9,6 +9,7 @@ const ImageOffre = require('../models/ImageOffreModel');
 const { Op } = require('sequelize');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
+const Evaluation = require('../models/EvaluationModel');
 
 exports.createReservation = async (req, res) => {
   const { id_offre, nombre, prix_totale, hotels ,typeR} = req.body; // Extract hotels array from request body
@@ -73,36 +74,154 @@ exports.createReservation = async (req, res) => {
   }
 };
 
-exports.getAllReservations = async (req, res) => {
+exports.getReservationDemande = async (req, res) => {
+  const userId = req.userId;
+
   try {
-    // Fetch all reservations from the database
-    const reservations = await Reservation.findAll({
+    
+    let reservations = await Reservation.findAll({
+      where: { 
+        etat: [ 'confirmer', 'reparation'] // Filter by specified etat values
+      },
       include: [
         {
           model: Offre,
-          as: 'offre', // alias to access offre information
+          as: 'offre',
           include: [
-            {
-              model: Collaborateur,
-              as: 'collaborateur', // alias to access collaborateur information
-            },
+            { model: Collaborateur, as: 'collaborateur' },
+            // Ensure other necessary models are included as needed
           ],
         },
         {
           model: Employe,
-          as: 'employe', // alias to access employe information
+          as: 'employe',
           include: [
-            {
-              model: Utilisateur,
-              as: 'utilisateur', // alias to access utilisateur information
-            },
+            { model: Utilisateur, as: 'utilisateur' },
+            // Ensure other necessary models are included as needed
           ],
-        },
+        }
+        // Ensure other necessary models are included as needed
       ],
     });
+
+    reservations = await Promise.all(reservations.map(async (reservation) => {
+      const images = await ImageOffre.findAll({
+        where: { id_offre: reservation.id_offre },
+        attributes: ['image'],
+      });
+
+      const reservationJson = {
+        ...reservation.toJSON(),
+        offre: {
+          ...reservation.offre.toJSON(),
+          images: images.map(img => img.image),
+        },
+      };
+
+      // Here's where we add the rooms details for hotel-type reservations
+      if (reservation.typeR === 'hotel') {
+        const hotels = await Hotel.findAll({
+          where: { id_reservation: reservation.id_reservation },
+          attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix']
+        });
+
+        const totalPeople = hotels.reduce((acc, hotel) => acc + hotel.nbr_adults + hotel.nbr_enfants, 0);
+        reservationJson.nombreTotal = totalPeople;
+        reservationJson.rooms = hotels;
+      } else {
+        // For non-hotel type reservations, use the reservation's nombre value
+        reservationJson.nombreTotal = reservation.nombre;
+      }
+
+      return reservationJson;
+    }));
+
+    // Optionally sort reservations to have 'en_cours' first
+    reservations.sort((a, b) => {
+      if (a.etat === 'en_cours' && b.etat !== 'en_cours') return -1;
+      if (a.etat !== 'en_cours' && b.etat === 'en_cours') return 1;
+      return 0;
+    });
+
     res.status(200).json(reservations);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to get reservations' });
+    console.error('Error fetching reservations:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+};
+
+exports.getReservationReponse = async (req, res) => {
+
+  try {
+    
+    let reservations = await Reservation.findAll({
+      where: { 
+        etat: [ 'accepter', 'refuser'] // Filter by specified etat values
+      },
+      include: [
+        {
+          model: Offre,
+          as: 'offre',
+          include: [
+            { model: Collaborateur, as: 'collaborateur' },
+            // Ensure other necessary models are included as needed
+          ],
+        },
+        {
+          model: Employe,
+          as: 'employe',
+          include: [
+            { model: Utilisateur, as: 'utilisateur' },
+            // Ensure other necessary models are included as needed
+          ],
+        }
+        // Ensure other necessary models are included as needed
+      ],
+    });
+
+    reservations = await Promise.all(reservations.map(async (reservation) => {
+      const images = await ImageOffre.findAll({
+        where: { id_offre: reservation.id_offre },
+        attributes: ['image'],
+      });
+
+      const reservationJson = {
+        ...reservation.toJSON(),
+        offre: {
+          ...reservation.offre.toJSON(),
+          images: images.map(img => img.image),
+        },
+      };
+
+      // Here's where we add the rooms details for hotel-type reservations
+      if (reservation.typeR === 'hotel') {
+        const hotels = await Hotel.findAll({
+          where: { id_reservation: reservation.id_reservation },
+          attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix']
+        });
+
+        const totalPeople = hotels.reduce((acc, hotel) => acc + hotel.nbr_adults + hotel.nbr_enfants, 0);
+        reservationJson.nombreTotal = totalPeople;
+        reservationJson.rooms = hotels;
+      } else {
+        // For non-hotel type reservations, use the reservation's nombre value
+        reservationJson.nombreTotal = reservation.nombre;
+      }
+
+      return reservationJson;
+    }));
+
+    // Optionally sort reservations to have 'en_cours' first
+    reservations.sort((a, b) => {
+      if (a.etat === 'en_cours' && b.etat !== 'en_cours') return -1;
+      if (a.etat !== 'en_cours' && b.etat === 'en_cours') return 1;
+      return 0;
+    });
+
+    res.status(200).json(reservations);
+  } catch (error) {
+    console.error('Error fetching reservations:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 };
 
@@ -259,6 +378,121 @@ exports.confirmationReservation = async (req, res) => {
   }
 };
 
+exports.reparationReservation = async (req, res) => {
+  const userId = req.userId;
+  const reservationId = req.params.id; // Assuming reservation ID is passed as a parameter
+
+  try {
+    // Find the employee corresponding to the logged-in user
+    const employe = await Employe.findOne({
+      where: {
+        id_utilisateur: userId,
+      },
+    });
+
+    if (!employe) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+
+    // Find the reservation to be cancelled
+    const userReservation = await Reservation.findOne({
+      where: {
+        id_employe: employe.id_employe,
+        id_reservation: reservationId,
+        etat: 'confirmer',
+      },
+    });
+
+    if (!userReservation) {
+      return res.status(404).json({ error: 'Reservation not found or cannot be cancelled' });
+    }
+
+    // Update the reservation state to 'annuler'
+    await userReservation.update({ etat: 'reparation' });
+
+    res.status(200).json({ message: 'Reservation reparation successfully' });
+  } catch (error) {
+    console.error('Error confirming reservation:', error);
+    res.status(500).json({ error: 'Failed to confirm reservation' });
+  }
+};
+
+exports.acceptationReservation = async (req, res) => {
+  const userId = req.userId;
+  const reservationId = req.params.id; // Assuming reservation ID is passed as a parameter
+
+  try {
+    // Find the employee corresponding to the logged-in user
+    const admin = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: userId,
+      },
+    });
+
+    if (!admin) {
+      return res.status(404).json({ error: 'admin not found' });
+    }
+
+    // Find the reservation to be cancelled
+    const userReservation = await Reservation.findOne({
+      where: {
+        id_reservation: reservationId,
+        etat: 'reparation',
+      },
+    });
+
+    if (!userReservation) {
+      return res.status(404).json({ error: 'Reservation not found or cannot be cancelled' });
+    }
+
+    // Update the reservation state to 'annuler'
+    await userReservation.update({ etat: 'accepter' });
+
+    res.status(200).json({ message: 'Reservation accepted successfully' });
+  } catch (error) {
+    console.error('Error confirming reservation:', error);
+    res.status(500).json({ error: 'Failed to confirm reservation' });
+  }
+};
+
+exports.refuserReservation = async (req, res) => {
+  const userId = req.userId;
+  const reservationId = req.params.id; // Assuming reservation ID is passed as a parameter
+
+  try {
+    // Find the employee corresponding to the logged-in user
+    const admin = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: userId,
+      },
+    });
+
+    if (!admin) {
+      return res.status(404).json({ error: 'admin not found' });
+    }
+
+    // Find the reservation to be cancelled
+    const userReservation = await Reservation.findOne({
+      where: {
+        id_reservation: reservationId,
+        etat: 'reparation',
+      },
+    });
+
+    if (!userReservation) {
+      return res.status(404).json({ error: 'Reservation not found or cannot be cancelled' });
+    }
+
+    // Update the reservation state to 'annuler'
+    await userReservation.update({ etat: 'refuser' });
+
+    res.status(200).json({ message: 'Reservation refused successfully' });
+  } catch (error) {
+    console.error('Error confirming reservation:', error);
+    res.status(500).json({ error: 'Failed to confirm reservation' });
+  }
+};
+
 exports.updateReservation = async (req, res) => {
   const userId = req.userId;
   const reservationId = req.params.id; // Assuming reservation ID is passed as a parameter
@@ -375,7 +609,170 @@ exports.getMyReservations = async (req, res) => {
     }
 
     let reservations = await Reservation.findAll({
-      where: { id_employe: employe.id_employe },
+      where: { 
+        id_employe: employe.id_employe,
+        etat: ['en_cours', 'annuler'] // Filter by specified etat values
+      },
+      include: [
+        {
+          model: Offre,
+          as: 'offre',
+          include: [
+            { model: Collaborateur, as: 'collaborateur' },
+            // Ensure other necessary models are included as needed
+          ],
+        },
+        {
+          model: Employe,
+          as: 'employe',
+        }
+        // Ensure other necessary models are included as needed
+      ],
+    });
+
+    reservations = await Promise.all(reservations.map(async (reservation) => {
+      const images = await ImageOffre.findAll({
+        where: { id_offre: reservation.id_offre },
+        attributes: ['image'],
+      });
+
+      const reservationJson = {
+        ...reservation.toJSON(),
+        offre: {
+          ...reservation.offre.toJSON(),
+          images: images.map(img => img.image),
+        },
+      };
+
+      // Here's where we add the rooms details for hotel-type reservations
+      if (reservation.typeR === 'hotel') {
+        const hotels = await Hotel.findAll({
+          where: { id_reservation: reservation.id_reservation },
+          attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix']
+        });
+
+        const totalPeople = hotels.reduce((acc, hotel) => acc + hotel.nbr_adults + hotel.nbr_enfants, 0);
+        reservationJson.nombreTotal = totalPeople;
+        reservationJson.rooms = hotels;
+      } else {
+        // For non-hotel type reservations, use the reservation's nombre value
+        reservationJson.nombreTotal = reservation.nombre;
+      }
+
+      return reservationJson;
+    }));
+
+    // Optionally sort reservations to have 'en_cours' first
+    reservations.sort((a, b) => {
+      if (a.etat === 'en_cours' && b.etat !== 'en_cours') return -1;
+      if (a.etat !== 'en_cours' && b.etat === 'en_cours') return 1;
+      return 0;
+    });
+
+    res.status(200).json(reservations);
+  } catch (error) {
+    console.error('Error fetching reservations:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+};
+
+exports.getMyReservationsBoxD = async (req, res) => {
+  const userId = req.userId;
+
+  try {
+    const employe = await Employe.findOne({
+      where: { id_utilisateur: userId },
+    });
+
+    if (!employe) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+
+    let reservations = await Reservation.findAll({
+      where: { 
+        id_employe: employe.id_employe,
+        etat: [ 'confirmer', 'reparation'] // Filter by specified etat values
+      },
+      include: [
+        {
+          model: Offre,
+          as: 'offre',
+          include: [
+            { model: Collaborateur, as: 'collaborateur' },
+            // Ensure other necessary models are included as needed
+          ],
+        },
+        {
+          model: Employe,
+          as: 'employe',
+        }
+        // Ensure other necessary models are included as needed
+      ],
+    });
+
+    reservations = await Promise.all(reservations.map(async (reservation) => {
+      const images = await ImageOffre.findAll({
+        where: { id_offre: reservation.id_offre },
+        attributes: ['image'],
+      });
+
+      const reservationJson = {
+        ...reservation.toJSON(),
+        offre: {
+          ...reservation.offre.toJSON(),
+          images: images.map(img => img.image),
+        },
+      };
+
+      // Here's where we add the rooms details for hotel-type reservations
+      if (reservation.typeR === 'hotel') {
+        const hotels = await Hotel.findAll({
+          where: { id_reservation: reservation.id_reservation },
+          attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix']
+        });
+
+        const totalPeople = hotels.reduce((acc, hotel) => acc + hotel.nbr_adults + hotel.nbr_enfants, 0);
+        reservationJson.nombreTotal = totalPeople;
+        reservationJson.rooms = hotels;
+      } else {
+        // For non-hotel type reservations, use the reservation's nombre value
+        reservationJson.nombreTotal = reservation.nombre;
+      }
+
+      return reservationJson;
+    }));
+
+    // Optionally sort reservations to have 'en_cours' first
+    reservations.sort((a, b) => {
+      if (a.etat === 'en_cours' && b.etat !== 'en_cours') return -1;
+      if (a.etat !== 'en_cours' && b.etat === 'en_cours') return 1;
+      return 0;
+    });
+
+    res.status(200).json(reservations);
+  } catch (error) {
+    console.error('Error fetching reservations:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+};
+
+exports.getMyReservationsBoxT = async (req, res) => {
+  const userId = req.userId;
+
+  try {
+    const employe = await Employe.findOne({
+      where: { id_utilisateur: userId },
+    });
+
+    if (!employe) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+
+    let reservations = await Reservation.findAll({
+      where: { 
+        id_employe: employe.id_employe,
+        etat: [ 'accepter', 'refuser'] // Filter by specified etat values
+      },
       include: [
         {
           model: Offre,
@@ -495,5 +892,136 @@ exports.deleteHotel = async (req, res) => {
   }
 };
 
+//vote
+
+exports.createEvaluation = async (req, res) => {
+  const { id_offre, vote } = req.body;
+  const userId = req.userId; // Assumed to be set by your authentication middleware
+
+  try {
+      // Retrieve the employe ID using the user ID from the token
+      const employe = await Employe.findOne({
+          where: { id_utilisateur: userId }
+      });
+
+      if (!employe) {
+          return res.status(404).json({ error: 'Employee not found.' });
+      }
+
+      const id_employe = employe.id_employe;
+
+      // Check if the id_offre and id_employe exist together in a reservation
+      const existingReservation = await Reservation.findOne({
+          where: {
+              id_offre: id_offre,
+              id_employe: id_employe
+          }
+      });
+
+      if (!existingReservation) {
+          return res.status(404).json({ error: 'No reservation found with the provided employee and offer IDs.' });
+      }
+
+      // Check if an evaluation already exists with the same id_offre and id_employe
+      const existingEvaluation = await Evaluation.findOne({
+          where: {
+              id_offre: id_offre,
+              id_employe: id_employe
+          }
+      });
+
+      if (existingEvaluation) {
+          // Update the existing evaluation's vote
+          await existingEvaluation.update({ vote: vote });
+          return res.status(200).json({ message: 'Evaluation updated successfully', evaluation: existingEvaluation });
+      }
+
+      // Create a new evaluation if it does not exist
+      const newEvaluation = await Evaluation.create({
+          id_offre: id_offre,
+          id_employe: id_employe,
+          vote: vote
+      });
+
+      res.status(201).json({ message: 'Evaluation created successfully', evaluation: newEvaluation });
+  } catch (error) {
+      console.error('Failed to create or update evaluation:', error);
+      res.status(500).json({ error: 'Failed to create or update evaluation', details: error.message });
+  }
+};
+
+exports.getOffreVote = async (req, res) => {
+  const { offreId } = req.params;  // Getting the offer ID from the request parameters
+
+  try {
+      // First, check if the offre exists to provide a meaningful error if it doesn't
+      const offre = await Offre.findByPk(offreId);
+      if (!offre) {
+          return res.status(404).json({ error: 'Offer not found.' });
+      }
+
+      // Retrieve all evaluations for the given offre ID
+      const evaluations = await Evaluation.findAll({
+          where: { id_offre: offreId }
+      });
+
+      const totalVotes = evaluations.reduce((sum, evaluation) => sum + evaluation.vote, 0);
+      const numberOfEvaluations = evaluations.length;
+      const averageVotes = numberOfEvaluations > 0 ? (totalVotes / numberOfEvaluations).toFixed(2) : 0;
+
+      // Construct response with total votes, number of evaluations, and average votes
+      const response = {
+          id_offre: offreId,
+          totalVotes: totalVotes,
+          numberOfEvaluations: numberOfEvaluations,
+          averageVotes: parseFloat(averageVotes)  // Ensure the response is a number even if it was calculated as zero
+      };
+
+      res.status(200).json(response);
+  } catch (error) {
+      console.error('Failed to get votes for offre:', error);
+      res.status(500).json({ error: 'Failed to retrieve offer votes', details: error.message });
+  }
+};
+
+exports.getVoteByOffreAndEmployee = async (req, res) => {
+  const { offreId } = req.params; // Getting the offer ID from the request parameters
+  const userId = req.userId; // Assumed to be set by your authentication middleware
+
+  try {
+      // Retrieve the employe ID using the user ID from the token
+      const employe = await Employe.findOne({
+          where: { id_utilisateur: userId }
+      });
+
+      if (!employe) {
+          return res.status(404).json({ error: 'Employee not found.' });
+      }
+
+      const id_employe = employe.id_employe;
+
+      // Retrieve the specific evaluation for the given offre ID and employe ID
+      const evaluation = await Evaluation.findOne({
+          where: {
+              id_offre: offreId,
+              id_employe: id_employe
+          }
+      });
+
+      if (!evaluation) {
+          return res.status(200).json({ message: 'Evaluation not found for the specified offer and employee.' });
+      }
+
+      // Return the found evaluation
+      res.status(200).json({
+          id_offre: offreId,
+          id_employe: id_employe,
+          vote: evaluation.vote
+      });
+  } catch (error) {
+      console.error('Failed to get vote:', error);
+      res.status(500).json({ error: 'Failed to retrieve vote', details: error.message });
+  }
+};
 
 module.exports = exports;
