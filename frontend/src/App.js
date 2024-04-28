@@ -41,7 +41,10 @@ function App() {
           <Routes>
           <Route path="/post/:postId" element={
             <ProtectedRoute>
-             <PostLink />
+               {' '}
+               <Home/>
+               <PostLink />
+               {' '}
              </ProtectedRoute>
             } />
             <Route
