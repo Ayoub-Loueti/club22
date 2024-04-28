@@ -474,69 +474,67 @@ exports.getEmployeeOfferById = async (req, res) => {
 
 exports.getAllOffresCollab = async (req, res) => {
   try {
-    const isEmployee = await Utilisateur.findOne({
-      where: {
-        id_utilisateur: req.userId,
-        type: 'employe',
-      },
-    });
-
-    if (!isEmployee) {
-      return res.status(403).json({
-        error: 'Permission denied. Only employees can perform this action.',
-      });
-    }
+    const { collabId } = req.params; 
 
     const offres = await OffreModel.findAll({
-      include: [
-        {
-          model: CollaborateurModel,
-          as: 'collaborateur',
-          attributes: ['nom', 'logo'],
-        },
-      ],
-      attributes: { exclude: ['created_at', 'updated_at'] },
+      include: {
+        model: CollaborateurModel,
+        as: 'collaborateur',
+        where: { id_collaborateur: collabId }, // Filter by collaborator ID
+        attributes: ['nom', 'logo'],
+      },
+      attributes: { exclude: ['created_at', 'updated_at'] }, // Exclude timestamps from OffreModel
     });
 
     if (!offres.length) {
-      return res.status(404).json({ message: 'No offers found' });
+      return res.status(204).json({ message: 'No offres found for the collaborator' });
     }
 
-    // Dynamically fetch additional details based on the offre type
     const offreDetails = await Promise.all(
-      offres.map(async (offre) => {
+      offres.map(async(offre) => {
         const offreJson = offre.toJSON();
-        offreJson.lesImages = await ImageOffre.findAll({
-          where: { id_offre: offre.id_offre },
+
+        const images = await ImageOffre.findAll({
+          where: {
+            id_offre:offre.id_offre,
+          },
         });
-
-        // Fetch details from the specific model based on the offre type
-        switch (offre.type) {
-          case 'hotel':
-            offreJson.details = await GrandHotelModel.findOne({
-              where: { id_offre: offre.id_offre },
-            });
-            break;
-          case 'voyage':
-            offreJson.details = await VoyageModel.findOne({
-              where: { id_offre: offre.id_offre },
-            });
-            break;
-          case 'activite':
-            offreJson.details = await ActiviteModel.findOne({
-              where: { id_offre: offre.id_offre },
-            });
-            break;
-        }
-
+        offreJson.lesImages = images;
+        const evaluations = await Evaluation.findAll({
+        where: { id_offre: offre.id_offre }
+      });
+      const totalVotes = evaluations.reduce((sum, evaluation) => sum + evaluation.vote, 0);
+      const numberOfEvaluations = evaluations.length;
+      offreJson.evaluation = {
+        averageVotes: numberOfEvaluations > 0 ? (totalVotes / numberOfEvaluations).toFixed(2) : 0,
+        totalVotes: totalVotes,
+        numberOfEvaluations: numberOfEvaluations
+      };
+      
+      // Fetch details from the specific model based on the offre type
+      switch (offre.type) {
+        case 'hotel':
+          offreJson.details = await GrandHotelModel.findOne({
+            where: { id_offre: offre.id_offre }
+          });
+          break;
+        case 'voyage':
+          offreJson.details = await VoyageModel.findOne({
+            where: { id_offre: offre.id_offre }
+          });
+          break;
+        case 'activite':
+          offreJson.details = await ActiviteModel.findOne({
+            where: { id_offre: offre.id_offre }
+          });
+          break;
+      }
         return offreJson;
       })
     );
-
     res.status(200).json(offreDetails);
   } catch (error) {
-    console.error('Failed to get offers:', error);
-    res.status(500).json({ error: 'Failed to get offers' });
+    res.status(500).json({ error: 'Failed to get offres' });
   }
 };
 
