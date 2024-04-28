@@ -31,6 +31,7 @@ import CollaborateurClickPage from './pages/OffreEmploye/collabClickPage';
 import MyReservations from './pages/OffreEmploye/myReservation';
 import AdminPanel from './pages/admin/adherant/adminAdherant';
 import AdminSignalsPage from './pages/admin/signal/AdminSignalsPage';
+import PostLink from './components/postLink/postLink';
 
 function App() {
   return (
@@ -38,6 +39,14 @@ function App() {
       <Router>
         <div className="App">
           <Routes>
+          <Route path="/post/:postId" element={
+            <ProtectedRoute>
+               {' '}
+               <Home/>
+               <PostLink />
+               {' '}
+             </ProtectedRoute>
+            } />
             <Route
               path="/"
               element={

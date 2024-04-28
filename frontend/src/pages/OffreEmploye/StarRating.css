@@ -1,0 +1,47 @@
+.star-rating {
+    font-size: 18px; /* Size of the stars */
+    color: #ffd700; /* Color of the filled stars */
+  }
+  
+  .star-rating .fa {
+    margin-right: 2px; /* Space between stars */
+  }
+  
+  .star-rating .checked {
+    color: #ffd700; /* Color of the active (filled) stars */
+  }
+  
+  /* Additional styling to adjust as needed */
+  .fa-star, .fa-star-half-o {
+    transition: color 0.2s ease-in-out; /* Smooth transition for hover effects */
+  }
+  
+  /* Hover effect to optionally highlight stars on hover (can be removed if not needed) */
+  .star-rating .fa:hover {
+    color: #f7ca18; /* Color when a star is hovered over */
+  }
+  
+  .star-rating {
+    display: inline-block; 
+    font-size: 18px; 
+    color: #ccc;
+  }
+  
+  .star-rating .fa {
+    margin-right: 2px;
+  }
+  
+  .star-rating .checked {
+    color: #ffd700; 
+  }
+  
+  /* Optional: if you want to add transition for hover effects */
+  .star-rating .fa:hover {
+    color: #f7ca18; 
+  }
+  
+  .reviews-count {
+    margin-left: 8px;
+    color: #666; /* Color for the text showing the number of reviews */
+    font-size: 14px;
+  }
