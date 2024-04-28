@@ -292,6 +292,17 @@ exports.getAllOffres = async (req, res) => {
           where: { id_offre: offre.id_offre },
         });
 
+        const evaluations = await Evaluation.findAll({
+          where: { id_offre: offre.id_offre }
+        });
+        const totalVotes = evaluations.reduce((sum, evaluation) => sum + evaluation.vote, 0);
+        const numberOfEvaluations = evaluations.length;
+        offreJson.evaluation = {
+          averageVotes: numberOfEvaluations > 0 ? (totalVotes / numberOfEvaluations).toFixed(2) : 0,
+          totalVotes: totalVotes,
+          numberOfEvaluations: numberOfEvaluations
+        };
+        
         switch (offre.type) {
           case 'hotel':
             offreJson.details = await GrandHotelModel.findOne({
