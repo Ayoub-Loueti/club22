@@ -22,6 +22,7 @@ import { faBookmark as farBookmark } from '@fortawesome/free-regular-svg-icons';
 import Swal from 'sweetalert2';
 import { NavLink } from 'react-router-dom';
 import LikesModal from '../likesModal/likesModal';
+
 const Post = (props) => {
   const { data, onPostDeleted, onPostUpdated, isModalView, openModalForPost } =
     props;
@@ -50,6 +51,7 @@ const Post = (props) => {
   const [visibleReplies, setVisibleReplies] = useState({});
   const [likesModalVisible, setLikesModalVisible] = useState(false);
   const [likesData, setLikesData] = useState([]);
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('login');
@@ -683,6 +685,20 @@ const Post = (props) => {
     }
   };  
 
+  const handleShare = async () => {
+    const postUrl = `http://localhost:3000/post/${data.id_post}`;
+    try {
+      await navigator.clipboard.writeText(postUrl);
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 900); // the toast will disappear after 3 seconds
+    } catch (error) {
+      console.error('Failed to copy: ', error);
+      // Optionally handle errors specifically if clipboard access fails
+    }
+  };  
+
   return (
     <div className="Post">
       <div className="postHeader">
@@ -824,8 +840,8 @@ const Post = (props) => {
           className="reactionIcon"
           onClick={toggleCommentForm}
         />
-        <img src={ShareIcon} alt="share" className="reactionIcon" />
-      </div>
+    <img src={ShareIcon} alt="share" className="reactionIcon" onClick={handleShare} />
+    {showToast && <div className="toast show">Link copied!</div>}      </div>
       <div className="likesCount">
         <span onClick={showLikesModal} title="Voir qui a aimé ce post">
           {likes} J'aime

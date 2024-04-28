@@ -506,3 +506,33 @@ margin-left: 11%;
 .reportResponseIcon:hover {
   color: #000000; /* A darker shade for hover to indicate interactivity */
 }
+
+.toast {
+  visibility: hidden; /* Hidden by default */
+  min-width: 100px; /* Set a minimum width */
+  background-color: black; /* Black background color */
+  color: #fff; /* White text color */
+  text-align: center; /* Centered text */
+  border-radius: 5px; /* Rounded borders */
+  padding: 8px 16px; /* Padding */
+  position: fixed; /* Positioned relative to the viewport */
+  z-index: 1; /* Sit on top */
+  right: 52%; /* Center the toast */
+  bottom: 370px; /* 30px from the bottom */
+  font-size: 14px; /* Text size */
+}
+
+.toast.show {
+  visibility: visible; /* Show the toast */
+  animation: fadein 0.5s, fadeout 0.5s 0.5s; /* Fade in and out */
+}
+
+@keyframes fadein {
+  from {bottom: 360px; opacity: 0;} 
+  to {bottom: 370px; opacity: 1;}
+}
+
+@keyframes fadeout {
+  from {bottom: 370px; opacity: 1;} 
+  to {bottom: 360px; opacity: 0;}
+}

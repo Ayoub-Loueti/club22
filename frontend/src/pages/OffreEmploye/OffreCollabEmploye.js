@@ -3,6 +3,7 @@ import axios from 'axios';
 import './OffreEmploye.css'; // Assuming CSS from previous examples
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/navbar/navbar';
+import StarRating from './StarRating'; // Make sure this is imported correctly
 
 function OffreCollabEmploye({ collaborateurId }) {
   const [offres, setOffres] = useState([]);
@@ -95,6 +96,7 @@ function OffreCollabEmploye({ collaborateurId }) {
                   />
                   <div className="remise-badge">{offre.remise}%</div>
                   <h2>{offre.titre}</h2>
+                  <StarRating rating={parseFloat(offre.evaluation.averageVotes)} numReviews={offre.evaluation.numberOfEvaluations} />
                   <button
                     className="voirPlusOffre"
                     onClick={() => handleVoirPlusClick(offre.id_offre)}
