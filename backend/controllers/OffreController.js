@@ -3,45 +3,45 @@ const OffreModel = require('../models/OffreModel');
 const CollaborateurModel = require('../models/CollaborateurModel');
 const ImageOffre = require('../models/ImageOffreModel');
 const multiImageUpload = require('../middleware/multiImageUpload');
+const ActiviteModel = require('../models/ActiviteModel');
+const VoyageModel = require('../models/VoyageModel');
+const GrandHotelModel = require('../models/GrandHotelModel');
+const Evaluation = require('../models/EvaluationModel');
 
-
-  exports.getOfferImages = async (req, res) => {
-    const { offreId } = req.params;
-    try {
-      const isAdmin = await Utilisateur.findOne({
-        where: {
-          id_utilisateur: req.userId,
-          type: 'admin',
-        },
+exports.getOfferImages = async (req, res) => {
+  const { offreId } = req.params;
+  try {
+    const isAdmin = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: req.userId,
+        type: 'admin',
+      },
+    });
+    if (!isAdmin) {
+      return res.status(403).json({
+        error:
+          'Permission denied. Only administrators can access offer images.',
       });
-      if (!isAdmin) {
-        return res
-          .status(403)
-          .json({
-            error:
-              'Permission denied. Only administrators can access offer images.',
-          });
-      }
-
-      const images = await ImageOffre.findAll({
-        where: { id_offre: offreId },
-        attributes: ['image'], // Ensure this is the correct field name in your model
-      });
-
-      if (!images.length) {
-        return res
-          .status(404)
-          .json({ message: 'No images found for this offer' });
-      }
-
-      res.status(200).json(images.map((img) => img.image)); // Modify as necessary to match your file path handling
-    } catch (error) {
-      console.error('Failed to get offer images:', error);
-      res.status(500).json({ error: 'Failed to retrieve offer images' });
     }
-  };
 
-// Creation of an offer
+    const images = await ImageOffre.findAll({
+      where: { id_offre: offreId },
+      attributes: ['image'], // Ensure this is the correct field name in your model
+    });
+
+    if (!images.length) {
+      return res
+        .status(404)
+        .json({ message: 'No images found for this offer' });
+    }
+
+    res.status(200).json(images.map((img) => img.image)); // Modify as necessary to match your file path handling
+  } catch (error) {
+    console.error('Failed to get offer images:', error);
+    res.status(500).json({ error: 'Failed to retrieve offer images' });
+  }
+};
+
 exports.createOffre = async (req, res) => {
   try {
     const isAdmin = await Utilisateur.findOne({
@@ -49,7 +49,12 @@ exports.createOffre = async (req, res) => {
     });
 
     if (!isAdmin) {
-      return res.status(403).json({ error: 'Permission denied. Only administrators can perform this action.' });
+      return res
+        .status(403)
+        .json({
+          error:
+            'Permission denied. Only administrators can perform this action.',
+        });
     }
 
     const {
@@ -61,7 +66,27 @@ exports.createOffre = async (req, res) => {
       id_collaborateur,
       type,
       remise,
+      destination,
+      // Additional fields for specific types
+      nom_hotel,
+      etoiles,
+      climatisation,
+      wifi,
+      piscine_exterieure,
+      piscine_couverte,
+      bassin_enfants,
+      parking,
+      discotheque,
+      plage_privee,
+      ascenseur,
+      salle_de_sport,
+      aire_de_jeux_enfants,
+      programme,
+      inclus,
+      nbr_jours,
+      duree,
     } = req.body;
+
     const offre = await OffreModel.create({
       titre,
       description,
@@ -71,20 +96,64 @@ exports.createOffre = async (req, res) => {
       id_collaborateur,
       type,
       remise,
+      destination,
     });
 
     if (req.files && req.files.length > 0) {
-      const imageUploads = req.files.map(file => {
-        const imagePath = file.path;  // Assumes path handling is already set
-        return ImageOffre.create({ image: imagePath, id_offre: offre.id_offre });
+      const imageUploads = req.files.map((file) => {
+        const imagePath = file.path; // Assumes path handling is already set
+        return ImageOffre.create({
+          image: imagePath,
+          id_offre: offre.id_offre,
+        });
       });
       await Promise.all(imageUploads);
+    }
+
+    // Create specific type details based on offre type
+    switch (type) {
+      case 'hotel':
+        await GrandHotelModel.create({
+          id_offre: offre.id_offre,
+          nom_hotel,
+          etoiles,
+          climatisation,
+          wifi,
+          piscine_exterieure,
+          piscine_couverte,
+          bassin_enfants,
+          parking,
+          discotheque,
+          plage_privee,
+          ascenseur,
+          salle_de_sport,
+          aire_de_jeux_enfants,
+        });
+        break;
+      case 'voyage':
+        await VoyageModel.create({
+          id_offre: offre.id_offre,
+          programme,
+          inclus,
+          nbr_jours,
+        });
+        break;
+      case 'activite':
+        await ActiviteModel.create({
+          id_offre: offre.id_offre,
+          programme,
+          inclus,
+          duree,
+        });
+        break;
     }
 
     res.status(201).json({ message: 'Offre created successfully', offre });
   } catch (error) {
     console.error('Error creating offre:', error);
-    res.status(500).json({ error: 'Failed to create offre', details: error.message });
+    res
+      .status(500)
+      .json({ error: 'Failed to create offre', details: error.message });
   }
 };
 
@@ -97,7 +166,12 @@ exports.updateOffre = async (req, res) => {
     });
 
     if (!isAdmin) {
-      return res.status(403).json({ error: 'Permission denied. Only administrators can perform this action.' });
+      return res
+        .status(403)
+        .json({
+          error:
+            'Permission denied. Only administrators can perform this action.',
+        });
     }
 
     const offre = await OffreModel.findByPk(offreId);
@@ -112,66 +186,73 @@ exports.updateOffre = async (req, res) => {
       date_debut: req.body.date_debut,
       date_fin: req.body.date_fin,
       id_collaborateur: req.body.id_collaborateur,
-      type:req.body.type,
-      remise:req.body.remise
+      type: req.body.type,
+      remise: req.body.remise,
+      destination: req.body.destination,
     };
 
     await offre.update(updateData);
 
     if (req.files && req.files.length > 0) {
-      const existingImages = await ImageOffre.findAll({ where: { id_offre: offreId } });
-      const deletions = existingImages.map(img => img.destroy());
+      const existingImages = await ImageOffre.findAll({
+        where: { id_offre: offreId },
+      });
+      const deletions = existingImages.map((img) => img.destroy());
       await Promise.all(deletions);
 
-      const imageUploads = req.files.map(file => {
-        const imagePath = file.path;  // Assumes path handling is already set
-        return ImageOffre.create({ image: imagePath, id_offre: offre.id_offre });
+      const imageUploads = req.files.map((file) => {
+        const imagePath = file.path; // Assumes path handling is already set
+        return ImageOffre.create({
+          image: imagePath,
+          id_offre: offre.id_offre,
+        });
       });
       await Promise.all(imageUploads);
     }
 
-    res.status(200).json({ message: 'Offre updated successfully', data: offre });
+    res
+      .status(200)
+      .json({ message: 'Offre updated successfully', data: offre });
   } catch (error) {
     console.error('Update failed:', error);
-    res.status(500).json({ error: 'Failed to update offre', details: error.message });
+    res
+      .status(500)
+      .json({ error: 'Failed to update offre', details: error.message });
   }
 };
 
-
-
-  
 exports.deleteOffre = async (req, res) => {
-    const { offreId } = req.params;
-    try {
-      const isAdmin = await Utilisateur.findOne({
-        where: {
-          id_utilisateur: req.userId,
-          type: 'admin',
-        },
+  const { offreId } = req.params;
+  try {
+    const isAdmin = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: req.userId,
+        type: 'admin',
+      },
+    });
+
+    if (!isAdmin) {
+      return res.status(403).json({
+        error:
+          'Permission denied. Only administrators can perform this action.',
       });
-  
-      if (!isAdmin) {
-        return res.status(403).json({
-          error:
-            'Permission denied. Only administrators can perform this action.',
-        });
-      }
-  
-      // Check if the offer exists
-      const offreToDelete = await OffreModel.findByPk(offreId);
-      if (!offreToDelete) {
-        return res.status(404).json({ error: 'Offre not found' });
-      }
-  
-      // Delete the offer using the correct column name (assuming it's id_offre)
-      await OffreModel.destroy({ where: { id_offre: offreId } });
-      res.status(200).json({ message: 'Offre deleted successfully' });
-    } catch (error) {
-      console.error('Failed to delete offre:', error);
-      res.status(500).json({ error: 'Failed to delete offre' });
     }
+
+    // Check if the offer exists
+    const offreToDelete = await OffreModel.findByPk(offreId);
+    if (!offreToDelete) {
+      return res.status(404).json({ error: 'Offre not found' });
+    }
+
+    // Delete the offer using the correct column name (assuming it's id_offre)
+    await OffreModel.destroy({ where: { id_offre: offreId } });
+    res.status(200).json({ message: 'Offre deleted successfully' });
+  } catch (error) {
+    console.error('Failed to delete offre:', error);
+    res.status(500).json({ error: 'Failed to delete offre' });
+  }
 };
-  
+
 exports.getAllOffres = async (req, res) => {
   try {
     const isAdmin = await Utilisateur.findOne({
@@ -189,33 +270,53 @@ exports.getAllOffres = async (req, res) => {
     }
 
     const offres = await OffreModel.findAll({
-      include: {
-        model: CollaborateurModel,
-        as: 'collaborateur',
-        attributes: ['nom', 'logo'],
-      },
-      attributes: { exclude: ['created_at', 'updated_at'] }, // Exclude timestamps from OffreModel
+      include: [
+        {
+          model: CollaborateurModel,
+          as: 'collaborateur',
+          attributes: ['nom', 'logo'],
+        },
+      ],
+      attributes: { exclude: ['created_at', 'updated_at'] },
     });
 
     if (!offres.length) {
       return res.status(404).json({ message: 'No offres found' });
     }
 
+    // Dynamically fetch details based on the offre type
     const offreDetails = await Promise.all(
-      offres.map(async(offre) => {
+      offres.map(async (offre) => {
         const offreJson = offre.toJSON();
-
-        const images = await ImageOffre.findAll({
-          where: {
-            id_offre:offre.id_offre,
-          },
+        offreJson.lesImages = await ImageOffre.findAll({
+          where: { id_offre: offre.id_offre },
         });
-        offreJson.lesImages=images;
+
+        switch (offre.type) {
+          case 'hotel':
+            offreJson.details = await GrandHotelModel.findOne({
+              where: { id_offre: offre.id_offre },
+            });
+            break;
+          case 'voyage':
+            offreJson.details = await VoyageModel.findOne({
+              where: { id_offre: offre.id_offre },
+            });
+            break;
+          case 'activite':
+            offreJson.details = await ActiviteModel.findOne({
+              where: { id_offre: offre.id_offre },
+            });
+            break;
+        }
+
         return offreJson;
       })
     );
+
     res.status(200).json(offreDetails);
   } catch (error) {
+    console.error('Failed to get offres:', error);
     res.status(500).json({ error: 'Failed to get offres' });
   }
 };
@@ -242,12 +343,12 @@ exports.getOffreById = async (req, res) => {
       return res.status(404).json({ error: 'Offre not found' });
     }
     const images = await ImageOffre.findAll({
-      where:{
+      where: {
         id_offre: offre.id_offre,
       },
-    })
+    });
     const offreDetail = offre.toJSON();
-    offreDetail.lesImages=images;
+    offreDetail.lesImages = images;
     res.status(200).json(offreDetail);
   } catch (error) {
     res.status(500).json({ error: 'Failed to get offre' });
@@ -257,46 +358,83 @@ exports.getOffreById = async (req, res) => {
 exports.getAllEmployeeOffers = async (req, res) => {
   try {
     const isEmployee = await Utilisateur.findOne({
-      where: {
-        id_utilisateur: req.userId,
-        type: 'employe',
-      },
+      where: { id_utilisateur: req.userId, type: 'employe' },
     });
 
     if (!isEmployee) {
-      return res.status(403).json({
-        error: 'Permission denied. Only employees can perform this action.',
-      });
+      return res
+        .status(403)
+        .json({
+          error: 'Permission denied. Only employees can perform this action.',
+        });
     }
 
-    const offres = await OffreModel.findAll({
-      include: {
-        model: CollaborateurModel,
-        as: 'collaborateur',
-        attributes: ['nom', 'logo'],
-      },
+    let offres = await OffreModel.findAll({
+      include: [
+        {
+          model: CollaborateurModel,
+          as: 'collaborateur',
+          attributes: ['nom', 'logo'],
+        },
+      ],
       attributes: { exclude: ['created_at', 'updated_at'] },
     });
 
-    if (!offres.length) {
-      return res.status(404).json({ message: 'No offers found' });
-    }
-
-    const offreDetails = await Promise.all(
+    const detailedOffres = await Promise.all(
       offres.map(async (offre) => {
         const offreJson = offre.toJSON();
-
-        const images = await ImageOffre.findAll({
-          where: {
-            id_offre: offre.id_offre,
-          },
+        offreJson.lesImages = await ImageOffre.findAll({
+          where: { id_offre: offre.id_offre },
         });
-        offreJson.lesImages = images;
+
+        // Fetch evaluations and calculate average votes, nested under "evaluation"
+        const evaluations = await Evaluation.findAll({
+          where: { id_offre: offre.id_offre },
+        });
+        const totalVotes = evaluations.reduce(
+          (sum, evaluation) => sum + evaluation.vote,
+          0
+        );
+        const numberOfEvaluations = evaluations.length;
+        offreJson.evaluation = {
+          averageVotes:
+            numberOfEvaluations > 0
+              ? (totalVotes / numberOfEvaluations).toFixed(2)
+              : 0,
+          totalVotes: totalVotes,
+          numberOfEvaluations: numberOfEvaluations,
+        };
+
+        // Dynamically include details based on the type of offre
+        switch (offre.type) {
+          case 'hotel':
+            offreJson.details = await GrandHotelModel.findOne({
+              where: { id_offre: offre.id_offre },
+            });
+            break;
+          case 'voyage':
+            offreJson.details = await VoyageModel.findOne({
+              where: { id_offre: offre.id_offre },
+            });
+            break;
+          case 'activite':
+            offreJson.details = await ActiviteModel.findOne({
+              where: { id_offre: offre.id_offre },
+            });
+            break;
+        }
+
         return offreJson;
       })
     );
-    res.status(200).json(offreDetails);
+
+    if (!detailedOffres.length) {
+      return res.status(404).json({ message: 'No offers found' });
+    }
+
+    res.status(200).json(detailedOffres);
   } catch (error) {
+    console.error('Failed to get offers:', error);
     res.status(500).json({ error: 'Failed to get offers' });
   }
 };
@@ -336,38 +474,69 @@ exports.getEmployeeOfferById = async (req, res) => {
 
 exports.getAllOffresCollab = async (req, res) => {
   try {
-    const { collabId } = req.params; 
+    const isEmployee = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: req.userId,
+        type: 'employe',
+      },
+    });
+
+    if (!isEmployee) {
+      return res.status(403).json({
+        error: 'Permission denied. Only employees can perform this action.',
+      });
+    }
 
     const offres = await OffreModel.findAll({
-      include: {
-        model: CollaborateurModel,
-        as: 'collaborateur',
-        where: { id_collaborateur: collabId }, // Filter by collaborator ID
-        attributes: ['nom', 'logo'],
-      },
-      attributes: { exclude: ['created_at', 'updated_at'] }, // Exclude timestamps from OffreModel
+      include: [
+        {
+          model: CollaborateurModel,
+          as: 'collaborateur',
+          attributes: ['nom', 'logo'],
+        },
+      ],
+      attributes: { exclude: ['created_at', 'updated_at'] },
     });
 
     if (!offres.length) {
-      return res.status(204).json({ message: 'No offres found for the collaborator' });
+      return res.status(404).json({ message: 'No offers found' });
     }
 
+    // Dynamically fetch additional details based on the offre type
     const offreDetails = await Promise.all(
-      offres.map(async(offre) => {
+      offres.map(async (offre) => {
         const offreJson = offre.toJSON();
-
-        const images = await ImageOffre.findAll({
-          where: {
-            id_offre:offre.id_offre,
-          },
+        offreJson.lesImages = await ImageOffre.findAll({
+          where: { id_offre: offre.id_offre },
         });
-        offreJson.lesImages = images;
+
+        // Fetch details from the specific model based on the offre type
+        switch (offre.type) {
+          case 'hotel':
+            offreJson.details = await GrandHotelModel.findOne({
+              where: { id_offre: offre.id_offre },
+            });
+            break;
+          case 'voyage':
+            offreJson.details = await VoyageModel.findOne({
+              where: { id_offre: offre.id_offre },
+            });
+            break;
+          case 'activite':
+            offreJson.details = await ActiviteModel.findOne({
+              where: { id_offre: offre.id_offre },
+            });
+            break;
+        }
+
         return offreJson;
       })
     );
+
     res.status(200).json(offreDetails);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to get offres' });
+    console.error('Failed to get offers:', error);
+    res.status(500).json({ error: 'Failed to get offers' });
   }
 };
 

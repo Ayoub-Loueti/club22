@@ -35,11 +35,14 @@ const OffreModel = sequelize.define(
     },
     remise: {
       type: DataTypes.INTEGER,
-      
     },
     type: {
       type: DataTypes.ENUM('voyage', 'hotel', 'activité', 'autre'),
       allowNull: false,
+    },
+    destination: {
+      type: DataTypes.STRING,
+      allowNull: true, // Optionnel, car toutes les offres n'ont pas une destination claire
     },
   },
   {

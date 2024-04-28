@@ -16,31 +16,31 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
   const [offreAddedOrUpdated, setOffreAddedOrUpdated] = useState(false);
   const token = localStorage.getItem('login');
 
- useEffect(() => {
-   const fetchOffres = async () => {
-     const url = isCollabMode
-       ? `http://localhost:5000/allOffersCollab/${collaborateurId}`
-       : 'http://localhost:5000/allOffers';
+  useEffect(() => {
+    const fetchOffres = async () => {
+      const url = isCollabMode
+        ? `http://localhost:5000/allOffersCollab/${collaborateurId}`
+        : 'http://localhost:5000/allOffers';
 
-     try {
-       const response = await axios.get(url, {
-         headers: {
-           Authorization: `Bearer ${JSON.parse(token).token}`,
-         },
-       });
+      try {
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(token).token}`,
+          },
+        });
 
-       const updatedOffres = response.data.map((offre) => ({
-         ...offre,
-         currentImageIndex: 0,
-       }));
-       setOffres(updatedOffres);
-     } catch (error) {
-       console.error('Error fetching offres:', error);
-     }
-   };
+        const updatedOffres = response.data.map((offre) => ({
+          ...offre,
+          currentImageIndex: 0,
+        }));
+        setOffres(updatedOffres);
+      } catch (error) {
+        console.error('Error fetching offres:', error);
+      }
+    };
 
-   fetchOffres();
- }, [isCollabMode, collaborateurId, offreAddedOrUpdated]);
+    fetchOffres();
+  }, [isCollabMode, collaborateurId, offreAddedOrUpdated]);
 
   useEffect(() => {
     // Automatically switch to the next image for each offer every 5 seconds
@@ -102,11 +102,10 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
   const filteredOffres = offres.filter(
     (offre) =>
       offre.titre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      offre.description.toLowerCase().includes(searchTerm.toLowerCase())||
-           offre.prix.toString().toLowerCase().includes(searchTerm.toLowerCase()) 
- 
+      offre.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      offre.prix.toString().toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
+
   return (
     <>
       <NavAdmin />
