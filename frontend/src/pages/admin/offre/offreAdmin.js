@@ -105,6 +105,25 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
       offre.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       offre.prix.toString().toLowerCase().includes(searchTerm.toLowerCase())
   );
+function displayHotelAttributes(details) {
+  const attributes = [
+    { key: 'climatisation', label: 'Climatisation' },
+    { key: 'wifi', label: 'Wi-Fi' },
+    { key: 'piscine_exterieure', label: 'Piscine extérieure' },
+    { key: 'piscine_couverte', label: 'Piscine couverte' },
+    { key: 'bassin_enfants', label: 'Bassin enfants' },
+    { key: 'parking', label: 'Parking' },
+    { key: 'discotheque', label: 'Discothèque' },
+    { key: 'plage_privee', label: 'Plage privée' },
+    { key: 'ascenseur', label: 'Ascenseur' },
+    { key: 'salle_de_sport', label: 'Salle de sport' },
+    { key: 'aire_de_jeux_enfants', label: 'Aire de jeux enfants' },
+  ];
+
+  return attributes
+    .filter((attr) => details[attr.key])
+    .map((attr) => <p key={attr.key}>{attr.label}: Oui</p>);
+}
 
   return (
     <>
@@ -166,7 +185,20 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
                     </span>
                   </p>
                 )}
-                <p>Type: {offre.type}</p>
+                <p>
+                  Offre valable de:{' '}
+                  <span className="text-after-colon">{offre.date_debut}</span>
+                </p>
+                <p>
+                  Jusqu'au:{' '}
+                  <span className="text-after-colon">{offre.date_fin}</span>
+                </p>
+                <p>
+                  Collaborateur:{' '}
+                  <span className="text-after-colon">
+                    {offre.collaborateur?.nom}
+                  </span>
+                </p>
                 {offre.type === 'voyage' && offre.details && (
                   <>
                     <p>
@@ -235,20 +267,6 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
                     </p>
                   </>
                 )}
-                <p>
-                  Offre valable de:{' '}
-                  <span className="text-after-colon">{offre.date_debut}</span>
-                </p>
-                <p>
-                  Jusqu'au:{' '}
-                  <span className="text-after-colon">{offre.date_fin}</span>
-                </p>
-                <p>
-                  Collaborateur:{' '}
-                  <span className="text-after-colon">
-                    {offre.collaborateur?.nom}
-                  </span>
-                </p>
               </div>
               <div className="offre-card-actions">
                 <button

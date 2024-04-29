@@ -49,12 +49,10 @@ exports.createOffre = async (req, res) => {
     });
 
     if (!isAdmin) {
-      return res
-        .status(403)
-        .json({
-          error:
-            'Permission denied. Only administrators can perform this action.',
-        });
+      return res.status(403).json({
+        error:
+          'Permission denied. Only administrators can perform this action.',
+      });
     }
 
     const {
@@ -167,18 +165,12 @@ exports.updateOffre = async (req, res) => {
 
     if (!isAdmin) {
       return res.status(403).json({
-        error: 'Permission denied. Only administrators can perform this action.',
+        error:
+          'Permission denied. Only administrators can perform this action.',
       });
     }
 
-const offre = await OffreModel.findByPk(offreId, {
-  include: [
-    { model: VoyageModel, as: 'voyage' },
-    { model: GrandHotelModel, as: 'hotel' },
-    { model: ActiviteModel, as: 'activite' },
-    // other includes as necessary
-  ],
-});
+    const offre = await OffreModel.findByPk(offreId);
     if (!offre) {
       return res.status(404).json({ error: 'Offre not found' });
     }
@@ -215,7 +207,9 @@ const offre = await OffreModel.findByPk(offreId, {
           salle_de_sport: req.body.salle_de_sport,
           aire_de_jeux_enfants: req.body.aire_de_jeux_enfants,
         };
-        await GrandHotelModel.update(hotelDetails, { where: { id_offre: offreId } });
+        await GrandHotelModel.update(hotelDetails, {
+          where: { id_offre: offreId },
+        });
         break;
       case 'voyage':
         const voyageDetails = {
@@ -223,7 +217,9 @@ const offre = await OffreModel.findByPk(offreId, {
           inclus: req.body.inclus,
           nbr_jours: req.body.nbr_jours,
         };
-        await VoyageModel.update(voyageDetails, { where: { id_offre: offreId } });
+        await VoyageModel.update(voyageDetails, {
+          where: { id_offre: offreId },
+        });
         break;
       case 'activite':
         const activiteDetails = {
@@ -231,14 +227,20 @@ const offre = await OffreModel.findByPk(offreId, {
           inclus: req.body.inclus,
           duree: req.body.duree,
         };
-        await ActiviteModel.update(activiteDetails, { where: { id_offre: offreId } });
+        await ActiviteModel.update(activiteDetails, {
+          where: { id_offre: offreId },
+        });
         break;
     }
 
-    res.status(200).json({ message: 'Offre updated successfully', data: offre });
+    res
+      .status(200)
+      .json({ message: 'Offre updated successfully', data: offre });
   } catch (error) {
     console.error('Update failed:', error);
-    res.status(500).json({ error: 'Failed to update offre', details: error.message });
+    res
+      .status(500)
+      .json({ error: 'Failed to update offre', details: error.message });
   }
 };
 
@@ -314,16 +316,22 @@ exports.getAllOffres = async (req, res) => {
         });
 
         const evaluations = await Evaluation.findAll({
-          where: { id_offre: offre.id_offre }
+          where: { id_offre: offre.id_offre },
         });
-        const totalVotes = evaluations.reduce((sum, evaluation) => sum + evaluation.vote, 0);
+        const totalVotes = evaluations.reduce(
+          (sum, evaluation) => sum + evaluation.vote,
+          0
+        );
         const numberOfEvaluations = evaluations.length;
         offreJson.evaluation = {
-          averageVotes: numberOfEvaluations > 0 ? (totalVotes / numberOfEvaluations).toFixed(2) : 0,
+          averageVotes:
+            numberOfEvaluations > 0
+              ? (totalVotes / numberOfEvaluations).toFixed(2)
+              : 0,
           totalVotes: totalVotes,
-          numberOfEvaluations: numberOfEvaluations
+          numberOfEvaluations: numberOfEvaluations,
         };
-        
+
         switch (offre.type) {
           case 'hotel':
             offreJson.details = await GrandHotelModel.findOne({
@@ -361,7 +369,6 @@ exports.getOffreById = async (req, res) => {
         id_utilisateur: req.userId,
         type: 'admin',
       },
-      
     });
 
     if (!isAdmin) {
@@ -385,17 +392,17 @@ exports.getOffreById = async (req, res) => {
     switch (offre.type) {
       case 'hotel':
         offreDetail.details = await GrandHotelModel.findOne({
-          where: { id_offre: offre.id_offre }
+          where: { id_offre: offre.id_offre },
         });
         break;
       case 'voyage':
         offreDetail.details = await VoyageModel.findOne({
-          where: { id_offre: offre.id_offre }
+          where: { id_offre: offre.id_offre },
         });
         break;
       case 'activite':
         offreDetail.details = await ActiviteModel.findOne({
-          where: { id_offre: offre.id_offre }
+          where: { id_offre: offre.id_offre },
         });
         break;
     }
@@ -412,11 +419,9 @@ exports.getAllEmployeeOffers = async (req, res) => {
     });
 
     if (!isEmployee) {
-      return res
-        .status(403)
-        .json({
-          error: 'Permission denied. Only employees can perform this action.',
-        });
+      return res.status(403).json({
+        error: 'Permission denied. Only employees can perform this action.',
+      });
     }
 
     let offres = await OffreModel.findAll({
@@ -524,7 +529,7 @@ exports.getEmployeeOfferById = async (req, res) => {
 
 exports.getAllOffresCollab = async (req, res) => {
   try {
-    const { collabId } = req.params; 
+    const { collabId } = req.params;
 
     const offres = await OffreModel.findAll({
       include: {
@@ -537,48 +542,56 @@ exports.getAllOffresCollab = async (req, res) => {
     });
 
     if (!offres.length) {
-      return res.status(204).json({ message: 'No offres found for the collaborator' });
+      return res
+        .status(204)
+        .json({ message: 'No offres found for the collaborator' });
     }
 
     const offreDetails = await Promise.all(
-      offres.map(async(offre) => {
+      offres.map(async (offre) => {
         const offreJson = offre.toJSON();
 
         const images = await ImageOffre.findAll({
           where: {
-            id_offre:offre.id_offre,
+            id_offre: offre.id_offre,
           },
         });
         offreJson.lesImages = images;
         const evaluations = await Evaluation.findAll({
-        where: { id_offre: offre.id_offre }
-      });
-      const totalVotes = evaluations.reduce((sum, evaluation) => sum + evaluation.vote, 0);
-      const numberOfEvaluations = evaluations.length;
-      offreJson.evaluation = {
-        averageVotes: numberOfEvaluations > 0 ? (totalVotes / numberOfEvaluations).toFixed(2) : 0,
-        totalVotes: totalVotes,
-        numberOfEvaluations: numberOfEvaluations
-      };
-      
-      // Fetch details from the specific model based on the offre type
-      switch (offre.type) {
-        case 'hotel':
-          offreJson.details = await GrandHotelModel.findOne({
-            where: { id_offre: offre.id_offre }
-          });
-          break;
-        case 'voyage':
-          offreJson.details = await VoyageModel.findOne({
-            where: { id_offre: offre.id_offre }
-          });
-          break;
-        case 'activite':
-          offreJson.details = await ActiviteModel.findOne({
-            where: { id_offre: offre.id_offre }
-          });
-          break;
-      }
+          where: { id_offre: offre.id_offre },
+        });
+        const totalVotes = evaluations.reduce(
+          (sum, evaluation) => sum + evaluation.vote,
+          0
+        );
+        const numberOfEvaluations = evaluations.length;
+        offreJson.evaluation = {
+          averageVotes:
+            numberOfEvaluations > 0
+              ? (totalVotes / numberOfEvaluations).toFixed(2)
+              : 0,
+          totalVotes: totalVotes,
+          numberOfEvaluations: numberOfEvaluations,
+        };
+
+        // Fetch details from the specific model based on the offre type
+        switch (offre.type) {
+          case 'hotel':
+            offreJson.details = await GrandHotelModel.findOne({
+              where: { id_offre: offre.id_offre },
+            });
+            break;
+          case 'voyage':
+            offreJson.details = await VoyageModel.findOne({
+              where: { id_offre: offre.id_offre },
+            });
+            break;
+          case 'activite':
+            offreJson.details = await ActiviteModel.findOne({
+              where: { id_offre: offre.id_offre },
+            });
+            break;
+        }
         return offreJson;
       })
     );

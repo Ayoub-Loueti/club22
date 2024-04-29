@@ -22,7 +22,7 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
   // States for Voyage-specific fields
 const [programme, setProgramme] = useState(''); 
   const [inclus, setInclus] = useState('');
-  const [nbrJours, setNbrJours] = useState(0);
+  const [nbr_jours, setNbrJours] = useState(0);
 
   // States for Hotel-specific fields
   const [hotelName, setHotelName] = useState('');
@@ -67,7 +67,7 @@ const [programme, setProgramme] = useState('');
  }
           // Assuming additionalFields is correctly structured in the response
           if (data.type === 'voyage') {
-            setNbrJours(data.details.nbrJours);
+            setNbrJours(data.details.nbr_jours);
           } else if (data.type === 'hotel') {
             setHotelName(data.details.nom_hotel);
             setEtoiles(data.details.etoiles);
@@ -180,7 +180,7 @@ const renderSharedFields = () => (
         Nombre de Jours:
         <input
           type="number"
-          value={nbrJours}
+          value={nbr_jours}
           onChange={(e) => setNbrJours(e.target.value)}
           required
         />
@@ -338,13 +338,11 @@ const renderSharedFields = () => (
     formData.append('remise', remise === '' ? 0 : parseInt(remise, 10));
 
     // Append additional fields based on type
-    switch (typeOffre) {
-      case 'voyage':
-        formData.append('programme', programme);
-        formData.append('inclus', inclus);
-        formData.append('nbrJours', nbrJours);
-        break;
-      case 'hotel':
+if (typeOffre === 'voyage') {
+    formData.append('programme', programme);
+    formData.append('inclus', inclus);
+    formData.append('nbr_jours', nbr_jours);
+} else if (typeOffre === 'hotel') {
         formData.append('nom_hotel', hotelName);
         formData.append('etoiles', etoiles);
         formData.append('climatisation', climatisation);
@@ -358,12 +356,10 @@ const renderSharedFields = () => (
         formData.append('ascenseur', ascenseur);
         formData.append('salle_de_sport', salleDeSport);
         formData.append('aire_de_jeux_enfants', aireDeJeuxEnfants);
-        break;
-      case 'activite':
+   }else if(typeOffre === 'activite') {
       formData.append('programme', programme);
       formData.append('inclus', inclus);
         formData.append('duree', duree);
-        break;
     }
 
     images.forEach((image, index) =>
@@ -417,10 +413,14 @@ console.log({
   prix,
   date_debut,
   date_fin,
-  destination, // Check this value
+  destination,
   type: typeOffre,
   remise,
+  programme,
+  inclus,
+  nbr_jours, // Add all relevant states
 });
+
 
   const today = new Date().toISOString().split('T')[0];
   return (
