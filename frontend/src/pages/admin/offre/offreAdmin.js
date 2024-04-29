@@ -166,6 +166,75 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
                     </span>
                   </p>
                 )}
+                <p>Type: {offre.type}</p>
+                {offre.type === 'voyage' && offre.details && (
+                  <>
+                    <p>
+                      Programme: {offre.details.programme || 'Non spécifié'}
+                    </p>
+                    <p>Inclus: {offre.details.inclus || 'Non spécifié'}</p>
+                    <p>
+                      Nombre de jours:{' '}
+                      {offre.details.nbr_jours || 'Non spécifié'}
+                    </p>
+                  </>
+                )}
+                {offre.type === 'hotel' && offre.details && (
+                  <>
+                    <p>
+                      Nom de l'hôtel:{' '}
+                      {offre.details.nom_hotel || 'Non spécifié'}
+                    </p>
+                    <p>Étoiles: {offre.details.etoiles || 'Non spécifié'}</p>
+                    <p>
+                      Climatisation:{' '}
+                      {offre.details.climatisation ? 'Oui' : 'Non'}
+                    </p>
+                    <p>Wi-Fi: {offre.details.wifi ? 'Oui' : 'Non'}</p>
+                    <p>
+                      Piscine extérieure:{' '}
+                      {offre.details.piscine_exterieure ? 'Oui' : 'Non'}
+                    </p>
+                    <p>
+                      Piscine couverte:{' '}
+                      {offre.details.piscine_couverte ? 'Oui' : 'Non'}
+                    </p>
+                    <p>
+                      Bassin enfants:{' '}
+                      {offre.details.bassin_enfants ? 'Oui' : 'Non'}
+                    </p>
+                    <p>Parking: {offre.details.parking ? 'Oui' : 'Non'}</p>
+                    <p>
+                      Discothèque: {offre.details.discotheque ? 'Oui' : 'Non'}
+                    </p>
+                    <p>
+                      Plage privée: {offre.details.plage_privee ? 'Oui' : 'Non'}
+                    </p>
+                    <p>Ascenseur: {offre.details.ascenseur ? 'Oui' : 'Non'}</p>
+                    <p>
+                      Salle de sport:{' '}
+                      {offre.details.salle_de_sport ? 'Oui' : 'Non'}
+                    </p>
+                    <p>
+                      Aire de jeux enfants:{' '}
+                      {offre.details.aire_de_jeux_enfants ? 'Oui' : 'Non'}
+                    </p>
+                  </>
+                )}
+                {offre.type === 'activite' && offre.details && (
+                  <>
+                    <p>
+                      Programme: {offre.details.programme || 'Non spécifié'}
+                    </p>
+                    <p>Inclus: {offre.details.inclus || 'Non spécifié'}</p>
+                    <p>
+                      Durée:{' '}
+                      {offre.details.duree
+                        ? `${offre.details.duree} heures`
+                        : 'Non spécifié'}
+                    </p>
+                  </>
+                )}
                 <p>
                   Offre valable de:{' '}
                   <span className="text-after-colon">{offre.date_debut}</span>

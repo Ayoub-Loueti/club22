@@ -157,7 +157,7 @@ exports.createOffre = async (req, res) => {
   }
 };
 
-// Updating an offer
+// Updating an offer, including specific details based on the offer type
 exports.updateOffre = async (req, res) => {
   const { offreId } = req.params;
   try {
@@ -166,19 +166,24 @@ exports.updateOffre = async (req, res) => {
     });
 
     if (!isAdmin) {
-      return res
-        .status(403)
-        .json({
-          error:
-            'Permission denied. Only administrators can perform this action.',
-        });
+      return res.status(403).json({
+        error: 'Permission denied. Only administrators can perform this action.',
+      });
     }
 
-    const offre = await OffreModel.findByPk(offreId);
+const offre = await OffreModel.findByPk(offreId, {
+  include: [
+    { model: VoyageModel, as: 'voyage' },
+    { model: GrandHotelModel, as: 'hotel' },
+    { model: ActiviteModel, as: 'activite' },
+    // other includes as necessary
+  ],
+});
     if (!offre) {
       return res.status(404).json({ error: 'Offre not found' });
     }
 
+    // Basic info update
     const updateData = {
       titre: req.body.titre,
       description: req.body.description,
@@ -190,34 +195,50 @@ exports.updateOffre = async (req, res) => {
       remise: req.body.remise,
       destination: req.body.destination,
     };
-
     await offre.update(updateData);
 
-    if (req.files && req.files.length > 0) {
-      const existingImages = await ImageOffre.findAll({
-        where: { id_offre: offreId },
-      });
-      const deletions = existingImages.map((img) => img.destroy());
-      await Promise.all(deletions);
-
-      const imageUploads = req.files.map((file) => {
-        const imagePath = file.path; // Assumes path handling is already set
-        return ImageOffre.create({
-          image: imagePath,
-          id_offre: offre.id_offre,
-        });
-      });
-      await Promise.all(imageUploads);
+    // Update specific type details
+    switch (offre.type) {
+      case 'hotel':
+        const hotelDetails = {
+          nom_hotel: req.body.nom_hotel,
+          etoiles: req.body.etoiles,
+          climatisation: req.body.climatisation,
+          wifi: req.body.wifi,
+          piscine_exterieure: req.body.piscine_exterieure,
+          piscine_couverte: req.body.piscine_couverte,
+          bassin_enfants: req.body.bassin_enfants,
+          parking: req.body.parking,
+          discotheque: req.body.discotheque,
+          plage_privee: req.body.plage_privee,
+          ascenseur: req.body.ascenseur,
+          salle_de_sport: req.body.salle_de_sport,
+          aire_de_jeux_enfants: req.body.aire_de_jeux_enfants,
+        };
+        await GrandHotelModel.update(hotelDetails, { where: { id_offre: offreId } });
+        break;
+      case 'voyage':
+        const voyageDetails = {
+          programme: req.body.programme,
+          inclus: req.body.inclus,
+          nbr_jours: req.body.nbr_jours,
+        };
+        await VoyageModel.update(voyageDetails, { where: { id_offre: offreId } });
+        break;
+      case 'activite':
+        const activiteDetails = {
+          programme: req.body.programme,
+          inclus: req.body.inclus,
+          duree: req.body.duree,
+        };
+        await ActiviteModel.update(activiteDetails, { where: { id_offre: offreId } });
+        break;
     }
 
-    res
-      .status(200)
-      .json({ message: 'Offre updated successfully', data: offre });
+    res.status(200).json({ message: 'Offre updated successfully', data: offre });
   } catch (error) {
     console.error('Update failed:', error);
-    res
-      .status(500)
-      .json({ error: 'Failed to update offre', details: error.message });
+    res.status(500).json({ error: 'Failed to update offre', details: error.message });
   }
 };
 
@@ -340,6 +361,7 @@ exports.getOffreById = async (req, res) => {
         id_utilisateur: req.userId,
         type: 'admin',
       },
+      
     });
 
     if (!isAdmin) {

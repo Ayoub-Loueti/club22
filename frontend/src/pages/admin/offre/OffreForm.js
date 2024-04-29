@@ -20,7 +20,7 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
   const [images, setImages] = useState([]);
 
   // States for Voyage-specific fields
-  const [programme, setProgramme] = useState('');
+const [programme, setProgramme] = useState(''); 
   const [inclus, setInclus] = useState('');
   const [nbrJours, setNbrJours] = useState(0);
 
@@ -40,8 +40,7 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
   const [aireDeJeuxEnfants, setAireDeJeuxEnfants] = useState(false);
 
   // States for Activité-specific fields
-  const [activityName, setActivityName] = useState('');
-  const [participants, setParticipants] = useState(0);
+
   const [duree, setDuree] = useState(0);
 
   const token = localStorage.getItem('login');
@@ -60,33 +59,31 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
           setDateFin(data.date_fin.split('T')[0]);
           setSelectedCollaborateur(data.id_collaborateur);
           setTypeOffre(data.type);
-          setDestination(data.destination);
-
+  setDestination(data.destination || '');
           setRemise(data.remise ? data.remise.toString().padStart(2, '0') : '');
-
+ if (data.type === 'voyage' || data.type === 'activite') {
+  setProgramme(data.details?.programme || '');
+  setInclus(data.details?.inclus || '');
+ }
           // Assuming additionalFields is correctly structured in the response
           if (data.type === 'voyage') {
-            setProgramme(data.additionalFields.programme);
-            setInclus(data.additionalFields.inclus);
-            setNbrJours(data.additionalFields.nbr_jours);
+            setNbrJours(data.details.nbrJours);
           } else if (data.type === 'hotel') {
-            setHotelName(data.additionalFields.nom_hotel);
-            setEtoiles(data.additionalFields.etoiles);
-            setClimatisation(data.additionalFields.climatisation);
-            setWifi(data.additionalFields.wifi);
-            setPiscineExterieure(data.additionalFields.piscine_exterieure);
-            setPiscineCouverte(data.additionalFields.piscine_couverte);
-            setBassinEnfants(data.additionalFields.bassin_enfants);
-            setParking(data.additionalFields.parking);
-            setDiscotheque(data.additionalFields.discotheque);
-            setPlagePrivee(data.additionalFields.plage_privee);
-            setAscenseur(data.additionalFields.ascenseur);
-            setSalleDeSport(data.additionalFields.salle_de_sport);
-            setAireDeJeuxEnfants(data.additionalFields.aire_de_jeux_enfants);
+            setHotelName(data.details.nom_hotel);
+            setEtoiles(data.details.etoiles);
+            setClimatisation(data.details.climatisation);
+            setWifi(data.details.wifi);
+            setPiscineExterieure(data.details.piscine_exterieure);
+            setPiscineCouverte(data.details.piscine_couverte);
+            setBassinEnfants(data.details.bassin_enfants);
+            setParking(data.details.parking);
+            setDiscotheque(data.details.discotheque);
+            setPlagePrivee(data.details.plage_privee);
+            setAscenseur(data.details.ascenseur);
+            setSalleDeSport(data.details.salle_de_sport);
+            setAireDeJeuxEnfants(data.details.aire_de_jeux_enfants);
           } else if (data.type === 'activite') {
-            setActivityName(data.additionalFields.nom_activite);
-            setParticipants(data.additionalFields.participants);
-            setDuree(data.additionalFields.duree);
+            setDuree(data.details.duree);
           }
                     setInitialDataLoaded(true);
 
@@ -125,8 +122,6 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
     setAscenseur(false);
     setSalleDeSport(false);
     setAireDeJeuxEnfants(false);
-    setActivityName('');
-    setParticipants(0);
     setDuree(0);
   };
 
@@ -155,26 +150,32 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
         return null;
     }
   };
-
+const renderSharedFields = () => (
+  <>
+    <label>
+      Programme:
+      <textarea
+        type="text"
+        value={programme}
+        onChange={(e) => setProgramme(e.target.value)}
+        required
+      />
+    </label>
+    <label>
+      Inclus:
+      <textarea
+        type="text"
+        value={inclus}
+        onChange={(e) => setInclus(e.target.value)}
+        required
+      />
+    </label>
+  </>
+);
   const renderVoyageFields = () => (
     <>
       {' '}
-      <label>
-        Programme:
-        <textarea
-          value={programme}
-          onChange={(e) => setProgramme(e.target.value)}
-          required
-        />
-      </label>
-      <label>
-        Inclus:
-        <textarea
-          value={inclus}
-          onChange={(e) => setInclus(e.target.value)}
-          required
-        />
-      </label>
+      {renderSharedFields()}
       <label>
         Nombre de Jours:
         <input
@@ -300,24 +301,8 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
 
   const renderActiviteFields = () => (
     <>
-      <label>
-        Nom de l'Activité:
-        <input
-          type="text"
-          value={activityName}
-          onChange={(e) => setActivityName(e.target.value)}
-          required
-        />
-      </label>
-      <label>
-        Nombre de Participants:
-        <input
-          type="number"
-          value={participants}
-          onChange={(e) => setParticipants(e.target.value)}
-          required
-        />
-      </label>
+      {renderSharedFields()}
+
       <label>
         Durée (en heures):
         <input
@@ -356,7 +341,7 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
       case 'voyage':
         formData.append('programme', programme);
         formData.append('inclus', inclus);
-        formData.append('nbr_jours', nbrJours);
+        formData.append('nbrJours', nbrJours);
         break;
       case 'hotel':
         formData.append('nom_hotel', hotelName);
@@ -374,8 +359,8 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
         formData.append('aire_de_jeux_enfants', aireDeJeuxEnfants);
         break;
       case 'activite':
-        formData.append('nom_activite', activityName);
-        formData.append('participants', participants);
+      formData.append('programme', programme);
+      formData.append('inclus', inclus);
         formData.append('duree', duree);
         break;
     }
