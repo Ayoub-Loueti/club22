@@ -382,6 +382,23 @@ exports.getOffreById = async (req, res) => {
     });
     const offreDetail = offre.toJSON();
     offreDetail.lesImages = images;
+    switch (offre.type) {
+      case 'hotel':
+        offreDetail.details = await GrandHotelModel.findOne({
+          where: { id_offre: offre.id_offre }
+        });
+        break;
+      case 'voyage':
+        offreDetail.details = await VoyageModel.findOne({
+          where: { id_offre: offre.id_offre }
+        });
+        break;
+      case 'activite':
+        offreDetail.details = await ActiviteModel.findOne({
+          where: { id_offre: offre.id_offre }
+        });
+        break;
+    }
     res.status(200).json(offreDetail);
   } catch (error) {
     res.status(500).json({ error: 'Failed to get offre' });

@@ -42,7 +42,6 @@ const OffreModel = sequelize.define(
     },
     destination: {
       type: DataTypes.STRING,
-      allowNull: true, // Optionnel, car toutes les offres n'ont pas une destination claire
     },
   },
   {

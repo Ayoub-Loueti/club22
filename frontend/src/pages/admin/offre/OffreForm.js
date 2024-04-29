@@ -334,6 +334,7 @@ const renderSharedFields = () => (
     formData.append('date_fin', date_fin);
     formData.append('id_collaborateur', selectedCollaborateur);
     formData.append('type', typeOffre);
+    formData.append('destination', destination);
     formData.append('remise', remise === '' ? 0 : parseInt(remise, 10));
 
     // Append additional fields based on type
