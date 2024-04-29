@@ -232,10 +232,21 @@ exports.updateOffre = async (req, res) => {
         });
         break;
     }
+  if (req.files && req.files.length > 0) {
+    const existingImages = await ImageOffre.findAll({
+      where: { id_offre: offreId },
+    });
+    const deletions = existingImages.map((img) => img.destroy());
+    await Promise.all(deletions);
 
-    res
-      .status(200)
-      .json({ message: 'Offre updated successfully', data: offre });
+    const imageUploads = req.files.map((file) => {
+      const imagePath = file.path; // Assumes path handling is already set
+      return ImageOffre.create({ image: imagePath, id_offre: offre.id_offre });
+    });
+    await Promise.all(imageUploads);
+  }
+
+    res.status(200).json({ message: 'Offre updated successfully', data: offre });
   } catch (error) {
     console.error('Update failed:', error);
     res
@@ -494,6 +505,7 @@ exports.getAllEmployeeOffers = async (req, res) => {
   }
 };
 
+
 exports.getEmployeeOfferById = async (req, res) => {
   const { offreId } = req.params;
   try {
@@ -521,11 +533,32 @@ exports.getEmployeeOfferById = async (req, res) => {
     });
     const offreDetail = offre.toJSON();
     offreDetail.lesImages = images;
+
+    // Fetch and include details based on the type of the offer
+    switch (offre.type) {
+      case 'hotel':
+        offreDetail.details = await GrandHotelModel.findOne({
+          where: { id_offre: offre.id_offre },
+        });
+        break;
+      case 'voyage':
+        offreDetail.details = await VoyageModel.findOne({
+          where: { id_offre: offre.id_offre },
+        });
+        break;
+      case 'activite':
+        offreDetail.details = await ActiviteModel.findOne({
+          where: { id_offre: offre.id_offre },
+        });
+        break;
+    }
+
     res.status(200).json(offreDetail);
   } catch (error) {
     res.status(500).json({ error: 'Failed to get offer' });
   }
 };
+
 
 exports.getAllOffresCollab = async (req, res) => {
   try {

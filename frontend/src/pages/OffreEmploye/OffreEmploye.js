@@ -27,6 +27,7 @@ function OffreEmploye() {
     };
 
     fetchOffres();
+    
   }, [token]);
 
   useEffect(() => {
@@ -62,7 +63,7 @@ function OffreEmploye() {
           {filteredOffres.map((offre, index) => (
             <div key={index} className="offre-employee-card">
               <img src={`http://localhost:5000/${offre.lesImages[offre.currentImageIndex]?.image}`} alt={`Image ${offre.currentImageIndex}`} />
-              {offre.remise > 0 && <div className="remise-badge">{`${offre.remise}%`}</div>}
+              {offre.remise > 0 && <div className="remise-badge">{`${offre.remise.toString().padStart(2, '0')}%`}</div>}
               <h2>{offre.titre}</h2>
               <StarRating rating={parseFloat(offre.evaluation.averageVotes)} numReviews={offre.evaluation.numberOfEvaluations} />
               <button className="voirPlusOffre" onClick={() => handleVoirPlusClick(offre.id_offre)}>

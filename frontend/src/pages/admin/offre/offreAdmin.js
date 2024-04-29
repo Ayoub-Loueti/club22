@@ -105,7 +105,7 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
       offre.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       offre.prix.toString().toLowerCase().includes(searchTerm.toLowerCase())
   );
-function displayHotelAttributes(details) {
+/* function displayHotelAttributes(details) {
   const attributes = [
     { key: 'climatisation', label: 'Climatisation' },
     { key: 'wifi', label: 'Wi-Fi' },
@@ -123,7 +123,7 @@ function displayHotelAttributes(details) {
   return attributes
     .filter((attr) => details[attr.key])
     .map((attr) => <p key={attr.key}>{attr.label}: Oui</p>);
-}
+}*/
 
   return (
     <>

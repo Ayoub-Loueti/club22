@@ -55,7 +55,17 @@ function OffreEmployeDetails() {
   if (!offre) {
     return <div>Loading...</div>; // Affiche un message de chargement tant que les données de l'offre ne sont pas disponibles
   }
-  const { titre, description, date_debut, date_fin, prix, lesImages, remise ,type } = offre;
+  const {
+    titre,
+    description,
+    date_debut,
+    date_fin,
+    prix,
+    lesImages,
+    remise,
+    type,
+    details,
+  } = offre;
 
   const handleImageClick = (clickedIndex) => {
     setOffre((currentOffre) => {
@@ -96,6 +106,7 @@ function OffreEmployeDetails() {
             )}
             <h2 className="offre-titleDetails">{offre.titre}</h2>
             <p className="offre-priceDetails"> {offre.prix} DT</p>
+            <h4>Destination: {offre.destination}</h4>
             <p className="offre-descriptionDetails">{offre.description}</p>
             <div className="offre-buttonsDetails">
               <button
@@ -130,6 +141,7 @@ function OffreEmployeDetails() {
             </div>
           </div>
         </div>
+
         <div className="offre-additional-images">
           {offre.lesImages.slice(1).map((image, index) => (
             <img
@@ -141,6 +153,51 @@ function OffreEmployeDetails() {
             />
           ))}
         </div>
+        {details && (
+          <div className="offre-type-specific-details">
+            {type === 'hotel' && (
+              <div className="details-card">
+                <h3>Détails de l'Hôtel</h3>
+                <p>Nom: {details.nom_hotel}</p>
+                <p>Étoiles: {details.etoiles}</p>
+                <p>
+                  Services:{' '}
+                  {[
+                    details.climatisation && 'Climatisation',
+                    details.wifi && 'WiFi',
+                    details.piscine_exterieure && 'Piscine Extérieure',
+                    details.piscine_couverte && 'Piscine Couverte',
+                    details.bassin_enfants && 'Bassin enfants',
+                    details.parking && 'Parking',
+                    details.discotheque && 'Discothèque',
+                    details.plage_privee && 'Plage privée',
+                    details.ascenseur && 'Ascenseur',
+                    details.salle_de_sport && 'Salle de sport',
+                    details.aire_de_jeux_enfants && 'Aire de jeux enfants',
+                  ]
+                    .filter(Boolean)
+                    .join(', ')}
+                </p>
+              </div>
+            )}
+            {type === 'voyage' && (
+              <div className="details-card">
+                <h3>Itinéraire du Voyage</h3>
+                <p>Programme: {details.programme}</p>
+                <p>Inclus: {details.inclus}</p>
+                <p>Nombre de jours: {details.nbr_jours}</p>
+              </div>
+            )}
+            {type === 'activite' && (
+              <div className="details-card">
+                <h3>Détails de l'Activité</h3>
+                <p>Programme: {details.programme}</p>
+                <p>Inclus: {details.inclus}</p>
+                <p>Durée: {details.duree} heures</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </>
   );

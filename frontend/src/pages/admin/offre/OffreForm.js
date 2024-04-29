@@ -442,16 +442,7 @@ console.log({
           required
         />
       </label>
-      <div>
-        <label htmlFor="type">Catégorie :</label>
-        <select value={typeOffre} onChange={handleTypeChange} required>
-          <option value="">Sélectionnez le type d'offre</option>
-          <option value="voyage">Voyage</option>
-          <option value="hotel">Hôtel</option>
-          <option value="activite">Activité</option>
-        </select>
-        {renderFieldsForTypeOffre()}
-      </div>
+
       <label>
         Destination:
         <input
@@ -502,6 +493,16 @@ console.log({
           required
         />
       </label>
+      <div>
+        <label htmlFor="type">Catégorie :</label>
+        <select value={typeOffre} onChange={handleTypeChange} required>
+          <option value="">Sélectionnez le type d'offre</option>
+          <option value="voyage">Voyage</option>
+          <option value="hotel">Hôtel</option>
+          <option value="activite">Activité</option>
+        </select>
+        {renderFieldsForTypeOffre()}
+      </div>
       <label>
         Collaborateur:
         <select
@@ -529,9 +530,8 @@ console.log({
           onChange={handleImageChange}
           required={!isUpdate || !initialDataLoaded}
         />
-        
       </label>
-      
+
       <div className="formBut">
         <button type="button" className="cancelBut" onClick={onRequestClose}>
           Annuler
@@ -540,7 +540,6 @@ console.log({
           {isUpdate ? 'Modifier' : 'Ajouter'}
         </button>
       </div>
-
     </form>
   );
 }
