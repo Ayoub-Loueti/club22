@@ -25,13 +25,14 @@ exports.createPost = (req, res) => {
     } else {
       // Using req.userId set by your authentication middleware
       const id_utilisateur = req.userId; // Ensure your authentication middleware sets this
-      const { contenu, type } = req.body;
+      const { contenu, type,lieu } = req.body;
 
       try {
         const newPost = await Post.create({
           contenu,
           type,
           date_post: new Date(),
+          lieu,
           id_utilisateur, // Use the authenticated user's ID
         });
 
@@ -105,7 +106,7 @@ exports.createPost = (req, res) => {
 };
 
 exports.updatePost = async (req, res) => {
-    const { contenu, type } = req.body; 
+    const { contenu, type,lieu } = req.body; 
     const postId = req.params.postId; 
     const id_utilisateur = req.userId; 
 
@@ -122,6 +123,7 @@ exports.updatePost = async (req, res) => {
 
         post.contenu = contenu;
         post.type = type;
+        post.lieu = lieu;
         await post.save();
 
         return res.status(200).json(post);
@@ -780,25 +782,31 @@ exports.getAllSignaler = async (req, res) => {
 
       // Fetch all Signaler entries with related Post and Utilisateur information
       const allSignalerEntries = await Signaler.findAll({
-          include: [
+        include: [
+          {
+            model: Post,
+            as: 'post',
+            include: [
               {
-                  model: Post,
-                  as: 'post',
-                  include: [
-                      {
-                          model: Utilisateur,
-                          as: 'utilisateur',
-                          attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-                      }
-                  ],
-                  attributes: ['id_post', 'id_utilisateur' ,'contenu', 'type']
+                model: Utilisateur,
+                as: 'utilisateur',
+                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
               },
-              {
-                  model: Utilisateur,
-                  as: 'utilisateur',
-                  attributes: ['id_utilisateur', 'nom', 'prenom', 'photo']
-              }
-          ]
+            ],
+            attributes: [
+              'id_post',
+              'id_utilisateur',
+              'contenu',
+              'type',
+              'lieu',
+            ],
+          },
+          {
+            model: Utilisateur,
+            as: 'utilisateur',
+            attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+          },
+        ],
       });
 
       if (!allSignalerEntries.length) {
@@ -935,16 +943,27 @@ exports.getHashtagsWithPosts = async (req, res) => {
     const hashtagsWithPosts = await Promise.all(hashtagCounts.map(async tag => {
       const posts = await Hachtag.findAll({
         where: { hachtag: tag.hachtag },
-        include: [{
-          model: Post,
-          as: 'post',
-          attributes: ['id_post', 'id_utilisateur', 'contenu', 'type', 'date_post'],  
-          include: [{
-            model: Utilisateur,
-            as: 'utilisateur',
-            attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-          }]
-        }]
+        include: [
+          {
+            model: Post,
+            as: 'post',
+            attributes: [
+              'id_post',
+              'id_utilisateur',
+              'contenu',
+              'type',
+              'date_post',
+              'lieu',
+            ],
+            include: [
+              {
+                model: Utilisateur,
+                as: 'utilisateur',
+                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+              },
+            ],
+          },
+        ],
       });
 
       // Map each hachtag to its posts and include additional details for each post
