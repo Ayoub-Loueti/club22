@@ -23,6 +23,8 @@
     background-color: #f9f9f9; /* Slightly off-white for cards background */
   justify-content: space-between; display: flex;
   flex-direction: column;
+    text-align: center; /* Ensures text is aligned left */
+
 }
 .offre-card h2, p {
   color: #191f43; /* Deep navy blue for text */
@@ -79,6 +81,7 @@
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: 15px;
 }
 
 .offre-card button:first-child {
@@ -161,3 +164,25 @@
 .offDes::-webkit-scrollbar-thumb:hover {
   background-color: #879eb9;  /* Blue when hovered */
 }
+.category-filters button {
+  padding: 8px 16px;
+  margin-right: 10px;
+  border: none;
+  background-color: #c50f10;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-bottom: 20px;
+}
+
+.category-filters .active-filter-button {
+  font-weight: bold;
+  background-color: #5a7184;
+}
+
+.category-filters button:hover{
+  background-color: #6b85a4;
+
+}
+

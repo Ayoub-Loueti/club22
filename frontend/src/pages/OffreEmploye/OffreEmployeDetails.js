@@ -28,6 +28,7 @@ import {
   faClock,
 } from '@fortawesome/free-solid-svg-icons';
 import ProgramModal from './ProgramModal';
+import parse from 'html-react-parser';
 
 function OffreEmployeDetails() {
   const [offre, setOffre] = useState(null);
@@ -318,8 +319,11 @@ const closeProgramModal = () => {
                 <ProgramModal
                   isOpen={isProgramModalOpen}
                   onClose={closeProgramModal}
-                  content={details.programme}
+                  content={ details.programme
+                    ? parse(offre.details.programme)
+                    : 'Non spécifié'} 
                 />
+                
                 <p>
                   <FontAwesomeIcon
                     icon={faCalendarAlt}
