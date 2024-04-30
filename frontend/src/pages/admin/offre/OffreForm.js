@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import './OffreForm.css';
+import { Editor } from '@tinymce/tinymce-react';
 
 function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
   const [titre, setTitre] = useState('');
@@ -155,11 +156,26 @@ const renderSharedFields = () => (
   <>
     <label>
       Programme:
-      <textarea
-        type="text"
+      <Editor
+        apiKey="1y5o32iougly700k7a8m09628djopudgvzhhj5mq6ohwsjh6"
+        init={{
+          plugins:
+            'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
+          toolbar:
+            'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+          tinycomments_mode: 'embedded',
+          tinycomments_author: 'Author name',
+          mergetags_list: [
+            { value: 'First.Name', title: 'First Name' },
+            { value: 'Email', title: 'Email' },
+          ],
+          ai_request: (request, respondWith) =>
+            respondWith.string(() =>
+              Promise.reject('See docs to implement AI Assistant')
+            ),
+        }}
         value={programme}
-        onChange={(e) => setProgramme(e.target.value)}
-        required
+        onEditorChange={(content, editor) => setProgramme(content)}
       />
     </label>
     <label>

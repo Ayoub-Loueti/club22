@@ -38,7 +38,7 @@ const ProgramModal = ({ isOpen, onClose, content }) => {
         onClick={(e) => e.stopPropagation()} // Empêche le clic de fermer le modal
       >
         <h2>Programme</h2>
-        <p>{content}</p>
+        <div>{content}</div>{' '}
         <button
           onClick={onClose}
           style={{
@@ -50,7 +50,7 @@ const ProgramModal = ({ isOpen, onClose, content }) => {
             border: 'none',
             borderRadius: '5px',
             marginTop: '10px',
-            alignSelf: 'flex-end', // Place le bouton à la fin du contenu
+            alignSelf: 'flex-end',
           }}
         >
           Fermer
