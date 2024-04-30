@@ -194,6 +194,12 @@ const [categoryFilter, setCategoryFilter] = useState('tous');
                     <strong>Catégorie: </strong>
                     <span className="text-after-colon">{offre.type}</span>
                   </p>
+                  <p className="offDes">
+                    <strong>Destination:</strong>{' '}
+                    <span className="text-after-colon">
+                      {offre.destination || 'Non spécifié'}
+                    </span>
+                  </p>
                   <p>
                     <strong> Prix:</strong>{' '}
                     <span className="text-after-colon">{offre.prix}DT</span>
@@ -229,7 +235,7 @@ const [categoryFilter, setCategoryFilter] = useState('tous');
                           ? parse(offre.details.programme)
                           : 'Non spécifié'}
                       </div>
-                      <div>
+                      <div className="offDes">
                         <strong>Inclus:</strong>{' '}
                         <span className="text-after-colon">
                           {' '}
@@ -348,7 +354,7 @@ const [categoryFilter, setCategoryFilter] = useState('tous');
                           ? parse(offre.details.programme)
                           : 'Non spécifié'}
                       </div>
-                      <div>
+                      <div className="offDes">
                         <strong>Inclus:</strong>{' '}
                         <span className="text-after-colon">
                           {' '}

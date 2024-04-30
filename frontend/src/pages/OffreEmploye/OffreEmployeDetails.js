@@ -142,7 +142,10 @@ const closeProgramModal = () => {
             )}
             <h2 className="offre-titleDetails">{offre.titre}</h2>
             <p className="offre-priceDetails"> {offre.prix} DT</p>
-            <h4 className="destination-details">
+            <h4
+              className="destination-details
+          offre-descriptionDetails"
+            >
               <FontAwesomeIcon
                 icon={faMapMarkerAlt}
                 className="destination-icon"
@@ -319,11 +322,13 @@ const closeProgramModal = () => {
                 <ProgramModal
                   isOpen={isProgramModalOpen}
                   onClose={closeProgramModal}
-                  content={ details.programme
-                    ? parse(offre.details.programme)
-                    : 'Non spécifié'} 
+                  content={
+                    details.programme
+                      ? parse(offre.details.programme)
+                      : 'Non spécifié'
+                  }
                 />
-                
+
                 <p>
                   <FontAwesomeIcon
                     icon={faCalendarAlt}

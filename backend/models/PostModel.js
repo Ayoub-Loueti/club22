@@ -32,6 +32,10 @@ const PostModel = sequelize.define(
     type: {
       type: DataTypes.ENUM('hotel', 'voyage', 'activité', 'autre'),
     },
+    lieu: {
+      type: DataTypes.STRING,
+      allowNull: true, 
+    },
   },
   {
     tableName: 'post',
