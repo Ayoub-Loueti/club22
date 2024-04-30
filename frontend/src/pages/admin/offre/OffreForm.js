@@ -3,6 +3,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import './OffreForm.css';
 import { Editor } from '@tinymce/tinymce-react';
+import LocationSearchInput from './map/LocationSearchInput';
 
 function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
   const [titre, setTitre] = useState('');
@@ -438,7 +439,10 @@ console.log({
   nbr_jours, // Add all relevant states
 });
 
-
+    const handleLocationSelect = (location) => {
+      setDestination(location);
+      console.log('Selected location coordinates: ', location);
+    };
   const today = new Date().toISOString().split('T')[0];
   return (
     <form className="offre-form-container" onSubmit={handleSubmit}>
@@ -462,11 +466,9 @@ console.log({
 
       <label>
         Destination:
-        <input
-          type="text"
-          value={destination}
-          onChange={(e) => setDestination(e.target.value)}
-          required
+        <LocationSearchInput
+          onLocationSelect={handleLocationSelect}
+          initialLocation={destination}
         />
       </label>
 

@@ -16,12 +16,14 @@ import {
   faComment,
   faFlag,
   faEllipsisV,
+  faMapMarkerAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { faBookmark as farBookmark } from '@fortawesome/free-regular-svg-icons'; // Importing the regular (outline) bookmark icon
 
 import Swal from 'sweetalert2';
 import { NavLink } from 'react-router-dom';
 import LikesModal from '../likesModal/likesModal';
+import LocationModal from '../postShare/LocationModal';
 
 const Post = (props) => {
   const { data, onPostDeleted, onPostUpdated, isModalView, openModalForPost } =
@@ -52,6 +54,8 @@ const Post = (props) => {
   const [likesModalVisible, setLikesModalVisible] = useState(false);
   const [likesData, setLikesData] = useState([]);
   const [showToast, setShowToast] = useState(false);
+  const [editLieu, setEditLieu] = useState(data.lieu || ''); // Provide a default empty string if data.lieu is null
+  const [showLocationModal, setShowLocationModal] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('login');
@@ -213,18 +217,18 @@ const Post = (props) => {
     setIsEditing(!isEditing);
   };
   const handleSaveEdit = async () => {
-    if (editContent !== data.contenu) {
+    if (editContent !== data.contenu || editLieu !== data.lieu) {
       try {
         const response = await axios.put(
           `http://localhost:5000/posts/${data.id_post}`,
-          { contenu: editContent },
+          { contenu: editContent, lieu: editLieu },
           { headers: { Authorization: `Bearer ${token}` } }
         );
         console.log(response.data);
         setIsEditing(false);
 
         // Appeler onPostUpdated avec les nouvelles données du post
-        onPostUpdated({ ...data, contenu: editContent }); // Mettre à jour avec les changements
+        onPostUpdated({ ...data, contenu: editContent, lieu: editLieu }); // Mettre à jour avec les changements
       } catch (error) {
         console.error('Error updating the post:', error);
       }
@@ -602,7 +606,7 @@ const Post = (props) => {
       confirmButtonText: 'Oui, signaler!',
       cancelButtonText: 'Annuler',
     });
-  
+
     if (result) {
       try {
         const response = await axios.post(
@@ -610,7 +614,7 @@ const Post = (props) => {
           { id_post: data.id_post, id_cmntr: 0, id_reponse: 0 },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-  
+
         Swal.fire('Signalé!', 'Le post a été signalé avec succès.', 'success');
       } catch (error) {
         if (error.response && error.response.status === 409) {
@@ -621,7 +625,7 @@ const Post = (props) => {
         }
       }
     }
-  };  
+  };
 
   const handleReportComment = async (commentId) => {
     const { value: result } = await Swal.fire({
@@ -634,7 +638,7 @@ const Post = (props) => {
       confirmButtonText: 'Oui, signaler!',
       cancelButtonText: 'Annuler',
     });
-  
+
     if (result) {
       try {
         const response = await axios.post(
@@ -642,17 +646,29 @@ const Post = (props) => {
           { id_post: data.id_post, id_cmntr: commentId, id_reponse: 0 },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        Swal.fire('Signalé!', 'Le commentaire a été signalé avec succès.', 'success');
+        Swal.fire(
+          'Signalé!',
+          'Le commentaire a été signalé avec succès.',
+          'success'
+        );
       } catch (error) {
         if (error.response && error.response.status === 409) {
-          Swal.fire('Attention!', 'Ce commentaire a déjà été signalé.', 'warning');
+          Swal.fire(
+            'Attention!',
+            'Ce commentaire a déjà été signalé.',
+            'warning'
+          );
         } else {
           console.error('Error reporting the comment:', error);
-          Swal.fire('Échec!', 'Problème lors du signalement du commentaire.', 'error');
+          Swal.fire(
+            'Échec!',
+            'Problème lors du signalement du commentaire.',
+            'error'
+          );
         }
       }
     }
-  };  
+  };
 
   const handleReportResponse = async (commentId, responseId) => {
     const { value: result } = await Swal.fire({
@@ -665,25 +681,41 @@ const Post = (props) => {
       confirmButtonText: 'Oui, signaler!',
       cancelButtonText: 'Annuler',
     });
-  
+
     if (result) {
       try {
         const response = await axios.post(
           `http://localhost:5000/signals`,
-          { id_post: data.id_post, id_cmntr: commentId, id_reponse: responseId },
+          {
+            id_post: data.id_post,
+            id_cmntr: commentId,
+            id_reponse: responseId,
+          },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        Swal.fire('Signalé!', 'La réponse a été signalée avec succès.', 'success');
+        Swal.fire(
+          'Signalé!',
+          'La réponse a été signalée avec succès.',
+          'success'
+        );
       } catch (error) {
         if (error.response && error.response.status === 409) {
-          Swal.fire('Attention!', 'Cette réponse a déjà été signalée.', 'warning');
+          Swal.fire(
+            'Attention!',
+            'Cette réponse a déjà été signalée.',
+            'warning'
+          );
         } else {
           console.error('Error reporting the response:', error);
-          Swal.fire('Échec!', 'Problème lors du signalement de la réponse.', 'error');
+          Swal.fire(
+            'Échec!',
+            'Problème lors du signalement de la réponse.',
+            'error'
+          );
         }
       }
     }
-  };  
+  };
 
   const handleShare = async () => {
     const postUrl = `http://localhost:3000/post/${data.id_post}`;
@@ -697,8 +729,11 @@ const Post = (props) => {
       console.error('Failed to copy: ', error);
       // Optionally handle errors specifically if clipboard access fails
     }
-  };  
-
+  };
+  const handleLocationSelect = (location) => {
+    setEditLieu(location);
+    setShowLocationModal(false);
+  };
   return (
     <div className="Post">
       <div className="postHeader">
@@ -758,14 +793,42 @@ const Post = (props) => {
       </div>
       <div className="postContent">
         {!isEditing ? (
-          <span>{data.contenu}</span>
+          <>
+            <span>{data.contenu}</span>
+            {data.lieu && ( // Display location when not editing
+              <div className="postLocation">
+                <FontAwesomeIcon icon={faMapMarkerAlt} />{' '}
+                <span>{data.lieu}</span>
+              </div>
+            )}
+          </>
         ) : (
-          <textarea
-            className="editContent"
-            value={editContent}
-            onChange={(e) => setEditContent(e.target.value)}
-          />
+          <>
+            <textarea
+              className="editContent"
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Location"
+              value={editLieu}
+              className="editLieu"
+              readOnly // make this input readonly if you do not want direct text entry
+            />
+            <button onClick={() => setShowLocationModal(true)}>
+              Edit Location
+            </button>
+          </>
         )}
+        <LocationModal
+          isOpen={showLocationModal}
+          onClose={() => setShowLocationModal(false)}
+          onLieuSubmit={handleLocationSelect}
+          lieu={editLieu}
+          setLieu={setEditLieu}
+        />
+
         {userInfo &&
           userInfo.type === 'employe' &&
           data.lesCollab.length > 0 && (
@@ -840,8 +903,14 @@ const Post = (props) => {
           className="reactionIcon"
           onClick={toggleCommentForm}
         />
-    <img src={ShareIcon} alt="share" className="reactionIcon" onClick={handleShare} />
-    {showToast && <div className="toast show">Link copied!</div>}      </div>
+        <img
+          src={ShareIcon}
+          alt="share"
+          className="reactionIcon"
+          onClick={handleShare}
+        />
+        {showToast && <div className="toast show">Link copied!</div>}{' '}
+      </div>
       <div className="likesCount">
         <span onClick={showLikesModal} title="Voir qui a aimé ce post">
           {likes} J'aime
@@ -1049,7 +1118,6 @@ const Post = (props) => {
                 comment.reponses.map((reponse) => (
                   <div key={reponse.id_reponse} className="response">
                     <div>
-                    
                       <img
                         src={
                           reponse.utilisateur.photo

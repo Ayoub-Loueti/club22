@@ -10,7 +10,7 @@ import {
 import '../navbar/navbar.css';
 import Swal from 'sweetalert2';
 import axios from 'axios';
-
+import LocationModal from "./LocationModal";
 const PostShare = () => {
   const [image, setImage] = useState(null);
   const imageRef = useRef();
@@ -20,6 +20,9 @@ const PostShare = () => {
   const [userId, setUserId] = useState(null); // Add this line
   const [type, setType] = useState('');
   const [categorySelected, setCategorySelected] = useState(false);
+  const [showLocationModal, setShowLocationModal] = useState(false);
+  const [lieu, setLieu] = useState('');
+
   useEffect(() => {
     const token = localStorage.getItem('login');
     const storedUserId = JSON.parse(localStorage.getItem('userId')); // Rename for clarity
@@ -82,7 +85,7 @@ const handleSubmit = async (e) => {
   const formData = new FormData();
   formData.append('contenu', contenu);
   formData.append('type', type);
-
+formData.append('lieu', lieu);
   // Check if `image` is not null and has length before proceeding
   if (image && image.length > 0) {
     image.forEach((img) => {
@@ -180,6 +183,9 @@ const handleSubmit = async (e) => {
     setType(e.target.value);
     setCategorySelected(true); // Mettre à jour l'état pour indiquer qu'une catégorie a été sélectionnée
   };
+  const handleLocationClick = () => {
+    setShowLocationModal(true); // Opens the modal
+  };
   return (
     <div className="PostShare">
       {userInfo ? (
@@ -231,16 +237,17 @@ const handleSubmit = async (e) => {
             onClick={() => imageRef.current.click()}
           >
             <UilScenery />
-            Photo
+            Photo/Video
           </div>
-          <div className="option" style={{ color: 'var(--video)' }}>
-            <UilPlayCircle />
-            Video
-          </div>{' '}
-          <div className="option" style={{ color: 'var(--location)' }}>
+         
+          <div
+            className="option"
+            style={{ color: 'var(--location)' }}
+            onClick={handleLocationClick}
+          >
             <UilLocationPoint />
             Location
-          </div>{' '}
+          </div>
           <div className="option" style={{ color: 'var(--shedule)' }}>
             <UilSchedule />
             Shedule
@@ -270,6 +277,16 @@ const handleSubmit = async (e) => {
             </div>
           ))}
       </div>
+      <LocationModal
+        isOpen={showLocationModal}
+        onClose={() => setShowLocationModal(false)}
+        onLieuSubmit={(location) => {
+          setLieu(location);
+          setShowLocationModal(false);
+        }}
+        lieu={lieu}
+        setLieu={setLieu}
+      />
     </div>
   );
 };
