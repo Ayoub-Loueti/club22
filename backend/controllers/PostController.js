@@ -11,6 +11,7 @@ const Client = require('../models/ClientModel');
 const Collaborateur = require ('../models/CollaborateurModel');
 const Mention = require ('../models/MentionModel');
 const Signaler = require('../models/SignalerModel');
+const Hachtag = require('../models/HachtagModel');
 const { Op } = require('sequelize');
 const { sequelize } = require('../config/db');
 const { Sequelize } = require('sequelize'); 
@@ -57,6 +58,18 @@ exports.createPost = (req, res) => {
             });
           }
         }));
+        const words = contenu.split(/\s+/);
+        await Promise.all(words.map(async (word) => {
+          if (word.startsWith('#') && word.length > 1 && !/\s/.test(word.slice(1))) {
+            const hashtag = word.slice(1); // Extract the hashtag without '#'
+            if (hashtag.length > 0) { 
+              await Hachtag.create({
+                id_post: newPost.id_post,
+                hachtag: hashtag
+              });
+            }
+          }
+        }));      
         // Check if the id_utilisateur exists in the client table
         const existingClient = await Client.findOne({ where: { id_utilisateur } });
         if (existingClient) {
@@ -865,6 +878,155 @@ exports.getSignalsCount = async (req, res) => {
   } catch (error) {
       console.error('Error fetching unresolved signals count:', error);
       return res.status(500).json({ message: 'Error fetching signals count', error: error.message });
+  }
+};
+
+//hachtag
+
+exports.getTopHashtags = async (req, res) => {
+  try {
+    const topHashtags = await Hachtag.findAll({
+      attributes: [
+        'hachtag',
+        [Sequelize.fn('COUNT', Sequelize.col('hachtag')), 'nbr_hachtag']
+      ],
+      group: ['hachtag'], 
+      order: [[Sequelize.literal('nbr_hachtag'), 'DESC']], 
+      limit: 6, 
+    });
+
+    if (topHashtags.length > 0) {
+      res.status(200).json({
+        message: "Top hashtags retrieved successfully",
+        hashtags: topHashtags.map(tag => ({
+          hachtag: tag.hachtag,
+          nbr_hachtag: tag.get('nbr_hachtag'),
+        }))
+      });
+    } else {
+      res.status(404).json({
+        message: "No hashtags found"
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Error retrieving hashtags",
+      error: error.message
+    });
+  }
+};
+
+exports.getHashtagsWithPosts = async (req, res) => {
+  const userId = req.userId;  // Assume userId is set by your authentication middleware
+
+  try {
+    // First, retrieve all hashtags with their counts
+    const hashtagCounts = await Hachtag.findAll({
+      attributes: [
+        'hachtag',
+        [Sequelize.fn('COUNT', '*'), 'nbr_hachtag']
+      ],
+      group: 'hachtag',
+      order: [[Sequelize.literal('nbr_hachtag'), 'DESC']], 
+      limit: 6,
+    });
+
+    // Fetch posts for each hashtag
+    const hashtagsWithPosts = await Promise.all(hashtagCounts.map(async tag => {
+      const posts = await Hachtag.findAll({
+        where: { hachtag: tag.hachtag },
+        include: [{
+          model: Post,
+          as: 'post',
+          attributes: ['id_post', 'id_utilisateur', 'contenu', 'type', 'date_post'],  
+          include: [{
+            model: Utilisateur,
+            as: 'utilisateur',
+            attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+          }]
+        }]
+      });
+
+      // Map each hachtag to its posts and include additional details for each post
+      const postsWithDetails = await Promise.all(
+        posts.map(async (hachtag) => {
+          const post = hachtag.post;
+          const postJson = post.toJSON();
+
+          // Check if the current user has liked the post
+          const likeStatus = await Likes.findOne({
+            where: {
+              id_post: post.id_post,
+              id_utilisateur: userId,
+            },
+          });
+          postJson.isLikedByCurrentUser = !!likeStatus;
+
+          // Fetch images for the post
+          const images = await Image.findAll({
+            where: { id_post: post.id_post },
+          });
+          postJson.lesImages = images;
+
+          // Fetch comments for the post
+          const comments = await Commentaire.findAll({
+            where: { id_post: post.id_post },
+            include: [{
+              model: Utilisateur,
+              as: 'utilisateur',
+              attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+            }],
+          });
+          postJson.commentaires = comments;
+
+          // Fetch likes for the post
+          const likes = await Likes.findAll({
+            where: { id_post: post.id_post },
+            include: [{
+              model: Utilisateur,
+              as: 'utilisateur',
+              attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+            }],
+          });
+          postJson.likesCount = likes.length;
+          postJson.likes = likes;
+
+          // Fetch collaborations
+          const collabs = await Mention.findAll({
+            where: {
+              id_post: post.id_post,
+            },
+            include: [{
+              model: Offre,
+              as: 'offre',
+              attributes: ['id_offre', 'titre'],
+              include: [{
+                model: Collaborateur,
+                as: 'collaborateur',
+                attributes: ['id_collaborateur', 'nom'],
+              }],
+            }],
+          });
+          postJson.lesCollab = collabs;
+
+          return postJson;
+        })
+      );
+
+      return {
+        hachtag: tag.hachtag,
+        nbr_hachtag: tag.get('nbr_hachtag'),
+        posts: postsWithDetails  // Now contains a detailed list of posts including images, comments, etc.
+      };
+    }));
+
+    res.status(200).json({
+      message: "Hashtags with related posts retrieved successfully",
+      hashtags: hashtagsWithPosts
+    });
+  } catch (error) {
+    console.error('Error retrieving hashtags with posts:', error);
+    res.status(500).json({ message: 'Error fetching hashtags with related posts', error: error.message });
   }
 };
 

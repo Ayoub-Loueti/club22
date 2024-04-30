@@ -25,4 +25,7 @@ router.patch('/signaler/:id', authenticate, postController.updateSignalerStatus)
 router.patch('/updateAllSignalerOpen',authenticate, postController.updateAllSignalerOpen);
 router.get('/signalsCount', authenticate, postController.getSignalsCount);
 
+router.get('/tophashtags', postController.getTopHashtags);
+router.get('/hashtags',authenticate, postController.getHashtagsWithPosts);
+
 module.exports = router;

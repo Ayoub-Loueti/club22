@@ -5,6 +5,7 @@ import { Container, Typography, Button, Card, CardContent, CardActions, Link } f
 import DetailPostModal from './DetailedPostModal';
 import { NavLink } from 'react-router-dom'; 
 import NavAdmin from '../NavAdmin/navAdmin';
+import PostModal from '../../../components/postModal/postModal';
 
 const AdminSignalsPage = () => {
   const [signals, setSignals] = useState([]);
@@ -12,6 +13,7 @@ const AdminSignalsPage = () => {
   const [selectedCommentId, setSelectedCommentId] = useState(null);
   const [selectedResponseId, setSelectedResponseId] = useState(null);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+  const [isPostModalOpenD, setIsPostModalOpenD] = useState(false);
   const token = JSON.parse(localStorage.getItem('login'))?.token;
 
   useEffect(() => {
@@ -103,6 +105,12 @@ const AdminSignalsPage = () => {
     }
   };
 
+  const handleViewOriginalPost = (signal) => {
+    setSelectedPostId(signal.id_post);
+    setIsPostModalOpenD(true);
+};
+
+
   return (
     <>
     <NavAdmin />
@@ -133,6 +141,9 @@ const AdminSignalsPage = () => {
               <Button variant="outlined" onClick={() => handleDeleteContent(signal)} color="error">
                 Delete Content
               </Button>
+              <Button onClick={() => handleViewOriginalPost(signal)} color="primary">
+                Voir Original Post
+              </Button>
               {!signal.isRead ? null : (
                 <Button variant="outlined" onClick={() => updateSignalStatus(signal.id_signaler, false)} color="primary">
                   Mark as Unread
@@ -153,6 +164,11 @@ const AdminSignalsPage = () => {
           responseId={selectedResponseId}
         />
       )}
+          <PostModal
+                isOpen={isPostModalOpenD}
+                onRequestClose={() => setIsPostModalOpenD(false)}
+                postId={selectedPostId}
+            />
     </Container>
     </>
   );
