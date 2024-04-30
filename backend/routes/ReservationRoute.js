@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const reservationController = require('../controllers/ReservationController');
 const authenticate = require('../middleware/authenticate');
-const PDFDocument = require('pdfkit');
+//const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const Reservation = require('../models/ReservationModel');
 const Utilisateur = require('../models/UtilisateurModel');
@@ -24,7 +24,7 @@ router.put('/reservation/:id/refuser', authenticate, reservationController.refus
 
 //router.put('/updateReservation/:id', authenticate, reservationController.updateReservation);
 
-router.get('/reservation/pdf/:id', authenticate, reservationController.generateReservationPDF);
+//router.get('/reservation/pdf/:id', authenticate, reservationController.generateReservationPDF);
 router.get('/myReservations', authenticate, reservationController.getMyReservations);
 router.get('/myReservationsBoxD', authenticate, reservationController.getMyReservationsBoxD);
 router.get('/myReservationsBoxT', authenticate, reservationController.getMyReservationsBoxT);

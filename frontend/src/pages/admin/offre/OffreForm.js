@@ -150,6 +150,7 @@ const [programme, setProgramme] = useState('');
         return null;
     }
   };
+  
 const renderSharedFields = () => (
   <>
     <label>

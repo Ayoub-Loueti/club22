@@ -7,8 +7,7 @@ const Employe = require('../models/EmployeModel');
 const Hotel = require('../models/HotelModel');
 const ImageOffre = require('../models/ImageOffreModel');
 const { Op } = require('sequelize');
-const PDFDocument = require('pdfkit');
-const fs = require('fs');
+
 const Evaluation = require('../models/EvaluationModel');
 
 exports.createReservation = async (req, res) => {
@@ -544,7 +543,7 @@ exports.updateReservation = async (req, res) => {
   }
 };
 
-const generatePDF = async (reservationId) => {
+/* const generatePDF = async (reservationId) => {
   try {
       // Fetch reservation details from the database
       const reservation = await Reservation.findByPk(reservationId, {
@@ -594,7 +593,7 @@ exports.generateReservationPDF = async (req, res) => {
       console.error('Error generating reservation PDF:', error);
       res.status(500).json({ error: 'Failed to generate reservation PDF' });
   }
-};
+}; */
 
 exports.getMyReservations = async (req, res) => {
   const userId = req.userId;

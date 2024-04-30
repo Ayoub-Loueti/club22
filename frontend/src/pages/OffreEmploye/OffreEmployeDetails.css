@@ -178,31 +178,132 @@ margin-bottom: -30%
 }
 .offre-type-specific-details {
   display: flex;
-  justify-content: center;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
   padding: 20px;
+  height: 100vh; /* Ensures the container takes the full viewport height */
 }
 
-.details-card {
-  border: 2px solid #191f43;
-  background: #fff;
+
+/*.hotel-details-card, .details-card {
+  background-color: #ffffff;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  margin: 10px;
-  width: 300px;
-  flex-grow: 1;
+  margin: 20px; 
+  flex-basis: 45%; 
+  transition: transform 0.3s ease; 
+*/
+.hotel-details-card, .details-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px dashed #191f43;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 30px; /* Increased padding for more internal space */
+  margin: 20px;
+  width: 50%; /* Increased width */
+  min-height: 300px; /* Increased minimum height */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically inside the card */
+  align-items: center; /* Center content horizontally */
+  flex-grow: 0.4;
+  flex-shrink: 0;
 }
 
-.details-card h3 {
-  color: #191f43;
-  font-size: 22px;
+.hotel-details-card:hover, .details-card:hover {
+  transform: translateY(-10px); /* Lifts the card slightly for a visual effect on hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+}
+.hotel-name, .hotel-stars, .service-item {
+  text-align: center; /* Ensures text is centered within the card */
+  width: 100%; /* Ensures text elements take full width of the card */
+}
+
+.hotel-name {
+  color: #2a3f5f;
+  font-size: 20px;
   margin-bottom: 10px;
 }
 
-.details-card p {
-  color: #666;
-  line-height: 1.6;
-  margin-bottom: 5px;
+.hotel-stars {
+  color: #ffc107;
+  font-size: 18px;
+  margin-bottom: 10px;
 }
 
-/* Add more styles based on your specific needs */
+.hotel-services, .details-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: auto; /* S'adapte à la largeur du contenu */
+}
+
+.service-item {
+ display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: #4a5568;
+  margin-bottom: 5px; /* Garde un espace constant entre les items */
+  transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 10px; 
+}
+
+.service-icon {
+ margin-right: 15px;   color: #3182ce;
+}
+
+/* Styling for hover effect */
+.service-item:hover {
+  background-color: #f7fafc; /* Changement de couleur de fond au survol */
+  border-radius: 5px; /* Arrondit les coins du fond */
+  transform: scale(1.05); /* Agrandit légèrement l'item pour un effet subtil */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ajoute une légère ombre pour le relief */
+  cursor: pointer;
+}
+.details-link {
+  padding: 10px 20px;
+  margin-top: 20px;
+  background-color: #4a5568;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+}
+.destination-details {
+  display: flex;
+  align-items: center; /* Center the text and icon vertically */
+  color: #333; /* Or any color you prefer */
+  font-size: 16px; /* Adjust based on your design */
+  margin-left: 0px; /* Adjust spacing to the left as needed */
+}
+
+.destination-icon {
+  margin-right: 10px; /* Space between the icon and the text */
+  color: #c50f10; /* Or any color that fits your design */
+}
+.program-button {
+  background-color: #4a5568; /* Couleur de fond */
+  color: white; /* Couleur du texte */
+  border: none; /* Pas de bordure visible */
+  border-radius: 5px; /* Coins arrondis */
+  padding: 10px 20px; /* Espacement interne */
+  font-size: 16px; /* Taille de la police */
+  cursor: pointer; /* Curseur en forme de pointeur pour indiquer qu'il est cliquable */
+  outline: none; /* Suppression de la bordure de focus par défaut */
+  transition: background-color 0.3s, transform 0.2s; /* Transition pour le survol et le clic */
+  margin-top: 10px; /* Marge au-dessus du bouton */
+}
+
+.program-button:hover {
+  background-color: #2a3f5f; /* Changement de couleur au survol */
+  transform: translateY(-2px); /* Légère élévation au survol */
+}
+
+.program-button:active {
+  transform: translateY(1px); /* Effet enfoncé lors du clic */
+}

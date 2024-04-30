@@ -7,16 +7,38 @@ import AdherantModal from '../../components/AdherantModal/AdherantModal';
 import { FaArrowLeft } from 'react-icons/fa';
 import Navbar from '../../components/navbar/navbar';
 import NavbarHaut from '../../components/navbar/navbarHaut';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faSnowflake,
+  faWifi,
+  faSwimmer,
+  faWater,
+  faChild,
+  faParking,
+  faMusic,
+  faUmbrellaBeach,
+  faArrowUp,
+  faDumbbell,
+  faGamepad,
+  faMapMarkerAlt,
+  faSuitcaseRolling,
+  faCalendarAlt,
+  faCheckSquare,
+  faClipboardList,
+  faClock,
+} from '@fortawesome/free-solid-svg-icons';
+import ProgramModal from './ProgramModal';
 
 function OffreEmployeDetails() {
   const [offre, setOffre] = useState(null);
   const token = localStorage.getItem('login');
   const { offreId } = useParams();
   const [mainImageIndex, setMainImageIndex] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAdherantModalOpen, setIsAdherantModalOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem('user'));
   const [isAdherant, setIsAdherant] = useState(null);
+  const [isProgramModalOpen, setIsProgramModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchOffreDetails = async () => {
@@ -43,7 +65,7 @@ function OffreEmployeDetails() {
         });
         setIsAdherant(response.data.adherant);
       } catch (error) {
-        console.error("Error checking adherant status:", error);
+        console.error('Error checking adherant status:', error);
         setIsAdherant(false); // Assume non-adherant if there's an error
       }
     };
@@ -78,7 +100,14 @@ function OffreEmployeDetails() {
       return { ...currentOffre, lesImages: newLesImages };
     });
   };
+  // Fonction pour ouvrir le modal
+  const openProgramModal = () => setIsProgramModalOpen(true);
 
+  // Fonction pour fermer le modal
+const closeProgramModal = () => {
+  console.log('Fermeture du modal');
+  setIsProgramModalOpen(false);
+};
   return (
     <>
       <Navbar />
@@ -86,6 +115,12 @@ function OffreEmployeDetails() {
       <div>
         <button className="retour-btn" onClick={() => window.history.back()}>
           <FaArrowLeft /> Retour
+        </button>
+        <button
+          className="details-link"
+          onClick={() => (window.location = '#detailsSection')}
+        >
+          Plus de détails
         </button>
 
         <div className="offre-cardDetails">
@@ -106,7 +141,13 @@ function OffreEmployeDetails() {
             )}
             <h2 className="offre-titleDetails">{offre.titre}</h2>
             <p className="offre-priceDetails"> {offre.prix} DT</p>
-            <h4>Destination: {offre.destination}</h4>
+            <h4 className="destination-details">
+              <FontAwesomeIcon
+                icon={faMapMarkerAlt}
+                className="destination-icon"
+              />{' '}
+              Destination: {offre.destination}
+            </h4>
             <p className="offre-descriptionDetails">{offre.description}</p>
             <div className="offre-buttonsDetails">
               <button
@@ -154,46 +195,170 @@ function OffreEmployeDetails() {
           ))}
         </div>
         {details && (
-          <div className="offre-type-specific-details">
+          <div id="detailsSection" className="offre-type-specific-details">
             {type === 'hotel' && (
-              <div className="details-card">
-                <h3>Détails de l'Hôtel</h3>
-                <p>Nom: {details.nom_hotel}</p>
-                <p>Étoiles: {details.etoiles}</p>
-                <p>
-                  Services:{' '}
-                  {[
-                    details.climatisation && 'Climatisation',
-                    details.wifi && 'WiFi',
-                    details.piscine_exterieure && 'Piscine Extérieure',
-                    details.piscine_couverte && 'Piscine Couverte',
-                    details.bassin_enfants && 'Bassin enfants',
-                    details.parking && 'Parking',
-                    details.discotheque && 'Discothèque',
-                    details.plage_privee && 'Plage privée',
-                    details.ascenseur && 'Ascenseur',
-                    details.salle_de_sport && 'Salle de sport',
-                    details.aire_de_jeux_enfants && 'Aire de jeux enfants',
-                  ]
-                    .filter(Boolean)
-                    .join(', ')}
-                </p>
-              </div>
+              <>
+                <div className="details-card ">
+                  <h3 className="hotel-name"> Présentation de l'Hôtel </h3>
+                  <p className="hotel-name">
+                    <strong>Hotel:</strong> {details.nom_hotel}
+                  </p>
+                  <p className="hotel-stars">
+                    <strong>Étoiles:</strong> {'★'.repeat(details.etoiles)}
+                  </p>
+                </div>
+                <div className="hotel-services hotel-details-card ">
+                  <h3 className="hotel-name">Equipements</h3>
+
+                  {details.climatisation && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faSnowflake}
+                        className="service-icon"
+                      />{' '}
+                      Climatisation
+                    </p>
+                  )}
+                  {details.wifi && (
+                    <p className="service-item">
+                      <FontAwesomeIcon icon={faWifi} className="service-icon" />{' '}
+                      WiFi
+                    </p>
+                  )}
+                  {details.piscine_exterieure && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faSwimmer}
+                        className="service-icon"
+                      />{' '}
+                      Piscine Extérieure
+                    </p>
+                  )}
+                  {details.piscine_couverte && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faWater}
+                        className="service-icon"
+                      />{' '}
+                      Piscine Couverte
+                    </p>
+                  )}
+                  {details.bassin_enfants && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faChild}
+                        className="service-icon"
+                      />{' '}
+                      Bassin pour enfants
+                    </p>
+                  )}
+                  {details.parking && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faParking}
+                        className="service-icon"
+                      />{' '}
+                      Parking
+                    </p>
+                  )}
+                  {details.discotheque && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faMusic}
+                        className="service-icon"
+                      />{' '}
+                      Discothèque
+                    </p>
+                  )}
+                  {details.plage_privee && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faUmbrellaBeach}
+                        className="service-icon"
+                      />{' '}
+                      Plage privée
+                    </p>
+                  )}
+                  {details.ascenseur && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faArrowUp}
+                        className="service-icon"
+                      />{' '}
+                      Ascenseur
+                    </p>
+                  )}
+                  {details.salle_de_sport && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faDumbbell}
+                        className="service-icon"
+                      />{' '}
+                      Salle de sport
+                    </p>
+                  )}
+                  {details.aire_de_jeux_enfants && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faGamepad}
+                        className="service-icon"
+                      />{' '}
+                      Aire de jeux pour enfants
+                    </p>
+                  )}
+                </div>
+              </>
             )}
             {type === 'voyage' && (
               <div className="details-card">
                 <h3>Itinéraire du Voyage</h3>
-                <p>Programme: {details.programme}</p>
-                <p>Inclus: {details.inclus}</p>
-                <p>Nombre de jours: {details.nbr_jours}</p>
+                <button onClick={openProgramModal} className="program-button">
+                  Voir Programme
+                </button>
+                <ProgramModal
+                  isOpen={isProgramModalOpen}
+                  onClose={closeProgramModal}
+                  content={details.programme}
+                />
+                <p>
+                  <FontAwesomeIcon
+                    icon={faCalendarAlt}
+                    className="service-icon"
+                  />{' '}
+                  Nombre de jours: {details.nbr_jours}
+                </p>
+                <p>
+                  <FontAwesomeIcon
+                    icon={faCheckSquare}
+                    className="service-icon"
+                  />{' '}
+                  Inclus: {details.inclus}
+                </p>
               </div>
             )}
+
             {type === 'activite' && (
               <div className="details-card">
                 <h3>Détails de l'Activité</h3>
-                <p>Programme: {details.programme}</p>
-                <p>Inclus: {details.inclus}</p>
-                <p>Durée: {details.duree} heures</p>
+                <button onClick={openProgramModal} className="program-button">
+                  Voir Programme
+                </button>
+                <ProgramModal
+                  isOpen={isProgramModalOpen}
+                  onClose={closeProgramModal}
+                  content={details.programme}
+                />
+                <p>
+                  <FontAwesomeIcon icon={faClock} className="service-icon" />{' '}
+                  Durée: {details.duree} heures
+                </p>
+                <p>
+                  <FontAwesomeIcon
+                    icon={faCheckSquare}
+                    className="service-icon"
+                  />{' '}
+                  Inclus: {details.inclus}
+                </p>
               </div>
             )}
           </div>
