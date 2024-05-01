@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import Modal from 'react-modal';
-import { Button, TextField, Checkbox, FormControlLabel, Typography, Avatar, Box } from '@mui/material';
+import { Button, TextField, Checkbox, FormControlLabel, Avatar, Box } from '@mui/material';
+import { Typography } from '@mui/material';
+
 import SignaturePad from '../Signature/signaturePad';
 Modal.setAppElement('#root');
 

@@ -141,17 +141,15 @@ const closeProgramModal = () => {
               </div>
             )}
             <h2 className="offre-titleDetails">{offre.titre}</h2>
-            <p className="offre-priceDetails"> {offre.prix} DT</p>
-            <h4
-              className="destination-details
-          offre-descriptionDetails"
-            >
+            <h4 className="destination-details">
               <FontAwesomeIcon
                 icon={faMapMarkerAlt}
                 className="destination-icon"
               />{' '}
               Destination: {offre.destination}
             </h4>
+            <p className="offre-priceDetails"> {offre.prix} DT</p>
+
             <p className="offre-descriptionDetails">{offre.description}</p>
             <div className="offre-buttonsDetails">
               <button

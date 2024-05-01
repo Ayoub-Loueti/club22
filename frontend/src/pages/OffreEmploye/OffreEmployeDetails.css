@@ -19,22 +19,28 @@
 
 .offre-titleDetails {
   color: #191f43;
-  margin-bottom: 5px; /* Ajoute un espace en bas du titre */
   text-align: left;
       font-size: 30px;
        text-transform: uppercase; 
+            width: 450px;  
+ 
+
 
 }
 
-.offre-cardDetails .offre-priceDetails {
+.offre-priceDetails {
   color: #c50f10;
   font-weight: bold; /* Met le prix en gras */
   text-align: left;
         font-size: 20px;
+             width: 450px;  
+ 
+
 }
 
-.offre-cardDetails .offre-descriptionDetails {
-   width: 350px;  
+ .offre-descriptionDetails {
+     width: 450px;  
+ 
     max-width: 350px;  
     height: 190px;  
     overflow-y: auto; 
@@ -69,7 +75,7 @@
 
 .offre-buttonsDetails {
   justify-content: space-between;
-      margin-top: 20px;
+      margin-top: -60px;
 }
 
 .offre-cardDetails  {
@@ -125,12 +131,12 @@ margin-bottom: -30%
 
 
 
-.offre-cardDetails .offre-details {
-  margin-left: 20px; /* Ajoute un espace entre la photo et les textes */
+.offre-details {
+  margin-left: 10px; /* Ajoute un espace entre la photo et les textes */
 }
- .offre-details {
+ /*.offre-details {
   margin-bottom: 20px; 
-}
+}*/
 .offre-additional-images {
   display: flex;
   flex-wrap: wrap;
@@ -159,23 +165,25 @@ margin-bottom: -30%
 .offre-main-image {
   height: 430px; 
   width: 35%; /* Met la photo à gauche */
-  margin-bottom: 0px; /* Ajoute un espace en bas de l'image */
   border-radius: 1%;
     object-fit: cover; /* Couvre l'espace sans distorsion, en coupant au besoin */
 
 }
 
 .remise-badgee {
-  position: absolute; /* Position relative to nearest positioned ancestor */
-  top: -10px; /* 10px from the top of the container */
-  left: 720px; /* 10px from the right of the container */
-  background-color: #ED1C24; /* Bright red background */
-  color: white; /* White text */
-  border-radius: 50%; /* Rounded circle */
-  padding: 10px 15px; /* Vertical and horizontal padding */
-  font-size: 38px; /* Larger font size for visibility */
-  font-weight: bold; /* Bold font weight */
+  position: absolute;
+  top: 2%;  /* Modifiez le pourcentage pour ajuster la position verticale */
+  left: 50%;  /* Modifiez le pourcentage pour ajuster la position horizontale, en le déplaçant vers la droite de l'image */
+  transform: translate(-50%, -50%); /* Centre le badge */
+  background-color: #ED1C24;
+  color: white;
+  border-radius: 50%;
+  padding: 28px 28px;
+  font-size: 26px;
+  font-weight: bold;
+  z-index: 10; /* S'assure que le badge est bien au-dessus de l'image */
 }
+
 .offre-type-specific-details {
   display: flex;
   justify-content: center; /* Center horizontally */
@@ -274,16 +282,46 @@ margin-bottom: -30%
   cursor: pointer;
   border: none;
 }
+/* Styles pour la zone de destination */
 .destination-details {
-  display: flex;
-  align-items: center; /* Center the text and icon vertically */
-  color: #333; /* Or any color you prefer */
-  font-size: 16px; /* Adjust based on your design */
-  margin-left: 0px; /* Adjust spacing to the left as needed */
+    width: 450px;  
+ 
+  height:50px;  /* Ajustez la hauteur selon vos besoins */
+  overflow-y: auto; 
+  text-align: justify;  
+  margin: 20px 0;
+  padding: 10px; 
+  box-sizing: border-box;  
+    text-align: left;
+
 }
 
+/* Styles généraux pour le scrollbar */
+.destination-details::-webkit-scrollbar {
+  width: 6px;  /* Épaisseur du scrollbar */
+}
+
+/* Styling du track (partie dans laquelle le thumb glisse) */
+.destination-details::-webkit-scrollbar-track {
+  background: #f0f0f0;  /* Fond gris clair pour le track */
+  border-radius: 10px;  /* Coins arrondis pour le track */
+}
+
+/* Styling du thumb (la partie que l'on peut glisser) */
+.destination-details::-webkit-scrollbar-thumb {
+  background-color: #ED1C24;  /* Couleur gris foncé pour le thumb */
+  border-radius: 10px;  /* Coins arrondis pour le thumb */
+  border: 2px solid #f0f0f0;  /* Petite bordure pour le thumb avec la couleur du track pour créer un effet de padding */
+}
+
+/* Styling du thumb lors du survol ou du clic */
+.destination-details::-webkit-scrollbar-thumb:hover {
+  background-color: #879eb9;  /* Gris plus foncé lors du survol */
+}
+
+
 .destination-icon {
-  margin-right: 10px; /* Space between the icon and the text */
+  text-align: left;
   color: #c50f10; /* Or any color that fits your design */
 }
 .program-button {
