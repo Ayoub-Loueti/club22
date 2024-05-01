@@ -794,13 +794,13 @@ const Post = (props) => {
       <div className="postContent">
         {!isEditing ? (
           <>
-            <span>{data.contenu}</span>
             {data.lieu && ( // Display location when not editing
               <div className="postLocation">
                 <FontAwesomeIcon icon={faMapMarkerAlt} />{' '}
                 <span>{data.lieu}</span>
               </div>
             )}
+            <span>{data.contenu}</span>
           </>
         ) : (
           <>
@@ -811,13 +811,15 @@ const Post = (props) => {
             />
             <input
               type="text"
-              placeholder="Location"
+              className="editLocationInput"
               value={editLieu}
-              className="editLieu"
               readOnly // make this input readonly if you do not want direct text entry
             />
-            <button onClick={() => setShowLocationModal(true)}>
-              Edit Location
+            <button
+              onClick={() => setShowLocationModal(true)}
+              className="editLocationButton"
+            >
+              Modifier le lieu
             </button>
           </>
         )}

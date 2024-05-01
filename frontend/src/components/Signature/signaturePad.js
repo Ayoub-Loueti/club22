@@ -17,28 +17,68 @@ function SignaturePad({ setSignatureUrl }) {
 };
 
   return (
-    <div>
-      <div style={{ border: '2px solid black', width: 500, height: 200 }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        marginTop: '20px',
+      }}
+    >
+      <div
+        style={{ border: '2px solid black', width: '500px', height: '200px' }}
+      >
         <SignatureCanvas
-          canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
+          canvasProps={{
+            width: 500,
+            height: 200,
+            className: 'sigCanvas',
+          }}
           ref={(data) => setSign(data)}
         />
       </div>
 
-      <br></br>
-      <button style={{ height: '30px', width: '60px' }} onClick={handleClear}>
-        Clear
-      </button>
-      <button
-        style={{ height: '30px', width: '60px' }}
-        onClick={handleGenerate}
-      >
-        Save
-      </button>
+      <div style={{ marginTop: '10px' }}>
+        <button
+          style={{
+            height: '30px',
+            marginRight: '5px',
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+          }}
+          onClick={handleClear}
+        >
+          Effacer
+        </button>
+        <button
+          style={{
+            height: '30px',
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+          }}
+          onClick={handleGenerate}
+        >
+          Sauvegarder{' '}
+        </button>
+      </div>
 
-      <br />
-      <br />
-      <img src={url} />
+      {url && (
+        <div
+          style={{
+            marginTop: '10px',
+            border: '1px solid #ccc',
+            padding: '5px',
+          }}
+        >
+          <img src={url} alt="Signature preview" />
+        </div>
+      )}
     </div>
   );
 }

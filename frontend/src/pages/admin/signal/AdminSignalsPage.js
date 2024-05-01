@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Container, Typography, Button, Card, CardContent, CardActions, Link } from '@mui/material';
+import {
+  Container,
+  Typography,
+  Button,
+  Card,
+  CardContent,
+  CardActions,
+  Link,
+  Avatar,
+} from '@mui/material';
 import DetailPostModal from './DetailedPostModal';
-import { NavLink } from 'react-router-dom'; 
+import { NavLink } from 'react-router-dom';
 import NavAdmin from '../NavAdmin/navAdmin';
 import PostModal from '../../../components/postModal/postModal';
 
@@ -25,10 +34,16 @@ const AdminSignalsPage = () => {
       const response = await axios.get('http://localhost:5000/signals', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setSignals(response.data);
+      // Trier les données: non lus en premier
+      const sortedSignals = response.data.sort((a, b) => a.isRead - b.isRead);
+      setSignals(sortedSignals);
     } catch (error) {
-      console.error('Error fetching signals:', error);
-      Swal.fire('Error', 'Failed to fetch signals.', 'error');
+      console.error('Erreur lors de la récupération des signalements:', error);
+      Swal.fire(
+        'Erreur',
+        'Échec de la récupération des signalements.',
+        'error'
+      );
     }
   };
 
@@ -45,131 +60,323 @@ const AdminSignalsPage = () => {
 
   const updateSignalStatus = async (id, isRead) => {
     try {
-      await axios.patch(`http://localhost:5000/signaler/${id}`, { isRead }, {
-        headers: { Authorization: `Bearer ${token}` }
+      await axios.patch(
+        `http://localhost:5000/signaler/${id}`,
+        { isRead },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      // Mise à jour de l'état local des signaux après modification du statut
+      setSignals((prevSignals) => {
+        return prevSignals
+          .map((signal) =>
+            signal.id_signaler === id ? { ...signal, isRead: isRead } : signal
+          )
+          .sort((a, b) => a.isRead - b.isRead); // Assurer que les non lus sont toujours en haut
       });
-      fetchSignals();  // Refresh the list to reflect the updated isRead status
     } catch (error) {
-      console.error('Error updating signal status:', error);
+      console.error(
+        'Erreur lors de la mise à jour du statut du signalement:',
+        error
+      );
     }
   };
 
   const blockUser = async (userId) => {
     try {
-      await axios.put(`http://localhost:5000/block/${userId}`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      Swal.fire('Success', 'User has been blocked.', 'success');
+      await axios.put(
+        `http://localhost:5000/block/${userId}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      Swal.fire('Succès', "L'utilisateur a été bloqué.", 'success');
     } catch (error) {
-      console.error('Error blocking user:', error);
-      Swal.fire('Error', 'Failed to block user.', 'error');
+      console.error("Erreur lors du blocage de l'utilisateur :", error);
+      Swal.fire('Erreur', "Impossible de bloquer l'utilisateur.", 'error');
     }
   };
 
   const handleBlockUser = async (signal) => {
     if (signal.id_reponse) {
-      const replyData = await axios.get(`http://localhost:5000/replies/${signal.id_reponse}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const replyData = await axios.get(
+        `http://localhost:5000/replies/${signal.id_reponse}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       blockUser(replyData.data.utilisateur.id_utilisateur);
     } else if (signal.id_cmntr) {
-      const commentData = await axios.get(`http://localhost:5000/comment/${signal.id_cmntr}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const commentData = await axios.get(
+        `http://localhost:5000/comment/${signal.id_cmntr}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       blockUser(commentData.data.utilisateur.id_utilisateur);
     } else {
       blockUser(signal.post.utilisateur.id_utilisateur);
     }
   };
+  // Fonction pour demander confirmation avant de bloquer un utilisateur
+  const confirmBlockUser = async (signal) => {
+    Swal.fire({
+      title: `Êtes-vous sûr de vouloir bloquer l'utilisateur ?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, bloquez-le!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleBlockUser(signal);
+      }
+    });
+  };
 
   const handleDeleteContent = async (signal) => {
     try {
       if (signal.id_reponse) {
-        await axios.delete(`http://localhost:5000/response/${signal.id_reponse}/admin`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await axios.delete(
+          `http://localhost:5000/response/${signal.id_reponse}/admin`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
       } else if (signal.id_cmntr) {
-        await axios.delete(`http://localhost:5000/comment/${signal.id_cmntr}/admin`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await axios.delete(
+          `http://localhost:5000/comment/${signal.id_cmntr}/admin`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
       } else {
-        await axios.delete(`http://localhost:5000/post/${signal.id_post}/admin`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await axios.delete(
+          `http://localhost:5000/post/${signal.id_post}/admin`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
       }
-      Swal.fire('Success', 'Content has been deleted.', 'success');
+      Swal.fire('Succès', 'Le contenu a été supprimé.', 'success');
       fetchSignals(); // Refresh the list after deletion
     } catch (error) {
-      console.error('Error deleting content:', error);
-      Swal.fire('Error', 'Failed to delete content.', 'error');
+      console.error('Erreur lors de la suppression du contenu :', error);
+      Swal.fire('Erreur', 'Échec de la suppression du contenu.', 'error');
     }
+  };
+  const confirmDelete = async (signal) => {
+    Swal.fire({
+      title: 'Êtes-vous sûr?',
+      text: 'Vous ne pourrez pas revenir en arrière!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, supprimez-le!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleDeleteContent(signal);
+      }
+    });
   };
 
   const handleViewOriginalPost = (signal) => {
     setSelectedPostId(signal.id_post);
     setIsPostModalOpenD(true);
-};
+  };
 
+  const buttonStyles = {
+    viewContent: {
+      backgroundColor: '#003366', // Dark Blue
+      color: 'white',
+      padding: '4px 10px', // Reduced padding
+      fontSize: '0.75rem', // Reduced font size
+      '&:hover': {
+        backgroundColor: '#002244', // Darker shade on hover
+      },
+    },
+    viewOriginalPost: {
+      backgroundColor: '#DAA520', // Muted Gold
+      color: 'white',
+      padding: '4px 10px',
+      fontSize: '0.75rem',
+      '&:hover': {
+        backgroundColor: '#B8860B', // Darker Gold on hover
+      },
+    },
+    deleteContent: {
+      backgroundColor: '#CD5C5C', // Soft Red
+      color: 'white',
+      padding: '4px 10px',
+      fontSize: '0.75rem',
+      '&:hover': {
+        backgroundColor: '#B22222', // Darker Red on hover
+      },
+    },
+    blockUser: {
+      backgroundColor: '#FFB6C1', // Soft Pink
+      color: 'white',
+      padding: '4px 10px',
+      fontSize: '0.75rem',
+      '&:hover': {
+        backgroundColor: '#FFC0CB', // Darker Pink on hover
+      },
+    },
+    markAsUnread: {
+      backgroundColor: '#FF7F50', // Light Coral
+      color: 'white',
+      padding: '4px 10px',
+      fontSize: '0.75rem',
+      '&:hover': {
+        backgroundColor: '#FF6347', // Darker Coral on hover
+      },
+    },
+  };
 
   return (
     <>
-    <NavAdmin />
-    <Container maxWidth="md">
-      <Typography variant="h4" component="h1" gutterBottom>
-        Reported Content Management
-      </Typography>
-      {signals.length > 0 ? (
-        signals.map((signal, index) => (
-          <Card key={`${signal.id_signaler}-${index}`} sx={{ mb: 2, backgroundColor: signal.isRead ? '#F4F4F4' : '#FFFFFF' }}>
-            <CardContent>
-              <Typography variant="body1">
-                Reported by: <Link component={NavLink} to={`/profil/${signal.utilisateur.id_utilisateur}`} underline="hover">
-                  {signal.utilisateur.prenom} {signal.utilisateur.nom}
-                </Link>
-              </Typography>
-              <Typography variant="body2">
-                Type: {signal.id_reponse ? 'Response' : signal.id_cmntr ? 'Comment' : 'Post'}
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button variant="outlined" onClick={() => openPostModal(signal)}>
-                View Content
-              </Button>
-              <Button variant="outlined" onClick={() => handleBlockUser(signal)}>
-                Block User
-              </Button>
-              <Button variant="outlined" onClick={() => handleDeleteContent(signal)} color="error">
-                Delete Content
-              </Button>
-              <Button onClick={() => handleViewOriginalPost(signal)} color="primary">
-                Voir Original Post
-              </Button>
-              {!signal.isRead ? null : (
-                <Button variant="outlined" onClick={() => updateSignalStatus(signal.id_signaler, false)} color="primary">
-                  Mark as Unread
+      <NavAdmin />
+      <Container maxWidth="md">
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
+          style={{
+            color: '#191f43',
+            marginBottom: '50px',
+            marginTop: '50px',
+          }}
+        >
+          GESTION DES CONTENUS SIGNALÉS{' '}
+        </Typography>
+
+        {signals.length > 0 ? (
+          signals.map((signal, index) => (
+            <Card
+              key={`${signal.id_signaler}-${index}`}
+              sx={{
+                mb: 4, // Increased bottom margin for more space between cards
+                padding: '28px', // Increased padding inside the card for a larger appearance
+                boxShadow: '0 14px 18px rgba(0,0,0,0.1)', // Optional: adding a subtle shadow for depth
+                '&:hover': {
+                  boxShadow: '0 18px 16px rgba(0,0,0,0.2)', // Deeper shadow on hover for a dynamic effect
+                },
+                backgroundColor: signal.isRead ? '#F8F8F8' : '#D6D6D6', // Keeping your color scheme
+                maxWidth: 'none',
+                width: '100%',
+              }}
+            >
+              <CardContent>
+                <Typography variant="button">
+                  <Typography
+                    display="flex"
+                    alignItems="center"
+                    gap={2}
+                    marginBottom={2}
+                  >
+                    Signalé par:{' '}
+                    <Link
+                      color="#6b85a4"
+                      component={NavLink}
+                      to={`/profil/${signal.utilisateur.id_utilisateur}`}
+                      underline="hover"
+                      style={{ display: 'flex', alignItems: 'center' }}
+                    >
+                      <Avatar
+                        src={
+                          signal.utilisateur.photo
+                            ? `http://localhost:5000/${signal.utilisateur.photo}`
+                            : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+                        }
+                        alt={signal.utilisateur.prenom}
+                        sx={{ width: 38, height: 38 }}
+                      />
+                      <Typography
+                        variant="body1"
+                        sx={{ marginLeft: 1 }}
+                        color="#6b85a4"
+                        underline="hover"
+                      >
+                        {' '}
+                        {/* Increased margin for better spacing */}
+                        {signal.utilisateur.prenom} {signal.utilisateur.nom}
+                      </Typography>{' '}
+                    </Link>{' '}
+                  </Typography>
+                </Typography>
+                <Typography variant="body2">
+                  TYPE DE CONTENU :{' '}
+                  {signal.id_reponse
+                    ? 'Response'
+                    : signal.id_cmntr
+                    ? 'Comment'
+                    : 'Post'}
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button
+                  variant="contained"
+                  sx={buttonStyles.viewContent}
+                  onClick={() => openPostModal(signal)}
+                >
+                  Voir le contenu
                 </Button>
-              )}
-            </CardActions>
-          </Card>
-        ))
-      ) : (
-        <Typography>No reports to show.</Typography>
-      )}
-      {isPostModalOpen && (
-        <DetailPostModal
-          isOpen={isPostModalOpen}
-          onRequestClose={() => setIsPostModalOpen(false)}
+                <Button
+                  onClick={() => handleViewOriginalPost(signal)}
+                  sx={buttonStyles.viewOriginalPost}
+                >
+                  Voir post
+                </Button>
+
+                <Button
+                  variant="contained"
+                  sx={buttonStyles.deleteContent}
+                  onClick={() => confirmDelete(signal)}
+                >
+                  Supprimer le contenu
+                </Button>
+                <Button
+                  variant="contained"
+                  sx={buttonStyles.blockUser}
+                  onClick={() => confirmBlockUser(signal)}
+                >
+                  Bloquer l'utilisateur
+                </Button>
+                {!signal.isRead ? null : (
+                  <Button
+                    variant="outlined"
+                    sx={buttonStyles.markAsUnread}
+                    onClick={() =>
+                      updateSignalStatus(signal.id_signaler, false)
+                    }
+                  >
+                    Marquer comme non lu
+                  </Button>
+                )}
+              </CardActions>
+            </Card>
+          ))
+        ) : (
+          <Typography>Aucun signalement à afficher.</Typography>
+        )}
+        {isPostModalOpen && (
+          <DetailPostModal
+            isOpen={isPostModalOpen}
+            onRequestClose={() => setIsPostModalOpen(false)}
+            postId={selectedPostId}
+            commentId={selectedCommentId}
+            responseId={selectedResponseId}
+          />
+        )}
+        <PostModal
+          isOpen={isPostModalOpenD}
+          onRequestClose={() => setIsPostModalOpenD(false)}
           postId={selectedPostId}
-          commentId={selectedCommentId}
-          responseId={selectedResponseId}
         />
-      )}
-          <PostModal
-                isOpen={isPostModalOpenD}
-                onRequestClose={() => setIsPostModalOpenD(false)}
-                postId={selectedPostId}
-            />
-    </Container>
+      </Container>
     </>
   );
 };

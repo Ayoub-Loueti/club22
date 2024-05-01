@@ -539,7 +539,7 @@ margin-left: 11%;
 .postLocation {
   display: flex;
   align-items: center;
-  font-size: 17px;
+  font-size: 15px;
   color: #666;
   margin-top: 10px;
 }
@@ -547,4 +547,30 @@ margin-left: 11%;
 .postLocation svg {
   margin-right: 5px;
   color: #ed1c24;
+}
+.editLocationInput {
+  width: 90%;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #879eb9;
+  border-radius: 8px;
+  margin-top: 5px;
+  font-size: 14px;
+  line-height: 1.6;
+
+}
+
+.editLocationButton {
+  padding: 8px 16px;
+  background-color: #879eb9; /* Green background color for the button */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 5px;
+margin-left: 200px;}
+
+.editLocationButton:hover {
+  background-color: #cfd8dc; /* Darker green on hover */
 }

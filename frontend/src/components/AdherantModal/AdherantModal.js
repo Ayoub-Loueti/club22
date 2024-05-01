@@ -51,8 +51,16 @@ const DemandeModal = ({ isOpen, onRequestClose, userId }) => {
                     const adherantResponse = await axios.get(`http://localhost:5000/isAdherant`, { headers });
                     setIsAdherant(adherantResponse.data.adherant);
                 } catch (error) {
-                    console.error("Error fetching data:", error);
-                    Swal.fire('Error', 'Failed to fetch data.', 'error');
+                 console.error(
+                   'Erreur lors de la récupération des données :',
+                   error
+                 );
+                 Swal.fire(
+                   'Erreur',
+                   'Échec de la récupération des données.',
+                   'error'
+                 );
+
                 }
             };
             fetchData();
@@ -62,15 +70,20 @@ const DemandeModal = ({ isOpen, onRequestClose, userId }) => {
     const handleDemande = async () => {
         
         if (!description.trim() || !signatureUrl) {
-          Swal.fire(
-            'Validation Error',
-            'Please enter a description and sign before submitting.',
-            'info'
-          );
+         Swal.fire(
+           'Erreur de validation',
+           'Veuillez saisir une description et signer avant de soumettre.',
+           'info'
+         );
+
           return;
         }
         if (!acceptedTerms) {
-            Swal.fire('Terms and Conditions', 'You must accept the terms and conditions to proceed.', 'warning');
+Swal.fire(
+  'Conditions générales',
+  'Vous devez accepter les conditions générales pour continuer.',
+  'warning'
+);
             return;
         }
 
@@ -83,14 +96,24 @@ const DemandeModal = ({ isOpen, onRequestClose, userId }) => {
                 headers: { Authorization: `Bearer ${token}` },
               }
             );
-            Swal.fire('Success', 'Your demande has been successfully submitted.', 'success').then(result => {
-                if (result.isConfirmed || result.isDismissed) {
-                    onRequestClose();
-                }
-            });
+Swal.fire('Succès', 'Votre demande a été soumise avec succès.', 'success').then(
+  (result) => {
+    if (result.isConfirmed || result.isDismissed) {
+      onRequestClose();
+    }
+  }
+);
         } catch (error) {
-            Swal.fire('Failed', 'Your demande could not be submitted. Please try again.', 'error');
-            console.error("Failed to submit demande:", error.response?.data || error.message);
+          Swal.fire(
+            'Échec',
+            "Votre demande n'a pas pu être soumise. Veuillez réessayer.",
+            'error'
+          );
+          console.error(
+            'Échec de la soumission de la demande :',
+            error.response?.data || error.message
+          );
+
         }
     };
 
@@ -152,14 +175,17 @@ const DemandeModal = ({ isOpen, onRequestClose, userId }) => {
             my: 2,
           }}
         >
-          <strong>Terms and Conditions:</strong> By checking this box, you agree
-          to the terms and conditions set forth by our platform. These include,
-          but are not limited to, the following:
+          <strong>Conditions générales :</strong> En cochant cette case, vous
+          acceptez les conditions générales établies par notre plateforme.
+          Celles-ci comprennent, mais ne se limitent pas à, ce qui suit :
           <ol>
-            <li>Adherence to local and international laws.</li>
-            <li>Accurate and truthful declaration of information.</li>
-            <li>Understanding that terms may change without notice.</li>
-            <li>Your data will be handled per our privacy policy.</li>
+            <li>Respect des lois locales et internationales.</li>
+            <li>Déclaration précise et véridique des informations.</li>
+            <li>Compréhension que les termes peuvent changer sans préavis.</li>
+            <li>
+              Vos données seront traitées conformément à notre politique de
+              confidentialité.
+            </li>
           </ol>
         </Typography>
         <FormControlLabel
@@ -169,19 +195,19 @@ const DemandeModal = ({ isOpen, onRequestClose, userId }) => {
               onChange={(e) => setAcceptedTerms(e.target.checked)}
             />
           }
-          label="I have read and accept the terms and conditions."
+          label="J'ai lu et j'accepte les conditions générales."
         />
         <SignaturePad setSignatureUrl={setSignatureUrl} />
 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-          <Button onClick={onRequestClose}>Cancel</Button>
+          <Button onClick={onRequestClose}>Annuler</Button>
           <Button
             onClick={handleDemande}
             disabled={!acceptedTerms}
             variant="contained"
             color="primary"
           >
-            Submit
+            Soumettre{' '}
           </Button>
         </Box>
       </Modal>
