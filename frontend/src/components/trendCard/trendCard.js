@@ -8,6 +8,7 @@ const TrendCard = () => {
     const [trends, setTrends] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPosts, setSelectedPosts] = useState([]);
+    const [selectedPostId, setSelectedPostId] = useState(null);
 
     useEffect(() => {
         const token = localStorage.getItem('login');
@@ -49,6 +50,10 @@ const TrendCard = () => {
       },
     };
 
+    const openModalForPost = (postId) => {
+        setSelectedPostId(postId);
+        setIsModalOpen(true);
+      };
     return (
         <div className="TrendCard">
             <h3>Trends for you</h3>
@@ -64,7 +69,7 @@ const TrendCard = () => {
               onRequestClose={() => setIsModalOpen(false)}
               style={customStyles}
             >
-              <Posts posts={selectedPosts} />
+              <Posts posts={selectedPosts} openModalForPost={openModalForPost} />
             </Modal>
         </div>
     );

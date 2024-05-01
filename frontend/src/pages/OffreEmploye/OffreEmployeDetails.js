@@ -169,6 +169,8 @@ const closeProgramModal = () => {
                 remise={remise}
                 type={type}
                 isAdherant={isAdherant}
+                debut={date_debut}
+                fin={date_fin}
               />
               {isAdherant === false && (
                 <button
