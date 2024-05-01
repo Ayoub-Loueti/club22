@@ -311,8 +311,8 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
             onClick={handleReservation}
             variant="contained"
             color="primary"
-            disabled={!isDateSelected}
-          >
+            disabled={type === 'hotel' && !isDateSelected}
+            >
             Reserve
           </Button>
         </DialogActions>

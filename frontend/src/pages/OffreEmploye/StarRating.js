@@ -14,7 +14,7 @@ const StarRating = ({ rating, numReviews }) => {
         {halfStar === 1 && <i key="half" className="fa fa-star-half-o checked"></i>}
         {[...Array(emptyStars)].map((_, i) => <i key={`empty-${i}`} className="fa fa-star"></i>)}
       </div>
-      {numReviews > 0 && <span className="reviews-count">({numReviews})</span>}
+      {numReviews > 0 && <span className="reviews-count"> | {numReviews} Evaluations</span>}
     </div>
   );
 };
