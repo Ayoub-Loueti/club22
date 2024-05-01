@@ -4,6 +4,8 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete }) => {
     const incrementAdults = () => {
@@ -69,15 +71,23 @@ const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete }) => {
     );
 };
 
-const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type, isAdherant }) => {
-    const calculateRoomPrice = (adults, children, basePrice, isAdherant) => {
+const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type, isAdherant, debut , fin }) => {
+  const calculateDaysMultiplier = (start, end) => {
+    if (!start || !end) return 1;
+    const diffDays = (end - start) / (1000 * 3600 * 24) + 1; // Add 1 to include both start and end day
+    return Math.max(1, diffDays - 1); // Multiplier is (days - 1), minimum is 1
+};
+
+    const calculateRoomPrice = (adults, children, basePrice, isAdherant, daysMultiplier) => {
         let priceIncrease = 0;
         if (adults > 1) {
             priceIncrease += (adults - 1) * (basePrice * 0.4);
         }
         priceIncrease += children * (basePrice * 0.2);
-
         let totalCost = basePrice + priceIncrease;
+        if (type === 'hotel') {
+          totalCost *= daysMultiplier;
+      }
         if (isAdherant) {
             totalCost *= (1 - remise / 100);
         }
@@ -90,6 +100,17 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
     const [userInfo, setUserInfo] = useState(null);
     const [rooms, setRooms] = useState([{ id: 1, adults: 1, children: 0, prix: initialRoomPrice }]);
     const [nombre, setNombre] = useState(1);
+    const [reservationStart, setReservationStart] = useState();
+    const [reservationEnd, setReservationEnd] = useState();
+
+    useEffect(() => {
+      const daysMultiplier = calculateDaysMultiplier(reservationStart, reservationEnd);
+      const updatedRooms = rooms.map(room => ({
+          ...room,
+          prix: calculateRoomPrice(room.adults, room.children, prix, isAdherant, daysMultiplier)
+      }));
+      setRooms(updatedRooms);
+  }, [reservationStart, reservationEnd, prix, remise, isAdherant]);
 
     useEffect(() => {
         const token = localStorage.getItem('login');
@@ -158,6 +179,7 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
 
     const incrementNombre = () => setNombre(nombre + 1);
     const decrementNombre = () => setNombre(Math.max(1, nombre - 1));
+    const isDateSelected = reservationStart && reservationEnd;
 
     return (
       <Dialog open={isOpen} onClose={onRequestClose} maxWidth="sm" fullWidth>
@@ -185,7 +207,44 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
           <Typography variant="h6" sx={{ mt: 2 }}>
             Prix: {prix.toFixed(2)} DT
           </Typography>
-
+          {type === 'hotel' && (
+            <>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <MobileDatePicker
+                  label="Date de début"
+                  value={reservationStart}
+                  onChange={setReservationStart}
+                  minDate={new Date(debut)}
+                  maxDate={new Date(fin)}
+                  renderInput={(params) => (
+                    <TextField 
+                      {...params} 
+                      placeholder="jj/mm/aaaa" 
+                      fullWidth 
+                      error={!reservationStart} 
+                      helperText={!reservationStart ? "Sélection obligatoire" : ""}
+                    />
+                  )}
+                />
+                <MobileDatePicker
+                  label="Date de fin"
+                  value={reservationEnd}
+                  onChange={setReservationEnd}
+                  minDate={new Date(debut)}
+                  maxDate={new Date(fin)}
+                  renderInput={(params) => (
+                    <TextField 
+                      {...params} 
+                      placeholder="jj/mm/aaaa" 
+                      fullWidth 
+                      error={!reservationEnd} 
+                      helperText={!reservationEnd ? "Sélection obligatoire" : ""}
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+            </>
+          )}
           <Box sx={{ maxHeight: '40vh', overflowY: 'auto' }}>
             {type === 'hotel' ? (
               rooms.map((room, index) => (
@@ -252,6 +311,7 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
             onClick={handleReservation}
             variant="contained"
             color="primary"
+            disabled={!isDateSelected}
           >
             Reserve
           </Button>
