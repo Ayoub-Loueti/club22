@@ -204,8 +204,12 @@ const handleDownloadClick = (e, reservationId) => {
                         sx={{ position: 'relative', width: 100, height: 100 }}
                       >
                         <img
-                          src={`http://localhost:5000/${reservation.employe.utilisateur.photo}`}
-                          alt="Offre"
+                          src={
+                            reservation.employe.utilisateur.photo
+                              ? `http://localhost:5000/${reservation.employe.utilisateur.photo}`
+                              : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg' // URL de votre image par défaut
+                          }
+                          alt="Profil"
                           style={{
                             width: '100%',
                             height: '100%',
@@ -215,6 +219,7 @@ const handleDownloadClick = (e, reservationId) => {
                             marginTop: '10px',
                           }}
                         />
+
                         <Typography
                           variant="body2"
                           sx={{
@@ -368,8 +373,12 @@ const handleDownloadClick = (e, reservationId) => {
                         sx={{ position: 'relative', width: 100, height: 100 }}
                       >
                         <img
-                          src={`http://localhost:5000/${reservation.employe.utilisateur.photo}`}
-                          alt="Offre"
+                          src={
+                            reservation.employe.utilisateur.photo
+                              ? `http://localhost:5000/${reservation.employe.utilisateur.photo}`
+                              : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg' // URL de votre image par défaut
+                          }
+                          alt="Profil"
                           style={{
                             width: '100%',
                             height: '100%',
@@ -379,6 +388,7 @@ const handleDownloadClick = (e, reservationId) => {
                             marginTop: '10px',
                           }}
                         />
+
                         <Typography
                           variant="body2"
                           sx={{
