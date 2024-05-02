@@ -893,6 +893,164 @@ exports.modifyReservation = async (req, res) => {
   }
 };
 
+exports.getReservByCollabA = async (req, res) => {
+  const collaboratorId = req.params.collaboratorId;
+
+  try {
+    const collaborator = await Collaborateur.findByPk(collaboratorId);
+    if (!collaborator) {
+      return res.status(404).json({ error: 'Collaborator not found' });
+    }
+
+    let reservations = await Reservation.findAll({
+      where: {
+        etat: ['confirmer', 'reparation'],
+      },
+      include: [
+        {
+          model: Offre,
+          as: 'offre',
+          where: {
+            id_collaborateur: collaboratorId,
+          },
+          include: [
+            {
+              model: Collaborateur,
+              as: 'collaborateur',
+            },
+          ],
+        },
+        {
+          model: Employe,
+          as: 'employe',
+          include: [
+            {
+              model: Utilisateur,
+              as: 'utilisateur',
+            },
+          ],
+        },
+      ],
+    });
+
+    reservations = await Promise.all(reservations.map(async (reservation) => {
+      const images = await ImageOffre.findAll({
+        where: { id_offre: reservation.id_offre },
+        attributes: ['image'],
+      });
+
+      const reservationJson = {
+        ...reservation.toJSON(),
+        offre: {
+          ...reservation.offre.toJSON(),
+          images: images.map(img => img.image),
+        },
+      };
+
+      // Here's where we add the rooms details for hotel-type reservations
+      if (reservation.typeR === 'hotel') {
+        const hotels = await Hotel.findAll({
+          where: { id_reservation: reservation.id_reservation },
+          attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix']
+        });
+
+        const totalPeople = hotels.reduce((acc, hotel) => acc + hotel.nbr_adults + hotel.nbr_enfants, 0);
+        reservationJson.nombreTotal = totalPeople;
+        reservationJson.rooms = hotels;
+      } else {
+        // For non-hotel type reservations, use the reservation's nombre value
+        reservationJson.nombreTotal = reservation.nombre;
+      }
+
+      return reservationJson;
+    }));
+    
+    res.status(200).json(reservations);
+  } catch (error) {
+    console.error('Error fetching reservations:', error);
+    res.status(500).json({ error: 'Failed to get reservations' });
+  }
+};
+
+exports.getReservByCollabB = async (req, res) => {
+  const collaboratorId = req.params.collaboratorId;
+
+  try {
+    const collaborator = await Collaborateur.findByPk(collaboratorId);
+    if (!collaborator) {
+      return res.status(404).json({ error: 'Collaborator not found' });
+    }
+
+    let reservations = await Reservation.findAll({
+      where: {
+        etat: ['accepter', 'refuser'],
+      },
+      include: [
+        {
+          model: Offre,
+          as: 'offre',
+          where: {
+            id_collaborateur: collaboratorId,
+          },
+          include: [
+            {
+              model: Collaborateur,
+              as: 'collaborateur',
+            },
+          ],
+        },
+        {
+          model: Employe,
+          as: 'employe',
+          include: [
+            {
+              model: Utilisateur,
+              as: 'utilisateur',
+            },
+          ],
+        },
+      ],
+    });
+
+    reservations = await Promise.all(reservations.map(async (reservation) => {
+      const images = await ImageOffre.findAll({
+        where: { id_offre: reservation.id_offre },
+        attributes: ['image'],
+      });
+
+      const reservationJson = {
+        ...reservation.toJSON(),
+        offre: {
+          ...reservation.offre.toJSON(),
+          images: images.map(img => img.image),
+        },
+      };
+
+      // Here's where we add the rooms details for hotel-type reservations
+      if (reservation.typeR === 'hotel') {
+        const hotels = await Hotel.findAll({
+          where: { id_reservation: reservation.id_reservation },
+          attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix']
+        });
+
+        const totalPeople = hotels.reduce((acc, hotel) => acc + hotel.nbr_adults + hotel.nbr_enfants, 0);
+        reservationJson.nombreTotal = totalPeople;
+        reservationJson.rooms = hotels;
+      } else {
+        // For non-hotel type reservations, use the reservation's nombre value
+        reservationJson.nombreTotal = reservation.nombre;
+      }
+
+      return reservationJson;
+    }));
+    
+    res.status(200).json(reservations);
+  } catch (error) {
+    console.error('Error fetching reservations:', error);
+    res.status(500).json({ error: 'Failed to get reservations' });
+  }
+};
+
 //hotel
 
 exports.deleteHotel = async (req, res) => {
