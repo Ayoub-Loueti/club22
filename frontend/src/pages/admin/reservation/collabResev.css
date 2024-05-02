@@ -1,0 +1,125 @@
+.PageCollaborateur-container {
+    padding: 50px;
+  }
+  
+  .collabora-scroll-container {
+    display: flex;
+     justify-content: center; /* Centrer les cartes horizontalement */
+    align-items: center; /* Centrer les cartes verticalement */
+   
+  }
+  
+  .collab-card {
+    width: 160px;
+    height: 50px;
+    border-radius: 10px;
+    box-shadow: 0 9px 9px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    padding: 20px;
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+    margin-right: 10px;
+    flex-shrink: 0;
+    overflow: hidden;
+    align-items: center;
+    border: 2px solid #f1efef; /* Couleur de la bordure plus foncée */
+  }
+  
+  .collab-card:hover,
+  .collab-card.active {
+    box-shadow: 0 12px 15px rgba(0, 0, 0, 0.3); /* Larger shadow */
+    transform: translateY(-5px); /* Move up */
+    border-color: #ccc; /* Darker border color when active/hover */
+  }
+  
+  .collab-card img {
+    width: 90%;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+  
+  .collab-card-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #191f43;
+  }
+  
+  .collab-card-description {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  /* Changement de couleur et flottant au survol */
+  .collab-card:hover {
+    cursor: pointer;
+    box-shadow: 0 12px 15px rgba(0, 0, 0, 0.3); /* Boîte d'ombre plus grande */
+    transform: translateY(-5px); /* Déplacement vers le haut */
+  }
+  
+  .navig-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: -50px;
+    margin-left: 15%;
+    margin-right: 15%;
+    
+    cursor: pointer;
+  
+  }
+  
+  .navig-buttons button {
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    
+  }
+  
+  .navig-buttons button:hover {
+    background-color: #163172;
+  }
+  
+  
+  .navig-buttons .nav-icon {
+    color: #666;
+    cursor: pointer;
+  }
+  
+  .navig-buttons .nav-icon:disabled {
+    color: #ccc;
+    cursor: default;
+  }
+  
+  .navig-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+  }
+  
+  .voir-tous-btn {
+    background: linear-gradient(to right, #191f43, #6b85a4); /* Gradient background from dark blue to light blue */
+    color: white; /* White text */
+    border: none; /* No border */
+    padding: 10px 25px; /* Increased horizontal padding for a wider button */
+    font-size: 16px; /* Font size */
+    font-weight: bold; /* Bold text */
+    border-radius: 20px; /* Large border-radius for pill shape */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+  }
+  
+  .voir-tous-btn:hover {
+    background: linear-gradient(to right, #879eb9, #c50f10); /* Change to a gradient from light blue to red on hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Slightly larger shadow on hover */
+  }
+  
+  .voir-tous-btn:active {
+    background: #c50f10; /* Solid red background when the button is clicked */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Smaller shadow for a pressed effect */
+  }
+  

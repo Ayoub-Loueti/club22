@@ -23,7 +23,7 @@ import Home from './pages/home/home';
 import ListCollaborateur from './pages/admin/collaborateur/listCollaborateur';
 import ListCollab from './pages/admin/collaborateur/listCollab';
 import OffreAdmin from './pages/admin/offre/offreAdmin';
-import ListReservation from './pages/admin/reservation/listReservation';
+import ListReservation from './pages/admin/reservation/CollabReserv';
 import CollaborateurPage from './pages/OffreEmploye/collaborateurPage';
 import OffreEmploye from './pages/OffreEmploye/OffreEmploye';
 import OffreEmployeDetails from './pages/OffreEmploye/OffreEmployeDetails';
