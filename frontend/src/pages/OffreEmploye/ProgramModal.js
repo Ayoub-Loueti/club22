@@ -23,8 +23,8 @@ const ProgramModal = ({ isOpen, onClose, content }) => {
     background: 'white',
     padding: '20px',
     borderRadius: '5px',
-    minWidth: '300px',
-    maxWidth: '600px',
+    minWidth: '500px',
+    maxWidth: '800px',
     margin: 'auto', // Centre le modal verticalement et horizontalement
     overflowY: 'auto', // Active le défilement vertical si nécessaire
     maxHeight: '80vh', // Hauteur maximale pour permettre le défilement

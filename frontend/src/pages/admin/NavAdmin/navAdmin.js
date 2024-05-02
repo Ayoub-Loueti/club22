@@ -21,6 +21,7 @@ import {
   faUserCog,
   faUserShield,
   faUsersRectangle,
+  faCalendarAlt,
 } from '@fortawesome/free-solid-svg-icons';
 
 function NavAdmin() {
@@ -128,7 +129,12 @@ function NavAdmin() {
       {
         icon: faUserShield,
         label: signalsCount > 0 ? `Signaler (${signalsCount})` : 'Signaler',
-        path: '/adminSignal'
+        path: '/adminSignal',
+      },
+      {
+        icon: faCalendarAlt,
+        label: 'liste réservation',
+        path: '/listReservation',
       },
     ];
 

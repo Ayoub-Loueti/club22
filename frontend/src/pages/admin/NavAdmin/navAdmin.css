@@ -15,7 +15,7 @@
 }
 
 .adm-navbar.expanded {
-  width: 180px; /* Expanded width when an icon is hovered */
+  width: 250px; /* Expanded width when an icon is hovered */
 }
 .adm-icon-wrapper {
   position: relative;
@@ -35,7 +35,7 @@
   border-radius: 25px; /* Rounded corners for the hover background */
   padding: 4px 20px 4px 20px; /* Symmetric padding for vertical and initial horizontal */
    transition: background-color 0.2s ease; /* Smooth transition for all properties */
-  width: 90px;
+  width: 180px;
 margin-left: -3px;}
 /*
 .icon-and-tooltip:hover {
@@ -51,14 +51,17 @@ margin-left: -3px;}
 
 .adm-tooltip {
   font-size: 14px;
-  margin-left: 10px; /* Space between the icon and the tooltip */
-  margin-top: -25%;
-  visibility: hidden; /* Hidden by default */
+  margin-left: 10px; /* Espace entre l'icône et le tooltip */
+  visibility: hidden; /* Caché par défaut */
   opacity: 0;
   transition: visibility 0s, opacity 0.2s linear;
-   color: #191f43;
-   font-weight: bold;
+  color: #191f43;
+  font-weight: bold;
+  position: relative; /* Ajouté pour un positionnement relatif */
+  top: 160%; /* Déplacer au centre verticalement */
+  transform: translateY(-71%); /* Ajustement fin pour centrer exactement */
 }
+
 
 .icon-and-tooltip:hover .adm-tooltip ,.icon-and-tooltip:hover .adm-navbar-icon {
   visibility: visible;
@@ -143,7 +146,7 @@ margin-left: -3px;}
   align-items: flex-start; /* Alignement à gauche */
   height: 100%; /* Prend toute la hauteur disponible */
   padding-left: 10px; /* Déplace toutes les icônes un peu plus à droite */
-  padding-top: 180px; /* Espacement optionnel en haut */
+  padding-top: 120px; /* Espacement optionnel en haut */
   padding-bottom: 10px; /* Espacement optionnel en bas */
 }
 

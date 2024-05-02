@@ -7,11 +7,13 @@ const Employe = require('../models/EmployeModel');
 const Hotel = require('../models/HotelModel');
 const ImageOffre = require('../models/ImageOffreModel');
 const { Op } = require('sequelize');
-
+const ActiviteModel = require('../models/ActiviteModel');
+const VoyageModel = require('../models/VoyageModel');
+const GrandHotelModel = require('../models/GrandHotelModel');
 const Evaluation = require('../models/EvaluationModel');
 
 exports.createReservation = async (req, res) => {
-  const { id_offre, nombre, prix_totale, hotels ,typeR} = req.body; // Extract hotels array from request body
+  const { id_offre, nombre, prix_totale, hotels ,typeR, date_debut,date_fin} = req.body; // Extract hotels array from request body
   const userId = req.userId;
 
   if (nombre <= 0 || prix_totale <= 0) {
@@ -52,6 +54,8 @@ exports.createReservation = async (req, res) => {
       date_reservation: new Date(),
       etat: 'en_cours',
       typeR,
+      date_debut:new Date(date_debut),
+      date_fin:new Date(date_fin),
     });
 
     // Create associated hotel records
@@ -802,6 +806,24 @@ exports.getMyReservationsBoxT = async (req, res) => {
           images: images.map(img => img.image),
         },
       };
+
+      switch (reservation.offre.type) {
+        case 'hotel':
+          reservationJson.details = await GrandHotelModel.findOne({
+            where: { id_offre: reservation.id_offre },
+          });
+          break;
+        case 'voyage':
+          reservationJson.details = await VoyageModel.findOne({
+            where: { id_offre: reservation.id_offre },
+          });
+          break;
+        case 'activite':
+          reservationJson.details = await ActiviteModel.findOne({
+            where: { id_offre: reservation.id_offre },
+          });
+          break;
+      }
 
       // Here's where we add the rooms details for hotel-type reservations
       if (reservation.typeR === 'hotel') {
