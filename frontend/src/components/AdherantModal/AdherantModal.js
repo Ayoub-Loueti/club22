@@ -25,14 +25,15 @@ const customStyles = {
     padding: '20px',
     width: '620px', // Adjust width as needed
     maxHeight: '80vh',
+    zIndex: '100',
   },
   overlay: {
     backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    zIndex: '100',
   },
 };
 
 const DemandeModal = ({ isOpen, onRequestClose, userId }) => {
-    const [description, setDescription] = useState('');
     const [userInfo, setUserInfo] = useState(null);
     const [isAdherant, setIsAdherant] = useState(false);
     const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -71,10 +72,10 @@ const DemandeModal = ({ isOpen, onRequestClose, userId }) => {
 
     const handleDemande = async () => {
         
-        if (!description.trim() || !signatureUrl) {
+        if ( !signatureUrl) {
          Swal.fire(
            'Erreur de validation',
-           'Veuillez saisir une description et signer avant de soumettre.',
+           'Veuillez signer avant de soumettre.',
            'info'
          );
 
@@ -93,7 +94,7 @@ Swal.fire(
         try {
             await axios.post(
               'http://localhost:5000/demandes',
-              { userId, description, signature: signatureUrl },
+              { userId, signature: signatureUrl },
               {
                 headers: { Authorization: `Bearer ${token}` },
               }
@@ -156,15 +157,6 @@ Swal.fire('Succès', 'Votre demande a été soumise avec succès.', 'success').t
             <Typography variant="body2">{userInfo.email}</Typography>
           </Box>
         )}
-        <TextField
-          fullWidth
-          multiline
-          rows={4}
-          placeholder="Entrez la description de votre demande ici"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          margin="normal"
-        />
         <Typography
           component="div"
           variant="body2"

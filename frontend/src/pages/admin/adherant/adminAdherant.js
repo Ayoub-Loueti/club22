@@ -192,7 +192,6 @@ const AdminPanel = () => {
                 <p>{`Date de la demande: ${new Date(
                   dem.date_demande
                 ).toLocaleString()}`}</p>
-                <p>{dem.description}</p>
                 <div className="signature-and-actions">
                   <div className="signature-container">
                     <p className="signature-title">Signature:</p>

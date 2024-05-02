@@ -42,7 +42,13 @@ const ReservationModel = sequelize.define(
       type: DataTypes.FLOAT,
     },
     typeR: {
-      type: DataTypes.ENUM('hotel', 'autre'),
+      type: DataTypes.ENUM('voyage', 'hotel', 'activité', 'autre'),
+    },
+    date_debut: {
+      type: DataTypes.DATE,
+    },
+    date_fin: {
+      type: DataTypes.DATE,
     },
   },
   {

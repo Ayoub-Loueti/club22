@@ -161,8 +161,10 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
             })) : [],
             nombre: type !== 'hotel' ? nombre : rooms.length,
             typeR: type ,
-            prix_totale: type === 'hotel' ? rooms.reduce((acc, room) => acc + room.prix, 0).toFixed(2) : (nombre * calculateRoomPrice(1, 0, prix, isAdherant)).toFixed(2)
-        };
+            prix_totale: type === 'hotel' ? rooms.reduce((acc, room) => acc + room.prix, 0).toFixed(2) : (nombre * calculateRoomPrice(1, 0, prix, isAdherant)).toFixed(2),
+            date_debut: type === 'hotel' ? reservationStart.toISOString() : null ,
+            date_fin: type === 'hotel' ? reservationEnd.toISOString() : null ,
+          };
 
         try {
             await axios.post(
