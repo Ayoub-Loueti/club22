@@ -20,7 +20,13 @@ const RightSide = () => {
       <TrendCard />
       <ShareModal modalOpened={modalOpened} setModalOpened={setModalOpened} />
 
-      <button
+     
+    </div>
+  );
+};
+
+export default RightSide;
+/*  <button
         className="r-button" // Ensure you have this class styled as needed
         onClick={() => {
           console.log('Opening modal...');
@@ -28,9 +34,4 @@ const RightSide = () => {
         }}
       >
         Partager
-      </button>
-    </div>
-  );
-};
-
-export default RightSide;
+      </button> */

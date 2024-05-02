@@ -7,7 +7,9 @@ import NavbarHaut from '../../components/navbar/navbarHaut';
 import ShowReservationDialog from './ShowReservationDialog'; // Import the dialog component
 import ModifyReservation from './ModifyReservation'; // Import the ModifyReservation component
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
+
 const MyReservations = () => {
     const [reservations, setReservations] = useState([]);
     const [boxDReservations, setBoxDReservations] = useState([]);
@@ -68,23 +70,27 @@ const MyReservations = () => {
         const token = JSON.parse(localStorage.getItem('login'))?.token;
         try {
             const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: "Do you want to confirm this reservation?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, confirm it!',
-                cancelButtonText: 'No, cancel!',
-                reverseButtons: true
+              title: 'Êtes-vous sûr(e) ?',
+              text: 'Voulez-vous confirmer cette réservation ?',
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'Oui, confirmer !',
+              cancelButtonText: 'Non, annuler !',
+              reverseButtons: true,
             });
             if (result.isConfirmed) {
                 await axios.put(`http://localhost:5000/reservation/${id}/confirmer`, {}, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                Swal.fire('Confirmed!', 'The reservation has been confirmed.', 'success');
+Swal.fire('Confirmé !', 'La réservation a été confirmée.', 'success');
                 setReservations(reservations.map(r => r.id_reservation === id ? { ...r, etat: 'confirmed' } : r));
             }
         } catch (err) {
-            Swal.fire('Failed!', 'There was an error confirming the reservation.', 'error');
+Swal.fire(
+  'Échec !',
+  "Une erreur s'est produite lors de la confirmation de la réservation.",
+  'error'
+);
         }
     };
 
@@ -93,23 +99,27 @@ const MyReservations = () => {
         const token = JSON.parse(localStorage.getItem('login'))?.token;
         try {
             const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: "Do you want to cancel this reservation?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, cancel it!',
-                cancelButtonText: 'No, keep it',
-                reverseButtons: true
+              title: 'Êtes-vous sûr(e) ?',
+              text: 'Voulez-vous annuler cette réservation ?',
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'Oui, annuler',
+              cancelButtonText: 'Non, la garder',
+              reverseButtons: true,
             });
             if (result.isConfirmed) {
                 await axios.put(`http://localhost:5000/reservation/${id}/annuler`, {}, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                Swal.fire('Cancelled!', 'The reservation has been cancelled.', 'success');
+Swal.fire('Annulé !', 'La réservation a été annulée.', 'success');
                 setReservations(reservations.map(r => r.id_reservation === id ? { ...r, etat: 'cancelled' } : r));
             }
         } catch (err) {
-            Swal.fire('Failed!', 'There was an error cancelling the reservation.', 'error');
+Swal.fire(
+  'Échec !',
+  "Une erreur s'est produite lors de l'annulation de la réservation.",
+  'error'
+);
         }
     };
 
@@ -198,183 +208,178 @@ const MyReservations = () => {
             }
         } catch (err) {
             console.error('Error submitting vote:', err);
-            Swal.fire('Failed!', 'Failed to submit vote.', 'error');
+Swal.fire('Failed!', 'Échec de la soumission du vote.', 'error');
         }
     };
 
-  const downloadReservationPDF = async (reservation) => {
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'pt',
-      format: 'a4',
-    });
+const downloadReservationPDF = async (reservation) => {
+  const pdf = new jsPDF({
+    orientation: 'portrait',
+    unit: 'pt',
+    format: 'a4',
+  });
 
-    // Define margins and initial positions
-    const marginLeft = 40;
-    const marginTop = 60;
-    const lineHeight = 20;
-    const pageWidth = pdf.internal.pageSize.getWidth();
+  // Define margins and initial positions
+  const marginLeft = 40;
+  const marginTop = 60;
+  const lineHeight = 20;
+  const pageWidth = pdf.internal.pageSize.getWidth();
 
-    // Adding a colorful header
-    pdf.setFillColor(63, 81, 181); // Set a blue color
-    pdf.rect(0, 0, pageWidth, 100, 'F');
+  // Adding a colorful header
+  pdf.setFillColor(107, 133, 164); // Gold color (#6b85a4)
+  pdf.rect(0, 0, pageWidth, 100, 'F');
 
-    // Title of the voucher in white
-    pdf.setTextColor(255, 255, 255); // White color for text
-    pdf.setFontSize(22);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Bon de Réservation', marginLeft, marginTop);
+  // Title: "Carte de réservation"
+  pdf.setTextColor(0, 0, 0); // White color for text
+  pdf.setFontSize(22);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('Carte de réservation', marginLeft, marginTop);
 
-    // Reset text color for other details
-    pdf.setTextColor(0, 0, 0); // Black color for text
-    pdf.setDrawColor(0);
-    pdf.setLineWidth(1);
-    pdf.line(
-      marginLeft,
-      marginTop + 15,
-      pageWidth - marginLeft,
-      marginTop + 15
-    );
+  // Right-aligned: "Club22"
+  pdf.setFontSize(14);
+  pdf.text('Club22', pageWidth - marginLeft, marginTop, 'right');
 
-    // Move to start of details
-    let currentY = marginTop + 35;
-    pdf.setFontSize(16);
-    pdf.setFont('helvetica', 'normal');
+  // Offer Details Section
+  let currentY = marginTop + 35;
 
-    // Basic details
-    pdf.text(
-      `Titre de l'offre: ${reservation.offre.titre}`,
-      marginLeft,
-      currentY
-    );
-    currentY += lineHeight;
-    pdf.text(
-      `Description: ${reservation.offre.description}`,
-      marginLeft,
-      currentY
-    );
-    currentY += lineHeight * 2; // Extra space for long descriptions
+  pdf.setFontSize(16);
+  pdf.setFont('helvetica', 'normal');   currentY += lineHeight;
 
-    pdf.text(
-      `Prix total: ${reservation.prix_totale.toFixed(2)} DT`,
-      marginLeft,
-      currentY
-    );
-    if (reservation.offre.remise && reservation.isAdherant) {
+  pdf.text(`Offre: ${reservation.offre.titre}`, marginLeft, currentY);   currentY += lineHeight;
+
+   pdf.text(
+     `Prix total: ${reservation.prix_totale.toFixed(2)} DT`,
+     marginLeft,
+     currentY
+   );
+   if (reservation.offre.remise) {
+     currentY += lineHeight;
+     pdf.text(`Remise: ${reservation.offre.remise}%`, marginLeft, currentY);
+   }
+  currentY += lineHeight;
+  pdf.text(
+    `Description: ${reservation.offre.description}`,
+    marginLeft,
+    currentY
+  );
+
+
+  switch (reservation.offre.type) {
+    case 'hotel':
       currentY += lineHeight;
       pdf.text(
-        `Remise: ${reservation.offre.remise}% (Adhérant)`,
+        `Nom de l'hôtel: ${reservation.details.nom_hotel}`,
         marginLeft,
         currentY
       );
-    }
-    currentY += lineHeight;
+      pdf.text(
+        `Étoiles: ${'★'.repeat(reservation.details.etoiles)}`,
+        marginLeft,
+        (currentY += lineHeight)
+      );
+      // Add other hotel-specific attributes here...
+      break;
+    case 'voyage':
+      currentY += lineHeight;
+      pdf.text(
+        `Nombre de jours: ${reservation.details.nbr_jours}`,
+        marginLeft,
+        currentY
+      );
+      pdf.text(
+        `Inclus: ${reservation.details.inclus}`,
+        marginLeft,
+        (currentY += lineHeight)
+      );
+      // Add other voyage-specific attributes here...
+      break;
+    case 'activite':
+      currentY += lineHeight;
+      pdf.text(
+        `Durée: ${reservation.details.duree} heures`,
+        marginLeft,
+        currentY
+      );
+      pdf.text(
+        `Inclus: ${reservation.details.inclus}`,
+        marginLeft,
+        (currentY += lineHeight)
+      );
+      // Add other activite-specific attributes here...
+      break;
+    default:
+      break;
+  }
 
-    // Offer-specific details
-    pdf.setFillColor(224, 235, 255); // Light blue for sections
-    pdf.rect(
-      marginLeft - 10,
-      currentY - 10,
-      pageWidth - 2 * (marginLeft - 10),
-      lineHeight * 5,
-      'F'
-    );
+  // Collaborator Details Section
+  currentY += lineHeight * 3;
+  pdf.setFontSize(16);
+  pdf.text(`Détails du collaborateur:`, marginLeft, currentY);
+  pdf.setFontSize(12);
+  pdf.text(
+    `Email: ${reservation.offre.collaborateur.email}`,
+    marginLeft,
+    (currentY += lineHeight)
+  );
+  pdf.text(
+    `Téléphone: ${reservation.offre.collaborateur.tel}`,
+    marginLeft,
+    (currentY += lineHeight)
+  );
+  pdf.text(
+    `Adresse: ${reservation.offre.collaborateur.adresse}`,
+    marginLeft,
+    (currentY += lineHeight)
+  );
 
-    switch (reservation.offre.type) {
-      case 'hotel':
-        pdf.text(
-          `Nom de l'hôtel: ${reservation.details.nom_hotel}`,
-          marginLeft,
-          currentY
-        );
-        pdf.text(
-          `Étoiles: ${'★'.repeat(reservation.details.etoiles)}`,
-          marginLeft,
-          (currentY += lineHeight)
-        );
-        pdf.text("Services de l'hôtel:", marginLeft, (currentY += lineHeight));
-        pdf.setFontSize(12);
-        Object.keys(reservation.details.services).forEach((service) => {
-          if (reservation.details.services[service]) {
-            pdf.text(
-              `${service}: Oui`,
-              marginLeft + 20,
-              (currentY += lineHeight)
-            );
-          }
-        });
-        break;
-      case 'voyage':
-        pdf.text(
-          `Nombre de jours: ${reservation.details.nbr_jours}`,
-          marginLeft,
-          currentY
-        );
-        pdf.text(
-          `Inclus: ${reservation.details.inclus}`,
-          marginLeft,
-          (currentY += lineHeight)
-        );
-        pdf.text(
-          `Programme: Voir document attaché.`,
-          marginLeft,
-          (currentY += lineHeight)
-        );
-        break;
-      case 'activite':
-        pdf.text(
-          `Durée: ${reservation.details.duree} heures`,
-          marginLeft,
-          currentY
-        );
-        pdf.text(
-          `Inclus: ${reservation.details.inclus}`,
-          marginLeft,
-          (currentY += lineHeight)
-        );
-        pdf.text(
-          `Programme: ${reservation.details.programme}`,
-          marginLeft,
-          (currentY += lineHeight)
-        );
-        break;
-    }
-    currentY += lineHeight * 2;
+  // Employee Details Section
+  currentY += lineHeight * 2;
+  pdf.setFontSize(16);
+  pdf.text(`Détails de l'employé:`, marginLeft, currentY);
+  pdf.setFontSize(12);
+  pdf.text(
+    `Nom: ${
+      reservation.employe && reservation.employe.utilisateur
+        ? reservation.employe.utilisateur.nom
+        : 'N/A'
+    }`,
+    marginLeft,
+    (currentY += lineHeight)
+  );
+  pdf.text(
+    `Prénom: ${
+      reservation.employe && reservation.employe.utilisateur
+        ? reservation.employe.utilisateur.prenom
+        : 'N/A'
+    }`,
+    marginLeft,
+    (currentY += lineHeight)
+  );
+  pdf.text(
+    `Email: ${
+      reservation.employe && reservation.employe.utilisateur
+        ? reservation.employe.utilisateur.email
+        : 'N/A'
+    }`,
+    marginLeft,
+    (currentY += lineHeight)
+  );
 
-    // Collaborator contact details
-    pdf.setFontSize(14);
-    pdf.text(`Coordonnées du collaborateur:`, marginLeft, currentY);
-    pdf.setFontSize(12);
-    pdf.text(
-      `Email: ${reservation.offre.collaborateur.email}`,
-      marginLeft,
-      (currentY += lineHeight)
-    );
-    pdf.text(
-      `Téléphone: ${reservation.offre.collaborateur.tel}`,
-      marginLeft,
-      (currentY += lineHeight)
-    );
-    pdf.text(
-      `Adresse: ${reservation.offre.collaborateur.adresse}`,
-      marginLeft,
-      (currentY += lineHeight)
-    );
 
-    // Terms and conditions
-    currentY += 20; // Some space before terms
-    pdf.setFontSize(12);
-    pdf.setFont('helvetica', 'italic');
-    pdf.text('Conditions:', marginLeft, currentY);
-    pdf.text(
-      'Ce bon est non-remboursable et non-transférable.',
-      marginLeft,
-      (currentY += 20)
-    );
+  // Footer: "Club22 Ooredoo"
+  pdf.setFontSize(12);
+  pdf.setTextColor(25, 31, 67); // Dark blue color (#191f43)
+  pdf.text(
+    'Club22 Ooredoo',
+    pageWidth / 2,
+    pdf.internal.pageSize.getHeight() - 30,
+    'center'
+  );
 
-    // Save the PDF
-    pdf.save(`reservation-${reservation.id_reservation}.pdf`);
-  };
+  // Save the PDF
+  pdf.save('reservation.pdf');
+};
+
 
 
 
@@ -395,7 +400,7 @@ const MyReservations = () => {
               <Grid item xs={12}>
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="h5" sx={{ mb: 1 }}>
-                    Premiere phase
+                   Premiere phase : Vos réservations
                   </Typography>
                   <Card raised sx={{ height: 290, overflowY: 'auto' }}>
                     <CardContent>
@@ -482,7 +487,7 @@ const MyReservations = () => {
                                     handleModifyDialogOpen(reservation);
                                   }}
                                 >
-                                  Modify
+                                  Modifier
                                 </Button>
                                 <Button
                                   size="small"
@@ -513,7 +518,7 @@ const MyReservations = () => {
               <Grid item xs={12}>
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="h5" sx={{ mb: 1 }}>
-                    Deuxieme Phase
+                     Deuxieme Phase: vos réservations confrimés
                   </Typography>
                   <Card raised sx={{ height: 290, overflowY: 'auto' }}>
                     <CardContent>
@@ -583,7 +588,7 @@ const MyReservations = () => {
           <Grid item xs={12} md={6}>
             <Box sx={{ mb: 2 }}>
               <Typography variant="h5" sx={{ mb: 1 }}>
-                Resultat
+                Resultat du demande
               </Typography>
               <Card raised sx={{ height: 670, overflowY: 'auto' }}>
                 <CardContent>
@@ -640,10 +645,9 @@ const MyReservations = () => {
                                 event.stopPropagation();
                                 downloadReservationPDF(reservation);
                               }}
-                              variant="contained"
                               color="primary"
                             >
-                              Télécharger PDF
+                              <FontAwesomeIcon icon={faDownload} />
                             </Button>
                           </>
                         )}

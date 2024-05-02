@@ -55,23 +55,27 @@ const TrendCard = () => {
         setIsModalOpen(true);
       };
     return (
-        <div className="TrendCard">
-            <h3>Trends for you</h3>
-            {trends.map((trend, index) => (
-                <div key={index} onClick={() => openModalForPosts(trend.posts)} className="trend">
-                    <span>#{trend.hachtag}</span>
-                    <span>{trend.nbr_hachtag} partage(s)</span>
-                </div>
-            ))}
+      <div className="TrendCard">
+        <h3>Tendances</h3>
+        {trends.map((trend, index) => (
+          <div
+            key={index}
+            onClick={() => openModalForPosts(trend.posts)}
+            className="trend"
+          >
+            <span>#{trend.hachtag}</span>
+            <span>{trend.nbr_hachtag} partage(s)</span>
+          </div>
+        ))}
 
-            <Modal
-              isOpen={isModalOpen}
-              onRequestClose={() => setIsModalOpen(false)}
-              style={customStyles}
-            >
-              <Posts posts={selectedPosts} openModalForPost={openModalForPost} />
-            </Modal>
-        </div>
+        <Modal
+          isOpen={isModalOpen}
+          onRequestClose={() => setIsModalOpen(false)}
+          style={customStyles}
+        >
+          <Posts posts={selectedPosts} openModalForPost={openModalForPost} />
+        </Modal>
+      </div>
     );
 };
 

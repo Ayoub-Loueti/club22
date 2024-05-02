@@ -136,10 +136,14 @@ const ModifyReservation = ({ isOpen, onRequestClose, reservationData }) => {
       const response = await axios.put(`http://localhost:5000/updateReservation/${reservationData.id_reservation}`, updatedData, {
         headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
       });
-      Swal.fire('Updated!', 'Your reservation has been updated successfully.', 'success');
+Swal.fire(
+  'Mis à jour !',
+  'Votre réservation a été mise à jour avec succès.',
+  'success'
+);
       onRequestClose();  // Assuming this method closes the dialog
     } catch (error) {
-      Swal.fire('Failed!', 'Failed to update the reservation.', 'error');
+Swal.fire('Échec !', 'Échec de la mise à jour de la réservation.', 'error');
       console.error('Failed to update reservation:', error);
     }
   };
@@ -147,7 +151,7 @@ const ModifyReservation = ({ isOpen, onRequestClose, reservationData }) => {
 
   return (
     <Dialog open={isOpen} onClose={onRequestClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Modify Reservation</DialogTitle>
+      <DialogTitle>Modifier Réservation</DialogTitle>
       <DialogContent>
         {reservationData.typeR === 'hotel' ? (
           rooms.map((room, index) => (
@@ -179,10 +183,10 @@ const ModifyReservation = ({ isOpen, onRequestClose, reservationData }) => {
           </>
         )}
       </DialogContent>
-      <Typography variant="h6" sx={{ mt: 2 }}>&nbsp;&nbsp;&nbsp;&nbsp;Total Price: {prixTotal.toFixed(2)} DT</Typography>
+      <Typography variant="h6" sx={{ mt: 2 }}>&nbsp;&nbsp;&nbsp;&nbsp;Prix totale: {prixTotal.toFixed(2)} DT</Typography>
       <DialogActions>
-        <Button onClick={onRequestClose}>Cancel</Button>
-        <Button onClick={handleSaveChanges} color="primary">Save Changes</Button>
+        <Button onClick={onRequestClose}>Annuler</Button>
+        <Button onClick={handleSaveChanges} color="primary">Enregistrer</Button>
       </DialogActions>
     </Dialog>
   );

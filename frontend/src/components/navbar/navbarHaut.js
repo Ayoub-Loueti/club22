@@ -297,15 +297,15 @@ function NavbarHaut() {
           <div className="user-actions">
             <Link to={`/Home`} className="dropdown-item">
               <FontAwesomeIcon icon={faHome} className="acceuil-icon" />
-              Acceuil
+              <strong> Acceuil</strong>
             </Link>
             <Link to={`/profil/${userId}`} className="dropdown-item">
               <FontAwesomeIcon icon={faUser} className="profil-icon" />
-              Profil
+              <strong> Profil</strong>
             </Link>
             <button onClick={handleLogout} className="logout-button">
               <FontAwesomeIcon icon={faSignOutAlt} className="logout-icon" />
-              Déconnexion
+              <strong>Déconnexion</strong>
             </button>
           </div>
         </>

@@ -19,7 +19,7 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
-        Reservation Details
+         Détails de réservation
         <IconButton aria-label="close" onClick={onClose} sx={{ position: 'absolute', right: 8, top: 8 }}>
           <CloseIcon />
         </IconButton>
@@ -32,8 +32,8 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
               <Avatar src={`http://localhost:5000/${reservation.offre.collaborateur.logo}`} alt={reservation.offre.collaborateur.nom} sx={{ marginRight: 2 }} />
               <Typography variant="subtitle1">{reservation.offre.collaborateur.nom}</Typography>
             </Box>
-            <Typography variant="body2">Price: {reservation.prix_totale.toFixed(2)} DT</Typography>
-            <Typography variant="body2">Status: {reservation.etat}</Typography>
+            <Typography variant="body2">Prix: {reservation.prix_totale.toFixed(2)} DT</Typography>
+            <Typography variant="body2">Statut: {reservation.etat}</Typography>
             <Typography variant="body2">Type: {reservation.typeR}</Typography>
             
             {reservation.typeR === 'hotel' && (
@@ -50,7 +50,7 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
             )}
 
             {reservation.typeR === 'autre' && (
-              <Typography variant="body2">Number of People: {reservation.nombre}</Typography>
+              <Typography variant="body2">Nombres de personnes: {reservation.nombre}</Typography>
             )}
 
             <Box sx={{
@@ -68,7 +68,7 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">Close</Button>
+        <Button onClick={onClose} color="primary">Fermer</Button>
       </DialogActions>
     </Dialog>
   );
