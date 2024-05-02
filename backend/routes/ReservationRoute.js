@@ -29,6 +29,8 @@ router.get('/myReservations', authenticate, reservationController.getMyReservati
 router.get('/myReservationsBoxD', authenticate, reservationController.getMyReservationsBoxD);
 router.get('/myReservationsBoxT', authenticate, reservationController.getMyReservationsBoxT);
 router.put('/updateReservation/:id', authenticate, reservationController.modifyReservation);
+router.get('/getReservByCollabA/:collaboratorId', authenticate, reservationController.getReservByCollabA);
+router.get('/getReservByCollabB/:collaboratorId', authenticate, reservationController.getReservByCollabB);
 
 //hotel
 
