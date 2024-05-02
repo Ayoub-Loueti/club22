@@ -21,9 +21,6 @@ const DemandeModel = sequelize.define(
     titre: {
       type: DataTypes.STRING(200),
     },
-    description: {
-      type: DataTypes.STRING(200),
-    },
     date_demande: {
       type: DataTypes.DATE,
       allowNull: false,

@@ -517,8 +517,8 @@ margin-left: 11%;
   padding: 8px 16px; /* Padding */
   position: fixed; /* Positioned relative to the viewport */
   z-index: 1; /* Sit on top */
-  right: 52%; /* Center the toast */
-  bottom: 370px; /* 30px from the bottom */
+  right: 45%; /* Center the toast */
+  bottom: 100px; /* 30px from the bottom */
   font-size: 14px; /* Text size */
 }
 
@@ -528,13 +528,13 @@ margin-left: 11%;
 }
 
 @keyframes fadein {
-  from {bottom: 360px; opacity: 0;} 
-  to {bottom: 370px; opacity: 1;}
+  from {bottom: 90px; opacity: 0;} 
+  to {bottom: 100px; opacity: 1;}
 }
 
 @keyframes fadeout {
-  from {bottom: 370px; opacity: 1;} 
-  to {bottom: 360px; opacity: 0;}
+  from {bottom: 100px; opacity: 1;} 
+  to {bottom: 90px; opacity: 0;}
 }
 .postLocation {
   display: flex;
