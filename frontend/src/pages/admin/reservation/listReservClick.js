@@ -70,9 +70,9 @@ const MyReservations = ({ collaborateurId }) => {
             case 'reparation':
                 return '#ADD8E6'; // Light blue color for 'reparation' state
             case 'refuser':
-                return '#FF6347'; // Tomato red, a beautiful shade for 'refuser' state
+                return '#f8d7da'; // Tomato red, a beautiful shade for 'refuser' state
             case 'accepter':
-                return '#70CD32'; // Lime green, a bright and positive color for 'accepter' state
+                return '#77DD77'; // Lime green, a bright and positive color for 'accepter' state
             case 'en_cours':
                 return '#F4F4F4'; // Default light grey color for 'in progress' state
             default:
@@ -178,7 +178,7 @@ const handleDownloadClick = (e, reservationId) => {
       
 
           {/* Grid for reponse Reservations */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={12}>
             <Box sx={{ mb: 2 }}>
               <ToggleButtonGroup
                 value={reponseFilter}
@@ -188,8 +188,8 @@ const handleDownloadClick = (e, reservationId) => {
                 sx={{ margin: '0 auto', mb: 2 }}
               >
                 <ToggleButton value="tous">Tous</ToggleButton>
-                <ToggleButton value="accepter">Accepter</ToggleButton>
-                <ToggleButton value="refuser">Refuser</ToggleButton>
+                <ToggleButton value="accepter">Acceptés</ToggleButton>
+                <ToggleButton value="refuser">Refusés</ToggleButton>
               </ToggleButtonGroup>
               <Card raised sx={{ height: 600, overflowY: 'auto' }}>
                 <CardContent>
@@ -280,14 +280,14 @@ const handleDownloadClick = (e, reservationId) => {
                             <Typography
                               style={{ color: 'black', fontWeight: 'bold' }}
                             >
-                              Réservation acceptée avec succès
+                              Réservation acceptée
                             </Typography>
                           )}
                           {reservation.etat === 'refuser' && (
                             <Typography
                               style={{ color: 'black', fontWeight: 'bold' }}
                             >
-                              Réservation a été refusée
+                              Réservation refusée
                             </Typography>
                           )}
                         </Box>

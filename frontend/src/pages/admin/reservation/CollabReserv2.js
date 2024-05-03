@@ -55,8 +55,8 @@ function CollaborateurPage2() {
     <>
       <div>
         {showOffreCollab2 && (
-          <button className="voir-tous-btn" onClick={handleViewAllOffers}>
-            Tous les Reservation
+          <button className="voir-tous-bttn" onClick={handleViewAllOffers}>
+            Tous les Réservations
           </button>
         )}
         <div className="PageCollaborateur-container">

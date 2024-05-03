@@ -100,25 +100,26 @@
     padding: 10px 0;
   }
   
-  .voir-tous-btn {
+  .voir-tous-bttn {
     background: linear-gradient(to right, #191f43, #6b85a4); /* Gradient background from dark blue to light blue */
     color: white; /* White text */
     border: none; /* No border */
-    padding: 10px 25px; /* Increased horizontal padding for a wider button */
+    padding: 13px 25px; /* Increased horizontal padding for a wider button */
     font-size: 16px; /* Font size */
     font-weight: bold; /* Bold text */
+    margin-top: 18px;
     border-radius: 20px; /* Large border-radius for pill shape */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     cursor: pointer; /* Pointer cursor on hover */
     transition: all 0.3s ease; /* Smooth transition for hover effects */
   }
   
-  .voir-tous-btn:hover {
+  .voir-tous-bttn:hover {
     background: linear-gradient(to right, #879eb9, #c50f10); /* Change to a gradient from light blue to red on hover */
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Slightly larger shadow on hover */
   }
   
-  .voir-tous-btn:active {
+  .voir-tous-bttn:active {
     background: #c50f10; /* Solid red background when the button is clicked */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Smaller shadow for a pressed effect */
   }
