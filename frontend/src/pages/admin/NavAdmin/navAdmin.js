@@ -133,8 +133,13 @@ function NavAdmin() {
       },
       {
         icon: faCalendarAlt,
-        label: 'liste réservation',
+        label: 'liste réservations',
         path: '/listReservation',
+      },
+      {
+        icon: faCalendarAlt,
+        label: 'Demandes réservations',
+        path: '/demandeReservation',
       },
     ];
 

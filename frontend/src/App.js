@@ -32,6 +32,7 @@ import MyReservations from './pages/OffreEmploye/myReservation';
 import AdminPanel from './pages/admin/adherant/adminAdherant';
 import AdminSignalsPage from './pages/admin/signal/AdminSignalsPage';
 import PostLink from './components/postLink/postLink';
+import DemandeReservation from './pages/admin/reservation/CollabReserv2';
 
 function App() {
   return (
@@ -39,14 +40,16 @@ function App() {
       <Router>
         <div className="App">
           <Routes>
-          <Route path="/post/:postId" element={
-            <ProtectedRoute>
-               {' '}
-               <Home/>
-               <PostLink />
-               {' '}
-             </ProtectedRoute>
-            } />
+            <Route
+              path="/post/:postId"
+              element={
+                <ProtectedRoute>
+                  {' '}
+                  <Home />
+                  <PostLink />{' '}
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/"
               element={
@@ -88,8 +91,8 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AdminRestrictedRoute>
-                  {' '}
-                  <ListClient />{' '}
+                    {' '}
+                    <ListClient />{' '}
                   </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
@@ -98,9 +101,9 @@ function App() {
               path="/listEmploye"
               element={
                 <ProtectedRoute>
-                   <AdminRestrictedRoute>
-                  {' '}
-                  <ListEmploye />{' '}
+                  <AdminRestrictedRoute>
+                    {' '}
+                    <ListEmploye />{' '}
                   </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
@@ -110,8 +113,8 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AdminRestrictedRoute>
-                  {' '}
-                  <ListCollaborateur />{' '}
+                    {' '}
+                    <ListCollaborateur />{' '}
                   </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
@@ -121,8 +124,8 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AdminRestrictedRoute>
-                  {' '}
-                  <ListCollab />{' '}
+                    {' '}
+                    <ListCollab />{' '}
                   </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
@@ -132,8 +135,8 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AdminRestrictedRoute>
-                  {' '}
-                  <AdminPanel />{' '}
+                    {' '}
+                    <AdminPanel />{' '}
                   </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
@@ -143,8 +146,8 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AdminRestrictedRoute>
-                  {' '}
-                  <AdminSignalsPage />{' '}
+                    {' '}
+                    <AdminSignalsPage />{' '}
                   </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
@@ -153,9 +156,9 @@ function App() {
               path="/MesReservations"
               element={
                 <ProtectedRoute>
-                   <ClientRestrictedRoute>
-                  {' '}
-                  <MyReservations />{' '}
+                  <ClientRestrictedRoute>
+                    {' '}
+                    <MyReservations />{' '}
                   </ClientRestrictedRoute>
                 </ProtectedRoute>
               }
@@ -165,8 +168,8 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AdminRestrictedRoute>
-                  {' '}
-                  <OffreAdmin />{' '}
+                    {' '}
+                    <OffreAdmin />{' '}
                   </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
@@ -176,8 +179,19 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AdminRestrictedRoute>
-                  {' '}
-                  <ListReservation />{' '}
+                    {' '}
+                    <ListReservation />{' '}
+                  </AdminRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/demandeReservation"
+              element={
+                <ProtectedRoute>
+                  <AdminRestrictedRoute>
+                    {' '}
+                    <DemandeReservation />{' '}
                   </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
@@ -187,8 +201,8 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ClientRestrictedRoute>
-                  {' '}
-                  <CollaborateurPage />{' '}
+                    {' '}
+                    <CollaborateurPage />{' '}
                   </ClientRestrictedRoute>
                 </ProtectedRoute>
               }
@@ -198,8 +212,8 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ClientRestrictedRoute>
-                  {' '}
-                  <CollaborateurClickPage />{' '}
+                    {' '}
+                    <CollaborateurClickPage />{' '}
                   </ClientRestrictedRoute>
                 </ProtectedRoute>
               }
@@ -208,9 +222,9 @@ function App() {
               path="/offrePage"
               element={
                 <ProtectedRoute>
-                   <ClientRestrictedRoute>
-                  {' '}
-                  <OffreEmploye />{' '}
+                  <ClientRestrictedRoute>
+                    {' '}
+                    <OffreEmploye />{' '}
                   </ClientRestrictedRoute>
                 </ProtectedRoute>
               }
@@ -219,9 +233,9 @@ function App() {
               path="/offrePageDetails/:offreId"
               element={
                 <ProtectedRoute>
-                   <ClientRestrictedRoute>
-                  {' '}
-                  <OffreEmployeDetails />{' '}
+                  <ClientRestrictedRoute>
+                    {' '}
+                    <OffreEmployeDetails />{' '}
                   </ClientRestrictedRoute>
                 </ProtectedRoute>
               }
@@ -237,7 +251,7 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AdminRestrictedRoute>
-                  <TousLesUtilisateurs />
+                    <TousLesUtilisateurs />
                   </AdminRestrictedRoute>
                 </ProtectedRoute>
               }

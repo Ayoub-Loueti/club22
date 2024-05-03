@@ -35,7 +35,7 @@
   border-radius: 25px; /* Rounded corners for the hover background */
   padding: 4px 20px 4px 20px; /* Symmetric padding for vertical and initial horizontal */
    transition: background-color 0.2s ease; /* Smooth transition for all properties */
-  width: 180px;
+  width: 190px;
 margin-left: -3px;}
 /*
 .icon-and-tooltip:hover {
@@ -146,7 +146,7 @@ margin-left: -3px;}
   align-items: flex-start; /* Alignement à gauche */
   height: 100%; /* Prend toute la hauteur disponible */
   padding-left: 10px; /* Déplace toutes les icônes un peu plus à droite */
-  padding-top: 120px; /* Espacement optionnel en haut */
+  padding-top: 70px; /* Espacement optionnel en haut */
   padding-bottom: 10px; /* Espacement optionnel en bas */
 }
 
