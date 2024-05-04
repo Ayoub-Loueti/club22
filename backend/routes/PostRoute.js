@@ -28,4 +28,8 @@ router.get('/signalsCount', authenticate, postController.getSignalsCount);
 router.get('/tophashtags', postController.getTopHashtags);
 router.get('/hashtags',authenticate, postController.getHashtagsWithPosts);
 
+router.get('/semainelike', authenticate, postController.SumSeamine);
+router.get('/bestPost', authenticate, postController.BestPost);
+router.get('/bestCmntr', authenticate, postController.BestCmntr);
+
 module.exports = router;

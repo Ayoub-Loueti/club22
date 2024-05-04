@@ -36,6 +36,10 @@ const PostModel = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true, 
     },
+    SemaineLike : {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
   },
   {
     tableName: 'post',

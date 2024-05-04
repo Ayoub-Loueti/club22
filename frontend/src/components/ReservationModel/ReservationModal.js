@@ -71,7 +71,7 @@ const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete }) => {
     );
 };
 
-const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type, isAdherant, debut , fin }) => {
+const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type, isAdherant, debut , fin ,details}) => {
   const calculateDaysMultiplier = (start, end) => {
     if (!start || !end) return 1;
     const diffDays = (end - start) / (1000 * 3600 * 24) + 1; // Add 1 to include both start and end day
@@ -85,9 +85,7 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
         }
         priceIncrease += children * (basePrice * 0.2);
         let totalCost = basePrice + priceIncrease;
-        if (type === 'hotel') {
-          totalCost *= daysMultiplier;
-      }
+
         if (isAdherant) {
             totalCost *= (1 - remise / 100);
         }
@@ -99,17 +97,37 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
 
     const [userInfo, setUserInfo] = useState(null);
     const [rooms, setRooms] = useState([{ id: 1, adults: 1, children: 0, prix: initialRoomPrice }]);
-    const [nombre, setNombre] = useState(1);
+    const today = new Date();
     const [reservationStart, setReservationStart] = useState();
     const [reservationEnd, setReservationEnd] = useState();
-
+    const [nombre, setNombre] = useState(1);
+    
     useEffect(() => {
-      const daysMultiplier = calculateDaysMultiplier(reservationStart, reservationEnd);
-      const updatedRooms = rooms.map(room => ({
-          ...room,
-          prix: calculateRoomPrice(room.adults, room.children, prix, isAdherant, daysMultiplier)
-      }));
-      setRooms(updatedRooms);
+      if (type === 'voyage' && debut) {
+          const startDate = new Date(debut);
+          const endDate = new Date(startDate.getTime() + details.nbr_jours * 24 * 60 * 60 * 1000);
+          setReservationStart(startDate);
+          setReservationEnd(endDate);
+      }
+  }, [type, debut]);
+
+  const handleStartDateChange = (date) => {
+      setReservationStart(date);
+      if (type === 'voyage' && date) {
+          const endDate = new Date(date.getTime() + details.nbr_jours * 24 * 60 * 60 * 1000);
+          setReservationEnd(endDate);
+      }
+  };
+
+  const handleEndDateChange = (date) => {
+      setReservationEnd(date);
+  };
+
+  const [daysMultiplier, setDaysMultiplier] = useState(1);
+  
+    useEffect(() => {
+      const newDaysMultiplier  = calculateDaysMultiplier(reservationStart, reservationEnd);
+      setDaysMultiplier(newDaysMultiplier);
   }, [reservationStart, reservationEnd, prix, remise, isAdherant]);
 
     useEffect(() => {
@@ -162,7 +180,7 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
             nombre: type !== 'hotel' ? nombre : rooms.length,
             typeR: type ,
             prix_totale: type === 'hotel' ? rooms.reduce((acc, room) => acc + room.prix, 0).toFixed(2) : (nombre * calculateRoomPrice(1, 0, prix, isAdherant)).toFixed(2),
-            date_debut: type === 'hotel' ? reservationStart.toISOString() : null ,
+            date_debut: reservationStart.toISOString() ,
             date_fin: type === 'hotel' ? reservationEnd.toISOString() : null ,
           };
 
@@ -182,6 +200,10 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
     const incrementNombre = () => setNombre(nombre + 1);
     const decrementNombre = () => setNombre(Math.max(1, nombre - 1));
     const isDateSelected = reservationStart && reservationEnd;
+
+
+
+
 
     return (
       <Dialog open={isOpen} onClose={onRequestClose} maxWidth="sm" fullWidth>
@@ -216,8 +238,7 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
                   label="Date de début"
                   value={reservationStart}
                   onChange={setReservationStart}
-                  minDate={new Date(debut)}
-                  maxDate={new Date(fin)}
+                  minDate={today}
                   renderInput={(params) => (
                     <TextField 
                       {...params} 
@@ -232,8 +253,6 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
                   label="Date de fin"
                   value={reservationEnd}
                   onChange={setReservationEnd}
-                  minDate={new Date(debut)}
-                  maxDate={new Date(fin)}
                   renderInput={(params) => (
                     <TextField 
                       {...params} 
@@ -246,6 +265,63 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
                 />
               </LocalizationProvider>
             </>
+          )}
+          {type === 'voyage' && (
+                    <>
+                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <MobileDatePicker
+                                label="Date de début"
+                                value={reservationStart}
+                                onChange={handleStartDateChange}
+                                minDate={today}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        placeholder="jj/mm/aaaa"
+                                        fullWidth
+                                        error={!reservationStart}
+                                        helperText={!reservationStart ? "Sélection obligatoire" : ""}
+                                    />
+                                )}
+                            />
+                            <MobileDatePicker
+                                label="Date de fin"
+                                value={reservationEnd}
+                                onChange={handleEndDateChange}
+                                minDate={reservationStart}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        placeholder="jj/mm/aaaa"
+                                        fullWidth
+                                        error={!reservationEnd}
+                                        helperText={!reservationEnd ? "Sélection obligatoire" : ""}
+                                    />
+                                )}
+                            />
+                        </LocalizationProvider>
+                    </>
+          )}
+          {type === 'activite' && (
+                    <>
+                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <MobileDatePicker
+                                label="Date de début"
+                                value={reservationStart}
+                                onChange={handleStartDateChange}
+                                minDate={today}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        placeholder="jj/mm/aaaa"
+                                        fullWidth
+                                        error={!reservationStart}
+                                        helperText={!reservationStart ? "Sélection obligatoire" : ""}
+                                    />
+                                )}
+                            />
+                        </LocalizationProvider>
+                    </>
           )}
           <Box sx={{ maxHeight: '40vh', overflowY: 'auto' }}>
             {type === 'hotel' ? (
@@ -289,14 +365,12 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type,
             </Typography>
           )}
           <Typography variant="h6" sx={{ mt: 2 }}>
-            Prix totale:{' '}
-            {type === 'hotel'
-              ? rooms.reduce((acc, room) => acc + room.prix, 0).toFixed(2)
-              : (nombre * calculateRoomPrice(1, 0, prix, isAdherant)).toFixed(
-                  2
-                )}{' '}
-            DT
-          </Typography>
+    Prix totale:{' '}
+    {type === 'hotel'
+        ? (rooms.reduce((acc, room) => acc + room.prix, 0) * daysMultiplier).toFixed(2)
+        : (nombre * calculateRoomPrice(1, 0, prix, isAdherant)).toFixed(2)} DT
+</Typography>
+
           {type === 'hotel' && (
             <Button
               startIcon={<AddCircleOutlineIcon />}

@@ -35,7 +35,7 @@ exports.toggleLikePost = async (req, res) => {
             // If a like exists, unlike the post and remove notification
             await existingLike.destroy();
             await post.decrement('nbr_likes');
-  
+            await post.decrement('SemaineLike');
             // Find and destroy the like notification
             const likeNotification = await Notification.findOne({
                 where: {
@@ -63,7 +63,8 @@ exports.toggleLikePost = async (req, res) => {
                 date_like: new Date()
             });
             await post.increment('nbr_likes');
-  
+            await post.increment('SemaineLike');
+            
             // Do not create a notification if the user liking is the post owner
             if (id_utilisateur !== post.id_utilisateur) {
                 // Create a like notification
@@ -142,7 +143,7 @@ exports.toggleLikeComment = async (req, res) => {
             // If a like exists, unlike the post and remove notification
             await existingLike.destroy();
             await comment.decrement('nbr_likeCom');
-  
+            await comment.decrement('semaineCom');
             // Find and destroy the like notification
             const likeNotification = await Notification.findOne({
                 where: {
@@ -170,7 +171,7 @@ exports.toggleLikeComment = async (req, res) => {
                 date_likeCom: new Date()
             });
             await comment.increment('nbr_likeCom');
-  
+            await comment.increment('semaineCom');
             // Do not create a notification if the user liking is the post owner
             if (id_utilisateur !== comment.id_utilisateur) {
                 // Create a like notification
