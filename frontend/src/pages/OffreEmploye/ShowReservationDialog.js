@@ -11,7 +11,8 @@ import {
   Button,
   List,
   ListItem,
-  ListItemText
+  ListItemText,
+  Paper,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -46,6 +47,15 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
             <Typography variant="h5" gutterBottom>
               {reservation.offre.destination}
             </Typography>
+            <Paper elevation={3} sx={{ padding: 2 }}>
+              <Typography variant="body2">
+                Nom de l'employé: {reservation.employe.utilisateur.nom}{' '}
+                {reservation.employe.utilisateur.prenom}
+              </Typography>
+              <Typography variant="body2">
+                Email de l'employé: {reservation.employe.utilisateur.email}
+              </Typography>
+            </Paper>
             <Box
               sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}
             ></Box>
@@ -55,18 +65,23 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
             <Typography variant="body2">Type: {reservation.typeR}</Typography>
 
             {reservation.typeR === 'hotel' && (
-              <List>
-                {reservation.rooms.map((room, index) => (
-                  <ListItem key={index} divider sx={{ pt: 2, pb: 2 }}>
-                    <ListItemText
-                      primary={`Chambre ${index + 1}:`}
-                      secondary={`Adultes: ${room.nbr_adults}, Enfants: ${
-                        room.nbr_enfants
-                      }, Prix: ${room.prix.toFixed(2)} DT`}
-                    />
-                  </ListItem>
-                ))}
-              </List>
+              <>
+                <Typography variant="h5" gutterBottom>
+                  Nom de l'hotel: {reservation.details.nom_hotel}
+                </Typography>
+                <List>
+                  {reservation.rooms.map((room, index) => (
+                    <ListItem key={index} divider sx={{ pt: 2, pb: 2 }}>
+                      <ListItemText
+                        primary={`Chambre ${index + 1}:`}
+                        secondary={`Adultes: ${room.nbr_adults}, Enfants: ${
+                          room.nbr_enfants
+                        }, Prix: ${room.prix.toFixed(2)} DT`}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </>
             )}
 
             {reservation.typeR === 'autre' && (
@@ -79,6 +94,9 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
               <>
                 <Typography variant="body2">
                   Nombre de jours: {reservation.details.nbr_jours}
+                </Typography>
+                <Typography variant="body2">
+                  Nombre de personnes: {reservation.nombre}{' '}
                 </Typography>
                 <Typography variant="body2">
                   Inclus: {reservation.details.inclus}

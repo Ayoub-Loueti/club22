@@ -17,6 +17,7 @@ import NavAdmin from '../NavAdmin/navAdmin';
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
+import ooredooLogo from './../../../assets/ooredoo2.png';
 
 const DemandeReservation = () => {
   const [demandeReservations, setDemandeReservations] = useState([]);
@@ -212,11 +213,25 @@ const groupReservationsByDate = (reservations) => {
 const groupedReservations = groupReservationsByDate(
   filteredDemandeReservations
 );
+const getCollaborateurLogoUrl = (reservation) => {
+  // Vérifiez si l'URL du logo est disponible dans les données de la réservation
+  if (reservation.offre.collaborateur.logo) {
+    // Retournez l'URL complète du logo du collaborateur
+    return `http://localhost:5000/${reservation.offre.collaborateur.logo}`;
+  } else {
+    // Si l'URL du logo n'est pas disponible, retournez une URL par défaut ou une image générique
+    return 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.flaticon.com%2Ffr%2Ficone-gratuite%2Fpas-dappareil-photo_482432&psig=AOvVaw2oESc9luFlfvNxWovo3iww&ust=1714921741095000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCPis3Lqj9IUDFQAAAAAdAAAAABAE'; // Remplacez par votre URL par défaut
+  }
+};
+
 const downloadPDFConfirmedByDate = async (date) => {
   const pdf = new jsPDF();
 
-  // Add header to the PDF
-  pdf.text(`Réservations Confirmées pour le ${date}`, 10, 10);
+  // Add Ooredoo logo and header text
+  pdf.addImage(ooredooLogo, 'PNG', 10, 5, 25, 25);
+  pdf.setFontSize(14);
+  pdf.setTextColor('#333333');
+  pdf.text(`Le(s) réservation(s) Confirmée(s) pour le ${date}`, 70, 30);
 
   // Add confirmed reservations for the date to the PDF
   groupedReservations[date].forEach((reservation, index) => {
@@ -228,45 +243,78 @@ const downloadPDFConfirmedByDate = async (date) => {
 
       // Draw a rectangle as a card for the reservation
       pdf.setFillColor('#f2f2f2'); // Light gray background color for the card
-      pdf.rect(10, 20, 180, 100, 'F'); // Draw a filled rectangle as a card
+      const cardHeight = calculateCardHeight(reservation); // Calculate card height based on content
+      pdf.rect(10, 40, 180, cardHeight, 'F'); // Draw a filled rectangle as a card
       pdf.setTextColor('#000000'); // Set text color to black for better readability
 
-      // Add reservation details to the card
+      // Add collaborator's logo and name at the top center
+      const logoData = getCollaborateurLogoUrl(reservation);
+      pdf.addImage(logoData, 'JPEG', 70, 45, 30, 30); // Adjust the positioning as needed
       pdf.text(
         `Nom Collaborateur: ${reservation.offre.collaborateur.nom}`,
-        15,
-        30
+        105,
+        60,
+      
       );
-      pdf.text(`Titre: ${reservation.offre.titre}`, 15, 40);
-      pdf.text(`Destination: ${reservation.offre.destination}`, 15, 50);
-      pdf.text(`Prix: ${reservation.prix_totale.toFixed(2)} DT`, 15, 60);
-      pdf.text(`Type: ${reservation.typeR}`, 15, 70);
+
+      // Add reservation details to the card
+      pdf.text(`Titre: ${reservation.offre.titre}`, 30, 100);
+      pdf.text(`Destination: ${reservation.offre.destination}`, 30, 110);
+      pdf.text(`Type: ${reservation.typeR}`, 30, 120);
+      pdf.text(
+        `Nom de l'employé: ${reservation.employe.utilisateur.nom} ${reservation.employe.utilisateur.prenom}`,
+        30,
+        130
+      );
+      pdf.text(
+        `Email de l'employé: ${reservation.employe.utilisateur.email}`,
+        30,
+        140
+      );
+      pdf.text(`Prix: ${reservation.prix_totale.toFixed(2)} DT`, 30, 150);
 
       // Add specific details based on reservation type
-      let yPos = 80;
+      let yPos = 160;
       switch (reservation.typeR) {
         case 'hotel':
-          pdf.text('Chambres:', 15, yPos);
-          reservation.rooms.forEach((room, roomIndex) => {
-            const roomDetails = `Chambre ${roomIndex + 1}: Adultes - ${
-              room.nbr_adults
-            }, Enfants - ${room.nbr_enfants}, Prix - ${room.prix.toFixed(
-              2
-            )} DT`;
-            pdf.text(roomDetails, 20, yPos + 10 + roomIndex * 10);
-          });
+          pdf.text(
+            `Nom de l'hotel: ${reservation.details.nom_hotel}`,
+            30,
+            yPos
+          );
+          yPos += 20; // Increase Y position for visual separation between hotel name and room details
+
+          pdf.text('Chambres:', 30, yPos);
+          reservation.rooms.forEach(
+            (room, roomIndex) => {
+              const roomDetails = `Chambre ${roomIndex + 1}: Adultes - ${
+                room.nbr_adults
+              }, Enfants - ${room.nbr_enfants}, Prix - ${room.prix.toFixed(
+                2
+              )} DT`;
+              pdf.text(roomDetails, 35, yPos + 10 + roomIndex * 10);
+            },
+            30,
+            yPos
+          );
+
           break;
         case 'autre':
-          pdf.text(`Nombre de personnes: ${reservation.nombre}`, 15, yPos);
+          pdf.text(`Nombre de personnes: ${reservation.nombre}`, 30, yPos);
           break;
         case 'voyage':
-          pdf.text(`Nombre de jours: ${reservation.nbr_jours}`, 15, yPos);
-          pdf.text(`Inclus: ${reservation.inclus}`, 15, yPos + 10);
+          pdf.text(
+            `Nombre de jours: ${reservation.details.nbr_jours}`,
+            30,
+            yPos
+          );
+          pdf.text(`Nombre de personnes: ${reservation.nombre}`, 30, yPos + 10); // Add number of persons for voyages
+          pdf.text(`Inclus: ${reservation.details.inclus}`, 30, yPos + 20);
           // Add other specific details for voyage
           break;
         case 'activite':
-          pdf.text(`Durée: ${reservation.duree} heures`, 15, yPos);
-          pdf.text(`Inclus: ${reservation.inclus}`, 15, yPos + 10);
+          pdf.text(`Durée: ${reservation.details.duree} heures`, 30, yPos);
+          pdf.text(`Inclus: ${reservation.details.inclus}`, 30, yPos + 10);
           // Add other specific details for activite
           break;
         default:
@@ -275,7 +323,7 @@ const downloadPDFConfirmedByDate = async (date) => {
 
       // Add image to the card
       const imgData = reservation.offre.images[0]; // Assuming there is at least one image
-      pdf.addImage(imgData, 'JPEG', 130, 30, 60, 60);
+      pdf.addImage(imgData, 'JPEG', 130, 45, 60, 60);
 
       // Move down for the next card
       yPos += 30;
@@ -285,6 +333,26 @@ const downloadPDFConfirmedByDate = async (date) => {
   // Save and download the PDF
   pdf.save(`reservations_confirmees_${date}.pdf`);
 };
+
+// Function to calculate card height based on content
+const calculateCardHeight = (reservation) => {
+  let height = 160; // Initial height for common details
+  switch (reservation.typeR) {
+    case 'hotel':
+      height += 20 + reservation.rooms.length * 10; // Add room details height
+      break;
+    case 'voyage':
+      height += 30; // Add additional details for voyage
+      break;
+    case 'activite':
+      height += 20; // Add additional details for activite
+      break;
+    default:
+      break;
+  }
+  return height;
+};
+
 
 
 
