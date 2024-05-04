@@ -169,6 +169,7 @@ const closeProgramModal = () => {
                 isAdherant={isAdherant}
                 debut={date_debut}
                 fin={date_fin}
+                details={details}
               />
               {isAdherant === false && (
                 <button
