@@ -4,6 +4,8 @@ import RightSide from '../../components/rightSide/rightSide';
 import './home.css';
 import Navbar from '../../components/navbar/navbar';
 import NavbarHaut from '../../components/navbar/navbarHaut';
+import LifeSide from "../../components/leftSide/leftSide";
+
 const Home = () => {
   useEffect(() => {
     // Appliquer la couleur de fond à la page Home lors du montage
@@ -20,6 +22,7 @@ const Home = () => {
       <NavbarHaut />
 
       <div className="Home">
+        <LifeSide/>
         <PostSide />
         <RightSide />
       </div>

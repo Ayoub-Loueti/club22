@@ -14,7 +14,7 @@ const Signaler = require('../models/SignalerModel');
 const Hachtag = require('../models/HachtagModel');
 const { Op } = require('sequelize');
 const { sequelize } = require('../config/db');
-const { Sequelize } = require('sequelize'); 
+const { Sequelize, DataTypes, fn, col, literal  } = require('sequelize'); 
 
 // crud 
 
@@ -1046,6 +1046,90 @@ exports.getHashtagsWithPosts = async (req, res) => {
   } catch (error) {
     console.error('Error retrieving hashtags with posts:', error);
     res.status(500).json({ message: 'Error fetching hashtags with related posts', error: error.message });
+  }
+};
+
+
+exports.SumSeamine = async (req, res) => {
+  try {
+    const usersSemaineLike = await Post.findAll({
+      attributes: ['id_utilisateur', [Sequelize.fn('SUM', Sequelize.col('SemaineLike')), 'totalSemaineLike']],
+      group: ['id_utilisateur'],
+      order: [[Sequelize.literal('totalSemaineLike'), 'DESC']],
+      include: [
+        {
+          model: Utilisateur,
+          as: 'utilisateur',
+          attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+        },
+      ],
+    });
+
+    if (!usersSemaineLike.length) {
+      return res.status(404).json({ message: 'No users found' });
+    }
+
+    const sumAndUserWithHighestSemaineLike = {
+      totalSum: usersSemaineLike.reduce((total, user) => total + parseInt(user.dataValues.totalSemaineLike), 0),
+      userWithHighestSemaineLike: usersSemaineLike[0].toJSON(),
+    };
+
+    return res.status(200).json(sumAndUserWithHighestSemaineLike);
+  } catch (error) {
+    console.error('Error calculating user with highest SemaineLike:', error);
+    return res.status(500).json({ message: 'Error calculating user with highest SemaineLike', error: error.message });
+  }
+};
+
+exports.BestPost = async (req, res) => {
+  try {
+    const userWithHighestSemaineLike = await Post.findOne({
+      attributes: ['id_utilisateur'],
+      order: [['SemaineLike', 'DESC']],
+      include: [
+        {
+          model: Utilisateur,
+          as: 'utilisateur',
+          attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+        },
+      ],
+    });
+
+    if (!userWithHighestSemaineLike) {
+      return res.status(404).json({ message: 'No user found' });
+    }
+
+    const user = userWithHighestSemaineLike.toJSON();
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error('Error fetching user with highest SemaineLike:', error);
+    return res.status(500).json({ message: 'Error fetching user with highest SemaineLike', error: error.message });
+  }
+};
+
+exports.BestCmntr = async (req, res) => {
+  try {
+    const userWithHighestSemaineLike = await Commentaire.findOne({
+      attributes: ['id_utilisateur'],
+      order: [['SemaineCom', 'DESC']],
+      include: [
+        {
+          model: Utilisateur,
+          as: 'utilisateur',
+          attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+        },
+      ],
+    });
+
+    if (!userWithHighestSemaineLike) {
+      return res.status(404).json({ message: 'No user found' });
+    }
+
+    const user = userWithHighestSemaineLike.toJSON();
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error('Error fetching user with highest SemaineLike:', error);
+    return res.status(500).json({ message: 'Error fetching user with highest SemaineLike', error: error.message });
   }
 };
 
