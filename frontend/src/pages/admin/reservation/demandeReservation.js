@@ -214,26 +214,80 @@ const groupedReservations = groupReservationsByDate(
 );
 const downloadPDFConfirmedByDate = async (date) => {
   const pdf = new jsPDF();
-  let yPos = 10; // Initial Y position for content
 
   // Add header to the PDF
-  pdf.text(`Réservations Confirmées pour le ${date}`, 10, yPos);
-  yPos += 10; // Move down after header
+  pdf.text(`Réservations Confirmées pour le ${date}`, 10, 10);
 
   // Add confirmed reservations for the date to the PDF
   groupedReservations[date].forEach((reservation, index) => {
     if (reservation.etat === 'confirmer') {
-      const content = `${index + 1}. ${reservation.offre.titre} - ${
-        reservation.offre.collaborateur.nom
-      } - ${reservation.prix_totale} TND`;
-      pdf.text(content, 10, yPos);
-      yPos += 10; // Move down for the next reservation
+      // Add a new page for each reservation except the first one
+      if (index > 0) {
+        pdf.addPage();
+      }
+
+      // Draw a rectangle as a card for the reservation
+      pdf.setFillColor('#f2f2f2'); // Light gray background color for the card
+      pdf.rect(10, 20, 180, 100, 'F'); // Draw a filled rectangle as a card
+      pdf.setTextColor('#000000'); // Set text color to black for better readability
+
+      // Add reservation details to the card
+      pdf.text(
+        `Nom Collaborateur: ${reservation.offre.collaborateur.nom}`,
+        15,
+        30
+      );
+      pdf.text(`Titre: ${reservation.offre.titre}`, 15, 40);
+      pdf.text(`Destination: ${reservation.offre.destination}`, 15, 50);
+      pdf.text(`Prix: ${reservation.prix_totale.toFixed(2)} DT`, 15, 60);
+      pdf.text(`Type: ${reservation.typeR}`, 15, 70);
+
+      // Add specific details based on reservation type
+      let yPos = 80;
+      switch (reservation.typeR) {
+        case 'hotel':
+          pdf.text('Chambres:', 15, yPos);
+          reservation.rooms.forEach((room, roomIndex) => {
+            const roomDetails = `Chambre ${roomIndex + 1}: Adultes - ${
+              room.nbr_adults
+            }, Enfants - ${room.nbr_enfants}, Prix - ${room.prix.toFixed(
+              2
+            )} DT`;
+            pdf.text(roomDetails, 20, yPos + 10 + roomIndex * 10);
+          });
+          break;
+        case 'autre':
+          pdf.text(`Nombre de personnes: ${reservation.nombre}`, 15, yPos);
+          break;
+        case 'voyage':
+          pdf.text(`Nombre de jours: ${reservation.nbr_jours}`, 15, yPos);
+          pdf.text(`Inclus: ${reservation.inclus}`, 15, yPos + 10);
+          // Add other specific details for voyage
+          break;
+        case 'activite':
+          pdf.text(`Durée: ${reservation.duree} heures`, 15, yPos);
+          pdf.text(`Inclus: ${reservation.inclus}`, 15, yPos + 10);
+          // Add other specific details for activite
+          break;
+        default:
+          break;
+      }
+
+      // Add image to the card
+      const imgData = reservation.offre.images[0]; // Assuming there is at least one image
+      pdf.addImage(imgData, 'JPEG', 130, 30, 60, 60);
+
+      // Move down for the next card
+      yPos += 30;
     }
   });
 
   // Save and download the PDF
   pdf.save(`reservations_confirmees_${date}.pdf`);
 };
+
+
+
   return (
     <>
       <NavAdmin />

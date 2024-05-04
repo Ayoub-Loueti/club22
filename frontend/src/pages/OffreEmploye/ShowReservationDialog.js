@@ -78,7 +78,7 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
             {reservation.typeR === 'voyage' && (
               <>
                 <Typography variant="body2">
-                  Nombre de jours: {reservation.offre.details.nbr_jours}
+                  Nombre de jours: {reservation.details.nbr_jours}
                 </Typography>
                 <Typography variant="body2">
                   Inclus: {reservation.offre.details.inclus}
