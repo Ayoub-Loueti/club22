@@ -842,7 +842,7 @@ const Post = (props) => {
                       <hr></hr>
                       <strong>Collaborateur</strong>{' '}
                       <NavLink
-                        to={`/OffrePageDetails/${mention.offre.collaborateur.id_collaborateur}`}
+                        to={`/collabPage/${mention.offre.collaborateur.id_collaborateur}`}
                       >
                         {mention.offre.collaborateur.nom}
                       </NavLink>{' '}

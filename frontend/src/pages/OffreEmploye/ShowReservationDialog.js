@@ -81,7 +81,7 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
                   Nombre de jours: {reservation.details.nbr_jours}
                 </Typography>
                 <Typography variant="body2">
-                  Inclus: {reservation.offre.details.inclus}
+                  Inclus: {reservation.details.inclus}
                 </Typography>
                 {/* Ajoutez d'autres détails spécifiques au voyage ici */}
               </>
@@ -90,10 +90,10 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
             {reservation.typeR === 'activite' && (
               <>
                 <Typography variant="body2">
-                  Durée: {reservation.offre.details.duree} heures
+                  Durée: {reservation.details.duree} heures
                 </Typography>
                 <Typography variant="body2">
-                  Inclus: {reservation.offre.details.inclus}
+                  Inclus: {reservation.details.inclus}
                 </Typography>
                 {/* Ajoutez d'autres détails spécifiques à l'activité ici */}
               </>
