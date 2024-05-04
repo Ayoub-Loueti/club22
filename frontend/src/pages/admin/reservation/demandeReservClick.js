@@ -19,7 +19,6 @@ import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import ooredooLogo from './../../../assets/ooredoo2.png';
 
-
 const DemandeReserClick = ({ collaborateurId }) => {
   const [demandeReservations, setDemandeReservations] = useState([]);
   const [reponseReservations, setReponseReservations] = useState([]);
