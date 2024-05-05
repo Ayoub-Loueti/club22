@@ -12,8 +12,20 @@ const GrandHotelModel = require('../models/GrandHotelModel');
 const Evaluation = require('../models/EvaluationModel');
 
 exports.createReservation = async (req, res) => {
-  const { id_offre, nombre, prix_totale, hotels, typeR, date_debut, date_fin } =
-    req.body; // Extract hotels array from request body
+  const {
+    id_offre,
+    nombre,
+    prix_totale,
+    hotels,
+    typeR,
+    date_debut,
+    date_fin,
+    mode_paiement,
+    autorisation_deduction_salaire,
+    date_paiement,
+    montant_deduit,
+    statut_paiement,
+  } = req.body; // Extract hotels array from request body
   const userId = req.userId;
 
   if (nombre <= 0 || prix_totale <= 0) {
@@ -57,6 +69,11 @@ exports.createReservation = async (req, res) => {
       typeR,
       date_debut: new Date(date_debut),
       date_fin: new Date(date_fin),
+      mode_paiement,
+      autorisation_deduction_salaire,
+      date_paiement,
+      montant_deduit,
+      statut_paiement,
     });
 
     // Create associated hotel records
@@ -983,7 +1000,13 @@ exports.getMyReservationsBoxT = async (req, res) => {
 
 exports.modifyReservation = async (req, res) => {
   const { id } = req.params; // Correctly extracting the 'id' parameter
-  const { nombre, prix_totale, hotels } = req.body;
+  const {
+    nombre,
+    prix_totale,
+    hotels,
+    mode_paiement,
+    autorisation_deduction_salaire,
+  } = req.body;
 
   try {
     const reservation = await Reservation.findByPk(id); // Use 'id' not 'id_reservation'
@@ -991,7 +1014,12 @@ exports.modifyReservation = async (req, res) => {
       return res.status(404).json({ error: 'Reservation not found.' });
     }
 
-    await reservation.update({ nombre, prix_totale });
+    await reservation.update({
+      nombre,
+      prix_totale,
+      mode_paiement,
+      autorisation_deduction_salaire,
+    });
 
     // Update hotel details if any
     if (hotels && Array.isArray(hotels)) {

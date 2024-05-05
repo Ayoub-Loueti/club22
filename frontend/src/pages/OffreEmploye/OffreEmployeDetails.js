@@ -109,6 +109,19 @@ const closeProgramModal = () => {
   console.log('Fermeture du modal');
   setIsProgramModalOpen(false);
 };
+const handlePaymentMethod = (method) => {
+  // Update the mode_paiement state based on the selected method
+  setOffre((currentOffre) => ({ ...currentOffre, mode_paiement: method }));
+};
+
+const handleAuthorizationChange = () => {
+  // Toggle the authorization state for salary deduction
+  setOffre((currentOffre) => ({
+    ...currentOffre,
+    autorisation_deduction_salaire:
+      !currentOffre.autorisation_deduction_salaire,
+  }));
+};
   return (
     <>
       <Navbar />

@@ -16,24 +16,31 @@ const ReservationModel = sequelize.define(
       allowNull: false,
       defaultValue: DataTypes.NOW,
     },
-    id_offre:{
+    id_offre: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-          model: 'offre',
-          key: 'id_offre',
+        model: 'offre',
+        key: 'id_offre',
       },
     },
-    id_employe:{
+    id_employe: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-          model: 'employe',
-          key: 'id_employe',
+        model: 'employe',
+        key: 'id_employe',
       },
     },
     etat: {
-      type: DataTypes.ENUM('en_cours','confirmer','annuler','reparation','accepter','refuser'),
+      type: DataTypes.ENUM(
+        'en_cours',
+        'confirmer',
+        'annuler',
+        'reparation',
+        'accepter',
+        'refuser'
+      ),
     },
     nombre: {
       type: DataTypes.INTEGER,
@@ -50,7 +57,27 @@ const ReservationModel = sequelize.define(
     date_fin: {
       type: DataTypes.DATE,
     },
+    mode_paiement: {
+      type: DataTypes.ENUM('especes', 'deduction_salaire'),
+    },
+    autorisation_deduction_salaire: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false, // Par défaut, l'autorisation est fausse
+    },
+    date_paiement: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    montant_deduit: {
+      type: DataTypes.FLOAT,
+      defaultValue: 0,
+    },
+    statut_paiement: {
+      type: DataTypes.ENUM('en_attente', 'accepte', 'refuse', 'paye_especes'),
+      defaultValue: 'en_attente', 
+    },
   },
+
   {
     tableName: 'reservation',
     timestamps: false,
