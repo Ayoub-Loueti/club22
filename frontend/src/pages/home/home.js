@@ -5,6 +5,7 @@ import './home.css';
 import Navbar from '../../components/navbar/navbar';
 import NavbarHaut from '../../components/navbar/navbarHaut';
 import LifeSide from "../../components/leftSide/leftSide";
+import ScrollToTop from '../../components/designs/ScrollToTop';
 
 const Home = () => {
   useEffect(() => {
@@ -20,9 +21,10 @@ const Home = () => {
     <div>
       <Navbar />
       <NavbarHaut />
+      <ScrollToTop />
 
       <div className="Home">
-        <LifeSide/>
+        <LifeSide />
         <PostSide />
         <RightSide />
       </div>

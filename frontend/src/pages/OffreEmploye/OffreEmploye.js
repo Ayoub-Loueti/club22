@@ -5,6 +5,7 @@ import './OffreEmploye.css';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/navbar/navbar';
 import StarRating from './StarRating'; // Make sure this is imported correctly
+import ScrollToTop from '../../components/designs/ScrollToTop';
 
 function OffreEmploye() {
   const [offres, setOffres] = useState([]);
@@ -50,11 +51,17 @@ function OffreEmploye() {
   return (
     <>
       <Navbar />
+      <ScrollToTop />
+
       <div className="offre-employee-container">
         <h1 className="offre-employee-title">LES OFFRES DISPONIBLES</h1>
         <div className="filters">
-          {['tous', 'hotel', 'voyage', 'activité'].map(f => (
-            <button key={f} onClick={() => setFilter(f)} className={filter === f ? 'active' : ''}>
+          {['tous', 'hotel', 'voyage', 'activité'].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={filter === f ? 'active' : ''}
+            >
               {f.toUpperCase()}
             </button>
           ))}
@@ -62,11 +69,26 @@ function OffreEmploye() {
         <div className="offre-employee-cards-container">
           {filteredOffres.map((offre, index) => (
             <div key={index} className="offre-employee-card">
-              <img src={`http://localhost:5000/${offre.lesImages[offre.currentImageIndex]?.image}`} alt={`Image ${offre.currentImageIndex}`} />
-              {offre.remise > 0 && <div className="remise-badge">{`${offre.remise.toString().padStart(2, '0')}%`}</div>}
+              <img
+                src={`http://localhost:5000/${
+                  offre.lesImages[offre.currentImageIndex]?.image
+                }`}
+                alt={`Image ${offre.currentImageIndex}`}
+              />
+              {offre.remise > 0 && (
+                <div className="remise-badge">{`${offre.remise
+                  .toString()
+                  .padStart(2, '0')}%`}</div>
+              )}
               <h2>{offre.titre}</h2>
-              <StarRating rating={parseFloat(offre.evaluation.averageVotes)} numReviews={offre.evaluation.numberOfEvaluations} />
-              <button className="voirPlusOffre" onClick={() => handleVoirPlusClick(offre.id_offre)}>
+              <StarRating
+                rating={parseFloat(offre.evaluation.averageVotes)}
+                numReviews={offre.evaluation.numberOfEvaluations}
+              />
+              <button
+                className="voirPlusOffre"
+                onClick={() => handleVoirPlusClick(offre.id_offre)}
+              >
                 VOIR PLUS
               </button>
             </div>

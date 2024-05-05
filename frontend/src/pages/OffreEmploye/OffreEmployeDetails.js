@@ -29,6 +29,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import ProgramModal from './ProgramModal';
 import parse from 'html-react-parser';
+import ScrollToTop from '../../components/designs/ScrollToTop';
 
 function OffreEmployeDetails() {
   const [offre, setOffre] = useState(null);
@@ -126,6 +127,8 @@ const handleAuthorizationChange = () => {
     <>
       <Navbar />
       <NavbarHaut />
+      <ScrollToTop/>
+
       <div>
         <button className="retour-btn" onClick={() => window.history.back()}>
           <FaArrowLeft /> Retour
