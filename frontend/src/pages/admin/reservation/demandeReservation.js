@@ -31,7 +31,22 @@ const DemandeReservation = () => {
     useState([]);
   const [filteredReponseReservations, setFilteredReponseReservations] =
     useState([]);
+      const [updatedReservations, setUpdatedReservations] =
+        useState(demandeReservations);
 
+        const token = JSON.parse(localStorage.getItem('login'))?.token;
+
+  const fetchDemandeReservations = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/reservationsDe', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setDemandeReservations(response.data); // Setting the demander reservations
+      setFilteredDemandeReservations(response.data); // Setting the filtered demander reservations initially
+    } catch (err) {
+      console.error('Error fetching demander reservations:', err);
+    }
+  };
   useEffect(() => {
     const token = JSON.parse(localStorage.getItem('login'))?.token;
 
@@ -156,6 +171,40 @@ const DemandeReservation = () => {
       Swal.fire('Error!', 'Failed to refuse the reservation.', 'error');
     }
   };
+  
+    const handlerepair = async (id, event) => {
+      event.stopPropagation(); // Prevent opening the dialog
+      const token = JSON.parse(localStorage.getItem('login'))?.token;
+      try {
+        const response = await axios.put(
+          `http://localhost:5000/reservation/${id}/reparer`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        if (response.status === 200) {
+Swal.fire('Réparation réussie !', 'success');
+          // Reload or update local state here
+    fetchDemandeReservations();
+        }
+      } catch (error) {
+       console.error('Erreur lors du refus de la réservation :', error);
+       Swal.fire('Erreur !', 'Échec du refus de la réservation.', 'error');
+
+      }
+    };
+
+ const handleRepairAll = () => {
+   const repairedReservations = updatedReservations.map((reservation) => {
+     if (reservation.status === 'confirmed') {
+       return { ...reservation, status: 'reparation' };
+     }
+     return reservation;
+   });
+   setUpdatedReservations(repairedReservations);
+ };
+
   const downloadPDF = async (reservationId) => {
     // Ensure the element ID is correctly formed and points to an existing element
     const elementId = `reservation-card-${reservationId}`;
@@ -395,6 +444,14 @@ const calculateCardHeight = (reservation) => {
               <Button
                 size="small"
                 variant="contained"
+                sx={{ backgroundColor: '#7FB2B6', color: '#fff', ml: 1 }}
+                onClick={(event) => handleRepairAll(event)}
+              >
+                Réparer tous
+              </Button>
+              <Button
+                size="small"
+                variant="contained"
                 sx={{ backgroundColor: '#e1ae4a', color: '#fff', ml: 1 }}
                 onClick={() => downloadPDFConfirmedByDate(date)}
               >
@@ -535,7 +592,23 @@ const calculateCardHeight = (reservation) => {
                             >
                               <DownloadForOfflineIcon />
                             </IconButton>
-                          
+                            <Button
+                              size="small"
+                              variant="contained"
+                              sx={{
+                                backgroundColor: '#ABDEE6',
+                                color: '#fff',
+                                ml: 1,
+                                '&:hover': {
+                                  backgroundColor: '#7FB2B6',
+                                },
+                              }}
+                              onClick={(event) =>
+                                handlerepair(reservation.id_reservation, event)
+                              }
+                            >
+                              Réparer
+                            </Button>
                           </Box>
                         )}
                       </Box>

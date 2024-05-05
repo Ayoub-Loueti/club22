@@ -29,9 +29,63 @@ const DemandeReserClick = ({ collaborateurId }) => {
   const [reponseFilter, setReponseFilter] = useState('tous');
   const [filteredDemandeReservations, setFilteredDemandeReservations] =
     useState([]);
+     const [updatedReservations, setUpdatedReservations] =
+       useState(demandeReservations);
   const [filteredReponseReservations, setFilteredReponseReservations] =
     useState([]);
 
+    const token = JSON.parse(localStorage.getItem('login'))?.token;
+
+     const fetchDemandeReservations = async () => {
+       try {
+         console.log(
+           'Fetching demander reservations for collaborator ID:',
+           collaborateurId
+         );
+         const response = await axios.get(
+           `http://localhost:5000/getReservByCollabA/${collaborateurId}`,
+           {
+             headers: { Authorization: `Bearer ${token}` },
+           }
+         );
+         console.log('Demande Reservations:', response.data);
+         setDemandeReservations(response.data); // Setting the demander reservations
+         setFilteredDemandeReservations(response.data); // Setting the filtered demander reservations initially
+       } catch (err) {
+         console.error('Error fetching demander reservations:', err);
+       }
+     };
+const handlerepair = async (id, event) => {
+  event.stopPropagation(); // Prevent opening the dialog
+  const token = JSON.parse(localStorage.getItem('login'))?.token;
+  try {
+    const response = await axios.put(
+      `http://localhost:5000/reservation/${id}/reparer`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    if (response.status === 200) {
+      Swal.fire('Réparation réussie !', 'success');
+      // Reload or update local state here
+      fetchDemandeReservations();
+    }
+  } catch (error) {
+    console.error('Erreur lors du refus de la réservation :', error);
+    Swal.fire('Erreur !', 'Échec du refus de la réservation.', 'error');
+  }
+};
+
+const handleRepairAll = () => {
+  const repairedReservations = updatedReservations.map((reservation) => {
+    if (reservation.status === 'confirmed') {
+      return { ...reservation, status: 'reparation' };
+    }
+    return reservation;
+  });
+  setUpdatedReservations(repairedReservations);
+};
   useEffect(() => {
     const token = JSON.parse(localStorage.getItem('login'))?.token;
 
@@ -54,7 +108,7 @@ const DemandeReserClick = ({ collaborateurId }) => {
         console.error('Error fetching demander reservations:', err);
       }
     };
-
+  
     const fetchReponseReservations = async () => {
       try {
         console.log(
@@ -402,6 +456,14 @@ const calculateCardHeight = (reservation) => {
                 <Button
                   size="small"
                   variant="contained"
+                  sx={{ backgroundColor: '#7FB2B6', color: '#fff', ml: 1 }}
+                  onClick={(event) => handleRepairAll(event)}
+                >
+                  Réparer tous
+                </Button>
+                <Button
+                  size="small"
+                  variant="contained"
                   sx={{ backgroundColor: '#e1ae4a', color: '#fff', ml: 1 }}
                   onClick={() => downloadPDFConfirmedByDate(date)}
                 >
@@ -544,6 +606,23 @@ const calculateCardHeight = (reservation) => {
                             >
                               <DownloadForOfflineIcon />
                             </IconButton>
+                            <Button
+                              size="small"
+                              variant="contained"
+                              sx={{
+                                backgroundColor: '#ABDEE6',
+                                color: '#fff',
+                                ml: 1,
+                                '&:hover': {
+                                  backgroundColor: '#7FB2B6',
+                                },
+                              }}
+                              onClick={(event) =>
+                                handlerepair(reservation.id_reservation, event)
+                              }
+                            >
+                              Réparer
+                            </Button>
                           </Box>
                         )}
                       </Box>

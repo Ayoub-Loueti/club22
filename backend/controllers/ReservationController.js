@@ -446,20 +446,19 @@ exports.reparationReservation = async (req, res) => {
 
   try {
     // Find the employee corresponding to the logged-in user
-    const employe = await Employe.findOne({
+    const admin = await Utilisateur.findOne({
       where: {
         id_utilisateur: userId,
       },
     });
 
-    if (!employe) {
-      return res.status(404).json({ error: 'Employee not found' });
+    if (!admin) {
+      return res.status(404).json({ error: 'admin not found' });
     }
 
     // Find the reservation to be cancelled
     const userReservation = await Reservation.findOne({
       where: {
-        id_employe: employe.id_employe,
         id_reservation: reservationId,
         etat: 'confirmer',
       },
