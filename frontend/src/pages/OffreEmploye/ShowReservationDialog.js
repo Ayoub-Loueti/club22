@@ -40,12 +40,15 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
               alt={reservation.offre.collaborateur.nom}
               sx={{ marginRight: 2 }}
             />
-
             <Typography variant="h5" gutterBottom>
               {reservation.offre.titre}
             </Typography>
             <Typography variant="h5" gutterBottom>
               {reservation.offre.destination}
+            </Typography>{' '}
+            <Typography variant="h5" gutterBottom>
+              Date : De {reservation.date_debut} jusq'ua{' '}
+              {reservation.date_fin}
             </Typography>
             <Paper elevation={3} sx={{ padding: 2 }}>
               <Typography variant="body2">
@@ -63,7 +66,6 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
               Prix: {reservation.prix_totale.toFixed(2)} DT
             </Typography>
             <Typography variant="body2">Type: {reservation.typeR}</Typography>
-
             {reservation.typeR === 'hotel' && (
               <>
                 <Typography variant="h5" gutterBottom>
@@ -83,13 +85,11 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
                 </List>
               </>
             )}
-
             {reservation.typeR === 'autre' && (
               <Typography variant="body2">
                 Nombres de personnes: {reservation.nombre}
               </Typography>
             )}
-
             {reservation.typeR === 'voyage' && (
               <>
                 <Typography variant="body2">
@@ -104,7 +104,6 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
                 {/* Ajoutez d'autres détails spécifiques au voyage ici */}
               </>
             )}
-
             {reservation.typeR === 'activite' && (
               <>
                 <Typography variant="body2">
