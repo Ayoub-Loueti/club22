@@ -47,7 +47,7 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
               {reservation.offre.destination}
             </Typography>{' '}
             <Typography variant="h5" gutterBottom>
-              Date : De {reservation.date_debut} jusq'ua{' '}
+              Date : De {reservation.date_debut} Jusq'ua{' '}
               {reservation.date_fin}
             </Typography>
             <Paper elevation={3} sx={{ padding: 2 }}>
