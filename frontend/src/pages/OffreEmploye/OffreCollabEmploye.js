@@ -63,6 +63,8 @@ function OffreCollabEmploye({ collaborateurId }) {
 
   return (
     <>
+
+
       <Navbar />
       <div className="offre-employee-container">
         <h1 className="offre-employee-title">LES OFFRES DISPONIBLES</h1>
@@ -96,7 +98,10 @@ function OffreCollabEmploye({ collaborateurId }) {
                   />
                   <div className="remise-badge">{offre.remise}%</div>
                   <h2>{offre.titre}</h2>
-                  <StarRating rating={parseFloat(offre.evaluation.averageVotes)} numReviews={offre.evaluation.numberOfEvaluations} />
+                  <StarRating
+                    rating={parseFloat(offre.evaluation.averageVotes)}
+                    numReviews={offre.evaluation.numberOfEvaluations}
+                  />
                   <button
                     className="voirPlusOffre"
                     onClick={() => handleVoirPlusClick(offre.id_offre)}

@@ -1,23 +1,26 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import logo from '../../assets/logo.png';
+
 export default function ScrollToTop() {
-  const [scrollState, setScrollState] = useState(false);
+  const [scrollstate, setScrollState] = useState(false);
   const toTop = () => {
     window.scrollTo({ top: 0 });
   };
+
   window.addEventListener('scroll', () => {
     window.pageYOffset > 200 ? setScrollState(true) : setScrollState(false);
   });
+
   return (
-    <ToTop onClick={toTop} scrollState={scrollState}>
+    <ToTop onClick={toTop} scrollstate={scrollstate.toString()}>
       <img src={logo} alt="" />
     </ToTop>
   );
 }
 
 const ToTop = styled.div`
-  display: ${({ scrollState }) => (scrollState ? 'block' : 'none')};
+  display: ${({ scrollstate }) => (scrollstate === 'true' ? 'block' : 'none')};
   position: fixed;
   cursor: pointer;
   z-index: 10;
@@ -27,6 +30,6 @@ const ToTop = styled.div`
     height: 1.5rem;
   }
   border-radius: 2rem;
-  background-color: #1900ff39;
+  background-color: #ABDEE6;
   padding: 1rem;
 `;

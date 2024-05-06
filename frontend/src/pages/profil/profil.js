@@ -9,6 +9,7 @@ import './profil.css';
 
 import PostProfile from '../../components/postProfil/postProfil';
 import PostSavedModal from '../../components/PostSavedModal/PostSavedModal'; // Adjust the import path as needed
+import ScrollToTop from '../../components/designs/ScrollToTop';
 
 function Profil() {
   const { id } = useParams(); // Get user ID from URL
@@ -216,11 +217,11 @@ useOutsideClick(dropdownRef, () => {
     <>
       <Navbar />
       <NavbarHaut />
+      <ScrollToTop />
 
       <PostSavedModal
         modalOpened={modalOpened}
         setModalOpened={setModalOpened}
-        
       />
       <div className="profile-container">
         <div className="profile-header">

@@ -20,6 +20,13 @@
 .navbar.visible {
   transform: translateX(0);
 }
+
+
+.navbar:not(.visible) {
+  transform: translateX(-120px);
+}
+
+
 .navbar-toggle {
   position: fixed;
   left: 10px;

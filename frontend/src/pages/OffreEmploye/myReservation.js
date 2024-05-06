@@ -389,6 +389,7 @@ const downloadReservationPDF = async (reservation) => {
       <>
         <Navbar />
         <NavbarHaut />
+        
         {error && (
           <Typography color="error" sx={{ m: 2 }}>
             {error}

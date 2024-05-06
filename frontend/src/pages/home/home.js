@@ -17,6 +17,7 @@ const Home = () => {
       document.body.style.backgroundColor = ''; // Réinitialiser ou définir sur une autre couleur par défaut
     };
   }, []);
+  
   return (
     <div>
       <Navbar />

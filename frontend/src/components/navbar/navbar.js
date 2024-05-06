@@ -99,7 +99,7 @@ function Navbar() {
         <FontAwesomeIcon icon={faBars} style={{ fontSize: '27px' }} />
       </div>
 
-      <nav className={`navbar ${!isVisible ? '' : 'visible'}`}>
+      <nav className={`navbar ${!isVisible ? 'visible' : ''}`}>
         <img src={logo} alt="Logo" className="navbar-logo" />
         <div className="icon-containerrr">
           <FontAwesomeIcon

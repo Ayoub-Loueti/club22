@@ -5,12 +5,15 @@ import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import OffreEmploye from './OffreEmploye';
 import OffreCollabEmploye from './OffreCollabEmploye';
 import NavbarHaut from '../../components/navbar/navbarHaut';
+import Hero from '../../components/designs/Hero';
+import scrollreveal from 'scrollreveal';
 
 function CollaborateurPage() {
   const [collaborateurs, setCollaborateurs] = useState([]);
   const [selectedCollaborateurId, setSelectedCollaborateurId] = useState(null);
   const [startIndex, setStartIndex] = useState(0);
   const [showOffreCollab, setShowOffreCollab] = useState(false);
+ 
 
   useEffect(() => {
     const token = localStorage.getItem('login');
@@ -51,12 +54,34 @@ function CollaborateurPage() {
     setShowOffreCollab(false);
     setSelectedCollaborateurId(null);
   };
+ useEffect(() => {
+   const sr = scrollreveal({
+     origin: 'top',
+     distance: '80px',
+     duration: 2000,
+     reset: true,
+   });
+   sr.reveal(
+     `
+        #hero,
+        #services,
+        #recommend,
+        #testimonials,
+        footer
+        `,
+     {
+       opacity: 0,
+       interval: 300,
+     }
+   );
+ }, []);
 
   return (
     <>
       <NavbarHaut />
+      <Hero />
+
       <div>
-      
         {showOffreCollab && (
           <button className="voir-tous-btn" onClick={handleViewAllOffers}>
             Tous les offres
@@ -64,20 +89,39 @@ function CollaborateurPage() {
         )}
         <div className="PageCollaborateur-container">
           <div className="collabora-scroll-container">
-            {collaborateurs.slice(startIndex, startIndex + 6).map((collaborateur, index) => (
-              <div
-                key={index}
-                className={`collab-card ${selectedCollaborateurId === collaborateur.id_collaborateur ? 'active' : ''}`}
-                onClick={() => handleCollaboratorClick(collaborateur.id_collaborateur)}
-              >
-                <img src={`http://localhost:5000/${collaborateur.logo}`} alt={collaborateur.nom} />
-                <div className="collab-card-title">{collaborateur.nom}</div>
-              </div>
-            ))}
+            {collaborateurs
+              .slice(startIndex, startIndex + 6)
+              .map((collaborateur, index) => (
+                <div
+                  key={index}
+                  className={`collab-card ${
+                    selectedCollaborateurId === collaborateur.id_collaborateur
+                      ? 'active'
+                      : ''
+                  }`}
+                  onClick={() =>
+                    handleCollaboratorClick(collaborateur.id_collaborateur)
+                  }
+                >
+                  <img
+                    src={`http://localhost:5000/${collaborateur.logo}`}
+                    alt={collaborateur.nom}
+                  />
+                  <div className="collab-card-title">{collaborateur.nom}</div>
+                </div>
+              ))}
           </div>
           <div className="navig-buttons">
-            <FaArrowLeft onClick={handlePrevious} className="nav-icon" disabled={startIndex === 0} />
-            <FaArrowRight onClick={handleNext} className="nav-icon" disabled={startIndex + 4 >= collaborateurs.length} />
+            <FaArrowLeft
+              onClick={handlePrevious}
+              className="nav-icon"
+              disabled={startIndex === 0}
+            />
+            <FaArrowRight
+              onClick={handleNext}
+              className="nav-icon"
+              disabled={startIndex + 4 >= collaborateurs.length}
+            />
           </div>
           {showOffreCollab ? (
             <OffreCollabEmploye collaborateurId={selectedCollaborateurId} />

@@ -14,24 +14,31 @@
 
 .offre-employee-cards-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+      padding: 0 2rem;
+
 }
 
 .offre-employee-card {
   position: relative;
   border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 10px;
+      border-radius: 1rem;
+      padding: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
    min-height: 350px; /* Adjust based on your content */
   display: flex;
   flex-direction: column;
+      transition: 0.3s ease-in-out;
+              gap: 0.5rem;
+
+
 }
 
 .offre-employee-card:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+ transform: translateX(0.4rem) translateY(-1rem);
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+
 }
 
 .offre-employee-card img {
@@ -39,6 +46,8 @@
   height: 200px; /* adjust based on your preference */
   object-fit: cover; /* maintain aspect ratio without distortion */
   transition: transform 0.5s ease;
+        border-radius: 1rem;
+
 }
 
 .offre-employee-card:hover img {
@@ -102,7 +111,7 @@
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
-  margin-bottom: 20px;
+  margin-bottom: 70px;
 }
 
 .filters button:hover {
