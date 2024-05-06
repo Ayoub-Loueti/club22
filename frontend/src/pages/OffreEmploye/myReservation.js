@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Grid, Card, CardContent, Typography, Button, Box } from '@mui/material';
+import { Grid, Card, CardContent, Typography, Button, Box,Modal, Backdrop, Fade  } from '@mui/material';
 import Navbar from '../../components/navbar/navbar';
 import NavbarHaut from '../../components/navbar/navbarHaut';
 import ShowReservationDialog from './ShowReservationDialog'; // Import the dialog component
@@ -20,7 +20,10 @@ const MyReservations = () => {
     const [modifyDialogOpen, setModifyDialogOpen] = useState(false);
     const [ratings, setRatings] = useState({});
     const currentDate = new Date();
-    
+    const [showModal, setShowModal] = useState(false);
+    const [deductionDetails, setDeductionDetails] = useState([]);
+    const token = JSON.parse(localStorage.getItem('login'))?.token;
+
     useEffect(() => {
         const token = JSON.parse(localStorage.getItem('login'))?.token;
         
@@ -382,7 +385,21 @@ const downloadReservationPDF = async (reservation) => {
 };
 
 
+ const fetchDeductionDetails = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/myReservationsDeduction', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setDeductionDetails(response.data);
+            setShowModal(true);
+        } catch (err) {
+            console.error('Error fetching deduction details:', err);
+        }
+    };
 
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
 
 
 
@@ -587,11 +604,37 @@ const downloadReservationPDF = async (reservation) => {
             </Grid>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} style={{ marginTop: '-40px' }}>
             <Box sx={{ mb: 2 }}>
               <Typography variant="h5" sx={{ mb: 1 }}>
                 Resultat du demande
               </Typography>
+              <Button onClick={fetchDeductionDetails}>Afficher les détails de la déduction</Button>
+<Modal
+  open={showModal}
+  onClose={handleCloseModal}
+  closeAfterTransition
+>
+  <Fade in={showModal}>
+    {deductionDetails.length > 0 ? (
+      <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '10px', maxWidth: '400px', margin: 'auto', marginTop: '150px' }}>
+        {deductionDetails.map((detail) => (
+          <Card key={detail.id_reservation} style={{ marginBottom: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
+            <CardContent>
+              <Typography variant="h6" style={{ marginBottom: '10px' }}>{detail.offre.titre}</Typography>
+              <Typography style={{ marginBottom: '5px' }}>{`Date Paiement: ${new Date(detail.date_paiement).toLocaleDateString()}`}</Typography>
+              <Typography>{`Montant Deduit: ${detail.montant_deduit}`} DT</Typography>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    ) : (
+      <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '10px', maxWidth: '400px', margin: 'auto', marginTop: '150px' }}>
+        <Typography>Aucun détail de déduction à afficher.</Typography>
+      </div>
+    )}
+  </Fade>
+</Modal>
               <Card raised sx={{ height: 670, overflowY: 'auto' }}>
                 <CardContent>
                   {boxTReservations.map((reservation) => (

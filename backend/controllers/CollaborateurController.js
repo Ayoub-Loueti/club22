@@ -13,7 +13,7 @@ exports.createCollaborateur = async (req, res) => {
       if (!isAdmin) {
         return res.status(403).json({
           error:
-            'Permission denied. Only administrators can perform this action.',
+            'Permission refusée. Seuls les administrateurs peuvent effectuer cette action.',
         });
       }
   

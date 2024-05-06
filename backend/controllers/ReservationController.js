@@ -1308,6 +1308,91 @@ exports.getReservByCollabB = async (req, res) => {
   }
 };
 
+exports.getMyReservationsDeduction = async (req, res) => {
+  const userId = req.userId;
+
+  try {
+    const employe = await Employe.findOne({
+      where: { id_utilisateur: userId },
+    });
+
+    if (!employe) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+
+    let reservations = await Reservation.findAll({
+      where: {
+        id_employe: employe.id_employe,
+        etat: 'accepter',
+        mode_paiement: 'deduction_salaire',
+      },
+      include: [
+        {
+          model: Offre,
+          as: 'offre',
+          include: [
+            { model: Collaborateur, as: 'collaborateur' },
+            // Include other necessary models as needed
+          ],
+        },
+        {
+          model: Employe,
+          as: 'employe',
+          include: [
+            { model: Utilisateur, as: 'utilisateur' },
+            // Include other necessary models as needed
+          ],
+        },
+        // Include other necessary models as needed
+      ],
+    });
+
+    reservations = await Promise.all(
+      reservations.map(async (reservation) => {
+        const images = await ImageOffre.findAll({
+          where: { id_offre: reservation.id_offre },
+          attributes: ['image'],
+        });
+
+        const reservationJson = {
+          ...reservation.toJSON(),
+          offre: {
+            ...reservation.offre.toJSON(),
+            images: images.map((img) => img.image),
+          },
+        };
+
+        switch (reservation.offre.type) {
+          case 'hotel':
+            reservationJson.details = await GrandHotelModel.findOne({
+              where: { id_offre: reservation.id_offre },
+            });
+            break;
+          case 'voyage':
+            reservationJson.details = await VoyageModel.findOne({
+              where: { id_offre: reservation.id_offre },
+            });
+            break;
+          case 'activite':
+            reservationJson.details = await ActiviteModel.findOne({
+              where: { id_offre: reservation.id_offre },
+            });
+            break;
+        }
+
+        return reservationJson;
+      })
+    );
+
+    res.status(200).json(reservations);
+  } catch (error) {
+    console.error('Error fetching reservations:', error);
+    res
+      .status(500)
+      .json({ error: 'Internal server error', details: error.message });
+  }
+};
+
 //hotel
 
 exports.deleteHotel = async (req, res) => {
