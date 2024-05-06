@@ -58,6 +58,7 @@ exports.createReservation = async (req, res) => {
       return res.status(404).json({ error: 'Offer not found' });
     }
 
+    const statut_paiement = mode_paiement === 'especes' ? 'paye_especes' : 'en_attente';
     // Create the reservation
     const reservation = await Reservation.create({
       id_offre,
@@ -72,7 +73,7 @@ exports.createReservation = async (req, res) => {
       mode_paiement,
       autorisation_deduction_salaire,
       date_paiement,
-      montant_deduit,
+      montant_deduit:prix_totale,
       statut_paiement,
     });
 
@@ -497,6 +498,50 @@ exports.reparationReservation = async (req, res) => {
   }
 };
 
+exports.reparationReservations = async (req, res) => {
+  const userId = req.userId;
+  const reservationIds = req.body.reservationIds; // Assuming reservation IDs are passed in the request body as an array
+
+  try {
+    // Find the employee corresponding to the logged-in user
+    const admin = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: userId,
+      },
+    });
+
+    if (!admin) {
+      return res.status(404).json({ error: 'admin not found' });
+    }
+
+    // Find and update all reservations in the list
+    await Promise.all(
+      reservationIds.map(async (reservationId) => {
+        // Find the reservation to be repaired
+        const userReservation = await Reservation.findOne({
+          where: {
+            id_reservation: reservationId,
+            etat: 'confirmer',
+          },
+        });
+
+        if (!userReservation) {
+          console.error(`Reservation with ID ${reservationId} not found or cannot be repaired`);
+          // Return or continue depending on your requirements
+        }
+
+        // Update the reservation state to 'reparation'
+        await userReservation.update({ etat: 'reparation' });
+      })
+    );
+
+    res.status(200).json({ message: 'Reservations repaired successfully' });
+  } catch (error) {
+    console.error('Error repairing reservations:', error);
+    res.status(500).json({ error: 'Failed to repair reservations' });
+  }
+};
+
 exports.acceptationReservation = async (req, res) => {
   const userId = req.userId;
   const reservationId = req.params.id; // Assuming reservation ID is passed as a parameter
@@ -528,7 +573,7 @@ exports.acceptationReservation = async (req, res) => {
     }
 
     // Update the reservation state to 'annuler'
-    await userReservation.update({ etat: 'accepter' });
+    await userReservation.update({ etat: 'accepter', statut_paiement: 'accepte' });
 
     res.status(200).json({ message: 'Reservation accepted successfully' });
   } catch (error) {
@@ -568,7 +613,7 @@ exports.refuserReservation = async (req, res) => {
     }
 
     // Update the reservation state to 'annuler'
-    await userReservation.update({ etat: 'refuser' });
+    await userReservation.update({ etat: 'refuser', statut_paiement: 'refuse' });
 
     res.status(200).json({ message: 'Reservation refused successfully' });
   } catch (error) {
@@ -711,6 +756,10 @@ exports.getMyReservations = async (req, res) => {
         {
           model: Employe,
           as: 'employe',
+          include: [
+            { model: Utilisateur, as: 'utilisateur' },
+            // Ensure other necessary models are included as needed
+          ],
         },
         // Ensure other necessary models are included as needed
       ],
@@ -816,6 +865,10 @@ exports.getMyReservationsBoxD = async (req, res) => {
         {
           model: Employe,
           as: 'employe',
+          include: [
+            { model: Utilisateur, as: 'utilisateur' },
+            // Ensure other necessary models are included as needed
+          ],
         },
         // Ensure other necessary models are included as needed
       ],

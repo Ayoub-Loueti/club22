@@ -238,6 +238,17 @@ const handleAuthorizationChange = (event) => {
       }
       
         const token = JSON.parse(localStorage.getItem('login'))?.token;
+        let reservationStartAdjusted = reservationStart;
+  let reservationEndAdjusted = reservationEnd;
+
+  if (type === 'hotel') {
+    // Add one day to reservationStart and reservationEnd
+    reservationStartAdjusted = new Date(reservationStartAdjusted);
+    reservationStartAdjusted.setDate(reservationStartAdjusted.getDate() + 1);
+    reservationEndAdjusted = new Date(reservationEndAdjusted);
+    reservationEndAdjusted.setDate(reservationEndAdjusted.getDate() + 1);
+  }
+
         const reservationData = {
           id_offre: offreId,
           hotels:
@@ -257,8 +268,8 @@ const handleAuthorizationChange = (event) => {
               : (nombre * calculateRoomPrice(1, 0, prix, isAdherant)).toFixed(
                   2
                 ),
-          date_debut: reservationStart.toISOString(),
-          date_fin: type === 'hotel' ? reservationEnd.toISOString() : null,
+           date_debut: reservationStartAdjusted.toISOString(),
+           date_fin: reservationEndAdjusted.toISOString(),
           mode_paiement: modePaiement, // Include payment mode
           autorisation_deduction_salaire: autorisationDeductionSalaire,
           statut_paiement: "", // Set statut_paiement based on payment mode
@@ -383,22 +394,21 @@ const handleAuthorizationChange = (event) => {
                   )}
                 />
                 <MobileDatePicker
-                  label="Date de fin"
-                  value={reservationEnd}
-                  onChange={handleEndDateChange}
-                  minDate={reservationStart}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      placeholder="jj/mm/aaaa"
-                      fullWidth
-                      error={!reservationEnd}
-                      helperText={
-                        !reservationEnd ? 'Sélection obligatoire' : ''
-                      }
-                    />
-                  )}
-                />
+  label="Date de fin"
+  value={reservationEnd}
+  onChange={handleEndDateChange}
+  minDate={reservationStart}
+  disabled={type === 'voyage'} // Disable the field if type is 'voyage'
+  renderInput={(params) => (
+    <TextField
+      {...params}
+      placeholder="jj/mm/aaaa"
+      fullWidth
+      error={!reservationEnd}
+      helperText={!reservationEnd ? 'Sélection obligatoire' : ''}
+    />
+  )}
+/>
               </LocalizationProvider>
             </>
           )}

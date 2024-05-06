@@ -19,7 +19,8 @@ const MyReservations = () => {
     const [showDialog, setShowDialog] = useState(false);
     const [modifyDialogOpen, setModifyDialogOpen] = useState(false);
     const [ratings, setRatings] = useState({});
-
+    const currentDate = new Date();
+    
     useEffect(() => {
         const token = JSON.parse(localStorage.getItem('login'))?.token;
         
@@ -638,9 +639,14 @@ const downloadReservationPDF = async (reservation) => {
                         <Typography variant="body1" color="primary">
                           {reservation.prix_totale} TND
                         </Typography>
+                        {reservation.etat === 'accepter' && new Date(currentDate.toISOString().split('T')[0]) > new Date(reservation.date_debut) && (
+                         <>
+                        {renderStars(reservation)}
+                        </>
+                        )}
                         {reservation.etat === 'accepter' && (
                           <>
-                            {renderStars(reservation)}
+                            
                             <Button
                               onClick={(event) => {
                                 event.stopPropagation();

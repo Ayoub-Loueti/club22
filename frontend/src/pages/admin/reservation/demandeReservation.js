@@ -195,15 +195,7 @@ Swal.fire('Réparation réussie !', 'success');
       }
     };
 
- const handleRepairAll = () => {
-   const repairedReservations = updatedReservations.map((reservation) => {
-     if (reservation.status === 'confirmed') {
-       return { ...reservation, status: 'reparation' };
-     }
-     return reservation;
-   });
-   setUpdatedReservations(repairedReservations);
- };
+
 
   const downloadPDF = async (reservationId) => {
     // Ensure the element ID is correctly formed and points to an existing element
@@ -402,7 +394,27 @@ const calculateCardHeight = (reservation) => {
   return height;
 };
 
-
+const markAllAsReparation = async (date) => {
+  const token = JSON.parse(localStorage.getItem('login'))?.token;
+  const reservationIds = groupedReservations[date].map((reservation) => reservation.id_reservation);
+  try {
+    const response = await axios.put(
+      'http://localhost:5000/reservations/reparer',
+      { reservationIds },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    if (response.status === 200) {
+      Swal.fire('Réparation réussie !', 'success');
+      // Reload or update local state here
+      fetchDemandeReservations();
+    }
+  } catch (error) {
+    console.error('Erreur lors de la réparation des réservations :', error);
+    Swal.fire('Erreur !', 'Échec de la réparation des réservations.', 'error');
+  }
+};
 
 
   return (
@@ -442,13 +454,13 @@ const calculateCardHeight = (reservation) => {
             >
               {date}
               <Button
-                size="small"
-                variant="contained"
-                sx={{ backgroundColor: '#7FB2B6', color: '#fff', ml: 1 }}
-                onClick={(event) => handleRepairAll(event)}
-              >
-                Réparer tous
-              </Button>
+    size="small"
+    variant="contained"
+    sx={{ backgroundColor: '#7FB2B6', color: '#fff', ml: 1 }}
+    onClick={() => markAllAsReparation(date)}
+  >
+    Réparer tous
+  </Button>
               <Button
                 size="small"
                 variant="contained"
