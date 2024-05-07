@@ -1,45 +1,64 @@
 const Notification = require('../models/NotificationModel');
 const Utilisateur = require('../models/UtilisateurModel');
 const Post = require('../models/PostModel');
+const NotificationSprintTroix = require('../models/NotifcationTModel');
 
 exports.getNotificationsForUser = async (req, res) => {
-  const userId = req.userId; // Assuming req.userId holds the ID of the currently authenticated user
-
-  try {
-      // Fetch all notifications for the user, including relevant details from related models if necessary
+    const userId = req.userId; 
+  
+    try {
+      // Fetch notifications from Notification table
       const notifications = await Notification.findAll({
-          where: { id_notifier: userId },
-          include: [
+        where: { id_notifier: userId },
+        include: [
+          {
+            model: Post,
+            as: 'post',
+            include: [
               {
-                  model: Post,
-                  as: 'post',
-                  include: [
-                      {
-                          model: Utilisateur,
-                          as: 'utilisateur',
-                          attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-                      }
-                  ]
-              },
-              {
-                  model: Utilisateur,
-                  as: 'utilisateur', // Assuming there's a relation that allows fetching the user who triggered the notification
-                  attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+                model: Utilisateur,
+                as: 'utilisateur',
+                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
               }
-          ],
-          order: [['date_notif', 'DESC']] // Order by notification date, descending
+            ]
+          },
+          {
+            model: Utilisateur,
+            as: 'utilisateur',
+            attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+          }
+        ],
       });
-
-      if (!notifications.length) {
-          return res.status(404).json({ message: 'No notifications found' });
+  
+      // Fetch notifications from NotificationSprintTroix table
+      const notificationsSprintTroix = await NotificationSprintTroix.findAll({
+        where: { id_utilisateur: userId },
+        include: [
+            {
+              model: Utilisateur,
+              as: 'utilisateur',
+              attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+            }
+          ],
+        attributes: ['id_notif', 'contenu','type' ,'date_notif'],
+      });
+  
+      // Combine the results from both tables
+      const allNotifications = [...notifications, ...notificationsSprintTroix];
+  
+      // Order notifications by date_notif in descending order
+      allNotifications.sort((a, b) => new Date(b.date_notif) - new Date(a.date_notif));
+  
+      if (!allNotifications.length) {
+        return res.status(404).json({ message: 'No notifications found' });
       }
-
-      return res.status(200).json(notifications);
-  } catch (error) {
+  
+      return res.status(200).json(allNotifications);
+    } catch (error) {
       console.error('Error fetching notifications for user:', error);
       return res.status(500).json({ message: 'Error fetching notifications', error: error.message });
-  }
-};
+    }
+  };  
 
 exports.updateNotificationStatus = async (req, res) => {
     const { notificationId } = req.params; // Assuming you're passing the notification ID in the URL
@@ -117,4 +136,24 @@ exports.deleteNotification = async (req, res) => {
   }
 };
 
+exports.deleteNotificationT = async (req, res) => {
+    const { notificationId } = req.params;
+  
+    try {
+      const notification = await NotificationSprintTroix.findByPk(notificationId);
+      if (!notification) {
+        return res.status(404).json({ message: 'Notification not found' });
+      }
+  
+      await notification.destroy();
+      res.status(200).json({ message: 'Notification deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting notification:', error);
+      res
+        .status(500)
+        .json({ message: 'Error deleting notification', error: error.message });
+    }
+  };
+
+  
 module.exports = exports;

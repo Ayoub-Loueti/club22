@@ -11,6 +11,7 @@ const reservation = require('./routes/ReservationRoute');
 const collaborateur = require('./routes/CollaborateurRoute');
 const offre = require('./routes/OffreRoute');
 const employe = require('./routes/EmployeRoute');
+const messages = require('./routes/MessagesRoute');
 const dashboard = require('./routes/DashboardRoute');
 const dotenv = require('dotenv');
 const cors = require('cors');
@@ -56,6 +57,8 @@ app.use(collaborateur);
 app.use(offre);
 app.use(employe);
 app.use(dashboard);
+app.use(messages);
+
 app.use('/uploads', express.static('uploads'));
 
 const storage = multer.diskStorage({

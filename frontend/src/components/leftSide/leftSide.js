@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import './leftSide.css';
 import oorepub2 from "../../assets/oorepub2.jpg";
 import oorepub3 from "../../assets/oorepub3.jpg";
 
 const UserCard = ({ user, title }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/profil/${user.id_utilisateur}`);
+  };
+
   return (
-    <div className="user-card">
+    <div className="user-card" onClick={handleClick}>
       <div className="user-card-title">{title}</div>
       <div className="user-container">
         <img src={`http://localhost:5000/${user.photo}`} alt="Utilisateur" className="user-avatar" />
