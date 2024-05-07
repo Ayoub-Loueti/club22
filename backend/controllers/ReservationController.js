@@ -10,6 +10,7 @@ const ActiviteModel = require('../models/ActiviteModel');
 const VoyageModel = require('../models/VoyageModel');
 const GrandHotelModel = require('../models/GrandHotelModel');
 const Evaluation = require('../models/EvaluationModel');
+const NotificationSprintTroix = require('../models/NotifcationTModel');
 
 exports.createReservation = async (req, res) => {
   const {
@@ -564,16 +565,46 @@ exports.acceptationReservation = async (req, res) => {
         id_reservation: reservationId,
         etat: 'reparation',
       },
+      include: [
+        {
+          model: Offre,
+          as: 'offre',
+          include: [
+            { model: Collaborateur, as: 'collaborateur' },
+            // Ensure other necessary models are included as needed
+          ],
+        },
+        {
+          model: Employe,
+          as: 'employe',
+          include: [
+            { model: Utilisateur, as: 'utilisateur' },
+            // Ensure other necessary models are included as needed
+          ],
+        },
+        // Ensure other necessary models are included as needed
+      ],
     });
 
     if (!userReservation) {
       return res
         .status(404)
-        .json({ error: 'Reservation not found or cannot be cancelled' });
+        .json({ error: 'Reservation not found or cannot be updated' });
     }
 
     // Update the reservation state to 'annuler'
     await userReservation.update({ etat: 'accepter', statut_paiement: 'accepte' });
+
+    await NotificationSprintTroix.create({
+      contenu: 'Votre réservation a été acceptée',
+      id_utilisateur: userReservation.employe.utilisateur.id_utilisateur,
+      date_notif: new Date(),
+    });
+
+    const Owner = await Utilisateur.findByPk(userReservation.employe.utilisateur.id_utilisateur);
+    if (Owner) {
+      await Owner.increment('nbr_notifs', { by: 1 });
+    }
 
     res.status(200).json({ message: 'Reservation accepted successfully' });
   } catch (error) {
@@ -604,6 +635,25 @@ exports.refuserReservation = async (req, res) => {
         id_reservation: reservationId,
         etat: 'reparation',
       },
+      include: [
+        {
+          model: Offre,
+          as: 'offre',
+          include: [
+            { model: Collaborateur, as: 'collaborateur' },
+            // Ensure other necessary models are included as needed
+          ],
+        },
+        {
+          model: Employe,
+          as: 'employe',
+          include: [
+            { model: Utilisateur, as: 'utilisateur' },
+            // Ensure other necessary models are included as needed
+          ],
+        },
+        // Ensure other necessary models are included as needed
+      ],
     });
 
     if (!userReservation) {
@@ -614,6 +664,18 @@ exports.refuserReservation = async (req, res) => {
 
     // Update the reservation state to 'annuler'
     await userReservation.update({ etat: 'refuser', statut_paiement: 'refuse' });
+
+    await NotificationSprintTroix.create({
+      contenu: 'Votre réservation a été refusée',
+      id_utilisateur: userReservation.employe.utilisateur.id_utilisateur,
+      date_notif: new Date(),
+      type : 'reservrefuse',
+    });
+    
+    const Owner = await Utilisateur.findByPk(userReservation.employe.utilisateur.id_utilisateur);
+    if (Owner) {
+      await Owner.increment('nbr_notifs', { by: 1 });
+    }
 
     res.status(200).json({ message: 'Reservation refused successfully' });
   } catch (error) {

@@ -12,7 +12,7 @@ import {
   faUser,
   faSignOutAlt,
   faTimes,
-  faPhone,
+  faPhone,faCheckCircle, faTimesCircle, faExclamationCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import '../navbar/navbar.css';
 import PostModal from '../postModal/postModal';
@@ -110,66 +110,89 @@ function NavbarHaut() {
     }
   };
   const handleNotificationClick = (notification) => {
-    console.log(notification); // For debugging
-    setSelectedPostId(notification.post.id_post); // Use notification.post.id_post
-    setIsPostModalOpen(true);
-    setShowNotifications(false); // Close the notifications dropdown
-    markAsRead(notification.id_notif, notification.isRead); // Mark as read, assuming this function exists and works correctly
+    if (!['reservaccepte', 'signal', 'reservrefuse'].includes(notification.type)) {
+      console.log(notification); // For debugging
+      setSelectedPostId(notification.post.id_post); // Use notification.post.id_post
+      setIsPostModalOpen(true);
+      setShowNotifications(false); // Close the notifications dropdown
+      markAsRead(notification.id_notif, notification.isRead); // Mark as read, assuming this function exists and works correctly
+    }
   };
+  
 
   const NotificationsDropdown = () => (
     <div className="notifications-dropdown" ref={notificationsRef}>
-      {notifications.length ? (
-        notifications.map((notification) => (
-          <div
-            key={notification.id_notif}
-            className={`notification-item ${
-              !notification.isRead ? 'unseen' : ''
-            }`}
-            onClick={() => handleNotificationClick(notification)}
-          >
-            <img
-              src={`http://localhost:5000/${notification.utilisateur.photo}`}
-              alt="User"
-              className="notification-user-photo"
-            />
-            {/* Ici, on ajoute une condition pour afficher l'icône appropriée */}
-            {notification.type === 'comment' ? (
-              <FontAwesomeIcon
-                icon={faComment}
-                className="notification-icon-Comment"
-              /> // Assurez-vous d'avoir importé faComment
-            ) : (
-              <FontAwesomeIcon
-                icon={faHeart}
-                className="notification-icon-jaime"
-              /> // Assurez-vous d'avoir importé faHeart
-            )}
-            <div className="notification-text">
-              <strong>
-                {notification.utilisateur.prenom} {notification.utilisateur.nom}
-              </strong>
-              <span>
-                {' '}
-                {notification.notifier }{' '}
-              </span>
-            </div>
-            <div
-              className="notification-delete-icon"
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent notification item click
-                handleDeleteNotification(notification.id_notif);
-              }}
-            >
-              <FontAwesomeIcon icon={faTimes} />
-            </div>
-          </div>
-        ))
-      ) : (
-        <div className="notification-item">Pas de notifications</div>
-      )}
+        {notifications.length ? (
+            notifications.map((notification) => (
+                <div
+                    key={notification.id_notif}
+                    className={`notification-item ${!notification.isRead ? 'unseen' : ''}`}
+                    onClick={() => handleNotificationClick(notification)}
+                >
+                    <img
+                        src={`http://localhost:5000/${notification.utilisateur.photo}`}
+                        alt="User"
+                        className="notification-user-photo"
+                    />
+                    {notification.type === 'reservaccepte' && (
+                        <FontAwesomeIcon
+                        icon={faCheckCircle}
+                        className="notification-icon-Comment"
+                        style={{ color: '#73e24b' }}
+                      />
+                    )}
+                    {notification.type === 'reservrefuse' && (
+                        <FontAwesomeIcon icon={faTimesCircle} className="notification-icon-Comment" 
+                        style={{ color: '#de1212' }}/>
+                    )}
+                    {notification.type === 'signal' && (
+                        <FontAwesomeIcon icon={faExclamationCircle} className="notification-icon-Comment" 
+                        style={{ color: '#ded712' }}/>
+                    )}
+                    {['reservaccepte', 'reservrefuse', 'signal'].includes(notification.type) ? (
+                        <div className="notification-text">
+                            <span>{notification.contenu}</span>
+                        </div>
+                    ) : (
+                        <>
+                            {notification.type === 'comment' ? (
+                                <FontAwesomeIcon
+                                    icon={faComment}
+                                    className="notification-icon-Comment"
+                                />
+                            ) : (
+                                <FontAwesomeIcon
+                                    icon={faHeart}
+                                    className="notification-icon-jaime"
+                                />
+                            )}
+                            <div className="notification-text">
+                                <strong>
+                                    {notification.utilisateur.prenom} {notification.utilisateur.nom}
+                                </strong>
+                                <span>
+                                    {notification.notifier}
+                                </span>
+                            </div>
+                        </>
+                    )}
+                    <div
+                        className="notification-delete-icon"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteNotification(notification.id_notif);
+                        }}
+                    >
+                        <FontAwesomeIcon icon={faTimes} />
+                    </div>
+                    
+                </div>
+            ))
+        ) : (
+            <div className="notification-item">Pas de notifications</div>
+        )}
     </div>
-  );
+);
 
   const markAsRead = async (notificationId, isRead) => {
     const token = JSON.parse(localStorage.getItem('login')).token;
@@ -312,28 +335,37 @@ function NavbarHaut() {
       )}
     </div>
   );
-const handleDeleteNotification = async (notificationId) => {
-  const token = JSON.parse(localStorage.getItem('login')).token;
-  try {
-    // Remplacez cette URL par celle de votre API pour la suppression de notifications
-    await axios.delete(
-      `http://localhost:5000/notifications/${notificationId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+  const handleDeleteNotification = async (notificationId) => {
+    const token = JSON.parse(localStorage.getItem('login')).token;
+    const notification = notifications.find((n) => n.id_notif === notificationId);
+    
+    try {
+      if (['reservaccepte', 'signal', 'reservrefuse'].includes(notification.type)) {
+        await axios.delete(
+          `http://localhost:5000/notificationsTroix/${notificationId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      } else {
+        await axios.delete(
+          `http://localhost:5000/notifications/${notificationId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
       }
-    );
-    // Filtrez la notification supprimée de l'état
-    setNotifications(
-      notifications.filter(
-        (notification) => notification.id_notif !== notificationId
-      )
-    );
-  } catch (error) {
-    console.error('Erreur lors de la suppression de la notification', error);
-  }
-};
+      
+      // Filter out the deleted notification from the state
+      setNotifications(notifications.filter((n) => n.id_notif !== notificationId));
+    } catch (error) {
+      console.error('Erreur lors de la suppression de la notification', error);
+    }
+  };
 
 useEffect(() => {
   const fetchUserPoints = async () => {

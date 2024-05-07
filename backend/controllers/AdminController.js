@@ -4,6 +4,7 @@ const Demande = require('../models/DemandeModel');
 const Commentaire = require('../models/CommentairesModel');
 const Reponse = require('../models/ReponseModel');
 const Post = require('../models/PostModel'); 
+const NotificationSprintTroix = require('../models/NotifcationTModel');
 
 exports.getAllUsers = async (req, res) => {
   try {
@@ -357,15 +358,37 @@ exports.deletePostAdmin = async (req, res) => {
   });
 
   if (!isAdmin) {
-      return res.status(403).json({ message: "Only administrators can delete posts." });
+      return res.status(403).json({ message: "Seuls les administrateurs peuvent supprimer des publications." });
   }
 
   try {
+      // Fetch the id_utilisateur of the post with the given id
+      const post = await Post.findOne({
+        where: { id_post: id },
+        attributes: ['id_utilisateur'],
+      });
+
+      if (!post) {
+          return res.status(404).json({ message: "Publication introuvable." });
+      }
+
+      // Create a new NotificationSprintTroix entry with the id_utilisateur
+      await NotificationSprintTroix.create({
+        id_utilisateur: post.id_utilisateur,
+        contenu: "Votre publication a été supprimée par un administrateur.",
+        type: "signal",
+        date_notif: new Date(),
+      });
+      const Owner = await Utilisateur.findByPk( post.id_utilisateur);
+      if (Owner) {
+        await Owner.increment('nbr_notifs', { by: 1 });
+      }
+      // Delete the post
       const deleted = await Post.destroy({ where: { id_post: id } });
       if (deleted) {
-          return res.status(200).json({ message: "Post deleted successfully." });
+          return res.status(200).json({ message: "Publication supprimée avec succès." });
       }
-      return res.status(404).json({ message: "Post not found." });
+      return res.status(404).json({ message: "Publication introuvable." });
   } catch (error) {
       res.status(500).json({ error: error.message });
   }
@@ -386,6 +409,26 @@ exports.deleteCommentAdmin = async (req, res) => {
   }
 
   try {
+    const comment = await Commentaire.findOne({
+      where: { id_cmntr: id },
+      attributes: ['id_utilisateur'],
+    });
+
+    if (!comment) {
+        return res.status(404).json({ message: "comment introuvable." });
+    }
+
+    // Create a new NotificationSprintTroix entry with the id_utilisateur
+    await NotificationSprintTroix.create({
+      id_utilisateur: comment.id_utilisateur,
+      contenu: "Votre commentaire a été supprimée par un administrateur.",
+      type: "signal",
+      date_notif: new Date(),
+    });
+    const Owner = await Utilisateur.findByPk( comment.id_utilisateur);
+    if (Owner) {
+      await Owner.increment('nbr_notifs', { by: 1 });
+    }
       const deleted = await Commentaire.destroy({ where: { id_cmntr: id } });
       if (deleted) {
           return res.status(200).json({ message: "Comment deleted successfully." });
@@ -411,6 +454,26 @@ exports.deleteResponseAdmin = async (req, res) => {
   }
 
   try {
+    const reponse = await Reponse.findOne({
+      where: { id_reponse: id },
+      attributes: ['id_utilisateur'],
+    });
+
+    if (!reponse) {
+        return res.status(404).json({ message: "reponse introuvable." });
+    }
+
+    // Create a new NotificationSprintTroix entry with the id_utilisateur
+    await NotificationSprintTroix.create({
+      id_utilisateur: reponse.id_utilisateur,
+      contenu: "Votre reponse a été supprimée par un administrateur.",
+      type: "signal",
+      date_notif: new Date(),
+    });
+    const Owner = await Utilisateur.findByPk( reponse.id_utilisateur);
+    if (Owner) {
+      await Owner.increment('nbr_notifs', { by: 1 });
+    }
       const deleted = await Reponse.destroy({ where: { id_reponse: id } });
       if (deleted) {
           return res.status(200).json({ message: "Response deleted successfully." });

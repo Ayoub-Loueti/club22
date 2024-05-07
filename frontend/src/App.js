@@ -33,6 +33,7 @@ import AdminPanel from './pages/admin/adherant/adminAdherant';
 import AdminSignalsPage from './pages/admin/signal/AdminSignalsPage';
 import PostLink from './components/postLink/postLink';
 import DemandeReservation from './pages/admin/reservation/CollabReserv2';
+import Message from './pages/message/message';
 
 function App() {
   return (
@@ -48,6 +49,12 @@ function App() {
                   <Home />
                   <PostLink />{' '}
                 </ProtectedRoute>
+              }
+            />
+             <Route
+              path="/message"
+              element={
+                  <Message />
               }
             />
             <Route
