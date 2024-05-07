@@ -11,6 +11,7 @@ export default function Hero() {
    const token = localStorage.getItem('login');
 
    useEffect(() => {
+    
      fetchFilteredOffers();
    }, [minPrice, maxPrice, destination, promotionType]);
 
