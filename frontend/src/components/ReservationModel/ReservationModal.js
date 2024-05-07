@@ -286,14 +286,8 @@ const handleAuthorizationChange = (event) => {
          
 
             console.log("Reservation successful");
-             Swal.fire({
-               icon: 'success',
-               title: 'Réservation réussie',
-               text: 'Votre réservation a été effectuée avec succès!',
-               timer: 2000, 
-               
-               showConfirmButton: false, 
-             });
+                 window.location.href = '/mesreservations';
+
              
             onRequestClose();
             

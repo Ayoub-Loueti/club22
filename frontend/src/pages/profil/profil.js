@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { FaEdit, FaBookmark, FaTrash } from 'react-icons/fa';
+import {FaBookmark } from 'react-icons/fa';
 import Navbar from '../../components/navbar/navbar';
 import NavbarHaut from '../../components/navbar/navbarHaut';
 import './profil.css';
