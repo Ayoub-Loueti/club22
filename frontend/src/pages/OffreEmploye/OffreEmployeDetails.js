@@ -127,7 +127,7 @@ const handleAuthorizationChange = () => {
     <>
       <Navbar />
       <NavbarHaut />
-      <ScrollToTop/>
+      <ScrollToTop />
 
       <div>
         <button className="retour-btn" onClick={() => window.history.back()}>
@@ -353,7 +353,7 @@ const handleAuthorizationChange = () => {
                   />{' '}
                   Nombre de jours: {details.nbr_jours}
                 </p>
-                <p>
+                <p className="offre-inclus">
                   <FontAwesomeIcon
                     icon={faCheckSquare}
                     className="service-icon"
@@ -372,13 +372,17 @@ const handleAuthorizationChange = () => {
                 <ProgramModal
                   isOpen={isProgramModalOpen}
                   onClose={closeProgramModal}
-                  content={details.programme}
+                  content={
+                    details.programme
+                      ? parse(offre.details.programme)
+                      : 'Non spécifié'
+                  }
                 />
                 <p>
                   <FontAwesomeIcon icon={faClock} className="service-icon" />{' '}
                   Durée: {details.duree} heures
                 </p>
-                <p>
+                <p className="offre-inclus">
                   <FontAwesomeIcon
                     icon={faCheckSquare}
                     className="service-icon"

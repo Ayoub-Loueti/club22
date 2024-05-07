@@ -41,7 +41,7 @@ margin-top: 1px;
      width: 450px;  
  
     max-width: 350px;  
-    height: 190px;  
+    height: 100px;  
     overflow-y: auto; 
     text-align: justify;  
     margin: 20px 0;
@@ -74,7 +74,6 @@ margin-top: 1px;
 
 .offre-buttonsDetails {
   justify-content: space-between;
-      margin-top: -60px;
 }
 
 .offre-cardDetails  {
@@ -208,13 +207,14 @@ margin-bottom: -30%
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 30px; /* Increased padding for more internal space */
   margin: 20px;
-  width: 50%; /* Increased width */
   min-height: 300px; /* Increased minimum height */
-  display: flex;
   flex-direction: column;
   justify-content: center; /* Center content vertically inside the card */
   align-items: center; /* Center content horizontally */
   flex-grow: 0.4;
+   width: 300px; /* Set the fixed width */
+  max-height: 400px; /* Set the maximum height */
+  overflow-y: auto; 
   flex-shrink: 0;
 }
 
@@ -285,7 +285,7 @@ margin-bottom: -30%
 .destination-details {
     width: 450px;  
  
-  height:50px;  /* Ajustez la hauteur selon vos besoins */
+  height:30px;  /* Ajustez la hauteur selon vos besoins */
   overflow-y: auto; 
   text-align: justify;  
   margin: 20px 0;
@@ -343,4 +343,41 @@ margin-bottom: -30%
 
 .program-button:active {
   transform: translateY(1px); /* Effet enfoncé lors du clic */
+}
+
+.offre-inclus {
+  width: 750px;
+  max-width: 750px;
+  height: 100px;
+  overflow-y: auto;
+  text-align: center;
+  margin: 20px 0;
+  padding: 10px;
+  box-sizing: border-box;
+   display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* General styles for the scrollbar */
+.offre-inclus::-webkit-scrollbar {
+  width: 6px; /* Thickness of the scrollbar */
+}
+
+/* Styling the track (part the thumb slides within) */
+.offre-inclus::-webkit-scrollbar-track {
+  background: #f0f0f0; /* Light grey background on the track */
+  border-radius: 10px; /* Rounded corners for the track */
+}
+
+/* Styling the thumb (the part that can be dragged) */
+.offre-inclus::-webkit-scrollbar-thumb {
+  background-color: #191f43; /* Dark grey thumb */
+  border-radius: 10px; /* Rounded corners for the thumb */
+  border: 2px solid #f0f0f0; /* Slight border for the thumb with track color to create padding effect */
+}
+
+/* Styling the thumb when it is hovered or clicked */
+.offre-inclus::-webkit-scrollbar-thumb:hover {
+  background-color: #879eb9; /* Darker grey when hovered */
 }

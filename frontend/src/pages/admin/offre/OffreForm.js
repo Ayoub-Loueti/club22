@@ -226,7 +226,15 @@ const renderSharedFields = () => (
           required
         />
       </label>
-      <label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+          
+        }}
+      >
         Climatisation:
         <input
           type="checkbox"
@@ -234,7 +242,15 @@ const renderSharedFields = () => (
           onChange={(e) => setClimatisation(e.target.checked)}
         />
       </label>
-      <label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        {' '}
         Wi-Fi:
         <input
           type="checkbox"
@@ -242,7 +258,15 @@ const renderSharedFields = () => (
           onChange={(e) => setWifi(e.target.checked)}
         />
       </label>
-      <label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        {' '}
         Piscine Extérieure:
         <input
           type="checkbox"
@@ -250,7 +274,15 @@ const renderSharedFields = () => (
           onChange={(e) => setPiscineExterieure(e.target.checked)}
         />
       </label>
-      <label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        {' '}
         Piscine Couverte:
         <input
           type="checkbox"
@@ -258,7 +290,15 @@ const renderSharedFields = () => (
           onChange={(e) => setPiscineCouverte(e.target.checked)}
         />
       </label>
-      <label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        {' '}
         Bassin pour Enfants:
         <input
           type="checkbox"
@@ -266,7 +306,15 @@ const renderSharedFields = () => (
           onChange={(e) => setBassinEnfants(e.target.checked)}
         />
       </label>
-      <label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        {' '}
         Parking:
         <input
           type="checkbox"
@@ -274,7 +322,15 @@ const renderSharedFields = () => (
           onChange={(e) => setParking(e.target.checked)}
         />
       </label>
-      <label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        {' '}
         Discothèque:
         <input
           type="checkbox"
@@ -282,7 +338,15 @@ const renderSharedFields = () => (
           onChange={(e) => setDiscotheque(e.target.checked)}
         />
       </label>
-      <label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        {' '}
         Plage Privée:
         <input
           type="checkbox"
@@ -290,7 +354,15 @@ const renderSharedFields = () => (
           onChange={(e) => setPlagePrivee(e.target.checked)}
         />
       </label>
-      <label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        {' '}
         Ascenseur:
         <input
           type="checkbox"
@@ -298,7 +370,15 @@ const renderSharedFields = () => (
           onChange={(e) => setAscenseur(e.target.checked)}
         />
       </label>
-      <label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        {' '}
         Salle de Sport:
         <input
           type="checkbox"
@@ -306,7 +386,15 @@ const renderSharedFields = () => (
           onChange={(e) => setSalleDeSport(e.target.checked)}
         />
       </label>
-      <label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        {' '}
         Aire de Jeux pour Enfants:
         <input
           type="checkbox"
