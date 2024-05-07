@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/navbar/navbar';
 import StarRating from './StarRating'; // Make sure this is imported correctly
 import ScrollToTop from '../../components/designs/ScrollToTop';
-import Hero from '../../components/designs/Hero';
 
 function OffreEmploye() {
   const [offres, setOffres] = useState([]);

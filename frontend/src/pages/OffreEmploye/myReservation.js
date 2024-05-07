@@ -68,7 +68,20 @@ const MyReservations = () => {
         fetchBoxDReservations();
         fetchBoxTReservations();
     }, []);
-
+   const fetchReservations = async () => {
+     try {
+       const response = await axios.get(
+         'http://localhost:5000/myReservations',
+         {
+           headers: { Authorization: `Bearer ${token}` },
+         }
+       );
+       setReservations(response.data);
+     } catch (err) {
+       setError('An error occurred while fetching reservations.');
+       console.error('Error fetching reservations:', err);
+     }
+   };
     const confirmReservation = async (event, id) => {
         event.stopPropagation();
         const token = JSON.parse(localStorage.getItem('login'))?.token;
@@ -87,6 +100,7 @@ const MyReservations = () => {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 Swal.fire('Confirmé !', 'La réservation a été confirmée.', 'success');
+fetchReservations();
                 setReservations(reservations.map(r => r.id_reservation === id ? { ...r, etat: 'confirmed' } : r));
             }
         } catch (err) {
@@ -116,6 +130,8 @@ Swal.fire(
                     headers: { Authorization: `Bearer ${token}` },
                 });
 Swal.fire('Annulé !', 'La réservation a été annulée.', 'success');
+fetchReservations();
+
                 setReservations(reservations.map(r => r.id_reservation === id ? { ...r, etat: 'cancelled' } : r));
             }
         } catch (err) {
@@ -249,7 +265,8 @@ const downloadReservationPDF = async (reservation) => {
   pdf.setFontSize(16);
   pdf.setFont('helvetica', 'normal');   currentY += lineHeight;
 
-  pdf.text(`Offre: ${reservation.offre.titre}`, marginLeft, currentY);   currentY += lineHeight;
+  pdf.text(`Offre: ${reservation.offre.titre}`, marginLeft, currentY);   
+  currentY += lineHeight;
 
    pdf.text(
      `Prix total: ${reservation.prix_totale.toFixed(2)} DT`,
@@ -267,7 +284,12 @@ const downloadReservationPDF = async (reservation) => {
     currentY
   );
 
-
+  currentY += lineHeight;
+  pdf.text(
+    `Date: De ${reservation.date_debut} Jusqu'au ${reservation.date_fin}`,
+    marginLeft,
+    currentY
+  );
   switch (reservation.offre.type) {
     case 'hotel':
       currentY += lineHeight;

@@ -142,12 +142,13 @@ const DemandeReservation = () => {
         }
       );
       if (response.status === 200) {
-        Swal.fire('Accepted!', 'The reservation has been accepted.', 'success');
+Swal.fire('Accepté !', 'La réservation a été acceptée.', 'success');
         // Reload or update local state here
       }
     } catch (error) {
-      console.error('Error accepting reservation:', error);
-      Swal.fire('Error!', 'Failed to accept the reservation.', 'error');
+   console.error("Erreur lors de l'acceptation de la réservation :", error);
+   Swal.fire('Erreur !', "Échec de l'acceptation de la réservation.", 'error');
+
     }
   };
 
@@ -163,12 +164,13 @@ const DemandeReservation = () => {
         }
       );
       if (response.status === 200) {
-        Swal.fire('Refused!', 'The reservation has been refused.', 'success');
+Swal.fire('Refusé !', 'La réservation a été refusée.', 'success');
         // Reload or update local state here
       }
     } catch (error) {
-      console.error('Error refusing reservation:', error);
-      Swal.fire('Error!', 'Failed to refuse the reservation.', 'error');
+     console.error('Erreur lors du refus de la réservation :', error);
+     Swal.fire('Erreur !', 'Échec du refus de la réservation.', 'error');
+
     }
   };
   
@@ -184,13 +186,13 @@ const DemandeReservation = () => {
           }
         );
         if (response.status === 200) {
-Swal.fire('Réparation réussie !', 'success');
+Swal.fire('Validation réussie !', 'success');
           // Reload or update local state here
     fetchDemandeReservations();
         }
       } catch (error) {
-       console.error('Erreur lors du refus de la réservation :', error);
-       Swal.fire('Erreur !', 'Échec du refus de la réservation.', 'error');
+       console.error('Erreur lors du Validation de la réservation :', error);
+       Swal.fire('Erreur !', 'Échec du Validation de la réservation.', 'error');
 
       }
     };
@@ -294,11 +296,16 @@ const downloadPDFConfirmedByDate = async (date) => {
       pdf.text(
         `Nom Collaborateur: ${reservation.offre.collaborateur.nom}`,
         105,
-        60,
-      
+        60
       );
 
       // Add reservation details to the card
+      pdf.text(
+        `Date : De ${reservation.date_debut} Jusq'ua ${reservation.date_fin}`,
+        30,
+        80
+      ); // Add dates
+
       pdf.text(`Titre: ${reservation.offre.titre}`, 30, 100);
       pdf.text(`Destination: ${reservation.offre.destination}`, 30, 110);
       pdf.text(`Type: ${reservation.typeR}`, 30, 120);
@@ -406,7 +413,7 @@ const markAllAsReparation = async (date) => {
       }
     );
     if (response.status === 200) {
-      Swal.fire('Réparation réussie !', 'success');
+      Swal.fire('Validation réussie !', 'success');
       // Reload or update local state here
       fetchDemandeReservations();
     }
@@ -436,7 +443,7 @@ const markAllAsReparation = async (date) => {
         >
           <ToggleButton value="tous">Tous</ToggleButton>
           <ToggleButton value="confirmer">Confirmés</ToggleButton>
-          <ToggleButton value="reparation">Réparés</ToggleButton>
+          <ToggleButton value="reparation">Validés</ToggleButton>
         </ToggleButtonGroup>
       </Grid>
       <Grid container spacing={2} style={{ margin: 20 }}>
@@ -459,7 +466,7 @@ const markAllAsReparation = async (date) => {
     sx={{ backgroundColor: '#7FB2B6', color: '#fff', ml: 1 }}
     onClick={() => markAllAsReparation(date)}
   >
-    Réparer tous
+    Valider tous
   </Button>
               <Button
                 size="small"
@@ -619,7 +626,7 @@ const markAllAsReparation = async (date) => {
                                 handlerepair(reservation.id_reservation, event)
                               }
                             >
-                              Réparer
+                              Valider
                             </Button>
                           </Box>
                         )}

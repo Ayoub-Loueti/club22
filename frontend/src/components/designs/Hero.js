@@ -1,7 +1,85 @@
-import React from 'react';
+import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import homeImage from '../../assets/hero.png';
+import axios from 'axios';
 export default function Hero() {
+   const [minPrice, setMinPrice] = useState(0);
+   const [maxPrice, setMaxPrice] = useState(1000);
+   const [destination, setDestination] = useState('');
+   const [promotionType, setPromotionType] = useState('all'); // 'all', 'promo', 'nonpromo'
+   const [filteredOffres, setFilteredOffres] = useState([]);
+   const token = localStorage.getItem('login');
+
+   useEffect(() => {
+     fetchFilteredOffers();
+   }, [minPrice, maxPrice, destination, promotionType]);
+
+   const fetchFilteredOffers = async () => {
+     try {
+       const response = await axios.get('http://localhost:5000/employeOffers', {
+         headers: {
+           Authorization: `Bearer ${JSON.parse(token).token}`,
+         },
+       });
+       const allOffres = response.data;
+           console.log('All offers:', allOffres);
+
+       let filtered = allOffres.filter(
+         (offre) => offre.prix >= minPrice && offre.prix <= maxPrice
+       );
+           console.log('Filtered by price:', filtered);
+
+       if (destination) {
+         filtered = filtered.filter((offre) =>
+           offre.destination.toLowerCase().includes(destination.toLowerCase())
+         );
+               console.log('Filtered by destination:', filtered);
+
+       }
+       
+       if (promotionType === 'promo') {
+         filtered = filtered.filter((offre) => offre.remise !== '');
+               console.log('Filtered by promotion:', filtered);
+
+       } else if (promotionType === 'nonpromo') {
+         filtered = filtered.filter((offre) => offre.remise === '');
+               console.log('Filtered by non-promotion:', filtered);
+
+
+       }
+       setFilteredOffres(filtered);
+     } catch (error) {
+       console.error('Error fetching offres:', error);
+     }
+   };
+
+   const handlePriceChange = (event) => {
+     const value = parseInt(event.target.value);
+     setMinPrice(value);
+     setMaxPrice(value + 50); // Change the default range as needed
+   };
+
+   const handleDestinationChange = (event) => {
+     const value = event.target.value;
+     setDestination(value);
+   };
+
+   const handlePromotionTypeChange = (event) => {
+     const value = event.target.value;
+     setPromotionType(value);
+   };
+
+  const handleSearch = () => {
+    console.log('Search button clicked');
+    console.log('minPrice:', minPrice);
+    console.log('maxPrice:', maxPrice);
+    console.log('destination:', destination);
+    console.log('promotionType:', promotionType);
+
+    fetchFilteredOffers();
+  };
+
+
   return (
     <Section id="hero">
       <div className="background">
@@ -9,27 +87,46 @@ export default function Hero() {
       </div>
       <div className="content">
         <div className="title">
-          <h1>TRAVEL TO EXPLORE</h1>
+          <h1>VOYAGEZ POUR DÉCOUVRIR</h1>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere
-            natus, enim ipsam magnam odit deserunt itaque? Minima earum velit
-            tenetur!
+            Partez à la découverte de destinations uniques et vivez des
+            expériences inoubliables. Explorez des cultures fascinantes et créez
+            des souvenirs mémorables.
           </p>
         </div>
         <div className="search">
           <div className="container">
-            <label htmlFor="">Where you want to go</label>
-            <input type="text" placeholder="Search Your location" />
+            <label htmlFor="">Où voulez-vous aller</label>
+            <input
+              type="text"
+              placeholder="Recherchez votre destination"
+              onChange={handleDestinationChange}
+            />
+          </div>
+          <div className="container price-range">
+            <label htmlFor="">Plage de prix</label>
+            <div className="price-line">
+              <span className="min-price">{minPrice} TND</span>
+              <input
+                type="range"
+                min="0"
+                max="1000"
+                step="50"
+                value={minPrice}
+                onChange={handlePriceChange}
+              />
+              <span className="max-price">{maxPrice} TND</span>
+            </div>
           </div>
           <div className="container">
-            <label htmlFor="">Check-in</label>
-            <input type="date" />
+            <label htmlFor="">Promotion</label>
+            <select onChange={handlePromotionTypeChange}>
+              <option value="all">Toutes</option>
+              <option value="promo">Offres promotionnelles</option>
+              <option value="nonpromo">Offres non promotionnelles</option>
+            </select>
           </div>
-          <div className="container">
-            <label htmlFor="">Check-out</label>
-            <input type="date" />
-          </div>
-          <button>Explore Now</button>
+          <button onClick={handleSearch}>Découvrez</button>
         </div>
       </div>
     </Section>
@@ -98,10 +195,15 @@ const Section = styled.section`
           &[type='date'] {
             padding-left: 3rem;
           }
-
-          &::placeholder {
-            color: black;
-          }
+        }
+        select {
+          width: 100%;
+          padding: 0.5rem;
+          margin-top: 0.5rem;
+          border-radius: 0.3rem;
+          border: none;
+          background-color: #ffffff;
+          color: #000000;
           &:focus {
             outline: none;
           }
@@ -123,6 +225,45 @@ const Section = styled.section`
       }
     }
   }
+
+  .price-range {
+    .price-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+      .min-price,
+      .max-price {
+        font-size: 0.9rem;
+      }
+      input[type='range'] {
+        width: 80%;
+        margin: 0 1rem;
+        -webkit-appearance: none;
+        height: 0.5rem;
+        background: linear-gradient(to right, #ffbd69, #ff7e67);
+        border-radius: 5px;
+        outline: none;
+        &::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 1.5rem;
+          height: 1.5rem;
+          background: #4361ee;
+          border-radius: 50%;
+          cursor: pointer;
+        }
+        &::-moz-range-thumb {
+          width: 1.5rem;
+          height: 1.5rem;
+          background: #4361ee;
+          border-radius: 50%;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
   @media screen and (min-width: 280px) and (max-width: 980px) {
     height: 25rem;
     .background {
@@ -145,7 +286,6 @@ const Section = styled.section`
         flex-direction: column;
         padding: 0.8rem;
         gap: 0.8rem;
-        /* padding: 0; */
         .container {
           padding: 0 0.8rem;
           input[type='date'] {
@@ -156,7 +296,6 @@ const Section = styled.section`
           padding: 1rem;
           font-size: 1rem;
         }
-        /* display: none; */
       }
     }
   }
