@@ -34,6 +34,7 @@ import AdminSignalsPage from './pages/admin/signal/AdminSignalsPage';
 import PostLink from './components/postLink/postLink';
 import DemandeReservation from './pages/admin/reservation/CollabReserv2';
 import Message from './pages/message/message';
+import Dashboard from './pages/admin/dashboard/dashboard';
 
 function App() {
   return (
@@ -49,6 +50,12 @@ function App() {
                   <Home />
                   <PostLink />{' '}
                 </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard"
+              element={
+                  <Dashboard />
               }
             />
              <Route
