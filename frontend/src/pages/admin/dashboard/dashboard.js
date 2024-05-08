@@ -12,11 +12,15 @@ import NavAdmin from '../NavAdmin/navAdmin';
 
 const Dashboard = () => {
     const [showQuatre, setShowQuatre] = useState(true);
+    const [showSix, setShowSix] = useState(false);
 
     const toggleDashboards = () => {
         setShowQuatre((prev) => !prev);
     };
 
+    const toggleDashboardss = () => {
+        setShowSix((prev) => !prev);
+    };
     return (
         <>
             <NavAdmin />
@@ -58,8 +62,16 @@ const Dashboard = () => {
                     </Paper>
                     </Grid>
                         <Grid item xs={12} md={4}>
-                            <Paper elevation={3} style={{ padding: '10px' }}>
-                                <SixDash />
+                            <Paper elevation={3} style={{ padding: '10px' ,position: 'relative'}}>
+                            {showSix ? <CeptDash /> : <SixDash />}
+                            <IconButton
+                            aria-label="toggle dashboard"
+                            onClick={toggleDashboardss}
+                            size="small"
+                            style={{ position: 'absolute', top: 5, right: 500, zIndex: 1 }}
+                        >
+                        {showSix ? <ArrowForward /> : <ArrowBack />}
+                        </IconButton>
                             </Paper>
                         </Grid>
                     </Grid>
