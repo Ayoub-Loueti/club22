@@ -9,12 +9,21 @@
 }
 
 
+.offre-form-container textarea {
+  padding: 11px;
+  width: 100%;
+  height: 150px; /* Set a fixed height */
+  min-height: 150px; /* Or set a minimum height */
+  border-radius: 5px;
+  border: 2px solid #CBD5E0;
+  background-color: #EDF2F7;
+  color: #2D3748;
+}
 
 .offre-form-container input[type="text"],
 .offre-form-container input[type="number"],
 .offre-form-container input[type="date"],
-.offre-form-container select,
-.offre-form-container textarea {
+.offre-form-container select  {
   padding: 11px;
   width: 100%;
   border-radius: 5px;
