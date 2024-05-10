@@ -95,14 +95,30 @@ const MyReservations = () => {
               cancelButtonText: 'Non, annuler !',
               reverseButtons: true,
             });
-            if (result.isConfirmed) {
-                await axios.put(`http://localhost:5000/reservation/${id}/confirmer`, {}, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-Swal.fire('Confirmé !', 'La réservation a été confirmée.', 'success');
-fetchReservations();
-                setReservations(reservations.map(r => r.id_reservation === id ? { ...r, etat: 'confirmed' } : r));
-            }
+          if (result.isConfirmed) {
+            await axios.put(
+              `http://localhost:5000/reservation/${id}/confirmer`,
+              {},
+              {
+                headers: { Authorization: `Bearer ${token}` },
+              }
+            );
+            Swal.fire(
+              'Confirmé !',
+              'La réservation a été confirmée.',
+              'success'
+            );
+            setReservations(
+              reservations.filter((r) => r.id_reservation !== id)
+            );
+            const confirmedReservation = reservations.find(
+              (r) => r.id_reservation === id
+            );
+            setBoxDReservations([
+              ...boxDReservations,
+              { ...confirmedReservation, etat: 'confirmed' },
+            ]);
+          }
         } catch (err) {
 Swal.fire(
   'Échec !',
@@ -111,6 +127,16 @@ Swal.fire(
 );
         }
     };
+const handleReservationUpdated = (updatedReservation) => {
+  setReservations((prevReservations) =>
+    prevReservations.map((reservation) =>
+      reservation.id_reservation === updatedReservation.id_reservation
+        ? { ...reservation, ...updatedReservation }
+        : reservation
+    )
+  );
+  setModifyDialogOpen(false); // Fermer le dialogue après la mise à jour
+};
 
     const cancelReservation = async (event, id) => {
         event.stopPropagation();
@@ -429,7 +455,7 @@ const downloadReservationPDF = async (reservation) => {
       <>
         <Navbar />
         <NavbarHaut />
-        
+
         {error && (
           <Typography color="error" sx={{ m: 2 }}>
             {error}
@@ -441,7 +467,7 @@ const downloadReservationPDF = async (reservation) => {
               <Grid item xs={12}>
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="h5" sx={{ mb: 1 }}>
-                   Premiere phase : Vos réservations
+                    Premiere phase : Vos réservations
                   </Typography>
                   <Card raised sx={{ height: 290, overflowY: 'auto' }}>
                     <CardContent>
@@ -559,7 +585,7 @@ const downloadReservationPDF = async (reservation) => {
               <Grid item xs={12}>
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="h5" sx={{ mb: 1 }}>
-                     Deuxieme Phase: vos réservations confrimés
+                    Deuxieme Phase: vos réservations confrimés
                   </Typography>
                   <Card raised sx={{ height: 290, overflowY: 'auto' }}>
                     <CardContent>
@@ -631,32 +657,71 @@ const downloadReservationPDF = async (reservation) => {
               <Typography variant="h5" sx={{ mb: 1 }}>
                 Resultat du demande
               </Typography>
-              <Button onClick={fetchDeductionDetails}>Afficher les détails de la déduction</Button>
-<Modal
-  open={showModal}
-  onClose={handleCloseModal}
-  closeAfterTransition
->
-  <Fade in={showModal}>
-    {deductionDetails.length > 0 ? (
-      <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '10px', maxWidth: '400px', margin: 'auto', marginTop: '150px' }}>
-        {deductionDetails.map((detail) => (
-          <Card key={detail.id_reservation} style={{ marginBottom: '20px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
-            <CardContent>
-              <Typography variant="h6" style={{ marginBottom: '10px' }}>{detail.offre.titre}</Typography>
-              <Typography style={{ marginBottom: '5px' }}>{`Date Paiement: ${new Date(detail.date_paiement).toLocaleDateString()}`}</Typography>
-              <Typography>{`Montant Deduit: ${detail.montant_deduit}`} DT</Typography>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    ) : (
-      <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '10px', maxWidth: '400px', margin: 'auto', marginTop: '150px' }}>
-        <Typography>Aucun détail de déduction à afficher.</Typography>
-      </div>
-    )}
-  </Fade>
-</Modal>
+              <Button onClick={fetchDeductionDetails}>
+                Afficher les détails de la déduction
+              </Button>
+              <Modal
+                open={showModal}
+                onClose={handleCloseModal}
+                closeAfterTransition
+              >
+                <Fade in={showModal}>
+                  {deductionDetails.length > 0 ? (
+                    <div
+                      style={{
+                        backgroundColor: '#fff',
+                        padding: '20px',
+                        borderRadius: '10px',
+                        maxWidth: '400px',
+                        margin: 'auto',
+                        marginTop: '150px',
+                      }}
+                    >
+                      {deductionDetails.map((detail) => (
+                        <Card
+                          key={detail.id_reservation}
+                          style={{
+                            marginBottom: '20px',
+                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                          }}
+                        >
+                          <CardContent>
+                            <Typography
+                              variant="h6"
+                              style={{ marginBottom: '10px' }}
+                            >
+                              {detail.offre.titre}
+                            </Typography>
+                            <Typography
+                              style={{ marginBottom: '5px' }}
+                            >{`Date Paiement: ${new Date(
+                              detail.date_paiement
+                            ).toLocaleDateString()}`}</Typography>
+                            <Typography>
+                              {`Montant Deduit: ${detail.montant_deduit}`} DT
+                            </Typography>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        backgroundColor: '#fff',
+                        padding: '20px',
+                        borderRadius: '10px',
+                        maxWidth: '400px',
+                        margin: 'auto',
+                        marginTop: '150px',
+                      }}
+                    >
+                      <Typography>
+                        Aucun détail de déduction à afficher.
+                      </Typography>
+                    </div>
+                  )}
+                </Fade>
+              </Modal>
               <Card raised sx={{ height: 670, overflowY: 'auto' }}>
                 <CardContent>
                   {boxTReservations.map((reservation) => (
@@ -704,14 +769,13 @@ const downloadReservationPDF = async (reservation) => {
                         <Typography variant="body1" color="primary">
                           {reservation.prix_totale} TND
                         </Typography>
-                        {reservation.etat === 'accepter' && new Date(currentDate.toISOString().split('T')[0]) > new Date(reservation.date_debut) && (
-                         <>
-                        {renderStars(reservation)}
-                        </>
-                        )}
+                        {reservation.etat === 'accepter' &&
+                          new Date(currentDate.toISOString().split('T')[0]) >
+                            new Date(reservation.date_debut) && (
+                            <>{renderStars(reservation)}</>
+                          )}
                         {reservation.etat === 'accepter' && (
                           <>
-                            
                             <Button
                               onClick={(event) => {
                                 event.stopPropagation();
@@ -742,6 +806,7 @@ const downloadReservationPDF = async (reservation) => {
                 isOpen={modifyDialogOpen}
                 onRequestClose={handleModifyDialogClose}
                 reservationData={selectedReservation}
+                onReservationUpdated={handleReservationUpdated}
               />
             </>
           )}

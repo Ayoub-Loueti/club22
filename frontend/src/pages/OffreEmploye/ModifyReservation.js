@@ -62,7 +62,12 @@ const RoomDetails = ({ roomNumber, room, updateRoom, deleteRoom, canDelete, adhe
   );
 };
 
-const ModifyReservation = ({ isOpen, onRequestClose, reservationData }) => {
+const ModifyReservation = ({
+  isOpen,
+  onRequestClose,
+  reservationData,
+  onReservationUpdated,
+}) => {
   const [rooms, setRooms] = useState(reservationData.rooms || []);
   const [deletedRooms, setDeletedRooms] = useState([]);
   const [nombre, setNombre] = useState(reservationData.nombre || 1);
@@ -77,19 +82,24 @@ const ModifyReservation = ({ isOpen, onRequestClose, reservationData }) => {
   }, [rooms, deletedRooms]);
 
   const calculateRoomPrice = (adults, children, basePrice) => {
-    let priceIncrease = (adults - 1) * (basePrice * 0.4) + children * (basePrice * 0.2);
+    let priceIncrease =
+      (adults - 1) * (basePrice * 0.4) + children * (basePrice * 0.2);
     let totalPrice = basePrice + priceIncrease;
     if (adherent) {
-      totalPrice *= (1 - remise);
+      totalPrice *= 1 - remise;
     }
     return totalPrice;
   };
 
   const updateRoom = (roomId, field, value) => {
-    const updatedRooms = rooms.map(room => {
+    const updatedRooms = rooms.map((room) => {
       if (room.id_hotel === roomId) {
         const newRoom = { ...room, [field]: value };
-        newRoom.prix = calculateRoomPrice(newRoom.nbr_adults, newRoom.nbr_enfants, reservationData.offre.prix);
+        newRoom.prix = calculateRoomPrice(
+          newRoom.nbr_adults,
+          newRoom.nbr_enfants,
+          reservationData.offre.prix
+        );
         return newRoom;
       }
       return room;
@@ -99,55 +109,74 @@ const ModifyReservation = ({ isOpen, onRequestClose, reservationData }) => {
   };
 
   const deleteRoom = (roomId) => {
-    const updatedRooms = rooms.filter(room => room.id_hotel !== roomId);
-    const deletedRoom = rooms.find(room => room.id_hotel === roomId);
+    const updatedRooms = rooms.filter((room) => room.id_hotel !== roomId);
+    const deletedRoom = rooms.find((room) => room.id_hotel === roomId);
     setRooms(updatedRooms);
     setDeletedRooms([...deletedRooms, deletedRoom]); // Add the deleted room to deletedRooms
   };
 
   const updateTotalPrice = (updatedRooms) => {
-    const newTotalPrice = updatedRooms.reduce((acc, room) => acc + room.prix, 0);
+    const newTotalPrice = updatedRooms.reduce(
+      (acc, room) => acc + room.prix,
+      0
+    );
     setPrixTotal(newTotalPrice);
   };
 
   const handleSaveChanges = async () => {
-    const updatedRooms = rooms.map(room => ({
+    const updatedRooms = rooms.map((room) => ({
       id_hotel: room.id_hotel,
       nbr_adults: room.nbr_adults,
       nbr_enfants: room.nbr_enfants,
-      prix: room.prix
+      prix: room.prix,
     }));
-  
+
     const updatedData = {
+      id_reservation: reservationData.id_reservation,
+
       nombre: nombre,
       prix_totale: prixTotal,
-      hotels: updatedRooms
+      rooms: updatedRooms,
     };
-  
+
     try {
       // Delete any rooms marked for deletion
-      await Promise.all(deletedRooms.map(async deletedRoom => {
-        await axios.delete(`http://localhost:5000/hotel/${deletedRoom.id_hotel}`, {
-          headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
-        });
-      }));
-  
+      await Promise.all(
+        deletedRooms.map(async (deletedRoom) => {
+          await axios.delete(
+            `http://localhost:5000/hotel/${deletedRoom.id_hotel}`,
+            {
+              headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
+            }
+          );
+        })
+      );
+
       // Update the reservation with the modified data
-      const response = await axios.put(`http://localhost:5000/updateReservation/${reservationData.id_reservation}`, updatedData, {
-        headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
-      });
-Swal.fire(
-  'Mis à jour !',
-  'Votre réservation a été mise à jour avec succès.',
-  'success'
-);
-      onRequestClose();  // Assuming this method closes the dialog
+      const response = await axios.put(
+        `http://localhost:5000/updateReservation/${reservationData.id_reservation}`,
+        updatedData,
+        {
+          headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
+        }
+      );
+      Swal.fire(
+        'Mis à jour !',
+        'Votre réservation a été mise à jour avec succès.',
+        'success'
+      );
+      onReservationUpdated(updatedData); // Envoyer les données mises à jour
+
+      onRequestClose(); // Assuming this method closes the dialog
     } catch (error) {
-Swal.fire('Échec !', 'Échec de la mise à jour de la réservation.', 'error');
+      Swal.fire(
+        'Échec !',
+        'Échec de la mise à jour de la réservation.',
+        'error'
+      );
       console.error('Failed to update reservation:', error);
     }
   };
-  
 
   return (
     <Dialog open={isOpen} onClose={onRequestClose} maxWidth="sm" fullWidth>
@@ -168,25 +197,33 @@ Swal.fire('Échec !', 'Échec de la mise à jour de la réservation.', 'error');
           ))
         ) : (
           <>
-          <br />
-          <TextField
-            label="Nombre des personnes"
-            type="number"
-            fullWidth
-            variant="outlined"
-            value={nombre}
-            onChange={(e) => {
-              setNombre(Number(e.target.value));
-              setPrixTotal(Number(e.target.value) * reservationData.offre.prix * (adherent ? (1 - remise) : 1));
-            }}
-          />
+            <br />
+            <TextField
+              label="Nombre des personnes"
+              type="number"
+              fullWidth
+              variant="outlined"
+              value={nombre}
+              onChange={(e) => {
+                setNombre(Number(e.target.value));
+                setPrixTotal(
+                  Number(e.target.value) *
+                    reservationData.offre.prix *
+                    (adherent ? 1 - remise : 1)
+                );
+              }}
+            />
           </>
         )}
       </DialogContent>
-      <Typography variant="h6" sx={{ mt: 2 }}>&nbsp;&nbsp;&nbsp;&nbsp;Prix totale: {prixTotal.toFixed(2)} DT</Typography>
+      <Typography variant="h6" sx={{ mt: 2 }}>
+        &nbsp;&nbsp;&nbsp;&nbsp;Prix totale: {prixTotal.toFixed(2)} DT
+      </Typography>
       <DialogActions>
         <Button onClick={onRequestClose}>Annuler</Button>
-        <Button onClick={handleSaveChanges} color="primary">Enregistrer</Button>
+        <Button onClick={handleSaveChanges} color="primary">
+          Enregistrer
+        </Button>
       </DialogActions>
     </Dialog>
   );
