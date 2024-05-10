@@ -7,29 +7,38 @@ import Navbar from '../../components/navbar/navbar';
 import StarRating from './StarRating'; // Make sure this is imported correctly
 import ScrollToTop from '../../components/designs/ScrollToTop';
 
-function OffreEmploye() {
+function OffreEmploye({ offers }) {
   const [offres, setOffres] = useState([]);
   const [filter, setFilter] = useState('tous');
   const token = localStorage.getItem('login');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchOffres = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/employeOffers', {
-          headers: {
-            Authorization: `Bearer ${JSON.parse(token).token}`,
-          },
-        });
-        setOffres(response.data.map(offre => ({ ...offre, currentImageIndex: 0 })));
-      } catch (error) {
-        console.error('Error fetching offres:', error);
-      }
-    };
-
-    fetchOffres();
-    
-  }, [token]);
+ useEffect(() => {
+   // Si aucune offre n'est passée en props, fetch les offres
+   if (!offers || offers.length === 0) {
+     const fetchOffres = async () => {
+       try {
+         const response = await axios.get(
+           'http://localhost:5000/employeOffers',
+           {
+             headers: {
+               Authorization: `Bearer ${JSON.parse(token).token}`,
+             },
+           }
+         );
+         setOffres(
+           response.data.map((offre) => ({ ...offre, currentImageIndex: 0 }))
+         );
+       } catch (error) {
+         console.error('Error fetching offres:', error);
+       }
+     };
+     fetchOffres();
+   } else {
+     // Utilisez les offres passées en props
+     setOffres(offers);
+   }
+ }, [token, offers]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -55,7 +64,7 @@ function OffreEmploye() {
       <div className="offre-employee-container">
         <h1 className="offre-employee-title">LES OFFRES DISPONIBLES</h1>
         <div className="filters">
-          {['tous', 'hotel', 'voyage', 'activité'].map((f) => (
+          {['tous', 'hotel', 'voyage', 'activite'].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}

@@ -2,85 +2,72 @@ import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import homeImage from '../../assets/hero.png';
 import axios from 'axios';
-export default function Hero() {
-   const [minPrice, setMinPrice] = useState(0);
-   const [maxPrice, setMaxPrice] = useState(1000);
-   const [destination, setDestination] = useState('');
-   const [promotionType, setPromotionType] = useState('all'); // 'all', 'promo', 'nonpromo'
-   const [filteredOffres, setFilteredOffres] = useState([]);
-   const token = localStorage.getItem('login');
-
-   useEffect(() => {
-    
-     fetchFilteredOffers();
-   }, [minPrice, maxPrice, destination, promotionType]);
-
-   const fetchFilteredOffers = async () => {
-     try {
-       const response = await axios.get('http://localhost:5000/employeOffers', {
-         headers: {
-           Authorization: `Bearer ${JSON.parse(token).token}`,
-         },
-       });
-       const allOffres = response.data;
-           console.log('All offers:', allOffres);
-
-       let filtered = allOffres.filter(
-         (offre) => offre.prix >= minPrice && offre.prix <= maxPrice
-       );
-           console.log('Filtered by price:', filtered);
-
-       if (destination) {
-         filtered = filtered.filter((offre) =>
-           offre.destination.toLowerCase().includes(destination.toLowerCase())
-         );
-               console.log('Filtered by destination:', filtered);
-
-       }
-       
-       if (promotionType === 'promo') {
-         filtered = filtered.filter((offre) => offre.remise !== '');
-               console.log('Filtered by promotion:', filtered);
-
-       } else if (promotionType === 'nonpromo') {
-         filtered = filtered.filter((offre) => offre.remise === '');
-               console.log('Filtered by non-promotion:', filtered);
+export default function Hero({ onFiltered }) {
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(11000);
+  
+  const [destination, setDestination] = useState('');
+  const [promotionType, setPromotionType] = useState('all'); // 'all', 'promo', 'nonpromo'
+  const [filteredOffres, setFilteredOffres] = useState([]);
+  const token = localStorage.getItem('login');
 
 
-       }
-       setFilteredOffres(filtered);
-     } catch (error) {
-       console.error('Error fetching offres:', error);
-     }
-   };
+const normalizeImagePath = (path) => {
+  return path.replace(/\\/g, '/');
+};
 
-   const handlePriceChange = (event) => {
-     const value = parseInt(event.target.value);
-     setMinPrice(value);
-     setMaxPrice(value + 50); // Change the default range as needed
-   };
-
-   const handleDestinationChange = (event) => {
-     const value = event.target.value;
-     setDestination(value);
-   };
-
-   const handlePromotionTypeChange = (event) => {
-     const value = event.target.value;
-     setPromotionType(value);
-   };
-
-  const handleSearch = () => {
-    console.log('Search button clicked');
-    console.log('minPrice:', minPrice);
-    console.log('maxPrice:', maxPrice);
-    console.log('destination:', destination);
-    console.log('promotionType:', promotionType);
-
-    fetchFilteredOffers();
+const fetchFilteredOffers = async () => {
+  try {
+    const response = await axios.get('http://localhost:5000/employeOffers', {
+      headers: {
+        Authorization: `Bearer ${JSON.parse(token).token}`,
+      },
+    });
+    let filtered = response.data
+      .filter(
+        (offre) =>
+          offre.prix >= minPrice &&
+          offre.prix <= maxPrice &&
+          (!destination ||
+            offre.destination
+              .toLowerCase()
+              .includes(destination.toLowerCase())) &&
+          (promotionType === 'all' ||
+            (promotionType === 'promo' && offre.remise > 0) ||
+            (promotionType === 'nonpromo' && offre.remise === 0))
+      )
+      .map((offre) => ({
+        ...offre,
+        lesImages: offre.lesImages.map((img) => ({
+          ...img,
+          image: normalizeImagePath(img.image),
+        })),
+        currentImageIndex: 0, // Assurez-vous que chaque offre a un index d'image initialisé
+      }));
+    onFiltered(filtered);
+  } catch (error) {
+    console.error('Error fetching offres:', error);
+  }
+};
+  const handlePriceChange = (event) => {
+    const value = parseInt(event.target.value);
+    setMinPrice(value);
+    setMaxPrice(value + 50); // Change the default range as needed
   };
 
+  const handleDestinationChange = (event) => {
+    const value = event.target.value;
+    setDestination(value);
+  };
 
+  const handlePromotionTypeChange = (event) => {
+    const value = event.target.value;
+    setPromotionType(value);
+  };
+
+  const handleSearch = () => {
+    fetchFilteredOffers();
+  };
   return (
     <Section id="hero">
       <div className="background">
@@ -111,7 +98,7 @@ export default function Hero() {
               <input
                 type="range"
                 min="0"
-                max="1000"
+                max="11000"
                 step="50"
                 value={minPrice}
                 onChange={handlePriceChange}
