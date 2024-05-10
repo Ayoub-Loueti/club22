@@ -19,6 +19,7 @@ import {
   Select
 } from '@mui/material';
 import Swal from 'sweetalert2';
+import { addDays } from 'date-fns';
 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
@@ -269,8 +270,8 @@ const handleAuthorizationChange = (event) => {
                   2
                 ),
            date_debut: reservationStartAdjusted.toISOString(),
-           date_fin: reservationEndAdjusted.toISOString(),
-          mode_paiement: modePaiement, // Include payment mode
+           date_fin: type === 'activite' ? null : reservationEndAdjusted.toISOString(),
+           mode_paiement: modePaiement, // Include payment mode
           autorisation_deduction_salaire: autorisationDeductionSalaire,
           statut_paiement: "", // Set statut_paiement based on payment mode
           montant_deduit: "",
@@ -348,23 +349,22 @@ const handleAuthorizationChange = (event) => {
                     />
                   )}
                 />
-                <MobileDatePicker
-                  label="Date de fin"
-                  value={reservationEnd}
-                  onChange={setReservationEnd}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      placeholder="jj/mm/aaaa"
-                      fullWidth
-                      error={!reservationEnd}
-                      helperText={
-                        !reservationEnd ? 'Sélection obligatoire' : ''
-                      }
-                    />
-                  )}
-                />
-              </LocalizationProvider>
+               <MobileDatePicker
+  label="Date de fin"
+  value={reservationEnd}
+  onChange={handleEndDateChange}
+  minDate={addDays(reservationStart, 1)} // Set the minimum date for the end date to one day after the start date
+  renderInput={(params) => (
+    <TextField
+      {...params}
+      placeholder="jj/mm/aaaa"
+      fullWidth
+      error={!reservationEnd}
+      helperText={!reservationEnd ? 'Sélection obligatoire' : ''}
+    />
+  )}
+/>
+</LocalizationProvider>
             </>
           )}
           {type === 'voyage' && (
