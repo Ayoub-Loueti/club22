@@ -7,7 +7,8 @@ import UpdateOffreModal from './UpdateOffreModal';
 import { FaArrowLeft } from 'react-icons/fa';
 import '../NavAdmin/navAdmin';
 import NavAdmin from '../NavAdmin/navAdmin';
-import parse from 'html-react-parser';
+import { Link } from 'react-router-dom';
+import ScrollToTop from '../../../components/designs/ScrollToTop';
 
 function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
   const [offres, setOffres] = useState([]);
@@ -130,11 +131,10 @@ const [categoryFilter, setCategoryFilter] = useState('tous');
 
   return (
     <>
+      <ScrollToTop />
+
       <NavAdmin />
       <div className="offre-admin-container">
-        <button className="retour-btn" onClick={() => window.history.back()}>
-          <FaArrowLeft /> Retour
-        </button>
         <AddOffreModal
           isOpen={isModalOpen}
           onRequestClose={handleCloseModal}
@@ -181,7 +181,10 @@ const [categoryFilter, setCategoryFilter] = useState('tous');
             )
             .map((offre, index) => (
               <div key={index} className="offre-card">
-                <div className="offre-card-content">
+                <Link
+                  to={`/OffreAdminDetails/${offre.id_offre}`}
+                  className="offre-card-content"
+                >
                   <h2>{offre.titre}</h2>
                   <img
                     src={`http://localhost:5000/${
@@ -189,190 +192,20 @@ const [categoryFilter, setCategoryFilter] = useState('tous');
                     }`}
                     alt={`Image ${offre.currentImageIndex}`}
                   />
-                  <div className="offDes">{offre.description}</div>{' '}
                   <p>
-                    <strong>Catégorie: </strong>
-                    <span className="text-after-colon">{offre.type}</span>
-                  </p>
-                  <p className="offDes">
-                    <strong>Destination:</strong>{' '}
-                    <span className="text-after-colon">
-                      {offre.destination || 'Non spécifié'}
-                    </span>
-                  </p>
-                  <p>
-                    <strong> Prix:</strong>{' '}
-                    <span className="text-after-colon">{offre.prix}DT</span>
-                  </p>
-                  {offre.remise > 0 && (
-                    <p>
-                      <strong>Remise: </strong>
-                      <span className="text-after-colon">
-                        {' '}
-                        {offre.remise.toString().padStart(2, '0')}%
-                      </span>
-                    </p>
-                  )}
-                  <p>
-                    <strong> Offre valable de:</strong>
-                    <span className="text-after-colon">{offre.date_debut}</span>
-                  </p>
-                  <p>
-                    <strong> Jusqu'au:</strong>
-                    <span className="text-after-colon">{offre.date_fin}</span>
-                  </p>
-                  <p>
-                    <strong> Collaborateur:</strong>
+                    <strong>Collaborateur:</strong>
                     <span className="text-after-colon">
                       {offre.collaborateur?.nom}
                     </span>
                   </p>
-                  {offre.type === 'voyage' && offre.details && (
-                    <>
-                      <div className="offDes">
-                        <strong>Programme:</strong>
-                        {offre.details.programme
-                          ? parse(offre.details.programme)
-                          : 'Non spécifié'}
-                      </div>
-                      <div className="offDes">
-                        <strong>Inclus:</strong>{' '}
-                        <span className="text-after-colon">
-                          {' '}
-                          {offre.details.inclus || 'Non spécifié'}
-                        </span>{' '}
-                      </div>
-                      <div>
-                        <strong>Nombre de jours:</strong>{' '}
-                        <span className="text-after-colon">
-                          {' '}
-                          {offre.details.nbr_jours || 'Non spécifié'}
-                        </span>{' '}
-                      </div>
-                    </>
-                  )}
-                  {offre.type === 'hotel' && offre.details && (
-                    <>
-                      <strong> Nom de l'hôtel: </strong>
-                      <span className="text-after-colon">
-                        {' '}
-                        {offre.details.nom_hotel || 'Non spécifié'}
-                      </span>{' '}
-                      <p>
-                        <strong>Étoiles:</strong>
-                        <span className="text-after-colon">
-                          {' '}
-                          {offre.details.etoiles || 'Non spécifié'}
-                        </span>{' '}
-                      </p>
-                      <div className="offDes">
-                        <p>
-                          Climatisation:{' '}
-                          <span className="text-after-colon">
-                            {' '}
-                            {offre.details.climatisation ? 'Oui' : 'Non'}
-                          </span>{' '}
-                        </p>
-                        <p>
-                          Wi-Fi:{' '}
-                          <span className="text-after-colon">
-                            {' '}
-                            {offre.details.wifi ? 'Oui' : 'Non'}
-                          </span>{' '}
-                        </p>
-                        <p>
-                          Piscine extérieure:{' '}
-                          <span className="text-after-colon">
-                            {' '}
-                            {offre.details.piscine_exterieure ? 'Oui' : 'Non'}
-                          </span>{' '}
-                        </p>
-                        <p>
-                          Piscine couverte:{' '}
-                          <span className="text-after-colon">
-                            {' '}
-                            {offre.details.piscine_couverte ? 'Oui' : 'Non'}
-                          </span>{' '}
-                        </p>
-                        <p>
-                          Bassin enfants:{' '}
-                          <span className="text-after-colon">
-                            {' '}
-                            {offre.details.bassin_enfants ? 'Oui' : 'Non'}
-                          </span>{' '}
-                        </p>
-                        <p>
-                          Parking:
-                          <span className="text-after-colon">
-                            {' '}
-                            {offre.details.parking ? 'Oui' : 'Non'}
-                          </span>{' '}
-                        </p>
-                        <p>
-                          Discothèque:{' '}
-                          <span className="text-after-colon">
-                            {' '}
-                            {offre.details.discotheque ? 'Oui' : 'Non'}{' '}
-                          </span>{' '}
-                        </p>
-                        <p>
-                          Plage privée:{' '}
-                          <span className="text-after-colon">
-                            {' '}
-                            {offre.details.plage_privee ? 'Oui' : 'Non'}
-                          </span>{' '}
-                        </p>
-                        <p>
-                          Ascenseur:{' '}
-                          <span className="text-after-colon">
-                            {' '}
-                            {offre.details.ascenseur ? 'Oui' : 'Non'}
-                          </span>{' '}
-                        </p>
-                        <p>
-                          Salle de sport:{' '}
-                          <span className="text-after-colon">
-                            {' '}
-                            {offre.details.salle_de_sport ? 'Oui' : 'Non'}
-                          </span>{' '}
-                        </p>
-                        <p>
-                          Aire de jeux enfants:{' '}
-                          <span className="text-after-colon">
-                            {' '}
-                            {offre.details.aire_de_jeux_enfants ? 'Oui' : 'Non'}
-                          </span>{' '}
-                        </p>
-                      </div>
-                    </>
-                  )}
-                  {offre.type === 'activite' && offre.details && (
-                    <>
-                      <div className="offDes">
-                        <strong>Programme:</strong>
-                        {offre.details.programme
-                          ? parse(offre.details.programme)
-                          : 'Non spécifié'}
-                      </div>
-                      <div className="offDes">
-                        <strong>Inclus:</strong>{' '}
-                        <span className="text-after-colon">
-                          {' '}
-                          {offre.details.inclus || 'Non spécifié'}
-                        </span>{' '}
-                      </div>
-                      <div>
-                        <strong> Durée:</strong>{' '}
-                        <span className="text-after-colon">
-                          {offre.details.duree
-                            ? `${offre.details.duree} heures`
-                            : 'Non spécifié'}
-                        </span>{' '}
-                      </div>
-                    </>
-                  )}
-                </div>
+                </Link>
                 <div className="offre-card-actions">
+                  <Link
+                    to={`/OffreAdminDetails/${offre.id_offre}`}
+                    className="see-more-link"
+                  >
+                    VOIR PLUS
+                  </Link>
                   <button
                     onClick={() => handleUpdate(offre.id_offre)}
                     className="modifierOffreButton"
@@ -382,7 +215,7 @@ const [categoryFilter, setCategoryFilter] = useState('tous');
                   <button onClick={() => handleDelete(offre.id_offre)}>
                     SUPPRIMER
                   </button>
-                </div>{' '}
+                </div>
               </div>
             ))}
         </div>

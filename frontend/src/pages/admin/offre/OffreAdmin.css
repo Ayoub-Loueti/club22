@@ -24,7 +24,7 @@
   justify-content: space-between; display: flex;
   flex-direction: column;
     text-align: center; /* Ensures text is aligned left */
-
+background-color: #f3f5f8;
 }
 .offre-card h2, p {
   color: #191f43; /* Deep navy blue for text */
@@ -90,7 +90,7 @@
 }
 
 .offre-card button:last-child {
-  background-color: #c50f10; /* Vibrant red for delete */
+  background-color: #879eb9; /* Vibrant red for delete */
   color: white;
 }
 
@@ -186,3 +186,24 @@
 
 }
 
+.see-more-link {
+  display: block;
+  color: #191f43;
+  text-align: center;
+  padding: 3px 0px;
+  border-radius: 5px;
+    text-decoration:underline ; 
+  transition: background-color 0.3s ease;
+}
+
+.see-more-link:hover {
+color: #6b85a4; 
+    text-decoration:underline ; 
+
+}
+
+.offre-card-content {
+  cursor: pointer; /* Indicates that the item is clickable */
+    text-decoration: none; /* Remove underline from links */
+
+}

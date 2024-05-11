@@ -199,7 +199,8 @@ const renderSharedFields = () => (
         <input
           type="number"
           value={nbr_jours}
-          onChange={(e) => setNbrJours(e.target.value)}
+          onChange={handleNbrJoursChange}
+          min="0"
           required
         />
       </label>
@@ -222,7 +223,8 @@ const renderSharedFields = () => (
         <input
           type="number"
           value={etoiles}
-          onChange={(e) => setEtoiles(e.target.value)}
+          onChange={handleEtoilesChange}
+          min="0"
           required
         />
       </label>
@@ -232,7 +234,6 @@ const renderSharedFields = () => (
           color: '#4A5568',
           textTransform: 'uppercase',
           fontWeight: 'bold',
-          
         }}
       >
         Climatisation:
@@ -414,7 +415,8 @@ const renderSharedFields = () => (
         <input
           type="number"
           value={duree}
-          onChange={(e) => setDuree(e.target.value)}
+          onChange={handleDureeChange}
+          min="0"
           required
         />
       </label>
@@ -532,6 +534,19 @@ console.log({
       console.log('Selected location coordinates: ', location);
     };
   const today = new Date().toISOString().split('T')[0];
+  const handleNbrJoursChange = (e) => {
+    const newNbrJours = parseInt(e.target.value, 10);
+    setNbrJours(Math.max(0, newNbrJours)); // Assure que nbr_jours ne soit pas négatif
+  };
+  const handleDureeChange = (e) => {
+    const newDuree = parseInt(e.target.value, 10);
+    setDuree(Math.max(0, newDuree)); // Assure que la durée ne soit pas négative
+  };
+  const handleEtoilesChange = (e) => {
+    const newEtoiles = parseInt(e.target.value, 10);
+    setEtoiles(Math.max(0, newEtoiles)); // Assure que etoiles ne soit pas négatif
+  };
+
   return (
     <form className="offre-form-container" onSubmit={handleSubmit}>
       <label>
@@ -581,23 +596,23 @@ console.log({
         />
       </label>
       <label>
-        Date de début:
+        Date de début de remise:
         <input
           type="date"
           value={date_debut}
           onChange={(e) => setDateDebut(e.target.value)}
           min={isUpdate && initialDataLoaded ? undefined : today}
-          required
+          disabled={!remise} // Désactiver si remise n'est pas spécifiée
         />
       </label>
       <label>
-        Date de fin:
+        Date de fin de remise:
         <input
           type="date"
           value={date_fin}
           onChange={(e) => setDateFin(e.target.value)}
           min={date_debut || today}
-          required
+          disabled={!remise} // Désactiver si remise n'est pas spécifiée
         />
       </label>
       <div>

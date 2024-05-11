@@ -3,12 +3,13 @@ import styled from 'styled-components';
 import homeImage from '../../assets/hero.png';
 import axios from 'axios';
 export default function Hero({ onFiltered }) {
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(11000);
+
   
   const [destination, setDestination] = useState('');
   const [promotionType, setPromotionType] = useState('all'); // 'all', 'promo', 'nonpromo'
   const [filteredOffres, setFilteredOffres] = useState([]);
+    const [selectedOption, setSelectedOption] = useState('');
+
   const token = localStorage.getItem('login');
 
 
@@ -26,15 +27,17 @@ const fetchFilteredOffers = async () => {
     let filtered = response.data
       .filter(
         (offre) =>
-          offre.prix >= minPrice &&
-          offre.prix <= maxPrice &&
+    
           (!destination ||
             offre.destination
               .toLowerCase()
               .includes(destination.toLowerCase())) &&
           (promotionType === 'all' ||
             (promotionType === 'promo' && offre.remise > 0) ||
-            (promotionType === 'nonpromo' && offre.remise === 0))
+            (promotionType === 'nonpromo' && offre.remise === 0))&&
+   (selectedOption === '' || offre.type === selectedOption.split('-')[0] &&
+              offre.prixRange === selectedOption.split('-')[1])
+          
       )
       .map((offre) => ({
         ...offre,
@@ -49,17 +52,26 @@ const fetchFilteredOffers = async () => {
     console.error('Error fetching offres:', error);
   }
 };
-  const handlePriceChange = (event) => {
-    const value = parseInt(event.target.value);
-    setMinPrice(value);
-    setMaxPrice(value + 50); // Change the default range as needed
-  };
-
+  
   const handleDestinationChange = (event) => {
     const value = event.target.value;
     setDestination(value);
   };
+  const options = [
+    { value: 'voyage-eco', label: 'Voyage: Économique' },
+    { value: 'voyage-mid', label: 'Voyage: Moyen de gamme' },
+    { value: 'voyage-lux', label: 'Voyage: Luxe' },
+    { value: 'hotel-eco', label: 'Hôtel: Économique' },
+    { value: 'hotel-mid', label: 'Hôtel: Moyen de gamme' },
+    { value: 'hotel-lux', label: 'Hôtel: Luxe' },
+    { value: 'activite-eco', label: 'Activité: Économique' },
+    { value: 'activite-mid', label: 'Activité: Moyen de gamme' },
+    { value: 'activite-lux', label: 'Activité: Luxe' },
+  ];
 
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
   const handlePromotionTypeChange = (event) => {
     const value = event.target.value;
     setPromotionType(value);
@@ -92,19 +104,14 @@ const fetchFilteredOffers = async () => {
             />
           </div>
           <div className="container price-range">
-            <label htmlFor="">Plage de prix</label>
-            <div className="price-line">
-              <span className="min-price">{minPrice} TND</span>
-              <input
-                type="range"
-                min="0"
-                max="11000"
-                step="50"
-                value={minPrice}
-                onChange={handlePriceChange}
-              />
-              <span className="max-price">{maxPrice} TND</span>
-            </div>
+            <label>Type et Plage Budgétaire</label>
+            <select onChange={handleOptionChange}>
+              {options.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="container">
             <label htmlFor="">Promotion</label>

@@ -142,16 +142,18 @@
 
 .list-Employe-navigate-button {
     padding: 8px 16px;
-    background-color: #191F43;
-    color: white;
+    background-color: #F5F5DC;
+    color: black;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
+         font-weight: bold;
+
 }
 
 .list-Employe-navigate-button:hover {
-    background-color: #163172; /* Plus sombre au survol */
+    background-color: #DCDCC6; /* Plus sombre au survol */
 }
 
 .list-Employe-search-filter-contaiiner button {

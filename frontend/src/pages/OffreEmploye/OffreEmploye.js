@@ -89,6 +89,8 @@ function OffreEmploye({ offers }) {
                   .padStart(2, '0')}%`}</div>
               )}
               <h2>{offre.titre}</h2>
+              <h3>Prix : A partir de {offre.prix}</h3>
+
               <StarRating
                 rating={parseFloat(offre.evaluation.averageVotes)}
                 numReviews={offre.evaluation.numberOfEvaluations}

@@ -7,7 +7,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { mkConfig, generateCsv, download } from 'export-to-csv'; // Ensure this package is correctly installed
 import NavAdmin from '../NavAdmin/navAdmin';
 import './listEmployE.css';
-
+import { MRT_Localization_FR } from 'material-react-table/locales/fr';
 const columnHelper = createMRTColumnHelper();
 
 const ListEmploye = () => {
@@ -127,7 +127,7 @@ const ListEmploye = () => {
 
   return (
     <>
-         <NavAdmin/>
+      <NavAdmin />
       <div className="list-Employe-container">
         <div className="list-Employe-header">
           <h1>LISTE DES EMPLOYES</h1>
@@ -148,20 +148,34 @@ const ListEmploye = () => {
           </div>
         </div>
         <MaterialReactTable
-        muiTableHeadCellProps={{
-          sx: {
-            backgroundColor: '#191F43', 
-            color: 'white', 
-          }
-        }}
           columns={columns}
           data={employees}
           getRowId={(row) => row.id_utilisateur}
-          muiSearchTextFieldProps={{ variant: 'outlined', label: 'Search Employees' }}
+          localization={MRT_Localization_FR}
+          muiSearchTextFieldProps={{
+            variant: 'outlined',
+            label: 'Rechercher des employés',
+          }}
+          muiTableHeadCellProps={{
+            sx: {
+              backgroundColor: '#F5F5DC', // Couleur de fond des cellules d'en-tête
+              '&:hover': {},
+            },
+          }}
           renderTopToolbarCustomActions={({ table }) => (
-            <Box sx={{ display: 'flex', gap: '16px', padding: '8px', flexWrap: 'wrap' }}>
-              <Button onClick={handleExportData} startIcon={<FileDownloadIcon />}>
-                Export Data
+            <Box
+              sx={{
+                display: 'flex',
+                gap: '16px',
+                padding: '8px',
+                flexWrap: 'wrap',
+              }}
+            >
+              <Button
+                onClick={handleExportData}
+                startIcon={<FileDownloadIcon />}
+              >
+                Exporter les données
               </Button>
             </Box>
           )}
