@@ -2,84 +2,96 @@ import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import homeImage from '../../assets/hero.png';
 import axios from 'axios';
-export default function Hero({ onFiltered }) {
 
-  
+import { Range } from 'react-range';
+
+
+export default function Hero({ onFiltered }) {
   const [destination, setDestination] = useState('');
   const [promotionType, setPromotionType] = useState('all'); // 'all', 'promo', 'nonpromo'
-  const [filteredOffres, setFilteredOffres] = useState([]);
-    const [selectedOption, setSelectedOption] = useState('');
-
+const [minPrice, setMinPrice] = useState(0);
+const [maxPrice, setMaxPrice] = useState(1000);
+const [prices, setPrices] = useState([minPrice, maxPrice]);
   const token = localStorage.getItem('login');
 
+  const normalizeImagePath = (path) => {
+    return path.replace(/\\/g, '/');
+  };
+ const fetchFilteredOffers = async (prices, destination, promotionType) => {
+   try {
+     const response = await axios.get('http://localhost:5000/employeOffers', {
+       headers: {
+         Authorization: `Bearer ${JSON.parse(token).token}`,
+       },
+     });
+     let filtered = response.data
+       .filter((offre) => {
+         const priceMatch = offre.prix >= prices[0] && offre.prix <= prices[1];
+         const destinationMatch = destination
+           ? offre.destination.toLowerCase().includes(destination.toLowerCase())
+           : true;
+         let promotionMatch = true;
+         if (promotionType === 'promo') {
+           promotionMatch = offre.remise > 0;
+         } else if (promotionType === 'nonpromo') {
+           promotionMatch = offre.remise === 0;
+         }
+         return priceMatch && destinationMatch && promotionMatch;
+       })
+       .map((offre) => ({
+         ...offre,
+         lesImages: offre.lesImages.map((img) => ({
+           ...img,
+           image: normalizeImagePath(img.image),
+         })),
+         currentImageIndex: 0,
+       }));
+     onFiltered(filtered);
+   } catch (error) {
+     console.error('Error fetching offres:', error);
+   }
+ };
 
-const normalizeImagePath = (path) => {
-  return path.replace(/\\/g, '/');
-};
+ useEffect(() => {
+   const fetchPrices = async () => {
+     try {
+       const response = await axios.get('http://localhost:5000/employeOffers', {
+         headers: {
+           Authorization: `Bearer ${JSON.parse(token).token}`,
+         },
+       });
+       const allPrices = response.data.map((offre) => offre.prix);
+       setMinPrice(Math.min(...allPrices));
+       setMaxPrice(Math.max(...allPrices));
+       setPrices([Math.min(...allPrices), Math.max(...allPrices)]);
+     } catch (error) {
+       console.error('Error fetching prices:', error);
+     }
+   };
+   fetchPrices();
+ }, [token]);
 
-const fetchFilteredOffers = async () => {
-  try {
-    const response = await axios.get('http://localhost:5000/employeOffers', {
-      headers: {
-        Authorization: `Bearer ${JSON.parse(token).token}`,
-      },
-    });
-    let filtered = response.data
-      .filter(
-        (offre) =>
-    
-          (!destination ||
-            offre.destination
-              .toLowerCase()
-              .includes(destination.toLowerCase())) &&
-          (promotionType === 'all' ||
-            (promotionType === 'promo' && offre.remise > 0) ||
-            (promotionType === 'nonpromo' && offre.remise === 0))&&
-   (selectedOption === '' || offre.type === selectedOption.split('-')[0] &&
-              offre.prixRange === selectedOption.split('-')[1])
-          
-      )
-      .map((offre) => ({
-        ...offre,
-        lesImages: offre.lesImages.map((img) => ({
-          ...img,
-          image: normalizeImagePath(img.image),
-        })),
-        currentImageIndex: 0, // Assurez-vous que chaque offre a un index d'image initialisé
-      }));
-    onFiltered(filtered);
-  } catch (error) {
-    console.error('Error fetching offres:', error);
-  }
-};
-  
+ const handleSearch = () => {
+   fetchFilteredOffers(prices, destination, promotionType);
+ };
+
+ const handleRangeChange = (values) => {
+   setPrices(values);
+ };
+
   const handleDestinationChange = (event) => {
     const value = event.target.value;
     setDestination(value);
   };
-  const options = [
-    { value: 'voyage-eco', label: 'Voyage: Économique' },
-    { value: 'voyage-mid', label: 'Voyage: Moyen de gamme' },
-    { value: 'voyage-lux', label: 'Voyage: Luxe' },
-    { value: 'hotel-eco', label: 'Hôtel: Économique' },
-    { value: 'hotel-mid', label: 'Hôtel: Moyen de gamme' },
-    { value: 'hotel-lux', label: 'Hôtel: Luxe' },
-    { value: 'activite-eco', label: 'Activité: Économique' },
-    { value: 'activite-mid', label: 'Activité: Moyen de gamme' },
-    { value: 'activite-lux', label: 'Activité: Luxe' },
-  ];
+ 
 
-  const handleOptionChange = (event) => {
-    setSelectedOption(event.target.value);
-  };
   const handlePromotionTypeChange = (event) => {
     const value = event.target.value;
     setPromotionType(value);
   };
 
-  const handleSearch = () => {
-    fetchFilteredOffers();
-  };
+
+  
   return (
     <Section id="hero">
       <div className="background">
@@ -99,23 +111,72 @@ const fetchFilteredOffers = async () => {
             <label htmlFor="">Où voulez-vous aller</label>
             <input
               type="text"
-              placeholder="Recherchez votre destination"
+              placeholder="Votre destination"
               onChange={handleDestinationChange}
+              style={{
+                padding: '0.5rem',
+                border: '2px solid #4361ee',
+                borderRadius: '0.3rem',
+                margin: '0.3rem 0',
+                width: '100%',
+              }}
             />
           </div>
-          <div className="container price-range">
-            <label>Type et Plage Budgétaire</label>
-            <select onChange={handleOptionChange}>
-              {options.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+          <div className="price-range">
+            <div className="price-line">
+              <span className="min-price">{prices[0]} TND</span>
+              <Range
+                step={1}
+                min={minPrice}
+                max={maxPrice}
+                values={prices}
+                onChange={handleRangeChange}
+                renderTrack={({ props, children }) => (
+                  <div
+                    {...props}
+                    style={{
+                      ...props.style,
+                      height: '6px',
+                      width: '100%',
+                      background: 'linear-gradient(to right, #ffbd69, #ff7e67)',
+                      borderRadius: '5px',
+                      borderRadius: '5px',
+                    }}
+                  >
+                    {children}
+                  </div>
+                )}
+                renderThumb={({ props }) => (
+                  <div
+                    {...props}
+                    style={{
+                      ...props.style,
+                      height: '1rem', // Réduire la taille des poignées
+                      width: '1rem',
+                      backgroundColor: '#023e8a',
+                      borderRadius: '50%',
+                      cursor: 'pointer',
+                    }}
+                  />
+                )}
+              />
+              <span className="max-price">{prices[1]} TND</span>
+            </div>
           </div>
           <div className="container">
             <label htmlFor="">Promotion</label>
-            <select onChange={handlePromotionTypeChange}>
+            <select
+              onChange={handlePromotionTypeChange}
+              style={{
+                padding: '0.8rem',
+                border: '2px solid #4361ee',
+                borderRadius: '0.3rem',
+                margin: '0.5rem 0',
+                width: '100%',
+                backgroundColor: '#ffffff',
+                color: '#000000',
+              }}
+            >
               <option value="all">Toutes</option>
               <option value="promo">Offres promotionnelles</option>
               <option value="nonpromo">Offres non promotionnelles</option>
@@ -170,14 +231,14 @@ const Section = styled.section`
     .search {
       display: flex;
       background-color: #ffffffce;
-      padding: 0.5rem;
+      padding: 0.7rem;
       border-radius: 0.5rem;
       .container {
         display: flex;
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        padding: 0 1.5rem;
+        padding: 0 4rem;
         label {
           font-size: 1.1rem;
           color: #03045e;
@@ -197,7 +258,7 @@ const Section = styled.section`
           margin-top: 0.5rem;
           border-radius: 0.3rem;
           border: none;
-          background-color: #ffffff;
+          background-color: #023e8a;
           color: #000000;
           &:focus {
             outline: none;
@@ -205,13 +266,13 @@ const Section = styled.section`
         }
       }
       button {
-        padding: 1rem;
+        padding: 0.1rem 0.5rem;
         cursor: pointer;
         border-radius: 0.3rem;
         border: none;
         color: white;
         background-color: #4361ee;
-        font-size: 1.1rem;
+        font-size: 1rem;
         text-transform: uppercase;
         transition: 0.3s ease-in-out;
         &:hover {
@@ -222,17 +283,21 @@ const Section = styled.section`
   }
 
   .price-range {
+    width: 50%;
+    padding: 0;
     .price-line {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: 0.5rem;
+      width: 100%;
+      margin-top: 3rem;
+      padding: 0 0.5rem;
       .min-price,
       .max-price {
         font-size: 0.9rem;
       }
       input[type='range'] {
-        width: 80%;
+        width: 100%;
         margin: 0 1rem;
         -webkit-appearance: none;
         height: 0.5rem;
