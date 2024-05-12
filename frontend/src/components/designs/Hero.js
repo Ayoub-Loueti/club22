@@ -115,7 +115,7 @@ const [prices, setPrices] = useState([minPrice, maxPrice]);
               onChange={handleDestinationChange}
               style={{
                 padding: '0.5rem',
-                border: '2px solid #4361ee',
+                border: '2px solid #232C5F',
                 borderRadius: '0.3rem',
                 margin: '0.3rem 0',
                 width: '100%',
@@ -138,7 +138,7 @@ const [prices, setPrices] = useState([minPrice, maxPrice]);
                       ...props.style,
                       height: '6px',
                       width: '100%',
-                      background: 'linear-gradient(to right, #ffbd69, #ff7e67)',
+                      background: 'linear-gradient(to right,#909AD6, #384696)',
                       borderRadius: '5px',
                       borderRadius: '5px',
                     }}
@@ -153,14 +153,14 @@ const [prices, setPrices] = useState([minPrice, maxPrice]);
                       ...props.style,
                       height: '1rem', // Réduire la taille des poignées
                       width: '1rem',
-                      backgroundColor: '#023e8a',
+                      backgroundColor: 'BLACK',
                       borderRadius: '50%',
                       cursor: 'pointer',
                     }}
                   />
                 )}
               />
-              <span className="max-price">{prices[1]} TND</span>
+              <span className="max-price"> {prices[1]} TND</span>
             </div>
           </div>
           <div className="container">
@@ -169,7 +169,7 @@ const [prices, setPrices] = useState([minPrice, maxPrice]);
               onChange={handlePromotionTypeChange}
               style={{
                 padding: '0.8rem',
-                border: '2px solid #4361ee',
+                border: '2px solid #232C5F',
                 borderRadius: '0.3rem',
                 margin: '0.5rem 0',
                 width: '100%',
@@ -271,7 +271,7 @@ const Section = styled.section`
         border-radius: 0.3rem;
         border: none;
         color: white;
-        background-color: #4361ee;
+        background-color: #232c5f;
         font-size: 1rem;
         text-transform: uppercase;
         transition: 0.3s ease-in-out;
@@ -296,12 +296,18 @@ const Section = styled.section`
       .max-price {
         font-size: 0.9rem;
       }
+      .min-price {
+        margin-right: 1rem; // Ajoutez un espace à droite du prix minimum
+      }
+      .max-price {
+        margin-left: 1rem; // Ajoutez un espace à gauche du prix maximum
+      }
       input[type='range'] {
         width: 100%;
         margin: 0 1rem;
         -webkit-appearance: none;
         height: 0.5rem;
-        background: linear-gradient(to right, #ffbd69, #ff7e67);
+        background: linear-gradient(to right, #7481cc, #384696);
         border-radius: 5px;
         outline: none;
         &::-webkit-slider-thumb {
@@ -309,14 +315,14 @@ const Section = styled.section`
           appearance: none;
           width: 1.5rem;
           height: 1.5rem;
-          background: #4361ee;
+          background: #232c5f;
           border-radius: 50%;
           cursor: pointer;
         }
         &::-moz-range-thumb {
           width: 1.5rem;
           height: 1.5rem;
-          background: #4361ee;
+          background: #232c5f;
           border-radius: 50%;
           cursor: pointer;
         }

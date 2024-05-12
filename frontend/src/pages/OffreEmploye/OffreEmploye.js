@@ -89,8 +89,19 @@ function OffreEmploye({ offers }) {
                   .padStart(2, '0')}%`}</div>
               )}
               <h2>{offre.titre}</h2>
-              <h3>Prix : A partir de {offre.prix}</h3>
-
+              <h3
+                style={{
+                  margin: '10px 0',
+                  fontSize: '17px',
+                  color: '#232C5F',
+                  fontWeight: 'bold',
+                }}
+              >
+                Prix : A partir de{' '}
+                <span style={{ color: '#f00', fontSize: '23px' }}>
+                  {offre.prix} TND
+                </span>
+              </h3>
               <StarRating
                 rating={parseFloat(offre.evaluation.averageVotes)}
                 numReviews={offre.evaluation.numberOfEvaluations}
