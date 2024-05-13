@@ -811,7 +811,7 @@ exports.getMyReservations = async (req, res) => {
           model: Offre,
           as: 'offre',
           include: [
-            { model: Collaborateur, as: 'collaborateur', attributes: ['logo'] },
+            { model: Collaborateur, as: 'collaborateur'},
             // Ensure other necessary models are included as needed
           ],
         },
