@@ -93,10 +93,34 @@
 }
 
 .offre-form-container select {
-  padding: 10px; /* Increase padding for the select dropdown */
+  padding: 7px; 
   border-radius: 5px;
   border: 2px solid #CBD5E0;
   background-color: #EDF2F7;
   color: #2D3748;
-  width: 100%; /* Make the select dropdown full width */
+  width: 90%; 
+font-size: smaller;
+}
+.suggestions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background-color: #fff;
+  border: 1px solid #cbd5e0;
+  position: absolute;
+  width: 90%;
+  z-index: 1000;
+  font-size: smaller;
+
+}
+
+.suggestions-list li {
+  padding: 6px;
+  cursor: pointer;
+  border-bottom: 1px solid #e2e8f0;
+  
+}
+
+.suggestions-list li:hover {
+  background-color: #ebf4ff;
 }

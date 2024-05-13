@@ -1,9 +1,10 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
-import '../OffreForm.css'
+import '../OffreForm.css';
+
 function LocationSearchInput({ onLocationSelect, initialLocation = '' }) {
   const [suggestions, setSuggestions] = useState([]);
-    const [query, setQuery] = useState(initialLocation); 
+  const [query, setQuery] = useState(initialLocation);
   const provider = new OpenStreetMapProvider();
 
   const handleSearch = async (e) => {
@@ -17,38 +18,34 @@ function LocationSearchInput({ onLocationSelect, initialLocation = '' }) {
       setSuggestions([]);
     }
   };
-  useEffect(() => {
-    // Update the query whenever the initialLocation changes
-    setQuery(initialLocation);
-  }, [initialLocation]); 
-  
 
-  const handleSelect = (e) => {
-    const value = e.target.value;
-    const selectedResult = suggestions.find((s) => s.label === value);
-    if (selectedResult) {
-      setQuery(selectedResult.label);
-      onLocationSelect(selectedResult.label);
-    } else {
-      onLocationSelect(value); // Use the manually entered value if it's not a selection
-    }
-    setSuggestions([]); // Clear suggestions after selection or input
+  useEffect(() => {
+    setQuery(initialLocation);
+  }, [initialLocation]);
+
+  const handleSelect = (suggestion) => {
+    setQuery(suggestion.label);
+    onLocationSelect(suggestion.label);
+    setSuggestions([]); // Clear suggestions after selection
   };
 
   return (
     <div>
       <input
         type="text"
-        list="location-suggestions"
         value={query}
         onChange={handleSearch}
-        onBlur={handleSelect} // Handle final input when focus is lost
+        autoComplete="off"
       />
-      <datalist id="location-suggestions">
-        {suggestions.map((suggestion, index) => (
-          <option key={index} value={suggestion.label} />
-        ))}
-      </datalist>
+      {suggestions.length > 0 && (
+        <ul className="suggestions-list">
+          {suggestions.map((suggestion, index) => (
+            <li key={index} onClick={() => handleSelect(suggestion)}>
+              {suggestion.label}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
