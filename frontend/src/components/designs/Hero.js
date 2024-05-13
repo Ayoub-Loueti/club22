@@ -153,7 +153,7 @@ const [prices, setPrices] = useState([minPrice, maxPrice]);
                       ...props.style,
                       height: '1rem', // Réduire la taille des poignées
                       width: '1rem',
-                      backgroundColor: 'BLACK',
+                      backgroundColor: '#384696',
                       borderRadius: '50%',
                       cursor: 'pointer',
                     }}
