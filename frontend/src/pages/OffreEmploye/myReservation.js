@@ -265,50 +265,55 @@ const downloadReservationPDF = async (reservation) => {
     format: 'a4',
   });
 
-  // Define margins and initial positions
+  // Marges et positions initiales
   const marginLeft = 40;
-  const marginTop = 60;
   const lineHeight = 20;
   const pageWidth = pdf.internal.pageSize.getWidth();
 
-  // Adding a colorful header
-  pdf.setFillColor(107, 133, 164); // Gold color (#6b85a4)
+  // En-tête coloré
+  pdf.setFillColor(107, 133, 164); // Couleur bleu
   pdf.rect(0, 0, pageWidth, 100, 'F');
 
-  // Title: "Carte de réservation"
-  pdf.setTextColor(0, 0, 0); // White color for text
+  // Titre: "Carte de réservation"
+  pdf.setTextColor(255, 255, 255); // Couleur du texte blanc pour le titre
   pdf.setFontSize(22);
   pdf.setFont('helvetica', 'bold');
-  pdf.text('Carte de réservation', marginLeft, marginTop);
+  pdf.text('Carte de réservation', marginLeft, 80);
 
-  // Right-aligned: "Club22"
+  // Aligné à droite: "Club22"
   pdf.setFontSize(14);
-  pdf.text('Club22', pageWidth - marginLeft, marginTop, 'right');
+  pdf.text('Club22', pageWidth - marginLeft, 80, 'right');
 
-  // Offer Details Section
-  let currentY = marginTop + 35;
+  // Réinitialisation de la couleur pour les autres textes
+  pdf.setTextColor(0, 0, 0); // Noir pour le texte suivant
 
+  let currentY = 150; // Début des détails plus bas
+  pdf.setDrawColor(0, 0, 0); // Noir pour la ligne de séparation
+  currentY += 10;
+  pdf.line(marginLeft, currentY, pageWidth - marginLeft, currentY);
+
+  // Section des détails de l'offre
+  currentY += lineHeight;
   pdf.setFontSize(16);
-  pdf.setFont('helvetica', 'normal');   currentY += lineHeight;
+  pdf.setFont('helvetica', 'normal');
+  pdf.setTextColor(150, 150, 150); // Gris pour les titres des sections
+  currentY -= 5;
+  pdf.text(`Détails de l'offre:`, marginLeft, currentY - lineHeight); // Titre juste au-dessus de la ligne
+  currentY += lineHeight; // Décalage vers le bas pour les détails
 
-  pdf.text(`Offre: ${reservation.offre.titre}`, marginLeft, currentY);   
+  pdf.setTextColor(0, 0, 0); // Noir pour les détails
+  pdf.text(`Offre: ${reservation.offre.titre}`, marginLeft, currentY);
   currentY += lineHeight;
 
-   pdf.text(
-     `Prix total: ${reservation.prix_totale.toFixed(2)} DT`,
-     marginLeft,
-     currentY
-   );
-   if (reservation.offre.remise) {
-     currentY += lineHeight;
-     pdf.text(`Remise: ${reservation.offre.remise}%`, marginLeft, currentY);
-   }
-  currentY += lineHeight;
   pdf.text(
-    `Description: ${reservation.offre.description}`,
+    `Prix total: ${reservation.prix_totale.toFixed(2)} DT`,
     marginLeft,
     currentY
   );
+  if (reservation.offre.remise) {
+    currentY += lineHeight;
+    pdf.text(`Remise: ${reservation.offre.remise}%`, marginLeft, currentY);
+  }
 
   currentY += lineHeight;
   pdf.text(
@@ -316,9 +321,21 @@ const downloadReservationPDF = async (reservation) => {
     marginLeft,
     currentY
   );
+  currentY += lineHeight * 2; // Espace supplémentaire avant la prochaine section
+
+  pdf.setDrawColor(0, 0, 0); // Noir pour la ligne de séparation
+  currentY += 10;
+  pdf.line(marginLeft, currentY, pageWidth - marginLeft, currentY);
+  currentY += lineHeight;
+
+  // Détails spécifiques selon le type d'offre
+  pdf.setTextColor(150, 150, 150); // Gris pour les titres des sections
   switch (reservation.offre.type) {
     case 'hotel':
-      currentY += lineHeight;
+      currentY -= 5;
+      pdf.text(`Détails de l'hôtel:`, marginLeft, currentY - lineHeight); // Titre juste au-dessus de la ligne
+      currentY += lineHeight; // Décalage vers le bas pour les détails
+      pdf.setTextColor(0, 0, 0); // Noir pour les détails
       pdf.text(
         `Nom de l'hôtel: ${reservation.details.nom_hotel}`,
         marginLeft,
@@ -329,45 +346,44 @@ const downloadReservationPDF = async (reservation) => {
         marginLeft,
         (currentY += lineHeight)
       );
-      // Add other hotel-specific attributes here...
       break;
     case 'voyage':
-      currentY += lineHeight;
+      currentY -= 5;
+      pdf.text(`Détails du voyage:`, marginLeft, currentY - lineHeight); // Titre juste au-dessus de la ligne
+      currentY += lineHeight; // Décalage vers le bas pour les détails
+      pdf.setTextColor(0, 0, 0); // Noir pour les détails
       pdf.text(
         `Nombre de jours: ${reservation.details.nbr_jours}`,
         marginLeft,
         currentY
       );
-      pdf.text(
-        `Inclus: ${reservation.details.inclus}`,
-        marginLeft,
-        (currentY += lineHeight)
-      );
-      // Add other voyage-specific attributes here...
       break;
     case 'activite':
-      currentY += lineHeight;
+      currentY -= 5;
+      pdf.text(`Détails de l'activité:`, marginLeft, currentY - lineHeight); // Titre juste au-dessus de la ligne
+      currentY += lineHeight; // Décalage vers le bas pour les détails
+      pdf.setTextColor(0, 0, 0); // Noir pour les détails
       pdf.text(
         `Durée: ${reservation.details.duree} heures`,
         marginLeft,
         currentY
       );
-      pdf.text(
-        `Inclus: ${reservation.details.inclus}`,
-        marginLeft,
-        (currentY += lineHeight)
-      );
-      // Add other activite-specific attributes here...
-      break;
-    default:
       break;
   }
 
-  // Collaborator Details Section
-  currentY += lineHeight * 3;
-  pdf.setFontSize(16);
-  pdf.text(`Détails du collaborateur:`, marginLeft, currentY);
-  pdf.setFontSize(12);
+  currentY += lineHeight * 3; // Espace avant la section suivante
+
+  pdf.setDrawColor(0, 0, 0); // Noir pour la ligne de séparation
+  currentY += 10;
+  pdf.line(marginLeft, currentY, pageWidth - marginLeft, currentY);
+  currentY += lineHeight;
+
+  // Détails du collaborateur
+  pdf.setTextColor(150, 150, 150); // Gris pour les titres des sections
+  currentY -= 5;
+  pdf.text(`Détails du collaborateur:`, marginLeft, currentY - lineHeight); // Titre juste au-dessus de la ligne
+  currentY += lineHeight; // Décalage vers le bas pour les détails
+  pdf.setTextColor(0, 0, 0); // Noir pour les détails
   pdf.text(
     `Email: ${reservation.offre.collaborateur.email}`,
     marginLeft,
@@ -384,11 +400,19 @@ const downloadReservationPDF = async (reservation) => {
     (currentY += lineHeight)
   );
 
-  // Employee Details Section
-  currentY += lineHeight * 2;
-  pdf.setFontSize(16);
-  pdf.text(`Détails de l'employé:`, marginLeft, currentY);
-  pdf.setFontSize(12);
+  currentY += lineHeight * 2; // Espace avant la section suivante
+
+  pdf.setDrawColor(0, 0, 0); // Noir pour la ligne de séparation
+  currentY += 10;
+  pdf.line(marginLeft, currentY, pageWidth - marginLeft, currentY);
+  currentY += lineHeight;
+
+  // Détails de l'employé
+  pdf.setTextColor(150, 150, 150); // Gris pour les titres des sections
+  currentY -= 5;
+  pdf.text(`Détails de l'employé:`, marginLeft, currentY - lineHeight); // Titre juste au-dessus de la ligne
+  currentY += lineHeight; // Décalage vers le bas pour les détails
+  pdf.setTextColor(0, 0, 0); // Noir pour les détails
   pdf.text(
     `Nom: ${
       reservation.employe && reservation.employe.utilisateur
@@ -417,10 +441,11 @@ const downloadReservationPDF = async (reservation) => {
     (currentY += lineHeight)
   );
 
+  currentY += lineHeight * 2; // Espace avant la section suivante
 
-  // Footer: "Club22 Ooredoo"
+  // Pied de page
   pdf.setFontSize(12);
-  pdf.setTextColor(25, 31, 67); // Dark blue color (#191f43)
+  pdf.setTextColor(25, 31, 67); // Couleur bleu foncé
   pdf.text(
     'Club22 Ooredoo',
     pageWidth / 2,
@@ -428,10 +453,9 @@ const downloadReservationPDF = async (reservation) => {
     'center'
   );
 
-  // Save the PDF
+  // Sauvegarde du PDF
   pdf.save('reservation.pdf');
 };
-
 
  const fetchDeductionDetails = async () => {
         try {
