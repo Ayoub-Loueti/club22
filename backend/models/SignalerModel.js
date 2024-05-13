@@ -28,23 +28,27 @@ const SignalerModel = sequelize.define(
       },
     },
     id_cmntr: {
-        type: DataTypes.INTEGER,
-        defaultValue: false,
-      },
-      id_reponse: {
-        type: DataTypes.INTEGER,
-        defaultValue: false,
-      },
+      type: DataTypes.INTEGER,
+      defaultValue: false,
+    },
+    id_reponse: {
+      type: DataTypes.INTEGER,
+      defaultValue: false,
+    },
     isRead: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
-      },
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
     isOpen: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
-      },
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    cause: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     tableName: 'signaler',

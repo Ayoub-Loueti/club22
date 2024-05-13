@@ -315,6 +315,9 @@ const AdminSignalsPage = () => {
                     ? 'Comment'
                     : 'Post'}
                 </Typography>
+                <Typography variant="body2" color="error">
+                  Raison: {signal.cause}
+                </Typography>
               </CardContent>
               <CardActions>
                 <Button

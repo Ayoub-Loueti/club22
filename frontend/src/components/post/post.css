@@ -583,3 +583,34 @@ margin-left: 200px;}
   background-color: #cfd8dc; /* Darker green on hover */
 }
 
+/* Styles pour les boutons radio dans SweetAlert2 */
+
+.swal2-radio {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 50px; /* Ajoute un peu d'espace au-dessus des boutons */
+}
+
+.swal2-radio input[type="radio"] {
+  margin-right: 10px; /* Espace entre le bouton radio et le label */
+  cursor: pointer; /* Change le curseur pour indiquer qu'il est cliquable */
+  appearance: none; /* Supprime les styles de base des radios pour un design personnalisé */
+  width: 16px; /* Taille du bouton radio personnalisé */
+  height: 16px; /* Taille du bouton radio personnalisé */
+  border-radius: 50%; /* Rend les boutons radio ronds */
+  border: 2px solid #3085d6; /* Bordure des boutons radio */
+  transition: border-color 0.3s ease; /* Transition pour le changement de couleur de la bordure */
+}
+
+.swal2-radio input[type="radio"]:checked {
+  background-color: #3085d6; /* Couleur de fond lorsque le bouton radio est coché */
+}
+
+.swal2-radio label {
+  margin-bottom: 10px; /* Espace entre les options */
+  font-size: 16px; /* Taille de police pour les labels */
+  color: #333; /* Couleur du texte plus lisible */
+  cursor: pointer; /* Indique que le label est cliquable */
+  transition: color 0.3s ease; /* Transition douce pour le changement de couleur */
+}
