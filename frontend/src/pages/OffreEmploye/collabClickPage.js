@@ -6,6 +6,8 @@ import { useParams } from 'react-router-dom'; // Continue using useParams to cap
 import OffreEmploye from './OffreEmploye';
 import OffreCollabEmploye from './OffreCollabEmploye';
 import NavbarHaut from '../../components/navbar/navbarHaut';
+import Hero from '../../components/designs/Hero';
+import ScrollToTop from '../../components/designs/ScrollToTop';
 
 function CollaborateurPage() {
   const [collaborateurs, setCollaborateurs] = useState([]);
@@ -65,12 +67,16 @@ function CollaborateurPage() {
     setSelectedCollaborateurId(null);
     window.history.pushState({}, '', '/collabPage'); // Manually update URL to general offers view
   };
+  const [filteredOffers, setFilteredOffers] = useState([]);
 
   return (
     <>
       <NavbarHaut />
+
+      <Hero onFiltered={setFilteredOffers} />
+      <ScrollToTop />
+
       <div>
-      
         {showOffreCollab && (
           <button className="voir-tous-btn" onClick={handleViewAllOffers}>
             Tous les offres
@@ -83,8 +89,17 @@ function CollaborateurPage() {
               .map((collaborateur, index) => (
                 <div
                   key={index}
-                  className={`collab-card ${selectedCollaborateurId === collaborateur.id_collaborateur.toString() ? 'active' : ''}`}
-                  onClick={() => handleCollaboratorClick(collaborateur.id_collaborateur.toString())}
+                  className={`collab-card ${
+                    selectedCollaborateurId ===
+                    collaborateur.id_collaborateur.toString()
+                      ? 'active'
+                      : ''
+                  }`}
+                  onClick={() =>
+                    handleCollaboratorClick(
+                      collaborateur.id_collaborateur.toString()
+                    )
+                  }
                 >
                   <img
                     src={`http://localhost:5000/${collaborateur.logo}`}
@@ -96,20 +111,14 @@ function CollaborateurPage() {
           </div>
 
           <div className="navig-buttons">
-            <FaArrowLeft
-              onClick={handlePrevious}
-              className="nav-icon"
-            />
-            <FaArrowRight
-              onClick={handleNext}
-              className="nav-icon"
-            />
+            <FaArrowLeft onClick={handlePrevious} className="nav-icon" />
+            <FaArrowRight onClick={handleNext} className="nav-icon" />
           </div>
 
           {showOffreCollab ? (
             <OffreCollabEmploye collaborateurId={selectedCollaborateurId} />
           ) : (
-            <OffreEmploye />
+            <OffreEmploye offers={filteredOffers} />
           )}
         </div>
       </div>

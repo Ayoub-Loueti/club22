@@ -303,37 +303,30 @@ function NavbarHaut() {
       console.error('Logout failed:', error);
     }
   };
-  useEffect(() => {
-    function handleClickOutside(event) {
-      // Fermeture du menu utilisateur
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setShowDropdown(false);
-      }
-
-      // Fermeture du menu des notifications
-      if (
-        notificationsRef.current &&
-        !notificationsRef.current.contains(event.target)
-      ) {
-        setShowNotifications(false);
-      }
-
-      // Ajout pour fermer la modal de recherche
-      const searchInputNavbar = document.getElementById('search-input-navbar');
-      if (searchInputNavbar && !searchInputNavbar.contains(event.target)) {
-        setSearchResults({ users: [], offers: [], collaborators: [] }); // Réinitialiser les résultats de recherche
-        setSearchInput(''); // Effacer l'entrée de recherche
-      }
+useEffect(() => {
+  function handleClickOutside(event) {
+    // Fermeture du menu utilisateur
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setShowDropdown(false);
     }
 
-    // Ajoute l'écouteur lors du montage
-    document.addEventListener('mousedown', handleClickOutside);
+    // Fermeture du menu des notifications
+    if (
+      notificationsRef.current &&
+      !notificationsRef.current.contains(event.target)
+    ) {
+      setShowNotifications(false);
+    }
+  }
 
-    // Retire l'écouteur lors du démontage
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [menuRef, notificationsRef]); // Exécute à nouveau si les références changent
+  // Ajoute l'écouteur lors du montage
+  document.addEventListener('mousedown', handleClickOutside);
+
+  // Retire l'écouteur lors du démontage
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  };
+}, [menuRef, notificationsRef]);
   const toggleDropdown = () => setShowDropdown(!showDropdown);
 
   // Now, 'userId' is available here because it's part of the component's state
