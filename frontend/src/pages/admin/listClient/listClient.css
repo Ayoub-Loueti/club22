@@ -28,7 +28,7 @@
 
 .list-client-navigate-button {
     padding: 8px 16px;
-    background-color: #F5F5DC;
+    background-color: #A2C8CC;
     color: black;
     border: none;
     border-radius: 5px;
@@ -39,7 +39,8 @@
 }
 
 .list-client-navigate-button:hover {
-    background-color: #DCDCC6;
+    background-color: #c5e0dc
+;
 }
 
 /* Ajoutez d'autres styles spécifiques à listClient si nécessaire */

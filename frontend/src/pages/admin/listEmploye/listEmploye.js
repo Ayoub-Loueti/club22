@@ -158,7 +158,7 @@ const ListEmploye = () => {
           }}
           muiTableHeadCellProps={{
             sx: {
-              backgroundColor: '#F5F5DC', // Couleur de fond des cellules d'en-tête
+              backgroundColor: '#A2C8CC', // Couleur de fond des cellules d'en-tête
               '&:hover': {},
             },
           }}

@@ -16,7 +16,8 @@ const Utilisateur = require('../models/UtilisateurModel');
 require('dotenv').config();
 
 exports.signup = async (req, res) => {
-  const { nom, prenom, email, motDePasse, genre, photo, type, etat } = req.body;
+  const { nom, prenom, email, motDePasse, genre, photo, type, etat, tel } =
+    req.body;
 
   try {
     const existingUser = await Utilisateur.findOne({ where: { email: email } });
@@ -36,6 +37,7 @@ exports.signup = async (req, res) => {
         photo,
         type,
         etat,
+        tel,
         resetPasswordToken: token,
         resetPasswordExpires: new Date(Date.now() + 3600000),
         lockUntil:0,
@@ -272,7 +274,7 @@ exports.updateUser = async (req, res) => {
 };
 
 exports.updateNameSurnameGenre = async (req, res) => {
-  const { nom, prenom, genre } = req.body;
+  const { nom, prenom, genre , tel} = req.body;
   const userId = req.userId; // Assurez-vous d'avoir l'ID de l'utilisateur, par exemple, depuis un token JWT
 
   try {
@@ -284,8 +286,11 @@ exports.updateNameSurnameGenre = async (req, res) => {
 
     // Vérifier si le nom et le prénom sont vides
     if (!user.nom.trim() && !user.prenom.trim()) {
-      await Utilisateur.update({ nom, prenom, genre }, { where: { id_utilisateur: userId } });
-      res.status(200).json({ message: 'Nom, prénom et genre mis à jour avec succès.' });
+      await Utilisateur.update(
+        { nom, prenom, genre, tel },
+        { where: { id_utilisateur: userId } }
+      );
+      res.status(200).json({ message: 'Nom, prénom et genre et tel mis à jour avec succès.' });
     } else {
       // Nom ou prénom n'est pas vide
       res.status(400).json({ message: 'Le nom et le prénom doivent être vides pour permettre la mise à jour.' });

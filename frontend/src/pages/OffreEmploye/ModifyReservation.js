@@ -161,7 +161,7 @@ const ModifyReservation = ({
         }
       );
       Swal.fire(
-        'Mis à jour !',
+        'Mise à jour !',
         'Votre réservation a été mise à jour avec succès.',
         'success'
       );

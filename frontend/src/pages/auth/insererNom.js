@@ -9,6 +9,8 @@ function InsererNom() {
   const [nom, setNom] = useState('');
   const [prenom, setPrenom] = useState('');
   const [genre, setGenre] = useState('');
+    const [tel, setTel] = useState('');
+
   const navigate = useNavigate();
 
   const handleUpdateUser = async (e) => {
@@ -18,7 +20,7 @@ function InsererNom() {
     try {
       const response = await axios.patch(
         'http://localhost:5000/updateNameSurnameGenre', // Assurez-vous que cette URL correspond à votre configuration de route
-        { nom, prenom, genre },
+        { nom, prenom, genre,tel },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -48,7 +50,7 @@ function InsererNom() {
   return (
     <div className="page">
       <form className="form" onSubmit={handleUpdateUser}>
-        <h2>Update Profile</h2>
+        <h2>Profil</h2>
         <input
           className="input"
           type="text"
@@ -65,6 +67,14 @@ function InsererNom() {
           onChange={(e) => setPrenom(e.target.value)}
           required
         />
+        <input
+          className="input"
+          type="text"
+          placeholder="Tél"
+          value={tel}
+          onChange={(e) => setTel(e.target.value)}
+          required
+        />
         <select
           className="input"
           value={genre}
@@ -76,7 +86,7 @@ function InsererNom() {
           <option value="femme">Femme</option>
         </select>
         <button className="button" type="submit">
-          Update Profile
+          Valider
         </button>
       </form>
     </div>

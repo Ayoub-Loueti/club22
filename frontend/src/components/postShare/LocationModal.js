@@ -15,23 +15,28 @@ L.Icon.Default.mergeOptions({
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
-  useEffect(() => {
-    const fetchLocation = async () => {
-      if (lieu.length > 3) {
-        const results = await provider.search({ query: lieu });
-        setSuggestions(results);
-        if (results.length > 0) {
-          const { x, y } = results[0];
-          setPosition([y, x]);
-          map?.flyTo([y, x], 13);
-        }
-      } else {
-        setSuggestions([]);
-      }
-    };
+ useEffect(() => {
+   const fetchLocation = async () => {
+     if (lieu.length > 3) {
+       try {
+         const results = await provider.search({ query: lieu });
+         setSuggestions(results);
+         if (results.length > 0) {
+           const { x, y } = results[0];
+           setPosition([y, x]);
+           map?.flyTo([y, x], 13);
+         }
+       } catch (error) {
+         console.error('Erreur lors de la recherche de localisation:', error);
+         setSuggestions([]);
+       }
+     } else {
+       setSuggestions([]);
+     }
+   };
 
-    fetchLocation();
-  }, [lieu, map]);
+   fetchLocation();
+ }, [lieu, map]);
 
   const handleInputChange = (event) => {
     setLieu(event.target.value);

@@ -31,7 +31,11 @@ function NavbarHaut() {
   const menuRef = useRef();
   const notificationsRef = useRef();
   const [searchInput, setSearchInput] = useState('');
-  const [searchResults, setSearchResults] = useState({ users: [], offers: [], collaborators: [] });
+  const [searchResults, setSearchResults] = useState({
+    users: [],
+    offers: [],
+    collaborators: [],
+  });
   const [userPoints, setUserPoints] = useState(null);
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false); // State to control the phone modal visibility
   const location = useLocation();
@@ -48,27 +52,32 @@ function NavbarHaut() {
   const handleSearchChange = async (e) => {
     const inputValue = e.target.value;
     setSearchInput(inputValue);
-  
+
     if (inputValue.length > 0) {
       fetchUsersAndOffersBySubstring(inputValue);
     } else {
-      setSearchResults({ users: [], offers: [],collaborators: [] }); // Clear results if input is cleared
+      setSearchResults({ users: [], offers: [], collaborators: [] }); // Clear results if input is cleared
     }
   };
 
   const fetchUsersAndOffersBySubstring = async (substring) => {
     const token = JSON.parse(localStorage.getItem('login')).token;
     try {
-      const response = await axios.get(`http://localhost:5000/search?substring=${substring}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `http://localhost:5000/search?substring=${substring}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       // Set the search results safely by ensuring both `users` and `offers` exist in the response data
       setSearchResults({
         users: Array.isArray(response.data.users) ? response.data.users : [],
         offers: Array.isArray(response.data.offers) ? response.data.offers : [],
-        collaborators: Array.isArray(response.data.collaborators) ? response.data.collaborators : [],
+        collaborators: Array.isArray(response.data.collaborators)
+          ? response.data.collaborators
+          : [],
       });
     } catch (error) {
       console.error('Error fetching users and offers by substring', error);
@@ -110,7 +119,9 @@ function NavbarHaut() {
     }
   };
   const handleNotificationClick = (notification) => {
-    if (!['reservaccepte', 'signal', 'reservrefuse'].includes(notification.type)) {
+    if (
+      !['reservaccepte', 'signal', 'reservrefuse'].includes(notification.type)
+    ) {
       console.log(notification); // For debugging
       setSelectedPostId(notification.post.id_post); // Use notification.post.id_post
       setIsPostModalOpen(true);
@@ -118,81 +129,88 @@ function NavbarHaut() {
       markAsRead(notification.id_notif, notification.isRead); // Mark as read, assuming this function exists and works correctly
     }
   };
-  
 
   const NotificationsDropdown = () => (
     <div className="notifications-dropdown" ref={notificationsRef}>
-        {notifications.length ? (
-            notifications.map((notification) => (
-                <div
-                    key={notification.id_notif}
-                    className={`notification-item ${!notification.isRead ? 'unseen' : ''}`}
-                    onClick={() => handleNotificationClick(notification)}
-                >
-                    <img
-                        src={`http://localhost:5000/${notification.utilisateur.photo}`}
-                        alt="User"
-                        className="notification-user-photo"
-                    />
-                    {notification.type === 'reservaccepte' && (
-                        <FontAwesomeIcon
-                        icon={faCheckCircle}
-                        className="notification-icon-Comment"
-                        style={{ color: '#73e24b' }}
-                      />
-                    )}
-                    {notification.type === 'reservrefuse' && (
-                        <FontAwesomeIcon icon={faTimesCircle} className="notification-icon-Comment" 
-                        style={{ color: '#de1212' }}/>
-                    )}
-                    {notification.type === 'signal' && (
-                        <FontAwesomeIcon icon={faExclamationCircle} className="notification-icon-Comment" 
-                        style={{ color: '#ded712' }}/>
-                    )}
-                    {['reservaccepte', 'reservrefuse', 'signal'].includes(notification.type) ? (
-                        <div className="notification-text">
-                            <span>{notification.contenu}</span>
-                        </div>
-                    ) : (
-                        <>
-                            {notification.type === 'comment' ? (
-                                <FontAwesomeIcon
-                                    icon={faComment}
-                                    className="notification-icon-Comment"
-                                />
-                            ) : (
-                                <FontAwesomeIcon
-                                    icon={faHeart}
-                                    className="notification-icon-jaime"
-                                />
-                            )}
-                            <div className="notification-text">
-                                <strong>
-                                    {notification.utilisateur.prenom} {notification.utilisateur.nom}
-                                </strong>
-                                <span>
-                                    {notification.notifier}
-                                </span>
-                            </div>
-                        </>
-                    )}
-                    <div
-                        className="notification-delete-icon"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteNotification(notification.id_notif);
-                        }}
-                    >
-                        <FontAwesomeIcon icon={faTimes} />
-                    </div>
-                    
+      {notifications.length ? (
+        notifications.map((notification) => (
+          <div
+            key={notification.id_notif}
+            className={`notification-item ${
+              !notification.isRead ? 'unseen' : ''
+            }`}
+            onClick={() => handleNotificationClick(notification)}
+          >
+            <img
+              src={`http://localhost:5000/${notification.utilisateur.photo}`}
+              alt="User"
+              className="notification-user-photo"
+            />
+            {notification.type === 'reservaccepte' && (
+              <FontAwesomeIcon
+                icon={faCheckCircle}
+                className="notification-icon-Comment"
+                style={{ color: '#73e24b' }}
+              />
+            )}
+            {notification.type === 'reservrefuse' && (
+              <FontAwesomeIcon
+                icon={faTimesCircle}
+                className="notification-icon-Comment"
+                style={{ color: '#de1212' }}
+              />
+            )}
+            {notification.type === 'signal' && (
+              <FontAwesomeIcon
+                icon={faExclamationCircle}
+                className="notification-icon-Comment"
+                style={{ color: '#ded712' }}
+              />
+            )}
+            {['reservaccepte', 'reservrefuse', 'signal'].includes(
+              notification.type
+            ) ? (
+              <div className="notification-text">
+                <span>{notification.contenu}</span>
+              </div>
+            ) : (
+              <>
+                {notification.type === 'comment' ? (
+                  <FontAwesomeIcon
+                    icon={faComment}
+                    className="notification-icon-Comment"
+                  />
+                ) : (
+                  <FontAwesomeIcon
+                    icon={faHeart}
+                    className="notification-icon-jaime"
+                  />
+                )}
+                <div className="notification-text">
+                  <strong>
+                    {notification.utilisateur.prenom}{' '}
+                    {notification.utilisateur.nom}
+                  </strong>
+                  <span>{notification.notifier}</span>
                 </div>
-            ))
-        ) : (
-            <div className="notification-item">Pas de notifications</div>
-        )}
+              </>
+            )}
+            <div
+              className="notification-delete-icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteNotification(notification.id_notif);
+              }}
+            >
+              <FontAwesomeIcon icon={faTimes} />
+            </div>
+          </div>
+        ))
+      ) : (
+        <div className="notification-item">Pas de notifications</div>
+      )}
     </div>
-);
+  );
 
   const markAsRead = async (notificationId, isRead) => {
     const token = JSON.parse(localStorage.getItem('login')).token;
@@ -299,6 +317,13 @@ function NavbarHaut() {
       ) {
         setShowNotifications(false);
       }
+
+      // Ajout pour fermer la modal de recherche
+      const searchInputNavbar = document.getElementById('search-input-navbar');
+      if (searchInputNavbar && !searchInputNavbar.contains(event.target)) {
+        setSearchResults({ users: [], offers: [], collaborators: [] }); // Réinitialiser les résultats de recherche
+        setSearchInput(''); // Effacer l'entrée de recherche
+      }
     }
 
     // Ajoute l'écouteur lors du montage
@@ -309,7 +334,6 @@ function NavbarHaut() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [menuRef, notificationsRef]); // Exécute à nouveau si les références changent
-
   const toggleDropdown = () => setShowDropdown(!showDropdown);
 
   // Now, 'userId' is available here because it's part of the component's state
@@ -337,10 +361,14 @@ function NavbarHaut() {
   );
   const handleDeleteNotification = async (notificationId) => {
     const token = JSON.parse(localStorage.getItem('login')).token;
-    const notification = notifications.find((n) => n.id_notif === notificationId);
-    
+    const notification = notifications.find(
+      (n) => n.id_notif === notificationId
+    );
+
     try {
-      if (['reservaccepte', 'signal', 'reservrefuse'].includes(notification.type)) {
+      if (
+        ['reservaccepte', 'signal', 'reservrefuse'].includes(notification.type)
+      ) {
         await axios.delete(
           `http://localhost:5000/notificationsTroix/${notificationId}`,
           {
@@ -359,46 +387,57 @@ function NavbarHaut() {
           }
         );
       }
-      
+
       // Filter out the deleted notification from the state
-      setNotifications(notifications.filter((n) => n.id_notif !== notificationId));
+      setNotifications(
+        notifications.filter((n) => n.id_notif !== notificationId)
+      );
     } catch (error) {
       console.error('Erreur lors de la suppression de la notification', error);
     }
   };
 
-useEffect(() => {
-  const fetchUserPoints = async () => {
-    const token = JSON.parse(localStorage.getItem('login')).token;
-    try {
-      const response = await axios.get('http://localhost:5000/points', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setUserPoints(response.data.points); // Set user points in state
-    } catch (error) {
-      console.error('Error fetching user points', error);
-    }
+  useEffect(() => {
+    const fetchUserPoints = async () => {
+      const token = JSON.parse(localStorage.getItem('login')).token;
+      try {
+        const response = await axios.get('http://localhost:5000/points', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUserPoints(response.data.points); // Set user points in state
+      } catch (error) {
+        console.error('Error fetching user points', error);
+      }
+    };
+
+    fetchUserPoints();
+  }, []);
+
+  const openPhoneModal = () => {
+    setIsPhoneModalOpen(true);
   };
 
-  fetchUserPoints();
-}, []);
+  const closePhoneModal = () => {
+    setIsPhoneModalOpen(false);
+  };
 
-const openPhoneModal = () => {
-  setIsPhoneModalOpen(true);
-};
-
-const closePhoneModal = () => {
-  setIsPhoneModalOpen(false);
-};
-
-const isProfilePage = location.pathname.includes('/profil/');
-const isHomePage = location.pathname.includes('/Home');
+  const isProfilePage = location.pathname.includes('/profil/');
+  const isHomePage = location.pathname.includes('/Home');
 
   return (
-    <div className={`navbar-horizontal ${(isProfilePage || isHomePage) ? '' : 'hide-search-bar'}`}>
-      {!isProfilePage && !isHomePage && <div> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>}
+    <div
+      className={`navbar-horizontal ${
+        isProfilePage || isHomePage ? '' : 'hide-search-bar'
+      }`}
+    >
+      {!isProfilePage && !isHomePage && (
+        <div>
+          {' '}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+      )}
       <form className="searchh-formm" onSubmit={(e) => e.preventDefault()}>
         <input
           type="text"
@@ -470,7 +509,7 @@ const isHomePage = location.pathname.includes('/Home');
             userInfo.type === 'employe' &&
             searchResults.collaborators.length > 0 && (
               <>
-                <div className="search-results-title">collaborators :</div>
+                <div className="search-results-title">collaborateurs :</div>
                 {searchResults.collaborators.map((collab) => (
                   <div
                     key={collab.id_collaborateur}
@@ -497,7 +536,7 @@ const isHomePage = location.pathname.includes('/Home');
       ) : (
         searchInput && (
           <div className="search-results search-no-results-message">
-            No users or offers or collabs match your search.
+            Aucun résultat trouvé pour votre recherche.{' '}
           </div>
         )
       )}

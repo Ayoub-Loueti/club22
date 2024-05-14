@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { MaterialReactTable, createMRTColumnHelper } from 'material-react-table';
-import { Box, Button } from '@mui/material';
 import NavAdmin from '../NavAdmin/navAdmin';
 import './tousLesUtilisateurs.css';
 import { MRT_Localization_FR } from 'material-react-table/locales/fr';
@@ -122,13 +121,7 @@ function TousLesUtilisateurs() {
               Employé
             </button>
           </div>
-          <input
-            type="text"
-            className="tousLesUtilisateurs-search-input"
-            placeholder="Rechercher..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          
         </div>
         <MaterialReactTable
           columns={columns}
@@ -150,7 +143,7 @@ function TousLesUtilisateurs() {
           }}
           muiTableHeadCellProps={{
             sx: {
-              backgroundColor: '#F5F5DC', // Couleur de fond des cellules d'en-tête
+              backgroundColor: '#A2C8CC', // Couleur de fond des cellules d'en-tête
               '&:hover': {},
             },
           }}

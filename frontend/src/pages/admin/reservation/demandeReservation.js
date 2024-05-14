@@ -319,10 +319,15 @@ const downloadPDFConfirmedByDate = async (date) => {
         30,
         140
       );
-      pdf.text(`Prix: ${reservation.prix_totale.toFixed(2)} DT`, 30, 150);
+       pdf.text(
+         `  tél de l'employé: ${reservation.employe.utilisateur.tel}`,
+         30,
+         150
+       );
+      pdf.text(`Prix: ${reservation.prix_totale.toFixed(2)} DT`, 30, 160);
 
       // Add specific details based on reservation type
-      let yPos = 160;
+      let yPos = 170;
       switch (reservation.typeR) {
         case 'hotel':
           pdf.text(

@@ -1,5 +1,5 @@
 .tousLesUtilisateurs-container {
-  padding: 20px;
+  padding: 40px;
   font-family: 'Arial', sans-serif;
 }
 
@@ -41,7 +41,7 @@
 
 .navigation-buttons button {
   padding: 8px 16px;
-  background-color: #F5F5DC;
+  background-color: #A2C8CC;
   color: black;
   border: none;
   border-radius: 5px;
@@ -50,15 +50,16 @@
 }
 
    .navigation-buttons .navigation-buttonsTous {
-     background-color: #F5F5DC; /* Couleur spécifique */
+     background-color: #A2C8CC; /* Couleur spécifique */
      border-radius: 10px; /* Rayon de bordure spécifique */
    }
 
    .navigation-buttons .navigation-buttonsTous:hover {
-     background-color: #DCDCC6 !important;
+     background-color: #c5e0dc
+ !important;
    }
    .navigation-buttonsTous {
-     background-color: #F5F5DC !important;
+     background-color: #A2C8CC !important;
      border-radius: 10px !important;
      font-weight: bold;
      color:black !important;

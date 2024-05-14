@@ -163,7 +163,7 @@ const markAllAsReparation = async (date) => {
       case 'refuser':
         return '#FF6347'; // Tomato red, a beautiful shade for 'refuser' state
       case 'accepter':
-        return '#70CD32'; // Lime green, a bright and positive color for 'accepter' state
+        return '#e9fced'; // Lime green, a bright and positive color for 'accepter' state
       case 'en_cours':
         return '#F4F4F4'; // Default light grey color for 'in progress' state
       default:
@@ -346,10 +346,15 @@ const downloadPDFConfirmedByDate = async (date) => {
         30,
         140
       );
-      pdf.text(`Prix: ${reservation.prix_totale.toFixed(2)} DT`, 30, 150);
+      pdf.text(
+        `  tél de l'employé: ${reservation.employe.utilisateur.tel}`,
+        30,
+        150
+      );
+      pdf.text(`Prix: ${reservation.prix_totale.toFixed(2)} DT`, 30, 160);
 
       // Add specific details based on reservation type
-      let yPos = 160;
+      let yPos = 170;
       switch (reservation.typeR) {
         case 'hotel':
           pdf.text(
