@@ -381,7 +381,26 @@ useOutsideClick(dropdownRef, () => {
                 </span>
               )}
             </div>
-
+            <div className="info-item">
+              <span className="info-label">Téléphone:</span>
+              {editing.tel ? (
+                <input
+                  type="text"
+                  name="tel"
+                  value={editValues.tel}
+                  onChange={handleEditChange}
+                  onBlur={() => handleUpdate('tel')}
+                  className="edit-input"
+                />
+              ) : (
+                <span className="info-value">{utilisateur.tel}</span>
+              )}
+              {isOwnProfile && (
+                <span onClick={() => toggleEdit('tel')} className="edit-icon">
+                  🖊️
+                </span>
+              )}
+            </div>
             <div className="info-item">
               <span className="info-label">Rôle:</span>
               <span className="info-value">{utilisateur.type}</span>

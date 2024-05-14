@@ -2,85 +2,96 @@ import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import homeImage from '../../assets/hero.png';
 import axios from 'axios';
-export default function Hero() {
-   const [minPrice, setMinPrice] = useState(0);
-   const [maxPrice, setMaxPrice] = useState(1000);
-   const [destination, setDestination] = useState('');
-   const [promotionType, setPromotionType] = useState('all'); // 'all', 'promo', 'nonpromo'
-   const [filteredOffres, setFilteredOffres] = useState([]);
-   const token = localStorage.getItem('login');
 
-   useEffect(() => {
-    
-     fetchFilteredOffers();
-   }, [minPrice, maxPrice, destination, promotionType]);
+import { Range } from 'react-range';
 
-   const fetchFilteredOffers = async () => {
+
+export default function Hero({ onFiltered }) {
+  const [destination, setDestination] = useState('');
+  const [promotionType, setPromotionType] = useState('all'); // 'all', 'promo', 'nonpromo'
+const [minPrice, setMinPrice] = useState(0);
+const [maxPrice, setMaxPrice] = useState(1000);
+const [prices, setPrices] = useState([minPrice, maxPrice]);
+  const token = localStorage.getItem('login');
+
+  const normalizeImagePath = (path) => {
+    return path.replace(/\\/g, '/');
+  };
+ const fetchFilteredOffers = async (prices, destination, promotionType) => {
+   try {
+     const response = await axios.get('http://localhost:5000/employeOffers', {
+       headers: {
+         Authorization: `Bearer ${JSON.parse(token).token}`,
+       },
+     });
+     let filtered = response.data
+       .filter((offre) => {
+         const priceMatch = offre.prix >= prices[0] && offre.prix <= prices[1];
+         const destinationMatch = destination
+           ? offre.destination.toLowerCase().includes(destination.toLowerCase())
+           : true;
+         let promotionMatch = true;
+         if (promotionType === 'promo') {
+           promotionMatch = offre.remise > 0;
+         } else if (promotionType === 'nonpromo') {
+           promotionMatch = offre.remise === 0;
+         }
+         return priceMatch && destinationMatch && promotionMatch;
+       })
+       .map((offre) => ({
+         ...offre,
+         lesImages: offre.lesImages.map((img) => ({
+           ...img,
+           image: normalizeImagePath(img.image),
+         })),
+         currentImageIndex: 0,
+       }));
+     onFiltered(filtered);
+   } catch (error) {
+     console.error('Error fetching offres:', error);
+   }
+ };
+
+ useEffect(() => {
+   const fetchPrices = async () => {
      try {
        const response = await axios.get('http://localhost:5000/employeOffers', {
          headers: {
            Authorization: `Bearer ${JSON.parse(token).token}`,
          },
        });
-       const allOffres = response.data;
-           console.log('All offers:', allOffres);
-
-       let filtered = allOffres.filter(
-         (offre) => offre.prix >= minPrice && offre.prix <= maxPrice
-       );
-           console.log('Filtered by price:', filtered);
-
-       if (destination) {
-         filtered = filtered.filter((offre) =>
-           offre.destination.toLowerCase().includes(destination.toLowerCase())
-         );
-               console.log('Filtered by destination:', filtered);
-
-       }
-       
-       if (promotionType === 'promo') {
-         filtered = filtered.filter((offre) => offre.remise !== '');
-               console.log('Filtered by promotion:', filtered);
-
-       } else if (promotionType === 'nonpromo') {
-         filtered = filtered.filter((offre) => offre.remise === '');
-               console.log('Filtered by non-promotion:', filtered);
-
-
-       }
-       setFilteredOffres(filtered);
+       const allPrices = response.data.map((offre) => offre.prix);
+       setMinPrice(Math.min(...allPrices));
+       setMaxPrice(Math.max(...allPrices));
+       setPrices([Math.min(...allPrices), Math.max(...allPrices)]);
      } catch (error) {
-       console.error('Error fetching offres:', error);
+       console.error('Error fetching prices:', error);
      }
    };
+   fetchPrices();
+ }, [token]);
 
-   const handlePriceChange = (event) => {
-     const value = parseInt(event.target.value);
-     setMinPrice(value);
-     setMaxPrice(value + 50); // Change the default range as needed
-   };
+ const handleSearch = () => {
+   fetchFilteredOffers(prices, destination, promotionType);
+ };
 
-   const handleDestinationChange = (event) => {
-     const value = event.target.value;
-     setDestination(value);
-   };
+ const handleRangeChange = (values) => {
+   setPrices(values);
+ };
 
-   const handlePromotionTypeChange = (event) => {
-     const value = event.target.value;
-     setPromotionType(value);
-   };
+  const handleDestinationChange = (event) => {
+    const value = event.target.value;
+    setDestination(value);
+  };
+ 
 
-  const handleSearch = () => {
-    console.log('Search button clicked');
-    console.log('minPrice:', minPrice);
-    console.log('maxPrice:', maxPrice);
-    console.log('destination:', destination);
-    console.log('promotionType:', promotionType);
-
-    fetchFilteredOffers();
+  const handlePromotionTypeChange = (event) => {
+    const value = event.target.value;
+    setPromotionType(value);
   };
 
 
+  
   return (
     <Section id="hero">
       <div className="background">
@@ -100,28 +111,72 @@ export default function Hero() {
             <label htmlFor="">Où voulez-vous aller</label>
             <input
               type="text"
-              placeholder="Recherchez votre destination"
+              placeholder="Votre destination"
               onChange={handleDestinationChange}
+              style={{
+                padding: '0.5rem',
+                border: '2px solid #232C5F',
+                borderRadius: '0.3rem',
+                margin: '0.3rem 0',
+                width: '100%',
+              }}
             />
           </div>
-          <div className="container price-range">
-            <label htmlFor="">Plage de prix</label>
+          <div className="price-range">
             <div className="price-line">
-              <span className="min-price">{minPrice} TND</span>
-              <input
-                type="range"
-                min="0"
-                max="1000"
-                step="50"
-                value={minPrice}
-                onChange={handlePriceChange}
+              <span className="min-price">{prices[0]} TND</span>
+              <Range
+                step={1}
+                min={minPrice}
+                max={maxPrice}
+                values={prices}
+                onChange={handleRangeChange}
+                renderTrack={({ props, children }) => (
+                  <div
+                    {...props}
+                    style={{
+                      ...props.style,
+                      height: '6px',
+                      width: '100%',
+                      background: 'linear-gradient(to right,#909AD6, #384696)',
+                      borderRadius: '5px',
+                      borderRadius: '5px',
+                    }}
+                  >
+                    {children}
+                  </div>
+                )}
+                renderThumb={({ props }) => (
+                  <div
+                    {...props}
+                    style={{
+                      ...props.style,
+                      height: '1rem', // Réduire la taille des poignées
+                      width: '1rem',
+                      backgroundColor: '#384696',
+                      borderRadius: '50%',
+                      cursor: 'pointer',
+                    }}
+                  />
+                )}
               />
-              <span className="max-price">{maxPrice} TND</span>
+              <span className="max-price"> {prices[1]} TND</span>
             </div>
           </div>
           <div className="container">
             <label htmlFor="">Promotion</label>
-            <select onChange={handlePromotionTypeChange}>
+            <select
+              onChange={handlePromotionTypeChange}
+              style={{
+                padding: '0.8rem',
+                border: '2px solid #232C5F',
+                borderRadius: '0.3rem',
+                margin: '0.5rem 0',
+                width: '100%',
+                backgroundColor: '#ffffff',
+                color: '#000000',
+              }}
+            >
               <option value="all">Toutes</option>
               <option value="promo">Offres promotionnelles</option>
               <option value="nonpromo">Offres non promotionnelles</option>
@@ -176,14 +231,14 @@ const Section = styled.section`
     .search {
       display: flex;
       background-color: #ffffffce;
-      padding: 0.5rem;
+      padding: 0.7rem;
       border-radius: 0.5rem;
       .container {
         display: flex;
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        padding: 0 1.5rem;
+        padding: 0 4rem;
         label {
           font-size: 1.1rem;
           color: #03045e;
@@ -203,7 +258,7 @@ const Section = styled.section`
           margin-top: 0.5rem;
           border-radius: 0.3rem;
           border: none;
-          background-color: #ffffff;
+          background-color: #023e8a;
           color: #000000;
           &:focus {
             outline: none;
@@ -211,13 +266,13 @@ const Section = styled.section`
         }
       }
       button {
-        padding: 1rem;
+        padding: 0.1rem 0.5rem;
         cursor: pointer;
         border-radius: 0.3rem;
         border: none;
         color: white;
-        background-color: #4361ee;
-        font-size: 1.1rem;
+        background-color: #232c5f;
+        font-size: 1rem;
         text-transform: uppercase;
         transition: 0.3s ease-in-out;
         &:hover {
@@ -228,21 +283,31 @@ const Section = styled.section`
   }
 
   .price-range {
+    width: 50%;
+    padding: 0;
     .price-line {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: 0.5rem;
+      width: 100%;
+      margin-top: 3rem;
+      padding: 0 0.5rem;
       .min-price,
       .max-price {
         font-size: 0.9rem;
       }
+      .min-price {
+        margin-right: 1rem; // Ajoutez un espace à droite du prix minimum
+      }
+      .max-price {
+        margin-left: 1rem; // Ajoutez un espace à gauche du prix maximum
+      }
       input[type='range'] {
-        width: 80%;
+        width: 100%;
         margin: 0 1rem;
         -webkit-appearance: none;
         height: 0.5rem;
-        background: linear-gradient(to right, #ffbd69, #ff7e67);
+        background: linear-gradient(to right, #7481cc, #384696);
         border-radius: 5px;
         outline: none;
         &::-webkit-slider-thumb {
@@ -250,14 +315,14 @@ const Section = styled.section`
           appearance: none;
           width: 1.5rem;
           height: 1.5rem;
-          background: #4361ee;
+          background: #232c5f;
           border-radius: 50%;
           cursor: pointer;
         }
         &::-moz-range-thumb {
           width: 1.5rem;
           height: 1.5rem;
-          background: #4361ee;
+          background: #232c5f;
           border-radius: 50%;
           cursor: pointer;
         }

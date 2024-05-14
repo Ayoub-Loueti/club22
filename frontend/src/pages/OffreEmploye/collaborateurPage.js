@@ -14,6 +14,7 @@ function CollaborateurPage() {
   const [startIndex, setStartIndex] = useState(0);
   const [showOffreCollab, setShowOffreCollab] = useState(false);
  
+  const [filteredOffers, setFilteredOffers] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem('login');
@@ -79,7 +80,7 @@ function CollaborateurPage() {
   return (
     <>
       <NavbarHaut />
-      <Hero />
+      <Hero onFiltered={setFilteredOffers} />
 
       <div>
         {showOffreCollab && (
@@ -126,7 +127,7 @@ function CollaborateurPage() {
           {showOffreCollab ? (
             <OffreCollabEmploye collaborateurId={selectedCollaborateurId} />
           ) : (
-            <OffreEmploye />
+            <OffreEmploye offers={filteredOffers} />
           )}
         </div>
       </div>

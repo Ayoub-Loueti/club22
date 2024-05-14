@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './tousLesUtilisateurs.css';
+import { MaterialReactTable, createMRTColumnHelper } from 'material-react-table';
 import NavAdmin from '../NavAdmin/navAdmin';
+import './tousLesUtilisateurs.css';
+import { MRT_Localization_FR } from 'material-react-table/locales/fr';
+
+const columnHelper = createMRTColumnHelper();
+
 function TousLesUtilisateurs() {
   const [utilisateurs, setUtilisateurs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -28,41 +33,73 @@ function TousLesUtilisateurs() {
     }
   }, [token]);
 
-  const filteredUsers = utilisateurs.filter(
-    (utilisateur) =>
-      utilisateur.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      utilisateur.prenom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      utilisateur.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-   const getBadgeStyle = (etat) => {
-     let backgroundColor;
-     switch (
-       etat.toLowerCase() // Utilisation de toLowerCase pour une comparaison insensible à la casse
-     ) {
-       case 'autorise':
-         backgroundColor = '#34c38f'; 
-         break;
-       case 'en attente':
-         backgroundColor = '#ffecb3';
-         break;
-       case 'bloque':
-         backgroundColor = '#f8d7da';
-         break;
-       default:
-         backgroundColor = '#adb5bd'; 
-     }
+  const columns = [
+    columnHelper.accessor('id_utilisateur', {
+      header: 'ID',
+    }),
+    columnHelper.accessor('photo', {
+      header: 'Photo',
+      Cell: ({ cell }) => (
+        <img
+          src={
+            cell.getValue()
+              ? `http://localhost:5000/${cell.getValue()}`
+              : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+          }
+          alt="Profil"
+          style={{ width: 50, height: 50, borderRadius: '50%' }}
+        />
+      ),
+    }),
+    columnHelper.accessor('nom', {
+      header: 'Nom',
+    }),
+    columnHelper.accessor('prenom', {
+      header: 'Prénom',
+    }),
+    columnHelper.accessor('email', {
+      header: 'Email',
+    }),
+    columnHelper.accessor('type', {
+      header: 'Type',
+    }),
+    columnHelper.accessor('etat', {
+      header: 'État',
+      Cell: ({ cell }) => (
+        <span style={getBadgeStyle(cell.getValue())}>
+          {cell.getValue().charAt(0).toUpperCase() + cell.getValue().slice(1)}
+        </span>
+      ),
+    }),
+  ];
 
-     return {
-       backgroundColor,
-       color: '#000', 
-       padding: '0.25em 0.6em',
-       borderRadius: '50rem',
-       fontSize: '0.90rem',
-       minWidth: '75px', 
-       textAlign: 'center', 
-       display: 'inline-block', // Assure que le badge prend en compte la largeur et le padding
-     };
-   };
+  const getBadgeStyle = (etat) => {
+    let backgroundColor;
+    switch (etat.toLowerCase()) {
+      case 'autorise':
+        backgroundColor = '#34c38f';
+        break;
+      case 'en attente':
+        backgroundColor = '#ffecb3';
+        break;
+      case 'bloque':
+        backgroundColor = '#f8d7da';
+        break;
+      default:
+        backgroundColor = '#adb5bd';
+    }
+
+    return {
+      backgroundColor,
+      color: '#000',
+      padding: '0.25em 0.6em',
+      borderRadius: '50rem',
+      fontSize: '0.90rem',
+      minWidth: '75px',
+      textAlign: 'center',
+      display: 'inline-block',
+    };
+  };
 
   return (
     <>
@@ -71,69 +108,46 @@ function TousLesUtilisateurs() {
         <div className="tousLesUtilisateurs-header">
           <h1>TOUS LES UTILISATEURS</h1>
           <div className="navigation-buttons">
-            <button onClick={() => navigate('/listClient')}>Client</button>
-            <button onClick={() => navigate('/listEmploye')}>Employé</button>
+            <button
+              onClick={() => navigate('/listClient')}
+              className="navigation-buttonsTous"
+            >
+              Client
+            </button>
+            <button
+              onClick={() => navigate('/listEmploye')}
+              className="navigation-buttonsTous"
+            >
+              Employé
+            </button>
           </div>
-          <input
-            type="text"
-            className="tousLesUtilisateurs-search-inpuut"
-            placeholder="Rechercher..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          
         </div>
-
-        <table className="utilisateurs-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Photo</th>
-              <th>Nom</th>
-              <th>Prénom</th>
-              <th>Email</th>
-              <th>Type</th>
-              <th>Etat</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.map((utilisateur, index) => (
-              <tr key={index}>
-                <td>{utilisateur.id_utilisateur}</td>
-                <td>
-                  <img
-                    src={
-                      utilisateur.photo
-                        ? `http://localhost:5000/${utilisateur.photo}`
-                        : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
-                    }
-                    alt="Profil"
-                    className="profile-picture"
-                  />
-                </td>
-                <td>
-                  {utilisateur.nom.charAt(0).toUpperCase() +
-                    utilisateur.nom.slice(1)}
-                </td>
-                <td>
-                  {utilisateur.prenom.charAt(0).toUpperCase() +
-                    utilisateur.prenom.slice(1)}
-                </td>
-                <td>{utilisateur.email}</td>
-                <td>
-                  {' '}
-                  {utilisateur.type.charAt(0).toUpperCase() +
-                    utilisateur.type.slice(1)}
-                </td>
-                <td>
-                  <span style={getBadgeStyle(utilisateur.etat)}>
-                    {utilisateur.etat.charAt(0).toUpperCase() +
-                      utilisateur.etat.slice(1)}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <MaterialReactTable
+          columns={columns}
+          data={utilisateurs.filter(
+            (utilisateur) =>
+              utilisateur.nom
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
+              utilisateur.prenom
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
+              utilisateur.email.toLowerCase().includes(searchTerm.toLowerCase())
+          )}
+          getRowId={(row) => row.id_utilisateur}
+          localization={MRT_Localization_FR}
+          muiSearchTextFieldProps={{
+            variant: 'outlined',
+            label: 'Rechercher des utilisateurs',
+          }}
+          muiTableHeadCellProps={{
+            sx: {
+              backgroundColor: '#A2C8CC', // Couleur de fond des cellules d'en-tête
+              '&:hover': {},
+            },
+          }}
+        />
       </div>
     </>
   );

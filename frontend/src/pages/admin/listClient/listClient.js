@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './listClient.css'; // Assuming this is the correct path to your CSS file
+import { MaterialReactTable, createMRTColumnHelper } from 'material-react-table';
+import { Box, Button } from '@mui/material';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import NavAdmin from '../NavAdmin/navAdmin';
+import './listClient.css';
+import { MRT_Localization_FR } from 'material-react-table/locales/fr';
+
+const columnHelper = createMRTColumnHelper();
+
 function ListClient() {
   const [clients, setClients] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState('');
   const navigate = useNavigate();
   const token = localStorage.getItem('login');
 
   useEffect(() => {
     fetchClients();
-  }, [filter]);
+  }, []);
 
   const fetchClients = async () => {
     try {
@@ -21,25 +26,15 @@ function ListClient() {
           Authorization: `Bearer ${JSON.parse(token).token}`,
         },
       });
-      const filteredData = filter
-        ? response.data.filter((client) => client.etat === filter)
-        : response.data;
-      setClients(filteredData);
+      setClients(response.data);
     } catch (error) {
       console.error('Error fetching clients:', error);
     }
   };
 
-  const handleSearchTermChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleFilterChange = (newFilter) => {
-    setFilter(newFilter);
-  };
-
   const handleBlockUnblock = async (id, etat) => {
-    const endpoint = etat === 'autorise' ? '/block/' : '/unblock/';
+    const endpoint =
+      etat.toLowerCase() === 'autorise' ? '/block/' : '/unblock/';
     try {
       await axios.put(
         `http://localhost:5000${endpoint}${id}`,
@@ -56,66 +51,86 @@ function ListClient() {
     }
   };
 
-  const filteredClients = searchTerm
-    ? clients.filter(
-        (client) =>
-          client.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          client.prenom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          client.email.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : clients;
-   const getBadgeStyle = (etat) => {
-     let backgroundColor;
-     switch (
-       etat.toLowerCase() // Utilisation de toLowerCase pour une comparaison insensible à la casse
-     ) {
-       case 'autorise':
-         backgroundColor = '#34c38f';
-         break;
-       case 'en attente':
-         backgroundColor = '#ffecb3';
-         break;
-       case 'bloque':
-         backgroundColor = '#f8d7da';
-         break;
-       default:
-         backgroundColor = '#adb5bd';
-     }
+  const columns = [
+    columnHelper.accessor('photo', {
+      header: 'Photo',
+      Cell: ({ cell }) => (
+        <img
+          src={
+            cell.getValue()
+              ? `http://localhost:5000/${cell.getValue()}`
+              : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+          }
+          alt="Client"
+          style={{ width: 50, height: 50, borderRadius: '50%' }}
+        />
+      ),
+    }),
+    columnHelper.accessor('nom', {
+      header: 'Nom',
+    }),
+    columnHelper.accessor('prenom', {
+      header: 'Prénom',
+    }),
+    columnHelper.accessor('email', {
+      header: 'Email',
+    }),
+    columnHelper.accessor('genre', {
+      header: 'Genre',
+      Cell: ({ cell }) =>
+        cell.getValue().charAt(0).toUpperCase() + cell.getValue().slice(1),
+    }),
+    columnHelper.accessor('etat', {
+      header: 'État',
+      Cell: ({ cell }) => (
+        <div
+          style={{
+            backgroundColor:
+              cell.getValue().toLowerCase() === 'autorise'
+                ? '#34c38f'
+                : cell.getValue().toLowerCase() === 'bloque'
+                ? '#f8d7da'
+                : '#ffecb3',
+            borderRadius: '0.5rem',
+            padding: '0.25em 0.6em',
+            color: '#000',
+            textAlign: 'center',
+          }}
+        >
+          {cell.getValue().charAt(0).toUpperCase() + cell.getValue().slice(1)}
+        </div>
+      ),
+    }),
+    columnHelper.accessor('id_utilisateur', {
+      header: 'Actions',
+      Cell: ({ row }) =>
+        row.original.etat !== 'En attente' && (
+          <Button
+            variant="contained"
+            color={
+              row.original.etat.toLowerCase() === 'autorise'
+                ? 'error'
+                : 'success'
+            }
+            onClick={() =>
+              handleBlockUnblock(row.original.id_utilisateur, row.original.etat)
+            }
+            style={{ margin: '0 10px' }}
+          >
+            {row.original.etat.toLowerCase() === 'autorise'
+              ? 'Bloquer'
+              : 'Débloquer'}
+          </Button>
+        ),
+    }),
+  ];
 
-     return {
-       backgroundColor,
-       color: '#000',
-       padding: '0.25em 0.6em',
-       borderRadius: '50rem',
-       fontSize: '0.90rem',
-       minWidth: '75px',
-       textAlign: 'center',
-       display: 'inline-block', // Assure que le badge prend en compte la largeur et le padding
-     };
-   };
   return (
     <>
-    <NavAdmin/>
+      <NavAdmin />
       <div className="list-client-container">
         <div className="list-client-header">
           <h1>LISTE DES CLIENTS</h1>
-          <div className="search-filter-container">
-            <input
-              type="text"
-              className="list-client-search-input"
-              placeholder="Rechercher..."
-              value={searchTerm}
-              onChange={handleSearchTermChange}
-            />
-            <button onClick={() => handleFilterChange('')}>Tous</button>
-            <button onClick={() => handleFilterChange('autorise')}>
-              Autorisé
-            </button>
-            <button onClick={() => handleFilterChange('En attente')}>
-              En attente
-            </button>
-            <button onClick={() => handleFilterChange('bloque')}>Bloqué</button>
-          </div>
           <div className="navigaate-container">
             <button
               className="list-client-navigate-button"
@@ -131,68 +146,39 @@ function ListClient() {
             </button>
           </div>
         </div>
-
-        <table className="list-client-table">
-          <thead>
-            <tr>
-              <th>Photo</th>
-              <th>Nom</th>
-              <th>Prénom</th>
-              <th>Email</th>
-              <th>Genre</th>
-              <th>Etat</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredClients.map((client) => (
-              <tr key={client.id_utilisateur}>
-                <td>
-                  <img
-                    src={
-                      client.photo
-                        ? `http://localhost:5000/${client.photo}`
-                        : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
-                    }
-                    alt="Profil"
-                    className="profile-picture"
-                  />
-                </td>
-                <td>
-                  {client.nom.charAt(0).toUpperCase() + client.nom.slice(1)}
-                </td>
-                <td>
-                  {client.prenom.charAt(0).toUpperCase() +
-                    client.prenom.slice(1)}
-                </td>
-                <td>{client.email}</td>
-                <td>
-                  {client.genre.charAt(0).toUpperCase() + client.genre.slice(1)}
-                </td>
-                <td>
-                  <span style={getBadgeStyle(client.etat)}>
-                    {client.etat.charAt(0).toUpperCase() + client.etat.slice(1)}
-                  </span>
-                </td>
-                <td>
-                  {client.etat !== 'En attente' && (
-                    <button
-                      className={client.etat === 'bloque' ? 'unblock' : ''}
-                      onClick={() =>
-                        handleBlockUnblock(client.id_utilisateur, client.etat)
-                      }
-                    >
-                      {client.etat === 'autorise' ? 'Bloquer' : 'Débloquer'}
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <MaterialReactTable
+          columns={columns}
+          data={clients}
+          getRowId={(row) => row.id_utilisateur}
+          localization={MRT_Localization_FR}
+          muiSearchTextFieldProps={{
+            variant: 'outlined',
+            label: 'Rechercher des clients',
+          }}
+          muiTableHeadCellProps={{
+            sx: {
+              backgroundColor: '#A2C8CC', // Couleur de fond des cellules d'en-tête
+              '&:hover': {},
+            },
+          }}
+          renderTopToolbarCustomActions={({ table }) => (
+            <Box
+              sx={{
+                display: 'flex',
+                gap: '16px',
+                padding: '8px',
+                flexWrap: 'wrap',
+              }}
+            >
+              <Button onClick={() => {}} startIcon={<FileDownloadIcon />}>
+                Exporter les données
+              </Button>
+            </Box>
+          )}
+        />
       </div>
     </>
   );
 }
 
-export default ListClient;
+export default ListClient;       

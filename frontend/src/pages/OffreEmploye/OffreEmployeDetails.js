@@ -21,10 +21,8 @@ import {
   faDumbbell,
   faGamepad,
   faMapMarkerAlt,
-  faSuitcaseRolling,
   faCalendarAlt,
   faCheckSquare,
-  faClipboardList,
   faClock,
 } from '@fortawesome/free-solid-svg-icons';
 import ProgramModal from './ProgramModal';
@@ -157,6 +155,10 @@ const handleAuthorizationChange = () => {
               </div>
             )}
             <h2 className="offre-titleDetails">{offre.titre}</h2>
+            <p className="offre-rating">Rating: {offre.rating}</p>{' '}
+            <p className="offre-collaborateur">
+              Collaborateur: {offre.nom}
+            </p>
             <h4 className="destination-details">
               <FontAwesomeIcon
                 icon={faMapMarkerAlt}
@@ -165,7 +167,6 @@ const handleAuthorizationChange = () => {
               Destination: {offre.destination}
             </h4>
             <p className="offre-priceDetails"> {offre.prix} DT</p>
-
             <p className="offre-descriptionDetails">{offre.description}</p>
             <div className="offre-buttonsDetails">
               <button

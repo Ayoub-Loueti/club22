@@ -375,6 +375,7 @@ exports.getAllOffres = async (req, res) => {
 exports.getOffreById = async (req, res) => {
   const { offreId } = req.params;
   try {
+    // Vérification des droits d'administrateur
     const isAdmin = await Utilisateur.findOne({
       where: {
         id_utilisateur: req.userId,
@@ -389,17 +390,30 @@ exports.getOffreById = async (req, res) => {
       });
     }
 
-    const offre = await OffreModel.findByPk(offreId);
+    // Récupération de l'offre avec les détails du collaborateur
+    const offre = await OffreModel.findByPk(offreId, {
+      include: [
+        {
+          model: CollaborateurModel,
+          as: 'collaborateur',
+          attributes: ['nom', 'logo'],
+        },
+      ],
+    });
+
     if (!offre) {
       return res.status(404).json({ error: 'Offre not found' });
     }
+
+    // Récupération des images associées à l'offre
     const images = await ImageOffre.findAll({
-      where: {
-        id_offre: offre.id_offre,
-      },
+      where: { id_offre: offre.id_offre },
     });
-    const offreDetail = offre.toJSON();
-    offreDetail.lesImages = images;
+
+    // Préparation de la réponse avec les images
+    const offreDetail = { ...offre.toJSON(), lesImages: images };
+
+    // Ajout des détails supplémentaires basés sur le type de l'offre
     switch (offre.type) {
       case 'hotel':
         offreDetail.details = await GrandHotelModel.findOne({
@@ -417,9 +431,14 @@ exports.getOffreById = async (req, res) => {
         });
         break;
     }
+
+    // Envoi de la réponse complète
     res.status(200).json(offreDetail);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to get offre' });
+    console.error('Failed to get offre:', error);
+    res
+      .status(500)
+      .json({ error: 'Failed to get offre', details: error.message });
   }
 };
 

@@ -18,8 +18,8 @@ import {
   FormControl,
   Select
 } from '@mui/material';
-import Swal from 'sweetalert2';
 import { addDays } from 'date-fns';
+import { fr } from 'date-fns/locale'; 
 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
@@ -43,7 +43,7 @@ const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete }) => {
     const decrementChildren = () => {
         updateRoom(room.id, 'children', Math.max(0, room.children - 1));
     };
-
+const adapter = new AdapterDateFns({ locale: fr });
     return (
         <Box sx={{ mb: 2, bgcolor: 'background.paper', p: 2, borderRadius: 'borderRadius', display: 'flex', flexDirection: 'column', gap: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -326,52 +326,57 @@ const handleAuthorizationChange = (event) => {
               </Box>
             </Box>
           )}
-          <Typography variant="h6" sx={{ mt: 2 }}>
+          {remise > 0 && (
+            <Typography
+              variant="body"
+              sx={{
+                mt: 1,
+                color: 'error.main', // Couleur pour les remises
+                fontSize: '1rem',
+                '&:hover': {
+                  color: 'error.dark', // Assombrir la couleur au survol
+                },
+              }}
+            >
+              Remise d'Adhésion Club22: {remise}%
+            </Typography>
+          )}
+          <Typography
+            variant="h6"
+            sx={{
+              mt: 2,
+              fontWeight: 'bold',
+              color: '#555',
+              '&:hover': {
+                color: '#555', // Changement de couleur au survol
+              },
+              fontSize: '1.25rem', // Taille de la police
+            }}
+          >
             Prix: {prix.toFixed(2)} DT
           </Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              mt: 2,
+              fontWeight: 'bold',
+              marginBottom:'10px',
+              color: '#555',
+              '&:hover': {
+                color: '#555', // Changement de couleur au survol
+              },
+              fontSize: '1.25rem', // Taille de la police
+            }}
+          >
+            DATE DE RESERVATION :{' '}
+          </Typography>
+          
           {type === 'hotel' && (
             <>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <LocalizationProvider dateAdapter={AdapterDateFns} locale={fr}>
+                {' '}
                 <MobileDatePicker
-                  label="Date de début"
-                  value={reservationStart}
-                  onChange={setReservationStart}
-                  minDate={today}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      placeholder="jj/mm/aaaa"
-                      fullWidth
-                      error={!reservationStart}
-                      helperText={
-                        !reservationStart ? 'Sélection obligatoire' : ''
-                      }
-                    />
-                  )}
-                />
-               <MobileDatePicker
-  label="Date de fin"
-  value={reservationEnd}
-  onChange={handleEndDateChange}
-  minDate={addDays(reservationStart, 1)} // Set the minimum date for the end date to one day after the start date
-  renderInput={(params) => (
-    <TextField
-      {...params}
-      placeholder="jj/mm/aaaa"
-      fullWidth
-      error={!reservationEnd}
-      helperText={!reservationEnd ? 'Sélection obligatoire' : ''}
-    />
-  )}
-/>
-</LocalizationProvider>
-            </>
-          )}
-          {type === 'voyage' && (
-            <>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <MobileDatePicker
-                  label="Date de début"
+                  label="Arrivée"
                   value={reservationStart}
                   onChange={handleStartDateChange}
                   minDate={today}
@@ -388,27 +393,69 @@ const handleAuthorizationChange = (event) => {
                   )}
                 />
                 <MobileDatePicker
-  label="Date de fin"
-  value={reservationEnd}
-  onChange={handleEndDateChange}
-  minDate={reservationStart}
-  disabled={type === 'voyage'} // Disable the field if type is 'voyage'
-  renderInput={(params) => (
-    <TextField
-      {...params}
-      placeholder="jj/mm/aaaa"
-      fullWidth
-      error={!reservationEnd}
-      helperText={!reservationEnd ? 'Sélection obligatoire' : ''}
-    />
-  )}
-/>
+                  label="Départ"
+                  value={reservationEnd}
+                  onChange={handleEndDateChange}
+                  minDate={addDays(reservationStart, 1)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      placeholder="jj/mm/aaaa"
+                      fullWidth
+                      error={!reservationEnd}
+                      helperText={
+                        !reservationEnd ? 'Sélection obligatoire' : ''
+                      }
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+            </>
+          )}
+          {type === 'voyage' && (
+            <>
+              <LocalizationProvider dateAdapter={AdapterDateFns} locale={fr}>
+                <MobileDatePicker
+                  label="Départ"
+                  value={reservationStart}
+                  onChange={handleStartDateChange}
+                  minDate={today}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      placeholder="jj/mm/aaaa"
+                      fullWidth
+                      error={!reservationStart}
+                      helperText={
+                        !reservationStart ? 'Sélection obligatoire' : ''
+                      }
+                    />
+                  )}
+                />
+                <MobileDatePicker
+                  label="Retour"
+                  value={reservationEnd}
+                  onChange={handleEndDateChange}
+                  minDate={reservationStart}
+                  disabled={type === 'voyage'} // Disable the field if type is 'voyage'
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      placeholder="jj/mm/aaaa"
+                      fullWidth
+                      error={!reservationEnd}
+                      helperText={
+                        !reservationEnd ? 'Sélection obligatoire' : ''
+                      }
+                    />
+                  )}
+                />
               </LocalizationProvider>
             </>
           )}
           {type === 'activite' && (
             <>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <LocalizationProvider dateAdapter={AdapterDateFns} locale={fr}>
                 <MobileDatePicker
                   label="Date de début"
                   value={reservationStart}
@@ -429,6 +476,7 @@ const handleAuthorizationChange = (event) => {
               </LocalizationProvider>
             </>
           )}
+
           <Box sx={{ maxHeight: '40vh', overflowY: 'auto' }}>
             {type === 'hotel' ? (
               rooms.map((room, index) => (
@@ -465,12 +513,30 @@ const handleAuthorizationChange = (event) => {
               </>
             )}
           </Box>
-          {remise > 0 && (
-            <Typography variant="h6" sx={{ mt: 1 }}>
-              Remise si tu es adhérant: {remise}%
-            </Typography>
+          {type === 'hotel' && (
+            <Button
+              startIcon={<AddCircleOutlineIcon />}
+              onClick={handleAddRoom}
+              sx={{
+                mt: 2,
+                color: 'white',
+                bgcolor: 'primary.main',
+                '&:hover': { bgcolor: 'primary.dark' },
+              }}
+            >
+              Ajouter une chambre
+            </Button>
           )}
-          <Typography variant="h6" sx={{ mt: 2 }}>
+
+          <Typography
+            variant="h6"
+            sx={{
+              mt: 2,
+              fontWeight: 'medium',
+              color: '#555',
+              fontSize: '1.15rem',
+            }}
+          >
             Prix totale:{' '}
             {type === 'hotel'
               ? (
@@ -483,21 +549,26 @@ const handleAuthorizationChange = (event) => {
             DT
           </Typography>
 
-          {type === 'hotel' && (
-            <Button
-              startIcon={<AddCircleOutlineIcon />}
-              onClick={handleAddRoom}
-              sx={{ mt: 2 }}
-            >
-              Ajouter une chambre
-            </Button>
-          )}
           <Box sx={{ mt: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Paiement
+            <Typography
+              variant="h6"
+              gutterBottom
+              sx={{
+                mt: 2,
+                fontWeight: 'bold',
+                color: '#555',
+                '&:hover': {
+                  color: '#555', // Changement de couleur au survol
+                },
+                fontSize: '1.25rem', // Taille de la police
+              }}
+            >
+              PAIEMENT :
             </Typography>
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <InputLabel id="mode-paiement-label">Mode de paiement</InputLabel>
+            <FormControl fullWidth sx={{ mb: 3 }}>
+              <InputLabel id="mode-paiement-label" sx={{}}>
+                Mode de paiement
+              </InputLabel>
               <Select
                 labelId="mode-paiement-label"
                 id="mode-paiement-select"
@@ -505,6 +576,13 @@ const handleAuthorizationChange = (event) => {
                 onChange={handlePaymentModeChange}
                 fullWidth
                 required
+                label="Mode de paiement" // Assurez-vous d'ajouter la prop 'label' ici pour que le label se déplace correctement
+                sx={{
+                  '& .MuiSelect-select': {
+                    pl: 2, // Padding à gauche pour le texte
+                    pr: 1, // Padding à droite pour l'icône
+                  },
+                }}
               >
                 <MenuItem value="especes">Espèces</MenuItem>
                 <MenuItem value="deduction_salaire">

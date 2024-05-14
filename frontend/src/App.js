@@ -35,6 +35,7 @@ import PostLink from './components/postLink/postLink';
 import DemandeReservation from './pages/admin/reservation/CollabReserv2';
 import Message from './pages/message/message';
 import Dashboard from './pages/admin/dashboard/dashboard';
+import OffreAdminDetails from './pages/admin/offre/OffreAdminDetails';
 
 function App() {
   return (
@@ -52,18 +53,8 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/dashboard"
-              element={
-                  <Dashboard />
-              }
-            />
-             <Route
-              path="/message"
-              element={
-                  <Message />
-              }
-            />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/message" element={<Message />} />
             <Route
               path="/"
               element={
@@ -184,6 +175,16 @@ function App() {
                   <AdminRestrictedRoute>
                     {' '}
                     <OffreAdmin />{' '}
+                  </AdminRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/OffreAdminDetails/:offreId"
+              element={
+                <ProtectedRoute>
+                  <AdminRestrictedRoute>
+                    <OffreAdminDetails />
                   </AdminRestrictedRoute>
                 </ProtectedRoute>
               }

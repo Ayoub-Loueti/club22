@@ -78,7 +78,7 @@ const LeftSide = () => {
 
     const timeout = setTimeout(() => {
       setShowUserCard(false);
-    }, 30000);
+    }, 3000);
 
     return () => clearTimeout(timeout);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

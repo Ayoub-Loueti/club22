@@ -72,7 +72,7 @@ const MyReservations = ({ collaborateurId }) => {
             case 'refuser':
                 return '#f8d7da'; // Tomato red, a beautiful shade for 'refuser' state
             case 'accepter':
-                return '#77DD77'; // Lime green, a bright and positive color for 'accepter' state
+                return '#e9fced'; // Lime green, a bright and positive color for 'accepter' state
             case 'en_cours':
                 return '#F4F4F4'; // Default light grey color for 'in progress' state
             default:

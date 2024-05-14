@@ -12,7 +12,7 @@ code {
     monospace;
 }
 ::-webkit-scrollbar {
-  width: 0.6rem;
+  width: 0.4rem;
   background-color: #14213d;
 }
 ::-webkit-scrollbar-thumb {

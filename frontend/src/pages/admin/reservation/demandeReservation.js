@@ -142,9 +142,18 @@ const DemandeReservation = () => {
         }
       );
       if (response.status === 200) {
-Swal.fire('Accepté !', 'La réservation a été acceptée.', 'success');
-        // Reload or update local state here
-      }
+Swal.fire({
+  title: 'Acceptation réussie !',
+  text: 'La réservation a été acceptée avec succès.',
+  icon: 'success',
+  timer: 2500, // L'alerte disparaîtra après 2500 millisecondes (3 secondes)
+  timerProgressBar: true, // Affiche une barre de progression qui indique le temps restant
+  showConfirmButton: false, // N'affiche pas le bouton de confirmation
+});    
+ setDemandeReservations((prevReservations) =>
+   prevReservations.filter((reservation) => reservation.id_reservation !== id)
+ );
+}
     } catch (error) {
    console.error("Erreur lors de l'acceptation de la réservation :", error);
    Swal.fire('Erreur !', "Échec de l'acceptation de la réservation.", 'error');
@@ -164,9 +173,17 @@ Swal.fire('Accepté !', 'La réservation a été acceptée.', 'success');
         }
       );
       if (response.status === 200) {
-Swal.fire('Refusé !', 'La réservation a été refusée.', 'success');
-        // Reload or update local state here
-      }
+Swal.fire({
+  title: 'Refus réussi !',
+  text: 'La réservation a été refusée.',
+  icon: 'info',
+  timer: 2500,
+  timerProgressBar: true,
+  showConfirmButton: false,
+});   setDemandeReservations((prevReservations) =>
+  prevReservations.filter((reservation) => reservation.id_reservation !== id)
+);
+}
     } catch (error) {
      console.error('Erreur lors du refus de la réservation :', error);
      Swal.fire('Erreur !', 'Échec du refus de la réservation.', 'error');
@@ -174,59 +191,141 @@ Swal.fire('Refusé !', 'La réservation a été refusée.', 'success');
     }
   };
   
-    const handlerepair = async (id, event) => {
-      event.stopPropagation(); // Prevent opening the dialog
-      const token = JSON.parse(localStorage.getItem('login'))?.token;
-      try {
-        const response = await axios.put(
-          `http://localhost:5000/reservation/${id}/reparer`,
-          {},
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        if (response.status === 200) {
-Swal.fire('Validation réussie !', 'success');
-          // Reload or update local state here
-    fetchDemandeReservations();
-        }
-      } catch (error) {
-       console.error('Erreur lors du Validation de la réservation :', error);
-       Swal.fire('Erreur !', 'Échec du Validation de la réservation.', 'error');
-
-      }
-    };
-
-
-
-  const downloadPDF = async (reservationId) => {
-    // Ensure the element ID is correctly formed and points to an existing element
-    const elementId = `reservation-card-${reservationId}`;
-    const input = document.getElementById(elementId);
-    if (input) {
-      try {
-        const canvas = await html2canvas(input, {
-          scale: window.devicePixelRatio,
-          useCORS: true,
-          logging: true, // Enable for debugging
-          windowHeight: input.scrollHeight,
-          windowWidth: input.scrollWidth,
-        });
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF({
-          orientation: 'portrait',
-          unit: 'px',
-          format: [canvas.width, canvas.height],
-        });
-        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-        pdf.save(`reservation_${reservationId}.pdf`);
-      } catch (error) {
-        console.error('Error generating PDF:', error);
-      }
-    } else {
-      console.error('No input element found with ID:', elementId);
+const handlerepair = async (id, event) => {
+  event.stopPropagation(); // Prevent opening the dialog
+  const token = JSON.parse(localStorage.getItem('login'))?.token;
+  try {
+    const response = await axios.put(
+      `http://localhost:5000/reservation/${id}/reparer`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    if (response.status === 200) {
+    Swal.fire({
+      title: 'Validation réussie !',
+      text: 'La réservation a été validée avec succès.',
+      icon: 'success',
+      timer: 2500,
+      timerProgressBar: true,
+      showConfirmButton: false,
+    });
+      fetchDemandeReservations(); // Reload or update local state here
     }
-  };
+  } catch (error) {
+    console.error('Erreur lors de la réparation de la réservation :', error);
+    Swal.fire('Erreur !', 'Échec de la réparation de la réservation.', 'error');
+  }
+};
+
+
+
+ const downloadPDF = async (reservationId) => {
+   const reservation = demandeReservations.find(
+     (res) => res.id_reservation === reservationId
+   );
+   if (!reservation) {
+     console.error('Réservation non trouvée:', reservationId);
+     return;
+   }
+
+   const pdf = new jsPDF();
+
+   // Ajouter le logo et le texte d'en-tête
+   pdf.addImage(ooredooLogo, 'PNG', 10, 5, 25, 25);
+   pdf.setFontSize(14);
+   pdf.setTextColor('#333333');
+   pdf.text(
+     `Détails de la réservation pour ${
+       reservation.date_reservation.split('T')[0]
+     }`,
+     70,
+     30
+   );
+
+   // Dessiner un rectangle comme carte pour la réservation
+   pdf.setFillColor('#f2f2f2'); // Couleur de fond gris clair pour la carte
+   const cardHeight = calculateCardHeight(reservation); // Calculer la hauteur de la carte en fonction du contenu
+   pdf.rect(10, 40, 180, cardHeight, 'F'); // Dessiner un rectangle rempli comme carte
+   pdf.setTextColor('#000000'); // Définir la couleur du texte en noir pour une meilleure lisibilité
+
+   // Ajouter le logo du collaborateur et le nom en haut au centre
+   const logoData = getCollaborateurLogoUrl(reservation);
+   pdf.addImage(logoData, 'JPEG', 70, 45, 30, 30); // Ajuster le positionnement au besoin
+   pdf.text(
+     `Nom Collaborateur: ${reservation.offre.collaborateur.nom}`,
+     105,
+     60
+   );
+
+   // Ajouter les détails de la réservation à la carte
+   pdf.text(
+     `Date : De ${reservation.date_debut} Jusq'ua ${reservation.date_fin}`,
+     30,
+     80
+   );
+   pdf.text(`Titre: ${reservation.offre.titre}`, 30, 100);
+   pdf.text(`Destination: ${reservation.offre.destination}`, 30, 110);
+   pdf.text(`Type: ${reservation.typeR}`, 30, 120);
+   pdf.text(
+     `Nom de l'employé: ${reservation.employe.utilisateur.nom} ${reservation.employe.utilisateur.prenom}`,
+     30,
+     130
+   );
+   pdf.text(
+     `Email de l'employé: ${reservation.employe.utilisateur.email}`,
+     30,
+     140
+   );
+   pdf.text(
+     `Tél de l'employé: ${reservation.employe.utilisateur.tel}`,
+     30,
+     150
+   );
+   pdf.text(`Prix: ${reservation.prix_totale.toFixed(2)} DT`, 30, 160);
+
+   // Ajouter des détails spécifiques en fonction du type de réservation
+   let yPos = 170;
+   switch (reservation.typeR) {
+     case 'hotel':
+       pdf.text(`Nom de l'hotel: ${reservation.details.nom_hotel}`, 30, yPos);
+       yPos += 20; // Augmenter la position Y pour une séparation visuelle entre le nom de l'hôtel et les détails des chambres
+       pdf.text('Chambres:', 30, yPos);
+       reservation.rooms.forEach((room, roomIndex) => {
+         const roomDetails = `Chambre ${roomIndex + 1}: Adultes - ${
+           room.nbr_adults
+         }, Enfants - ${room.nbr_enfants}, Prix - ${room.prix.toFixed(2)} DT`;
+         pdf.text(roomDetails, 35, yPos + 10 + roomIndex * 10);
+       });
+       break;
+     case 'autre':
+       pdf.text(`Nombre de personnes: ${reservation.nombre}`, 30, yPos);
+       break;
+     case 'voyage':
+       pdf.text(`Nombre de jours: ${reservation.details.nbr_jours}`, 30, yPos);
+       pdf.text(`Nombre de personnes: ${reservation.nombre}`, 30, yPos + 10);
+       pdf.text(`Inclus: ${reservation.details.inclus}`, 30, yPos + 20);
+       break;
+     case 'activite':
+       pdf.text(`Durée: ${reservation.details.duree} heures`, 30, yPos);
+       pdf.text(`Inclus: ${reservation.details.inclus}`, 30, yPos + 10);
+       break;
+     default:
+       break;
+   }
+
+   // Ajouter l'image à la carte
+   const imgData = reservation.offre.images[0]; // Supposons qu'il y a au moins une image
+   pdf.addImage(imgData, 'JPEG', 130, 45, 60, 60);
+
+   // Enregistrer et télécharger le PDF
+   pdf.save(`reservation_${reservationId}.pdf`);
+ };
+
+
+
+
+
+
   const handleDownloadClick = (e, reservationId) => {
     e.stopPropagation(); // This will prevent the event from bubbling up to the parent
     downloadPDF(reservationId);
@@ -319,10 +418,15 @@ const downloadPDFConfirmedByDate = async (date) => {
         30,
         140
       );
-      pdf.text(`Prix: ${reservation.prix_totale.toFixed(2)} DT`, 30, 150);
+       pdf.text(
+         `  tél de l'employé: ${reservation.employe.utilisateur.tel}`,
+         30,
+         150
+       );
+      pdf.text(`Prix: ${reservation.prix_totale.toFixed(2)} DT`, 30, 160);
 
       // Add specific details based on reservation type
-      let yPos = 160;
+      let yPos = 170;
       switch (reservation.typeR) {
         case 'hotel':
           pdf.text(
@@ -413,8 +517,14 @@ const markAllAsReparation = async (date) => {
       }
     );
     if (response.status === 200) {
-      Swal.fire('Validation réussie !', 'success');
-      // Reload or update local state here
+Swal.fire({
+  title: 'Validation de toutes les réservations réussie !',
+  text: 'Toutes les réservations sélectionnées ont été validées.',
+  icon: 'success',
+  timer: 2500,
+  timerProgressBar: true,
+  showConfirmButton: false,
+});      // Reload or update local state here
       fetchDemandeReservations();
     }
   } catch (error) {
@@ -446,7 +556,7 @@ const markAllAsReparation = async (date) => {
           <ToggleButton value="reparation">Validés</ToggleButton>
         </ToggleButtonGroup>
       </Grid>
-      <Grid container spacing={2} style={{ margin: 20 }}>
+      <Grid container spacing={2}>
         {Object.keys(groupedReservations).map((date) => (
           <Grid item xs={12} md={6} key={date}>
             <Typography
@@ -486,7 +596,7 @@ const markAllAsReparation = async (date) => {
                       id={`reservation-card-${reservation.id_reservation}`}
                       variant="outlined"
                       sx={{
-                        height: 150,
+                        height: 170,
                         mb: 2,
                         display: 'flex',
                         backgroundColor: getCardBackgroundColor(

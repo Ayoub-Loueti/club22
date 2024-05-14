@@ -1,0 +1,72 @@
+.contOffreAdminDetails-container {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    margin: 20px auto;
+    width: 80%;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.contOffreAdminDetails-container h1 {
+    color: #333;
+    text-align: center;
+}
+
+.contOffreAdminDetails-details {
+    margin-top: 20px;
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.contOffreAdminDetails-images-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+.contOffreAdminDetails-images-container img {
+    height: 200px;
+    border-radius: 5px;
+    object-fit: cover;
+}
+
+.contOffreAdminDetails-retour-btn {
+    display: block;
+    background-color: #4A5568;
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    width: fit-content;
+}
+
+.contOffreAdminDetails-retour-btn:hover {
+    background-color: #2D3748;
+}
+.modifierOffreButton, .supprimerOffreButton {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+  color: white;
+}
+
+.modifierOffreButton {
+  background-color: #8ab4ca; /* Blue for modify */
+}
+
+.supprimerOffreButton {
+  background-color: #f56a7f; /* Tomato for delete */
+}
+
+.modifierOffreButton:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.supprimerOffreButton:hover {
+  background-color: #e53e30; /* Darker red on hover */
+}

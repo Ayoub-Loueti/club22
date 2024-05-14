@@ -28,7 +28,7 @@ const CinqueDash = () => {
                 data={data}
                 keys={['evaluationsMoyennes']}
                 indexBy="collaboratorName"
-                margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+                margin={{ top: 50, right: 155, bottom: 60, left: 60 }}
                 padding={0.3}
                 valueScale={{ type: 'linear', min: 0, max: 5 }}
                 indexScale={{ type: 'band', round: true }}
@@ -39,9 +39,9 @@ const CinqueDash = () => {
                     tickSize: 5,
                     tickPadding: 5,
                     tickRotation: 0,
-                    legend: 'Collaborateur',
+                    legend: 'Collaborateurs',
                     legendPosition: 'middle',
-                    legendOffset: 32,
+                    legendOffset: 39,
                 }}
                 axisLeft={{
                     tickSize: 5,

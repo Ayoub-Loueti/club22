@@ -29,6 +29,19 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
           <CloseIcon />
         </IconButton>
       </DialogTitle>
+      <Paper elevation={3} sx={{ padding: 2 }}>
+        <Typography variant="body2">Employé:</Typography>
+        <Typography variant="body2">
+          Nom et Prénom: {reservation.employe.utilisateur.nom}{' '}
+          {reservation.employe.utilisateur.prenom}
+        </Typography>
+        <Typography variant="body2">
+          Email: {reservation.employe.utilisateur.email}
+        </Typography>
+        <Typography variant="body2">
+          Téléphone: {reservation.employe.utilisateur.tel}
+        </Typography>
+      </Paper>
       <DialogContent>
         {reservation && (
           <Box>
@@ -46,19 +59,6 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
             <Typography variant="h5" gutterBottom>
               {reservation.offre.destination}
             </Typography>{' '}
-            <Typography variant="h5" gutterBottom>
-              Date : De {reservation.date_debut} Jusq'ua{' '}
-              {reservation.date_fin}
-            </Typography>
-            <Paper elevation={3} sx={{ padding: 2 }}>
-              <Typography variant="body2">
-                Nom de l'employé: {reservation.employe.utilisateur.nom}{' '}
-                {reservation.employe.utilisateur.prenom}
-              </Typography>
-              <Typography variant="body2">
-                Email de l'employé: {reservation.employe.utilisateur.email}
-              </Typography>
-            </Paper>
             <Box
               sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}
             ></Box>
@@ -68,6 +68,10 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
             <Typography variant="body2">Type: {reservation.typeR}</Typography>
             {reservation.typeR === 'hotel' && (
               <>
+                <Typography variant="h5" gutterBottom>
+                  Date de réservation : De {reservation.date_debut} Jusq'ua{' '}
+                  {reservation.date_fin}
+                </Typography>
                 <Typography variant="h5" gutterBottom>
                   Nom de l'hotel: {reservation.details.nom_hotel}
                 </Typography>
@@ -85,13 +89,24 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
                 </List>
               </>
             )}
-            {reservation.typeR === 'autre' && (
-              <Typography variant="body2">
-                Nombres de personnes: {reservation.nombre}
-              </Typography>
-            )}
+            {reservation.typeR === 'autre' &&
+              ((
+                <Typography variant="h5" gutterBottom>
+                  Date de réservation : De {reservation.date_debut} Jusq'ua{' '}
+                  {reservation.date_fin}
+                </Typography>
+              ),
+              (
+                <Typography variant="body2">
+                  Nombres de personnes: {reservation.nombre}
+                </Typography>
+              ))}
             {reservation.typeR === 'voyage' && (
               <>
+                <Typography variant="h5" gutterBottom>
+                  Date de réservation : De {reservation.date_debut} Jusq'ua{' '}
+                  {reservation.date_fin}
+                </Typography>
                 <Typography variant="body2">
                   Nombre de jours: {reservation.details.nbr_jours}
                 </Typography>
@@ -101,18 +116,19 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
                 <Typography variant="body2">
                   Inclus: {reservation.details.inclus}
                 </Typography>
-                {/* Ajoutez d'autres détails spécifiques au voyage ici */}
               </>
             )}
-            {reservation.typeR === 'activite' && (
+            {reservation.typeR === 'activité' && (
               <>
+                <Typography variant="h5" gutterBottom>
+                  Date de réservation :  {reservation.date_debut} 
+                </Typography>
                 <Typography variant="body2">
                   Durée: {reservation.details.duree} heures
                 </Typography>
                 <Typography variant="body2">
                   Inclus: {reservation.details.inclus}
                 </Typography>
-                {/* Ajoutez d'autres détails spécifiques à l'activité ici */}
               </>
             )}
             <Box

@@ -69,7 +69,7 @@ function OffreCollabEmploye({ collaborateurId }) {
       <div className="offre-employee-container">
         <h1 className="offre-employee-title">LES OFFRES DISPONIBLES</h1>
         <div className="filters">
-          {['tous', 'hotel', 'voyage', 'activité'].map((f) => (
+          {['tous', 'hotel', 'voyage', 'activite'].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}

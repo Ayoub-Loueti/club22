@@ -731,7 +731,7 @@ exports.checkIfPostIsSaved = async (req, res) => {
 //signaler
 
 exports.createSignal = async (req, res) => {
-  const { id_post, id_cmntr, id_reponse } = req.body;
+  const { id_post, id_cmntr, id_reponse, cause } = req.body;
   const id_utilisateur = req.userId; 
 
   try {
@@ -754,7 +754,8 @@ exports.createSignal = async (req, res) => {
       id_post: id_post,
       id_cmntr: id_cmntr || 0,
       id_reponse: id_reponse || 0,
-      id_utilisateur: id_utilisateur
+      id_utilisateur: id_utilisateur,
+      cause:cause
     });
 
     return res.status(201).json({
