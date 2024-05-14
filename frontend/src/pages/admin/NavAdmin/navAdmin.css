@@ -23,7 +23,7 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
-    margin: 10px 0;
+  margin: 15px 0; /* Augmentez cette valeur pour plus d'espacement */
 }
 
 .icon-and-tooltip {
@@ -51,15 +51,12 @@ margin-left: -3px;}
 
 .adm-tooltip {
   font-size: 14px;
-  margin-left: 10px; /* Espace entre l'icône et le tooltip */
+  margin-left: 10px; /* Ajustez l'espace entre l'icône et le tooltip */
   visibility: hidden; /* Caché par défaut */
   opacity: 0;
   transition: visibility 0s, opacity 0.2s linear;
   color: #191f43;
   font-weight: bold;
-  position: relative; /* Ajouté pour un positionnement relatif */
-  top: 160%; /* Déplacer au centre verticalement */
-  transform: translateY(-71%); /* Ajustement fin pour centrer exactement */
 }
 
 
@@ -131,23 +128,26 @@ margin-left: -3px;}
 
 
 
-.adm-navbar-icon {
-  width: 19px; /* Définit une largeur fixe pour toutes les icônes */
-  height: 19px; /* Définit une hauteur fixe pour toutes les icônes */
-  margin-bottom: 26px; /* Espacement vertical uniforme */
-  color: #191f43; /* Assure la visibilité contre l'arrière-plan du navbar */
-  font-size: 23px;
-  cursor: pointer;
+.adm-icon-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Alignement à gauche */
+  height: 100%; /* Prend toute la hauteur disponible */
+  padding-left: 10px; /* Déplace toutes les icônes un peu plus à droite */
+  padding-top: 30px; /* Ajustez ici pour moins d'espacement en haut */
+  padding-bottom: 30px; /* Ajustez ici pour moins d'espacement en bas */
 }
 .adm-icon-container{
-  margin-bottom: 15px;
+  margin-bottom: 35px;
     display: flex;
   flex-direction: column;
   align-items: flex-start; /* Alignement à gauche */
   height: 100%; /* Prend toute la hauteur disponible */
   padding-left: 10px; /* Déplace toutes les icônes un peu plus à droite */
   padding-top: 70px; /* Espacement optionnel en haut */
-  padding-bottom: 10px; /* Espacement optionnel en bas */
+  padding-bottom: 50px; /* Espacement optionnel en bas */
+     color: #191f43; /* Couleur de l'icône */
+
 }
 
 

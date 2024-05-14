@@ -36,39 +36,63 @@ const CeptDash = () => {
     }, []);
 
     return (
-        <Grid container spacing={2} style={{ height: '400px' }}>
-            {/* Adjusted xs prop to 12 for vertical stacking */}
-            <Grid item xs={12} >
-                <Paper elevation={3} style={{ padding: '10px', backgroundColor: 'blue', color: 'white', height: '100%' }}>
-                    <Typography variant="h6" align="center">
-                        🚀 Likes totale
-                    </Typography>
-                    <Typography variant="h3" align="center">
-                        {totalLikes}
-                    </Typography>
-                </Paper>
-            </Grid>
-            <Grid item xs={12} >
-                <Paper elevation={3} style={{ padding: '10px', backgroundColor: 'green', color: 'white', height: '100%' }}>
-                    <Typography variant="h6" align="center">
-                        💬 Comments totale
-                    </Typography>
-                    <Typography variant="h3" align="center">
-                        {totalComments}
-                    </Typography>
-                </Paper>
-            </Grid>
-            <Grid item xs={12} >
-                <Paper elevation={3} style={{ padding: '10px', backgroundColor: 'purple', color: 'white', height: '100%' }}>
-                    <Typography variant="h6" align="center">
-                        👥 Total Users
-                    </Typography>
-                    <Typography variant="h3" align="center">
-                        {totalUsersCount}
-                    </Typography>
-                </Paper>
-            </Grid>
+      <Grid container spacing={2} style={{ height: '415px' }}>
+        {/* Adjusted xs prop to 12 for vertical stacking */}
+        <Grid item xs={12}>
+          <Paper
+            elevation={3}
+            style={{
+              padding: '10px',
+              backgroundColor: '#55ffe2',
+              color: 'white',
+              height: '86%',
+            }}
+          >
+            <Typography variant="h6" align="center">
+              🚀 Total des J'aime
+            </Typography>
+            <Typography variant="h3" align="center">
+              {totalLikes}
+            </Typography>
+          </Paper>
         </Grid>
+        <Grid item xs={12}>
+          <Paper
+            elevation={3}
+            style={{
+              padding: '10px',
+              backgroundColor: '#e9ff86',
+              color: 'white',
+              height: '86%',
+            }}
+          >
+            <Typography variant="h6" align="center">
+              💬 Total des commentaires
+            </Typography>
+            <Typography variant="h3" align="center">
+              {totalComments}
+            </Typography>
+          </Paper>
+        </Grid>
+        <Grid item xs={12}>
+          <Paper
+            elevation={3}
+            style={{
+              padding: '10px',
+              backgroundColor: '#67ff6b',
+              color: 'white',
+              height: '86%',
+            }}
+          >
+            <Typography variant="h6" align="center">
+              👥 Total des utilisateurs
+            </Typography>
+            <Typography variant="h3" align="center">
+              {totalUsersCount}
+            </Typography>
+          </Paper>
+        </Grid>
+      </Grid>
     );
 };
 

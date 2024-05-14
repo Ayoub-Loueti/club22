@@ -28,7 +28,7 @@ const QuatreDash = () => {
                 data={data}
                 keys={['actitviteReservations', 'hotelReservations', 'voyageReservations']}
                 indexBy="collaborateur"
-                margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+                margin={{ top: 50, right: 150, bottom: 60, left: 33 }}
                 padding={0.3}
                 valueScale={{ type: 'linear' }}
                 indexScale={{ type: 'band', round: true }}
@@ -39,9 +39,10 @@ const QuatreDash = () => {
                     tickSize: 5,
                     tickPadding: 5,
                     tickRotation: 0,
-                    legend: 'Collaborateur',
+                    legend: 'Collaborateurs',
                     legendPosition: 'middle',
-                    legendOffset: 32,
+                    legendOffset: 39,
+                    
                 }}
                 labelSkipWidth={12}
                 labelSkipHeight={12}

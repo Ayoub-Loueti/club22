@@ -22,6 +22,8 @@ import {
   faUserShield,
   faUsersRectangle,
   faCalendarAlt,
+  faRectangleList,
+  faDashboard,
 } from '@fortawesome/free-solid-svg-icons';
 
 function NavAdmin() {
@@ -128,11 +130,11 @@ function NavAdmin() {
       },
       {
         icon: faUserShield,
-        label: signalsCount > 0 ? `Signaler (${signalsCount})` : 'Signaler',
+        label: signalsCount > 0 ? `Signaler (${signalsCount})` : 'Signalements',
         path: '/adminSignal',
       },
       {
-        icon: faCalendarAlt,
+        icon: faRectangleList,
         label: 'liste réservations',
         path: '/listReservation',
       },
@@ -140,6 +142,11 @@ function NavAdmin() {
         icon: faCalendarAlt,
         label: 'Demandes réservations',
         path: '/demandeReservation',
+      },
+      {
+        icon: faDashboard,
+        label: 'Dashboard',
+        path: '/dashboard',
       },
     ];
 

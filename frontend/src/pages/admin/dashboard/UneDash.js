@@ -30,7 +30,7 @@ const UneDash = () => {
         <div style={{ height: 400 }}>
             {data && <ResponsivePie
                 data={data}
-                margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+                margin={{ top: 40, right: 60, bottom: 80, left: 80 }}
                 padAngle={0.7}
                 cornerRadius={3}
                 activeOuterRadiusOffset={8}
@@ -43,6 +43,8 @@ const UneDash = () => {
                 arcLinkLabelsColor={{ from: 'color' }}
                 arcLabelsSkipAngle={10}
                 arcLabelsTextColor={{ from: 'color', modifiers: [['darker', 2]] }}
+                 arcLinkLabelsStraightLength={16} 
+                arcLinkLabelsTextOffset={5} 
                 defs={[
                     {
                         id: 'dots',
