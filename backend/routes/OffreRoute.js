@@ -31,5 +31,6 @@ router.get(
 router.get( '/employeOffers', authenticate, offreController.getAllEmployeeOffers);
 router.get( '/employeOffer/:offreId',authenticate, offreController.getEmployeeOfferById);
 
+router.post('/offerFromCollab/:id_collaborateur', upload.array('photos', 4), offreController.createOffreFromCollab);
 
 module.exports = router;

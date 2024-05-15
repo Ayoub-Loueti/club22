@@ -653,4 +653,107 @@ exports.getAllOffresCollab = async (req, res) => {
   }
 };
 
+exports.createOffreFromCollab = async (req, res) => {
+  try {
+    const {
+      titre,
+      description,
+      date_debut,
+      date_fin,
+      prix,
+      type,
+      remise,
+      destination,
+      // Additional fields for specific types
+      nom_hotel,
+      etoiles,
+      climatisation,
+      wifi,
+      piscine_exterieure,
+      piscine_couverte,
+      bassin_enfants,
+      parking,
+      discotheque,
+      plage_privee,
+      ascenseur,
+      salle_de_sport,
+      aire_de_jeux_enfants,
+      programme,
+      inclus,
+      nbr_jours,
+      duree,
+    } = req.body;
+
+    const { id_collaborateur } = req.params;
+
+    const offre = await OffreModel.create({
+      titre,
+      description,
+      date_debut,
+      date_fin,
+      prix,
+      id_collaborateur,
+      type,
+      remise,
+      destination,
+    });
+
+    if (req.files && req.files.length > 0) {
+      const imageUploads = req.files.map((file) => {
+        const imagePath = file.path; // Assumes path handling is already set
+        return ImageOffre.create({
+          image: imagePath,
+          id_offre: offre.id_offre,
+        });
+      });
+      await Promise.all(imageUploads);
+    }
+
+    // Create specific type details based on offre type
+    switch (type) {
+      case 'hotel':
+        await GrandHotelModel.create({
+          id_offre: offre.id_offre,
+          nom_hotel,
+          etoiles,
+          climatisation,
+          wifi,
+          piscine_exterieure,
+          piscine_couverte,
+          bassin_enfants,
+          parking,
+          discotheque,
+          plage_privee,
+          ascenseur,
+          salle_de_sport,
+          aire_de_jeux_enfants,
+        });
+        break;
+      case 'voyage':
+        await VoyageModel.create({
+          id_offre: offre.id_offre,
+          programme,
+          inclus,
+          nbr_jours,
+        });
+        break;
+      case 'activite':
+        await ActiviteModel.create({
+          id_offre: offre.id_offre,
+          programme,
+          inclus,
+          duree,
+        });
+        break;
+    }
+
+    res.status(201).json({ message: 'Offre created successfully', offre });
+  } catch (error) {
+    console.error('Error creating offre:', error);
+    res
+      .status(500)
+      .json({ error: 'Failed to create offre', details: error.message });
+  }
+};
+
 module.exports = exports;

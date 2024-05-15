@@ -35,7 +35,10 @@ const CollaborateurModel = sequelize.define('Collaborateur', {
   },
   archiver: {
     type: DataTypes.BOOLEAN,
-  }
+  },
+  validation: {
+    type: DataTypes.DATE,
+  },
 }, {
     tableName: 'collaborateur',
     timestamps: false

@@ -46,7 +46,7 @@ exports.updateUserEtat = async (req, res) => {
     if (!isAdmin) {
       return res.status(403).json({
         error:
-          'Permission denied. Only administrators can perform this action.',
+          'Autorisation refusée. Seuls les administrateurs peuvent effectuer cette action.',
       });
     }
 
@@ -194,7 +194,7 @@ exports.getAllEmploye = async (req, res) => {
     if (!isAdmin) {
       return res.status(403).json({
         error:
-          'Permission denied. Only administrators can perform this action.',
+          'Autorisation refusée. Seuls les administrateurs peuvent effectuer cette action.',
       });
     }
 

@@ -13,4 +13,7 @@ router.get('/collaborator/:collaboratorId',authenticate,collaborateurController.
 router.put('/collaborator/:collaboratorId',authenticate,collaborateurController.updateCollaborateur);
 router.get('/allCollaborateursEmploye',authenticate,collaborateurController.getAllCollaborateursEmploye);
 
+router.put('/collaborateurs/:collaboratorId/validation', authenticate,collaborateurController.updateCollaborateurValidation);
+router.get('/checkValidation/:id_collaborateur', collaborateurController.checkValidationDate);
+
 module.exports = router;

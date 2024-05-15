@@ -36,6 +36,7 @@ import DemandeReservation from './pages/admin/reservation/CollabReserv2';
 import Message from './pages/message/message';
 import Dashboard from './pages/admin/dashboard/dashboard';
 import OffreAdminDetails from './pages/admin/offre/OffreAdminDetails';
+import AddFromCollaborateur from './pages/addFromCollab/addFromCollab';
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/Club22/:id_collaborateur" element={<AddFromCollaborateur />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/message" element={<Message />} />
             <Route

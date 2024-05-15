@@ -288,5 +288,58 @@ exports.updateCollaborateur = async (req, res) => {
     }
 };
 
+exports.updateCollaborateurValidation = async (req, res) => {
+  const { collaboratorId } = req.params;
+
+  try {
+    const isAdmin = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: req.userId,
+        type: 'admin',
+      },
+    });
+
+    if (!isAdmin) {
+      return res.status(403).json({
+        error: 'Permission denied. Only administrators can perform this action.',
+      });
+    }
+
+    const collaborateur = await Collaborateur.findByPk(collaboratorId);
+
+    if (!collaborateur) {
+      return res.status(404).json({ error: 'Collaborateur not found' });
+    }
+
+    // Calculate the date for tomorrow
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(now.getDate() + 1);
+
+    await collaborateur.update({ validation: tomorrow });
+    res.status(200).json({ message: 'Collaborateur validation date updated successfully' });
+  } catch (error) {
+    console.error('Failed to update collaborateur validation date:', error);
+    res.status(500).json({ error: 'Failed to update collaborateur validation date' });
+  }
+};
+
+exports.checkValidationDate = async (req, res) => {
+  try {
+    const { id_collaborateur } = req.params;
+    const collaborateur = await Collaborateur.findByPk(id_collaborateur);
+
+    if (!collaborateur) {
+      return res.status(404).json({ message: 'Collaborateur not found' });
+    }
+
+    const isValid = collaborateur.validation && new Date(collaborateur.validation) > new Date();
+
+    res.status(200).json({ result: isValid ? 1 : 0 });
+  } catch (error) {
+    console.error('Error checking validation date:', error);
+    res.status(500).json({ error: 'Failed to check validation date', details: error.message });
+  }
+};
 
 module.exports = exports;

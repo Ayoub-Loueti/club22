@@ -1,4 +1,3 @@
-// ListCollaborateur.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './ListCollab.css';
@@ -7,13 +6,10 @@ import AddCollaborateurModal from './AddCollaborateurModal';
 import OffreCollab from '../offre/OffreCollab'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import {
-  faArrowLeft,
-  faArrowRight,
-} from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faArrowRight, faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FaArrowLeft } from 'react-icons/fa';
 import NavAdmin from '../NavAdmin/navAdmin';
+import { SHA256 } from 'crypto-js';
 function ListCollaborateur() {
   const [collaborateurs, setCollaborateurs] = useState([]);
   const [selectedCollaborateurId, setSelectedCollaborateurId] = useState(null);
@@ -71,58 +67,92 @@ function ListCollaborateur() {
     }
   };
 
-const handleNext = () => {
-  // La taille de page est le nombre de collaborateurs que vous souhaitez afficher à la fois.
-  const pageSize = 3;
-  // Calculer le nombre total de pages.
-  const totalPages = Math.ceil(collaborateurs.length / pageSize);
-  // Calculer la page actuelle basée sur startIndex.
-  const currentPage = Math.ceil((startIndex + 1) / pageSize);
-  // S'assurer qu'on ne dépasse pas le nombre total de pages.
-  if (currentPage < totalPages) {
-    setStartIndex(startIndex + pageSize);
-  }
-};
+  const handleNext = () => {
+    const pageSize = 3;
+    const totalPages = Math.ceil(collaborateurs.length / pageSize);
+    const currentPage = Math.ceil((startIndex + 1) / pageSize);
+    if (currentPage < totalPages) {
+      setStartIndex(startIndex + pageSize);
+    }
+  };
 
+  const filteredCollaborateurs = collaborateurs.filter((collaborateur) => {
+    const nom = collaborateur.nom ? collaborateur.nom.toLowerCase() : '';
+    const type = collaborateur.type ? collaborateur.type.toLowerCase() : '';
+    const adresse = collaborateur.adresse
+      ? collaborateur.adresse.toLowerCase()
+      : '';
+    const tel = collaborateur.tel ? collaborateur.tel.toLowerCase() : '';
+    const email = collaborateur.email ? collaborateur.email.toLowerCase() : '';
+    const siteWeb = collaborateur.siteWeb
+      ? collaborateur.siteWeb.toLowerCase()
+      : '';
 
- const filteredCollaborateurs = collaborateurs.filter((collaborateur) => {
-   const nom = collaborateur.nom ? collaborateur.nom.toLowerCase() : ''; // Check if nom is not null
-   const type = collaborateur.type ? collaborateur.type.toLowerCase() : ''; // Check if type is not null
-   const adresse = collaborateur.adresse
-     ? collaborateur.adresse.toLowerCase()
-     : ''; // Check if adresse is not null
-   const tel = collaborateur.tel ? collaborateur.tel.toLowerCase() : ''; // Check if tel is not null
-   const email = collaborateur.email ? collaborateur.email.toLowerCase() : ''; // Check if email is not null
-   const siteWeb = collaborateur.siteWeb
-     ? collaborateur.siteWeb.toLowerCase()
-     : ''; // Check if siteWeb is not null
+    return (
+      nom.includes(searchTerm.toLowerCase()) ||
+      type.includes(searchTerm.toLowerCase()) ||
+      adresse.includes(searchTerm.toLowerCase()) ||
+      tel.includes(searchTerm.toLowerCase()) ||
+      email.includes(searchTerm.toLowerCase()) ||
+      siteWeb.includes(searchTerm.toLowerCase())
+    );
+  });
 
-   return (
-     nom.includes(searchTerm.toLowerCase()) ||
-     type.includes(searchTerm.toLowerCase()) ||
-     adresse.includes(searchTerm.toLowerCase()) ||
-     tel.includes(searchTerm.toLowerCase()) ||
-     email.includes(searchTerm.toLowerCase()) ||
-     siteWeb.includes(searchTerm.toLowerCase())
-   );
- });
-    const scrollToRef = React.createRef();
+  const scrollToRef = React.createRef();
 
-const handleViewOffers = () => {
-  // Assurez-vous que la référence existe et est actuellement montée dans le DOM
-  if (scrollToRef.current) {
-    // Fait défiler vers l'élément référencé
-    window.scrollTo({
-      top: scrollToRef.current.offsetTop, // Position Y de l'élément
-      behavior: 'smooth', // Option pour un défilement doux
-    });
-  }
-};
-const getEmailLink = (collaborateur) => {
-  const subject = encodeURIComponent('From Ooredoo Club2');
-  const body = encodeURIComponent('Hello cher collab');
-  return `mailto:${collaborateur.email}?subject=${subject}&body=${body}`;
-};
+  const handleViewOffers = () => {
+    if (scrollToRef.current) {
+      window.scrollTo({
+        top: scrollToRef.current.offsetTop,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  const getEmailLink = (collaborateur) => {
+    const subject = encodeURIComponent('From Ooredoo Club2');
+    const body = encodeURIComponent('Hello cher collab');
+    return `mailto:${collaborateur.email}?subject=${subject}&body=${body}`;
+  };
+
+  const handleCopyLink = async (id_collaborateur) => {
+    const hashedId = SHA256(id_collaborateur.toString()).toString();
+    const postUrl = `http://localhost:3000/Club22/${id_collaborateur}`;
+    try {
+      await navigator.clipboard.writeText(postUrl);
+      showAlert('Lien copié dans le presse-papier', 'green');
+    } catch (err) {
+      console.error('Failed to copy the text to clipboard', err);
+      showAlert('Failed to copy link', 'red');
+    }
+  };
+  
+  const showAlert = (message, color) => {
+    const alertBox = document.createElement('div');
+    alertBox.textContent = message;
+    alertBox.style.cssText = `
+      position: fixed;
+      top: 7%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      border-radius: 8px;
+      color: white;
+      background-color: ${color};
+      z-index: 100000;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      font-weight: bold;
+      font-family: Arial, sans-serif;
+    `;
+  
+    document.body.appendChild(alertBox);
+  
+    setTimeout(() => {
+      alertBox.remove();
+    }, 2000); // Remove the alert after 2 seconds
+  };  
+
   return (
     <>
       <NavAdmin />
@@ -186,6 +216,11 @@ const getEmailLink = (collaborateur) => {
 
                   <h3 className="collaborateur-card-title">
                     {collaborateur.nom}
+                    <FontAwesomeIcon
+                      icon={faCopy}
+                      className="copy-icon"
+                      onClick={() => handleCopyLink(collaborateur.id_collaborateur)}
+                    />
                   </h3>
                   <p className="collaborateur-card-description">
                     Catégorie :{' '}
@@ -247,7 +282,7 @@ const getEmailLink = (collaborateur) => {
                       setSelectedCollaborateurId(
                         collaborateur.id_collaborateur
                       );
-                      handleViewOffers(); // Déclenche le défilement après la mise à jour de l'état
+                      handleViewOffers();
                     }}
                     className="offers"
                   >
