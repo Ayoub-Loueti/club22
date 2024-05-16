@@ -1,64 +1,103 @@
 const Employe = require('../models/EmployeModel');
 const Utilisateur = require('../models/UtilisateurModel');
 const Message = require('../models/MessagesModel');
+const Discussion = require('../models/DiscussionModel');
 
 exports.createMessage = async (req, res) => {
     try {
-        const userId = req.userId;
-        const { contenu } = req.body;
+        const userId = req.userId; // id_utilisateur from req.userId
+        const { contenu } = req.body; // contenu from body
+        const { id_disc } = req.params; // id_disc from path
 
-        const isEmploye = await Utilisateur.findOne({
-            where: {
-                id_utilisateur: userId,
-                type: 'employe',
-            },
-        });
-
-        if (!isEmploye) {
-            return res.status(403).json({
-                error: 'Permission denied. Only employees can create requests.',
-            });
-        }
-
-        const employe = await Employe.findOne({
+        const utilisateur = await Utilisateur.findOne({
             where: { id_utilisateur: userId },
         });
 
-        if (!employe) {
-            return res.status(404).json({ error: 'Employee not found' });
+        if (!utilisateur) {
+            return res.status(404).json({ error: 'User not found' });
         }
-       
 
-            const message = await Message.create({
-              id_employe: employe.id_employe,
-             contenu: contenu,
-            });
+        const discussion = await Discussion.findOne({
+            where: { id_disc: id_disc },
+        });
 
-            return res.status(201).json({ message });
+        if (!discussion) {
+            return res.status(404).json({ error: 'Discussion not found' });
+        }
+
+        const message = await Message.create({
+            id_utilisateur: userId,
+            id_disc: id_disc,
+            contenu: contenu,
+        });
+
+        const fullMessage = await Message.findOne({
+            where: { id_msg: message.id_msg },
+            include: [{
+                model: Utilisateur,
+                as: 'utilisateur',
+                attributes: ['nom', 'prenom', 'photo']
+            }]
+        });
+
+        return res.status(201).json(fullMessage);
     } catch (error) {
         console.error('Error creating message:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
 
-exports.getAllMessages = async (req, res) => {
+exports.getMessages = async (req, res) => {
     try {
+        const { id_disc } = req.params; // Get id_disc from path
+
         const messages = await Message.findAll({
+            where: { id_disc: id_disc },
             include: [{
-                model: Employe,
-                as: 'employe',
-                include :[{
                 model: Utilisateur,
                 as: 'utilisateur',
-                }]
+                attributes: ['nom', 'prenom', 'photo']
             }],
         });
-        res.status(200).json({ messages });
+
+        if (!messages.length) { // Check if the messages array is empty
+            return res.status(404).json({ error: 'No messages found for this discussion' });
+        }
+
+        res.status(200).json(messages);
     } catch (error) {
         console.error('Error fetching messages:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error', details: error.message });
     }
 };
 
+exports.createDiscussion = async (req, res) => {
+    const { nomDisc, nbr_jours_disc } = req.body;
+    
+    try {
+        const currentDate = new Date();
+        const daysToAdd = parseInt(nbr_jours_disc, 10); // Ensure nbr_jours_disc is an integer
+        currentDate.setDate(currentDate.getDate() + daysToAdd);
+        const newDiscussion = await Discussion.create({
+            nomDisc,
+            typeDisc:"temporaire",
+            nbr_jours_disc,
+            date_fin: currentDate
+        });
+        res.status(201).json(newDiscussion);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.getAllDiscussions = async (req, res) => {
+    try {
+        const discussions = await Discussion.findAll({});
+        res.status(200).json(discussions);
+    } catch (error) {
+        console.error('Error fetching discussions:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
 module.exports = exports;

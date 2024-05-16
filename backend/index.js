@@ -79,7 +79,32 @@ app.post('/upload-image', upload.single('file'), (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
 
   console.log(`Server is running on port ${PORT}`);
+});
+
+const io = require("socket.io")(server, {
+    pingTimeout: 60000,
+    cors: {
+      origin:"http://localhost:3000",
+    },
+});
+
+io.on("connection", (socket) => {
+  console.log("connected to socket io");
+  socket.on("setup", (userId) => {
+    socket.join(userId);
+    console.log(userId);
+    socket.emit("connected");
+  });
+
+  socket.on('join chat', (room) => {
+    socket.join(room);
+    console.log('User joined Room: ' + room);
+  });
+  
+  socket.on("new message", (messageData) => {
+    io.to(messageData.room).emit("message received", messageData.message,messageData.userId);
+  });
 });
