@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect ,useRef} from 'react';
 import { Modal,Grid, Box, List, ListItem, ListItemText, Typography, Avatar, Paper , TextField, Button} from '@mui/material';
 import axios from 'axios';
 import io from 'socket.io-client';
+import Lottie from 'react-lottie';
+import typingAnimation from '../../animations/typing.json'; // Adjust the path as necessary
 
 const ENDPOINT = "http://localhost:5000";
 var socket, selectedChatCompare;
@@ -20,19 +22,42 @@ function MessagePage() {
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
     const [socket, setSocket] = useState(null);
+    const [typing , setTyping] = useState(false);
+    const [isTyping , setIsTyping] = useState(false);
+    const typingTimeout = useRef(null); // Define typingTimeout using useRef
+
+    const defaultOptions = {
+        loop: true,
+        autoplay: true,
+        animationData: typingAnimation,
+        rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice'
+        }
+    };
+
+ useEffect(() => {
+        const newSocket = io(ENDPOINT);
+        newSocket.emit("setup", userId);
+        newSocket.on("connected", () => setSocketConnected(true));
+        setSocket(newSocket);
+
+        return () => {
+            newSocket.close();
+            setSocket(null);
+        };
+    }, []);
 
     useEffect(() => {
-      const newSocket = io(ENDPOINT);
-      newSocket.emit("setup", userId);
-      newSocket.on("connection", () => setSocketConnected(true));
+        if (!socket) return;
 
-      setSocket(newSocket);
+        socket.on('typing', () => setIsTyping(true));
+        socket.on('stop typing', () => setIsTyping(false));
 
-      return () => {
-          newSocket.close();
-          setSocket(null);
-      };
-  }, []);
+        return () => {
+            socket.off('typing');
+            socket.off('stop typing');
+        };
+    }, [socket]);
 
     useEffect(() => {
       if (!socket) return;
@@ -60,6 +85,7 @@ function MessagePage() {
         })
         .catch(error => console.error('Error creating discussion:', error));
     };
+    
     
     const modalBody = (
         <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', boxShadow: 24, p: 4 }}>
@@ -131,26 +157,38 @@ function MessagePage() {
     }
   }, [selectedDiscussion]);
   
- const handleSendMessage = () => {
+  const handleSendMessage = () => {
     if (selectedDiscussion && newMessage.trim()) {
         axios.post(`http://localhost:5000/message/${selectedDiscussion.id_disc}`, 
             { contenu: newMessage },
             { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } }
         )
         .then(response => {
-            const sentMessage = response.data; // Assuming the response contains the full message object
-            setNewMessage(''); // Clear input field
-            fetchMessages(); 
+            const sentMessage = response.data;
+            setNewMessage('');
+            fetchMessages();
             socket.emit("new message", {
                 room: selectedDiscussion.id_disc,
                 message: sentMessage,
-                userId: userId, // Include userId in the object
+                userId: userId,
             });
-
-            fetchMessages(); 
+            socket.emit('stop typing', selectedDiscussion.id_disc);
         })
         .catch(error => console.error('Error sending message:', error));
     }
+};
+
+const handleTyping = (e) => {
+    setNewMessage(e.target.value);
+    if (!typing) {
+        setTyping(true);
+        socket.emit('typing', selectedDiscussion.id_disc);
+    }
+    clearTimeout(typingTimeout.current);
+    typingTimeout.current = setTimeout(() => {
+        setTyping(false);
+        socket.emit('stop typing', selectedDiscussion.id_disc);
+    }, 3000);
 };
 
 return (
@@ -206,19 +244,24 @@ return (
     ))}
 </List>
               </Box>
-              <Box component="form" sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                  <TextField
-                      fullWidth
-                      variant="outlined"
-                      placeholder="Type a message..."
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      sx={{ mr: 1 }}
-                  />
-                  <Button variant="contained" color="primary" onClick={handleSendMessage}>
-                      Envoyer
-                  </Button>
-              </Box>
+                <Box component="form" sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                        {isTyping && (
+                            <Box sx={{ width: '100%', textAlign: 'center' }}>
+                                <Lottie options={defaultOptions} height={40} width={70} />
+                            </Box>
+                        )}
+                        <TextField
+                            fullWidth
+                            variant="outlined"
+                            placeholder="Type a message..."
+                            value={newMessage}
+                            onChange={handleTyping}
+                            sx={{ mr: 1 }}
+                        />
+                        <Button variant="contained" color="primary" onClick={handleSendMessage}>
+                            Envoyer
+                        </Button>
+                    </Box>
           </Box>
       </Grid>
   </Grid>
