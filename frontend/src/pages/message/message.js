@@ -25,6 +25,7 @@ function MessagePage() {
     const [typing , setTyping] = useState(false);
     const [isTyping , setIsTyping] = useState(false);
     const typingTimeout = useRef(null); // Define typingTimeout using useRef
+    const [connectedUsers, setConnectedUsers] = useState([]);
 
     const defaultOptions = {
         loop: true,
@@ -35,17 +36,23 @@ function MessagePage() {
         }
     };
 
- useEffect(() => {
+    useEffect(() => {
         const newSocket = io(ENDPOINT);
         newSocket.emit("setup", userId);
         newSocket.on("connected", () => setSocketConnected(true));
+        newSocket.on("users online", async (users) => {
+            // Filter out the current user's ID before fetching user details
+            const otherUsers = users.filter(id => id !== userId);
+            const userDetails = await Promise.all(otherUsers.map(userId => fetchUserDetails(userId)));
+            setConnectedUsers(userDetails.filter(user => user !== null));
+        });
         setSocket(newSocket);
-
+    
         return () => {
             newSocket.close();
             setSocket(null);
         };
-    }, []);
+    }, [userId]); // Include userId in the dependency array
 
     useEffect(() => {
         if (!socket) return;
@@ -98,6 +105,7 @@ function MessagePage() {
                 value={discussionName}
                 onChange={(e) => setDiscussionName(e.target.value)}
                 sx={{ mt: 2 }}
+                required
             />
             <TextField
                 fullWidth
@@ -106,8 +114,15 @@ function MessagePage() {
                 value={validityDays}
                 onChange={(e) => setValidityDays(e.target.value)}
                 sx={{ mt: 2 }}
+                required
             />
-            <Button variant="contained" color="primary" onClick={handleCreateDiscussion} sx={{ mt: 2 }}>
+            <Button 
+                variant="contained" 
+                color="primary" 
+                onClick={handleCreateDiscussion} 
+                sx={{ mt: 2 }}
+                disabled={!discussionName || !validityDays || validityDays <= 0}  // Disable button if fields are empty or days are not positive
+            >
                 Ajouter
             </Button>
         </Box>
@@ -191,81 +206,114 @@ const handleTyping = (e) => {
     }, 3000);
 };
 
+const fetchUserDetails = async (userId) => {
+    try {
+        const response = await axios.get(`http://localhost:5000/profil/${userId}`,
+        { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } }
+        );
+        return {
+            id: userId,
+            nom: response.data.user.nom,
+            prenom: response.data.user.prenom,
+            photo: response.data.user.photo
+        };
+    } catch (error) {
+        console.error('Error fetching user details:', error);
+        return null;
+    }
+};
+
 return (
-  <Grid container spacing={2}>
-      <Grid item xs={4}>
-          <Box sx={{ maxHeight: '90vh', overflow: 'auto' }}>
-              <Typography variant="h6">
-                  Discussions
-                  <Button variant="contained" color="primary" onClick={handleOpenModal}>
-                      Créer nouvelle discussion
-                  </Button>
-              </Typography>
-              <Modal
-                  open={openModal}
-                  onClose={handleCloseModal}
-                  aria-labelledby="modal-modal-title"
-                  aria-describedby="modal-modal-description"
-              >
-                  {modalBody}
-              </Modal>
-              <List>
-                  {discussions.map((discussion) => (
-                      <ListItem button key={discussion.id_disc} onClick={() => setSelectedDiscussion(discussion)}>
-                          <ListItemText primary={discussion.nomDisc} secondary={discussion.typeDisc} />
-                      </ListItem>
-                  ))}
-              </List>
-          </Box>
-      </Grid>
-      <Grid item xs={8}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', height: '90vh' }}>
-              <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
-                  <Typography variant="h6">Messages</Typography>
-                  <List>
-    {messages.map((message) => (
-        <ListItem key={message.id_msg} alignItems="flex-start">
-            <Avatar
-                src={message.utilisateur && message.utilisateur.photo ? `http://localhost:5000/${message.utilisateur.photo}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'}
-                alt={message.utilisateur ? `${message.utilisateur.prenom} ${message.utilisateur.nom}` : 'Unknown User'}
-                sx={{ width: 56, height: 56, marginRight: 2 }}
-            />
-            <ListItemText
-                primary={message.contenu}
-                secondary={
-                    <React.Fragment>
-                        <Typography component="span" variant="body2" color="textPrimary">
-                            {message.utilisateur ? `${message.utilisateur.prenom} ${message.utilisateur.nom}` : 'Unknown User'}
-                        </Typography>
-                    </React.Fragment>
-                }
-            />
-        </ListItem>
-    ))}
-</List>
-              </Box>
+    <Grid container spacing={2}>
+        <Grid item xs={3}>  
+            <Box sx={{ maxHeight: '90vh', overflow: 'auto' }}>
+                <Typography variant="h6">
+                    Discussions
+                    <Button variant="contained" color="primary" onClick={handleOpenModal}>
+                        Créer nouvelle discussion
+                    </Button>
+                </Typography>
+                <Modal
+                    open={openModal}
+                    onClose={handleCloseModal}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    {modalBody}
+                </Modal>
+                <List>
+                    {discussions.map((discussion) => (
+                        <ListItem button key={discussion.id_disc} onClick={() => setSelectedDiscussion(discussion)}>
+                            <ListItemText 
+    primary={discussion.nomDisc} 
+    secondary={discussion.date_fin ? `valable jusqu'à ${discussion.date_fin}` : ''}
+/>
+                        </ListItem>
+                    ))}
+                </List>
+            </Box>
+        </Grid>
+        <Grid item xs={6}>  
+            <Box sx={{ display: 'flex', flexDirection: 'column', height: '90vh' }}>
+                <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
+                    <Typography variant="h6">Messages</Typography>
+                    <List>
+                      {messages.map((message) => (
+                          <ListItem key={message.id_msg} alignItems="flex-start">
+                              <Avatar
+                                  src={message.utilisateur && message.utilisateur.photo ? `http://localhost:5000/${message.utilisateur.photo}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'}
+                                  alt={message.utilisateur ? `${message.utilisateur.prenom} ${message.utilisateur.nom}` : 'Unknown User'}
+                                  sx={{ width: 56, height: 56, marginRight: 2 }}
+                              />
+                              <ListItemText
+                                  primary={message.contenu}
+                                  secondary={
+                                      <React.Fragment>
+                                          <Typography component="span" variant="body2" color="textPrimary">
+                                              {message.utilisateur ? `${message.utilisateur.prenom} ${message.utilisateur.nom}` : 'Unknown User'}
+                                          </Typography>
+                                      </React.Fragment>
+                                  }
+                              />
+                          </ListItem>
+                      ))}
+                    </List>
+                </Box>
                 <Box component="form" sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                        {isTyping && (
-                            <Box sx={{ width: '100%', textAlign: 'center' }}>
-                                <Lottie options={defaultOptions} height={40} width={70} />
-                            </Box>
-                        )}
-                        <TextField
-                            fullWidth
-                            variant="outlined"
-                            placeholder="Type a message..."
-                            value={newMessage}
-                            onChange={handleTyping}
-                            sx={{ mr: 1 }}
-                        />
-                        <Button variant="contained" color="primary" onClick={handleSendMessage}>
-                            Envoyer
-                        </Button>
-                    </Box>
-          </Box>
-      </Grid>
-  </Grid>
-);
+                    {isTyping && (
+                        <Box sx={{ width: '100%', textAlign: 'center' }}>
+                            <Lottie options={defaultOptions} height={40} width={70} />
+                        </Box>
+                    )}
+                    <TextField
+                        fullWidth
+                        variant="outlined"
+                        placeholder="Type a message..."
+                        value={newMessage}
+                        onChange={handleTyping}
+                        sx={{ mr: 1 }}
+                    />
+                    <Button variant="contained" color="primary" onClick={handleSendMessage}>
+                        Envoyer
+                    </Button>
+                </Box>
+            </Box>
+        </Grid>
+        <Grid item xs={3}>  
+            <Box sx={{ maxHeight: '90vh', overflow: 'auto' }}>
+                <Typography variant="h6">Utilisateurs connectés</Typography>
+                <List>
+                    {connectedUsers.map((user, index) => (
+                        <ListItem key={index}>
+                            <Avatar src={`http://localhost:5000/${user.photo}`} alt={`${user.prenom} ${user.nom}`} sx={{ width: 56, height: 56, marginRight: 2 }} />
+                            <ListItemText primary={`${user.prenom} ${user.nom}`} />
+                        </ListItem>
+                    ))}
+                </List>
+            </Box>
+        </Grid>
+    </Grid>
+  );
 }
 
 export default MessagePage;

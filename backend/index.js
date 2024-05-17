@@ -84,6 +84,8 @@ const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
+const connectedUsers = new Map();
+
 const io = require("socket.io")(server, {
     pingTimeout: 60000,
     cors: {
@@ -92,13 +94,23 @@ const io = require("socket.io")(server, {
 });
 
 io.on("connection", (socket) => {
+
   console.log("connected to socket io");
+
   socket.on("setup", (userId) => {
     socket.join(userId);
-    console.log(userId);
+    connectedUsers.set(socket.id, userId);
+    console.log(userId + " connected");
     socket.emit("connected");
+    io.emit("users online", Array.from(connectedUsers.values()));
   });
 
+  socket.on('disconnect', () => {
+    console.log(connectedUsers.get(socket.id) + " disconnected");
+    connectedUsers.delete(socket.id);
+    io.emit("users online", Array.from(connectedUsers.values()));
+  });
+  
   socket.on('join chat', (room) => {
     socket.join(room);
     console.log('User joined Room: ' + room);
