@@ -92,7 +92,7 @@ const io = require("socket.io")(server, {
       origin:"http://localhost:3000",
     },
 });
-
+app.set('io', io);
 io.on("connection", (socket) => {
 
   console.log("connected to socket io");

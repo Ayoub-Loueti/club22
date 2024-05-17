@@ -26,6 +26,7 @@ function MessagePage() {
     const [isTyping , setIsTyping] = useState(false);
     const typingTimeout = useRef(null); // Define typingTimeout using useRef
     const [connectedUsers, setConnectedUsers] = useState([]);
+    const [noMessagesError, setNoMessagesError] = useState('');
 
     const defaultOptions = {
         loop: true,
@@ -41,10 +42,12 @@ function MessagePage() {
         newSocket.emit("setup", userId);
         newSocket.on("connected", () => setSocketConnected(true));
         newSocket.on("users online", async (users) => {
-            // Filter out the current user's ID before fetching user details
             const otherUsers = users.filter(id => id !== userId);
             const userDetails = await Promise.all(otherUsers.map(userId => fetchUserDetails(userId)));
             setConnectedUsers(userDetails.filter(user => user !== null));
+        });
+        newSocket.on("new discussion", (discussion) => {
+            setDiscussions(prevDiscussions => [...prevDiscussions, discussion]);
         });
         setSocket(newSocket);
     
@@ -52,7 +55,7 @@ function MessagePage() {
             newSocket.close();
             setSocket(null);
         };
-    }, [userId]); // Include userId in the dependency array
+    }, [userId]);
 
     useEffect(() => {
         if (!socket) return;
@@ -154,17 +157,24 @@ function MessagePage() {
     fetchMessages();
   }, [selectedDiscussion, token]);
 
-  const fetchMessages = () => {
+ const fetchMessages = () => {
     if (selectedDiscussion && selectedDiscussion.id_disc) {
         axios.get(`http://localhost:5000/messages/${selectedDiscussion.id_disc}`, 
         { headers: { Authorization: `Bearer ${JSON.parse(token).token}` }})
             .then(response => {
                 setMessages(response.data);
-                socket.emit("join chat",selectedDiscussion.id_disc);
+                setNoMessagesError('');  // Clear any previous error messages
+                socket.emit("join chat", selectedDiscussion.id_disc);
             })
-            .catch(error => console.error('Error fetching messages:', error));
+            .catch(error => {
+                if (error.response && error.response.status === 404) {
+                    setNoMessagesError("Il n'y a pas de messages pour cette discussion. Soyez le premier à envoyer un message.");
+                } else {
+                    console.error('Error fetching messages:', error);
+                }
+            });
     }
-  };
+};
   
   useEffect(() => {
     if (selectedDiscussion && selectedDiscussion.id_disc) {
@@ -244,9 +254,9 @@ return (
                 <List>
                     {discussions.map((discussion) => (
                         <ListItem button key={discussion.id_disc} onClick={() => setSelectedDiscussion(discussion)}>
-                            <ListItemText 
+                           <ListItemText 
     primary={discussion.nomDisc} 
-    secondary={discussion.date_fin ? `valable jusqu'à ${discussion.date_fin}` : ''}
+    secondary={discussion.date_fin ? `valable jusqu'à ${new Date(discussion.date_fin).toLocaleDateString('fr-FR')}` : ''}
 />
                         </ListItem>
                     ))}
@@ -254,51 +264,57 @@ return (
             </Box>
         </Grid>
         <Grid item xs={6}>  
-            <Box sx={{ display: 'flex', flexDirection: 'column', height: '90vh' }}>
-                <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
-                    <Typography variant="h6">Messages</Typography>
-                    <List>
-                      {messages.map((message) => (
-                          <ListItem key={message.id_msg} alignItems="flex-start">
-                              <Avatar
-                                  src={message.utilisateur && message.utilisateur.photo ? `http://localhost:5000/${message.utilisateur.photo}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'}
-                                  alt={message.utilisateur ? `${message.utilisateur.prenom} ${message.utilisateur.nom}` : 'Unknown User'}
-                                  sx={{ width: 56, height: 56, marginRight: 2 }}
-                              />
-                              <ListItemText
-                                  primary={message.contenu}
-                                  secondary={
-                                      <React.Fragment>
-                                          <Typography component="span" variant="body2" color="textPrimary">
-                                              {message.utilisateur ? `${message.utilisateur.prenom} ${message.utilisateur.nom}` : 'Unknown User'}
-                                          </Typography>
-                                      </React.Fragment>
-                                  }
-                              />
-                          </ListItem>
-                      ))}
-                    </List>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '90vh' }}>
+        <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
+            <Typography variant="h6">Messages</Typography>
+            <List>
+              {messages.length > 0 ? (
+                  messages.map((message) => (
+                      <ListItem key={message.id_msg} alignItems="flex-start">
+                          <Avatar
+                              src={message.utilisateur && message.utilisateur.photo ? `http://localhost:5000/${message.utilisateur.photo}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'}
+                              alt={message.utilisateur ? `${message.utilisateur.prenom} ${message.utilisateur.nom}` : 'Unknown User'}
+                              sx={{ width: 56, height: 56, marginRight: 2 }}
+                          />
+                          <ListItemText
+                              primary={message.contenu}
+                              secondary={
+                                  <React.Fragment>
+                                      <Typography component="span" variant="body2" color="textPrimary">
+                                          {message.utilisateur ? `${message.utilisateur.prenom} ${message.utilisateur.nom}` : 'Unknown User'}
+                                      </Typography>
+                                  </React.Fragment>
+                              }
+                          />
+                      </ListItem>
+                  ))
+              ) : (
+                  <Typography sx={{ mt: 2, textAlign: 'center' }}>
+                      {noMessagesError || "Cliquez sur une discussion pour commencer à chatter."}
+                  </Typography>
+              )}
+            </List>
+        </Box>
+        <Box component="form" sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+            {isTyping && (
+                <Box sx={{ width: '100%', textAlign: 'center' }}>
+                    <Lottie options={defaultOptions} height={40} width={70} />
                 </Box>
-                <Box component="form" sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                    {isTyping && (
-                        <Box sx={{ width: '100%', textAlign: 'center' }}>
-                            <Lottie options={defaultOptions} height={40} width={70} />
-                        </Box>
-                    )}
-                    <TextField
-                        fullWidth
-                        variant="outlined"
-                        placeholder="Type a message..."
-                        value={newMessage}
-                        onChange={handleTyping}
-                        sx={{ mr: 1 }}
-                    />
-                    <Button variant="contained" color="primary" onClick={handleSendMessage}>
-                        Envoyer
-                    </Button>
-                </Box>
-            </Box>
-        </Grid>
+            )}
+            <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Type a message..."
+                value={newMessage}
+                onChange={handleTyping}
+                sx={{ mr: 1 }}
+            />
+            <Button variant="contained" color="primary" onClick={handleSendMessage}>
+                Envoyer
+            </Button>
+        </Box>
+    </Box>
+</Grid>
         <Grid item xs={3}>  
             <Box sx={{ maxHeight: '90vh', overflow: 'auto' }}>
                 <Typography variant="h6">Utilisateurs connectés</Typography>

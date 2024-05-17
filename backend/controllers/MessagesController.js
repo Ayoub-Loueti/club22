@@ -76,14 +76,17 @@ exports.createDiscussion = async (req, res) => {
     
     try {
         const currentDate = new Date();
-        const daysToAdd = parseInt(nbr_jours_disc, 10); // Ensure nbr_jours_disc is an integer
+        const daysToAdd = parseInt(nbr_jours_disc, 10);
         currentDate.setDate(currentDate.getDate() + daysToAdd);
         const newDiscussion = await Discussion.create({
             nomDisc,
-            typeDisc:"temporaire",
+            typeDisc: "temporaire",
             nbr_jours_disc,
             date_fin: currentDate
         });
+
+        req.app.get('io').emit('new discussion', newDiscussion);
+
         res.status(201).json(newDiscussion);
     } catch (error) {
         res.status(500).json({ error: error.message });
