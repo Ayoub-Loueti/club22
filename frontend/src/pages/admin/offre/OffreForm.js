@@ -14,7 +14,7 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
   const [collaborateurs, setCollaborateurs] = useState([]);
   const [typeOffre, setTypeOffre] = useState('');
   const [remise, setRemise] = useState('');
-    const [destination, setDestination] = useState('');
+  const [destination, setDestination] = useState('');
 
   const [initialDataLoaded, setInitialDataLoaded] = useState(false);
 
@@ -22,7 +22,7 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
   const [images, setImages] = useState([]);
 
   // States for Voyage-specific fields
-const [programme, setProgramme] = useState(''); 
+  const [programme, setProgramme] = useState('');
   const [inclus, setInclus] = useState('');
   const [nbr_jours, setNbrJours] = useState(0);
 
@@ -40,10 +40,33 @@ const [programme, setProgramme] = useState('');
   const [ascenseur, setAscenseur] = useState(false);
   const [salleDeSport, setSalleDeSport] = useState(false);
   const [aireDeJeuxEnfants, setAireDeJeuxEnfants] = useState(false);
-
+//nv pour hotel
+ const [spa, setSpa] = useState(false);
+ const [sauna, setSauna] = useState(false);
+ const [hammam, setHammam] = useState(false);
+ const [thalasso, setThalasso] = useState(false);
+ const [centreEsthetique, setCentreEsthetique] = useState(false);
+ const [toboggan, setToboggan] = useState(false);
+ const [piedsDansLEau, setPiedsDansLEau] = useState(false);
+ const [piscineEauDeMer, setPiscineEauDeMer] = useState(false);
+ const [babySetting, setBabySetting] = useState(false);
+ const [tennisDeTable, setTennisDeTable] = useState(false);
+ const [locationDeVoiture, setLocationDeVoiture] = useState(false);
+ const [changeMonetaire, setChangeMonetaire] = useState(false);
   // States for Activité-specific fields
 
   const [duree, setDuree] = useState(0);
+
+  //nv
+const [enfantsAutorises, setEnfantsAutorises] = useState(null);
+const [ageLimiteGratuite, setAgeLimiteGratuite] = useState(0);
+const [nombreEnfantsGratuits, setNombreEnfantsGratuits] = useState(0);
+const [prixEnfantsPayants, setPrixEnfantsPayants] = useState(0.0);
+const [conditions_speciales_enfants, setConditions_speciales_enfants] = useState("");
+
+//bch
+
+
 
   const token = localStorage.getItem('login');
   useEffect(() => {
@@ -54,6 +77,8 @@ const [programme, setProgramme] = useState('');
         .get(`http://localhost:5000/offer/${offreId}`, { headers })
         .then((response) => {
           const data = response.data;
+          console.log('Data received:', data); 
+
           setTitre(data.titre);
           setDescription(data.description);
           setPrix(data.prix);
@@ -61,12 +86,18 @@ const [programme, setProgramme] = useState('');
           setDateFin(data.date_fin.split('T')[0]);
           setSelectedCollaborateur(data.id_collaborateur);
           setTypeOffre(data.type);
-  setDestination(data.destination || '');
+          setDestination(data.destination || '');
           setRemise(data.remise ? data.remise.toString().padStart(2, '0') : '');
- if (data.type === 'voyage' || data.type === 'activite') {
-  setProgramme(data.details?.programme || '');
-  setInclus(data.details?.inclus || '');
- }
+          setEnfantsAutorises(data.enfants_autorises); // Utilisation de la clé correcte
+
+         setNombreEnfantsGratuits(data.nombre_enfants_gratuits);
+         setAgeLimiteGratuite(data.age_limite_gratuite);
+         setPrixEnfantsPayants(data.prix_enfants_payants);
+          setConditions_speciales_enfants(data.conditions_speciales_enfants);
+          if (data.type === 'voyage' || data.type === 'activite') {
+            setProgramme(data.details?.programme || '');
+            setInclus(data.details?.inclus || '');
+          }
           // Assuming additionalFields is correctly structured in the response
           if (data.type === 'voyage') {
             setNbrJours(data.details.nbr_jours);
@@ -84,13 +115,27 @@ const [programme, setProgramme] = useState('');
             setAscenseur(data.details.ascenseur);
             setSalleDeSport(data.details.salle_de_sport);
             setAireDeJeuxEnfants(data.details.aire_de_jeux_enfants);
+setSpa(data.details.spa);
+setSauna(data.details.sauna);
+setHammam(data.details.hammam);
+setThalasso(data.details.thalasso);
+setCentreEsthetique(data.details.centreEsthetique);
+setToboggan(data.details.toboggan);
+setPiedsDansLEau(data.details.piedsDansLEau);
+setPiscineEauDeMer(data.details.piscineEauDeMer);
+setBabySetting(data.details.babySetting);
+setTennisDeTable(data.details.tennisDeTable);
+setLocationDeVoiture(data.details.locationDeVoiture);
+setChangeMonetaire(data.details.changeMonetaire);
+
+
           } else if (data.type === 'activite') {
             setDuree(data.details.duree);
           }
-                    setInitialDataLoaded(true);
-
+          setInitialDataLoaded(true);
         })
         .catch((error) => console.error('Error fetching offer data:', error));
+      setEnfantsAutorises(false); // Seulement ici devrait-on mettre à jour à false en cas d'erreur
     }
 
     axios
@@ -152,44 +197,44 @@ const [programme, setProgramme] = useState('');
         return null;
     }
   };
-  
-const renderSharedFields = () => (
-  <>
-    <label>
-      Programme:
-      <Editor
-        apiKey="1y5o32iougly700k7a8m09628djopudgvzhhj5mq6ohwsjh6"
-        init={{
-          plugins:
-            'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
-          toolbar:
-            'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
-          tinycomments_mode: 'embedded',
-          tinycomments_author: 'Author name',
-          mergetags_list: [
-            { value: 'First.Name', title: 'First Name' },
-            { value: 'Email', title: 'Email' },
-          ],
-          ai_request: (request, respondWith) =>
-            respondWith.string(() =>
-              Promise.reject('See docs to implement AI Assistant')
-            ),
-        }}
-        value={programme}
-        onEditorChange={(content, editor) => setProgramme(content)}
-      />
-    </label>
-    <label>
-      Inclus:
-      <textarea
-        type="text"
-        value={inclus}
-        onChange={(e) => setInclus(e.target.value)}
-        required
-      />
-    </label>
-  </>
-);
+
+  const renderSharedFields = () => (
+    <>
+      <label>
+        Programme:
+        <Editor
+          apiKey="nyu5ch81cg147ar48dr3dpt08jl8gau8vgog2m8n5sn4iqi9"
+          init={{
+            plugins:
+              'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
+            toolbar:
+              'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+            tinycomments_mode: 'embedded',
+            tinycomments_author: 'Author name',
+            mergetags_list: [
+              { value: 'First.Name', title: 'First Name' },
+              { value: 'Email', title: 'Email' },
+            ],
+            ai_request: (request, respondWith) =>
+              respondWith.string(() =>
+                Promise.reject('See docs to implement AI Assistant')
+              ),
+          }}
+          value={programme}
+          onEditorChange={(content, editor) => setProgramme(content)}
+        />
+      </label>
+      <label>
+        Inclus:
+        <textarea
+          type="text"
+          value={inclus}
+          onChange={(e) => setInclus(e.target.value)}
+          required
+        />
+      </label>
+    </>
+  );
   const renderVoyageFields = () => (
     <>
       {' '}
@@ -403,6 +448,186 @@ const renderSharedFields = () => (
           onChange={(e) => setAireDeJeuxEnfants(e.target.checked)}
         />
       </label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        Spa:
+        <input
+          type="checkbox"
+          checked={spa}
+          onChange={(e) => setSpa(e.target.checked)}
+        />
+      </label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        Sauna:
+        <input
+          type="checkbox"
+          checked={sauna}
+          onChange={(e) => setSauna(e.target.checked)}
+        />
+      </label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        Hammam:
+        <input
+          type="checkbox"
+          checked={hammam}
+          onChange={(e) => setHammam(e.target.checked)}
+        />
+      </label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        Thalasso:
+        <input
+          type="checkbox"
+          checked={thalasso}
+          onChange={(e) => setThalasso(e.target.checked)}
+        />
+      </label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        Centre Esthétique:
+        <input
+          type="checkbox"
+          checked={centreEsthetique}
+          onChange={(e) => setCentreEsthetique(e.target.checked)}
+        />
+      </label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        Toboggan:
+        <input
+          type="checkbox"
+          checked={toboggan}
+          onChange={(e) => setToboggan(e.target.checked)}
+        />
+      </label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        Pieds dans l'Eau:
+        <input
+          type="checkbox"
+          checked={piedsDansLEau}
+          onChange={(e) => setPiedsDansLEau(e.target.checked)}
+        />
+      </label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        Piscine Eau de Mer:
+        <input
+          type="checkbox"
+          checked={piscineEauDeMer}
+          onChange={(e) => setPiscineEauDeMer(e.target.checked)}
+        />
+      </label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        Baby Setting:
+        <input
+          type="checkbox"
+          checked={babySetting}
+          onChange={(e) => setBabySetting(e.target.checked)}
+        />
+      </label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        Tennis de Table:
+        <input
+          type="checkbox"
+          checked={tennisDeTable}
+          onChange={(e) => setTennisDeTable(e.target.checked)}
+        />
+      </label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        Location de Voiture:
+        <input
+          type="checkbox"
+          checked={locationDeVoiture}
+          onChange={(e) => setLocationDeVoiture(e.target.checked)}
+        />
+      </label>
+      <label
+        style={{
+          flexDirection: 'row',
+          color: '#4A5568',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+        }}
+      >
+        Change Monétaire:
+        <input
+          type="checkbox"
+          checked={changeMonetaire}
+          onChange={(e) => setChangeMonetaire(e.target.checked)}
+        />
+      </label>
     </>
   );
 
@@ -443,31 +668,52 @@ const renderSharedFields = () => (
     formData.append('id_collaborateur', selectedCollaborateur);
     formData.append('type', typeOffre);
     formData.append('destination', destination);
+    formData.append('enfants_autorises', enfantsAutorises);
+    formData.append('age_limite_gratuite', ageLimiteGratuite);
+    formData.append('nombre_enfants_gratuits', nombreEnfantsGratuits);
+    formData.append('prix_enfants_payants', prixEnfantsPayants);
+    formData.append(
+      'conditions_speciales_enfants',
+      conditions_speciales_enfants
+    );
     formData.append('remise', remise === '' ? 0 : parseInt(remise, 10));
 
+
     // Append additional fields based on type
-if (typeOffre === 'voyage') {
-    formData.append('programme', programme);
-    formData.append('inclus', inclus);
-    formData.append('nbr_jours', nbr_jours);
-} else if (typeOffre === 'hotel') {
-        formData.append('nom_hotel', hotelName);
-        formData.append('etoiles', etoiles);
-        formData.append('climatisation', climatisation);
-        formData.append('wifi', wifi);
-        formData.append('piscine_exterieure', piscineExterieure);
-        formData.append('piscine_couverte', piscineCouverte);
-        formData.append('bassin_enfants', bassinEnfants);
-        formData.append('parking', parking);
-        formData.append('discotheque', discotheque);
-        formData.append('plage_privee', plagePrivee);
-        formData.append('ascenseur', ascenseur);
-        formData.append('salle_de_sport', salleDeSport);
-        formData.append('aire_de_jeux_enfants', aireDeJeuxEnfants);
-   }else if(typeOffre === 'activite') {
+    if (typeOffre === 'voyage') {
       formData.append('programme', programme);
       formData.append('inclus', inclus);
-        formData.append('duree', duree);
+      formData.append('nbr_jours', nbr_jours);
+    } else if (typeOffre === 'hotel') {
+      formData.append('nom_hotel', hotelName);
+      formData.append('etoiles', etoiles);
+      formData.append('climatisation', climatisation);
+      formData.append('wifi', wifi);
+      formData.append('piscine_exterieure', piscineExterieure);
+      formData.append('piscine_couverte', piscineCouverte);
+      formData.append('bassin_enfants', bassinEnfants);
+      formData.append('parking', parking);
+      formData.append('discotheque', discotheque);
+      formData.append('plage_privee', plagePrivee);
+      formData.append('ascenseur', ascenseur);
+      formData.append('salle_de_sport', salleDeSport);
+      formData.append('aire_de_jeux_enfants', aireDeJeuxEnfants);
+        formData.append('spa', spa);
+        formData.append('sauna', sauna);
+        formData.append('hammam', hammam);
+        formData.append('thalasso', thalasso);
+        formData.append('centre_esthetique', centreEsthetique);
+        formData.append('toboggan', toboggan);
+        formData.append('pieds_dans_l_eau', piedsDansLEau);
+        formData.append('piscine_eau_de_mer', piscineEauDeMer);
+        formData.append('baby_setting', babySetting);
+        formData.append('tennis_de_table', tennisDeTable);
+        formData.append('location_de_voiture', locationDeVoiture);
+        formData.append('change_monetaire', changeMonetaire);
+    } else if (typeOffre === 'activite') {
+      formData.append('programme', programme);
+      formData.append('inclus', inclus);
+      formData.append('duree', duree);
     }
 
     images.forEach((image, index) =>
@@ -515,24 +761,12 @@ if (typeOffre === 'voyage') {
       setRemise(value.toString().padStart(2, '0'));
     }
   };
-console.log({
-  titre,
-  description,
-  prix,
-  date_debut,
-  date_fin,
-  destination,
-  type: typeOffre,
-  remise,
-  programme,
-  inclus,
-  nbr_jours, // Add all relevant states
-});
 
-    const handleLocationSelect = (location) => {
-      setDestination(location);
-      console.log('Selected location coordinates: ', location);
-    };
+
+  const handleLocationSelect = (location) => {
+    setDestination(location);
+    console.log('Selected location coordinates: ', location);
+  };
   const today = new Date().toISOString().split('T')[0];
   const handleNbrJoursChange = (e) => {
     const newNbrJours = parseInt(e.target.value, 10);
@@ -615,6 +849,82 @@ console.log({
           disabled={!remise} // Désactiver si remise n'est pas spécifiée
         />
       </label>
+      <label>
+        Enfants autorisés:
+        <div>
+          <label>
+            <input
+              type="radio"
+              name="enfantsAutorises"
+              value="oui"
+              checked={enfantsAutorises === true}
+              onChange={() => setEnfantsAutorises(true)}
+            />{' '}
+            Oui
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="enfantsAutorises"
+              value="non"
+              checked={enfantsAutorises === false}
+              onChange={() => setEnfantsAutorises(false)}
+            />{' '}
+            Non
+          </label>
+        </div>
+      </label>
+      {enfantsAutorises && (
+        <>
+          <label>
+            Nombre d'enfants gratuits:
+            <input
+              type="number"
+              value={nombreEnfantsGratuits}
+              onChange={(e) =>
+                setNombreEnfantsGratuits(
+                  Math.max(0, parseInt(e.target.value, 10))
+                )
+              }
+              min="0"
+            />
+          </label>
+          <label>
+            Âge limite pour gratuité (max 12 ans):
+            <input
+              type="number"
+              value={ageLimiteGratuite}
+              onChange={(e) =>
+                setAgeLimiteGratuite(
+                  Math.min(12, Math.max(0, parseInt(e.target.value, 10)))
+                )
+              }
+              min="0"
+              max="12"
+            />
+          </label>
+          <label>
+            Prix pour les enfants payants:
+            <input
+              type="number"
+              value={prixEnfantsPayants}
+              onChange={(e) =>
+                setPrixEnfantsPayants(Math.max(0, parseFloat(e.target.value)))
+              }
+              min="0"
+              step="0.01"
+            />
+          </label>
+          <label>
+            conditions speciales enfants:
+            <input
+              type="text"
+              value={conditions_speciales_enfants}
+              onChange={(e) => setConditions_speciales_enfants(e.target.value)}
+            />
+          </label>
+        </>
+      )}
       <div>
         <label htmlFor="type">Catégorie :</label>
         <select value={typeOffre} onChange={handleTypeChange} required>

@@ -43,6 +43,22 @@ const OffreModel = sequelize.define(
     destination: {
       type: DataTypes.STRING,
     },
+    nombre_enfants_gratuits: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    age_limite_gratuite: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    prix_enfants_payants: {
+      type: DataTypes.FLOAT,
+      defaultValue: 0.0,
+    },
+    conditions_speciales_enfants: {
+      type: DataTypes.STRING,
+    },
+    enfants_autorises: { type: DataTypes.BOOLEAN },
   },
   {
     tableName: 'offre',

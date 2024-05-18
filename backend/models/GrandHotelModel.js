@@ -2,6 +2,7 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 const OffreModel = require('./OffreModel');
 
+
 const GrandHotelModel = sequelize.define(
   'GrandHotel',
   {
@@ -32,6 +33,18 @@ const GrandHotelModel = sequelize.define(
     ascenseur: { type: DataTypes.BOOLEAN, allowNull: false },
     salle_de_sport: { type: DataTypes.BOOLEAN, allowNull: false },
     aire_de_jeux_enfants: { type: DataTypes.BOOLEAN, allowNull: false },
+    spa: { type: DataTypes.BOOLEAN, allowNull: false },
+    sauna: { type: DataTypes.BOOLEAN, allowNull: false },
+    hammam: { type: DataTypes.BOOLEAN, allowNull: false },
+    thalasso: { type: DataTypes.BOOLEAN, allowNull: false },
+    centre_esthetique: { type: DataTypes.BOOLEAN, allowNull: false },
+    toboggan: { type: DataTypes.BOOLEAN, allowNull: false },
+    pieds_dans_l_eau: { type: DataTypes.BOOLEAN, allowNull: false },
+    piscine_eau_de_mer: { type: DataTypes.BOOLEAN, allowNull: false },
+    baby_setting: { type: DataTypes.BOOLEAN, allowNull: false },
+    tennis_de_table: { type: DataTypes.BOOLEAN, allowNull: false },
+    location_de_voiture: { type: DataTypes.BOOLEAN, allowNull: false },
+    change_monetaire: { type: DataTypes.BOOLEAN, allowNull: false },
   },
   {
     tableName: 'grandhotel',
@@ -40,5 +53,6 @@ const GrandHotelModel = sequelize.define(
 );
 
 GrandHotelModel.belongsTo(OffreModel, { foreignKey: 'id_offre', as: 'offre' });
+
 
 module.exports = GrandHotelModel;

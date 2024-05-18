@@ -62,7 +62,7 @@ const ReservationModel = sequelize.define(
     },
     autorisation_deduction_salaire: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false, // Par défaut, l'autorisation est fausse
+      defaultValue: false, 
     },
     date_paiement: {
       type: DataTypes.DATE,

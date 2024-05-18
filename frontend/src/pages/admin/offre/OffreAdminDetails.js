@@ -120,18 +120,48 @@ function OffreAdminDetails() {
           <p>
             <strong>Remise:</strong> {offre.remise}%
           </p>
-          <p>
-            <strong>Date de début:</strong> {offre.date_debut}
-          </p>
-          <p>
-            <strong>Date de fin:</strong> {offre.date_fin}
-          </p>
+          {offre.remise > 0 &&
+            offre.date_debut !== '0000-00-00' &&
+            offre.date_fin !== '0000-00-00' && (
+              <>
+                <p>
+                  <strong>Date de début:</strong> {offre.date_debut}
+                </p>
+                <p>
+                  <strong>Date de fin:</strong> {offre.date_fin}
+                </p>
+              </>
+            )}
           <p>
             <strong>Type:</strong> {offre.type}
           </p>
           <p>
             <strong>Destination:</strong> {offre.destination || 'Non spécifié'}
           </p>
+          <p>
+            <strong>Enfants Autorisés:</strong>{' '}
+            {offre.enfants_autorises ? 'Oui' : 'Non'}
+          </p>
+          {offre.enfants_autorises && (
+            <>
+              <p>
+                <strong>Âge Limite Gratuite:</strong>{' '}
+                {offre.age_limite_gratuite} ans
+              </p>
+              <p>
+                <strong>Nombre d'Enfants Gratuits:</strong>{' '}
+                {offre.nombre_enfants_gratuits}
+              </p>
+              <p>
+                <strong>Prix Enfants Payants:</strong>{' '}
+                {offre.prix_enfants_payants} TND
+              </p>
+              <p>
+                <strong>Conditions Spéciales Enfants:</strong>{' '}
+                {offre.conditions_speciales_enfants}
+              </p>
+            </>
+          )}
           <p>
             <strong>Collaborateur:</strong> {offre.collaborateur.nom}
           </p>
@@ -187,6 +217,53 @@ function OffreAdminDetails() {
                   <p>
                     <strong>Aire de Jeux pour Enfants:</strong>{' '}
                     {offre.details.aire_de_jeux_enfants ? 'Oui' : 'Non'}
+                  </p>
+                  <p>
+                    <strong>Spa:</strong> {offre.details.spa ? 'Oui' : 'Non'}
+                  </p>
+                  <p>
+                    <strong>Sauna:</strong>{' '}
+                    {offre.details.sauna ? 'Oui' : 'Non'}
+                  </p>
+                  <p>
+                    <strong>Hammam:</strong>{' '}
+                    {offre.details.hammam ? 'Oui' : 'Non'}
+                  </p>
+                  <p>
+                    <strong>Thalasso:</strong>{' '}
+                    {offre.details.thalasso ? 'Oui' : 'Non'}
+                  </p>
+                  <p>
+                    <strong>Centre Esthétique:</strong>{' '}
+                    {offre.details.centre_esthetique ? 'Oui' : 'Non'}
+                  </p>
+                  <p>
+                    <strong>Toboggan:</strong>{' '}
+                    {offre.details.toboggan ? 'Oui' : 'Non'}
+                  </p>
+                  <p>
+                    <strong>Pieds dans l'Eau:</strong>{' '}
+                    {offre.details.pieds_dans_l_eau ? 'Oui' : 'Non'}
+                  </p>
+                  <p>
+                    <strong>Piscine Eau de Mer:</strong>{' '}
+                    {offre.details.piscine_eau_de_mer ? 'Oui' : 'Non'}
+                  </p>
+                  <p>
+                    <strong>Baby Setting:</strong>{' '}
+                    {offre.details.baby_setting ? 'Oui' : 'Non'}
+                  </p>
+                  <p>
+                    <strong>Tennis de Table:</strong>{' '}
+                    {offre.details.tennis_de_table ? 'Oui' : 'Non'}
+                  </p>
+                  <p>
+                    <strong>Location de Voiture:</strong>{' '}
+                    {offre.details.location_de_voiture ? 'Oui' : 'Non'}
+                  </p>
+                  <p>
+                    <strong>Change Monétaire:</strong>{' '}
+                    {offre.details.change_monetaire ? 'Oui' : 'Non'}
                   </p>
                 </>
               )}

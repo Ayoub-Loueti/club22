@@ -7,6 +7,8 @@ const ActiviteModel = require('../models/ActiviteModel');
 const VoyageModel = require('../models/VoyageModel');
 const GrandHotelModel = require('../models/GrandHotelModel');
 const Evaluation = require('../models/EvaluationModel');
+const TypeChambreModel = require('../models/TypeChambreModel');
+const GrandHotelTypeChambres = require('../models/GrandHotelTypeChambres');
 
 exports.getOfferImages = async (req, res) => {
   const { offreId } = req.params;
@@ -65,6 +67,12 @@ exports.createOffre = async (req, res) => {
       type,
       remise,
       destination,
+      nombre_enfants_gratuits,
+      age_limite_gratuite,
+      prix_enfants_payants,
+      conditions_speciales_enfants,
+      enfants_autorises,
+
       // Additional fields for specific types
       nom_hotel,
       etoiles,
@@ -83,11 +91,30 @@ exports.createOffre = async (req, res) => {
       inclus,
       nbr_jours,
       duree,
+      spa,
+      sauna,
+      hammam,
+      thalasso,
+      centre_esthetique,
+      toboggan,
+      pieds_dans_l_eau,
+      piscine_eau_de_mer,
+      baby_setting,
+      tennis_de_table,
+      location_de_voiture,
+      change_monetaire,
+
+      
     } = req.body;
 
     const offre = await OffreModel.create({
       titre,
       description,
+      nombre_enfants_gratuits,
+      age_limite_gratuite,
+      prix_enfants_payants,
+      conditions_speciales_enfants,
+      enfants_autorises,
       date_debut,
       date_fin,
       prix,
@@ -110,8 +137,8 @@ exports.createOffre = async (req, res) => {
 
     // Create specific type details based on offre type
     switch (type) {
-      case 'hotel':
-        await GrandHotelModel.create({
+      case 'hotel':{
+     ho=   await GrandHotelModel.create({
           id_offre: offre.id_offre,
           nom_hotel,
           etoiles,
@@ -126,14 +153,29 @@ exports.createOffre = async (req, res) => {
           ascenseur,
           salle_de_sport,
           aire_de_jeux_enfants,
+          spa,
+          sauna,
+          hammam,
+          thalasso,
+          centre_esthetique,
+          toboggan,
+          pieds_dans_l_eau,
+          piscine_eau_de_mer,
+          baby_setting,
+          tennis_de_table,
+          location_de_voiture,
+          change_monetaire,
         });
-        break;
+
+
+        break;  }
       case 'voyage':
         await VoyageModel.create({
           id_offre: offre.id_offre,
           programme,
           inclus,
           nbr_jours,
+         
         });
         break;
       case 'activite':
@@ -142,6 +184,7 @@ exports.createOffre = async (req, res) => {
           programme,
           inclus,
           duree,
+       
         });
         break;
     }
@@ -179,6 +222,11 @@ exports.updateOffre = async (req, res) => {
     const updateData = {
       titre: req.body.titre,
       description: req.body.description,
+      nombre_enfants_gratuits: req.body.nombre_enfants_gratuits,
+      age_limite_gratuite: req.body.age_limite_gratuite,
+      prix_enfants_payants: req.body.prix_enfants_payants,
+      enfants_autorises:req.body.enfants_autorises,
+      conditions_speciales_enfants: req.body.conditions_speciales_enfants,
       prix: req.body.prix,
       date_debut: req.body.date_debut,
       date_fin: req.body.date_fin,
@@ -206,6 +254,18 @@ exports.updateOffre = async (req, res) => {
           ascenseur: req.body.ascenseur,
           salle_de_sport: req.body.salle_de_sport,
           aire_de_jeux_enfants: req.body.aire_de_jeux_enfants,
+          spa: req.body.spa,
+          sauna: req.body.sauna,
+          hammam: req.body.hammam,
+          thalasso: req.body.thalasso,
+          centre_esthetique: req.body.centre_esthetique,
+          toboggan: req.body.toboggan,
+          pieds_dans_l_eau: req.body.pieds_dans_l_eau,
+          piscine_eau_de_mer: req.body.piscine_eau_de_mer,
+          baby_setting: req.body.baby_setting,
+          tennis_de_table: req.body.tennis_de_table,
+          location_de_voiture: req.body.location_de_voiture,
+          change_monetaire: req.body.change_monetaire,
         };
         await GrandHotelModel.update(hotelDetails, {
           where: { id_offre: offreId },
@@ -216,6 +276,7 @@ exports.updateOffre = async (req, res) => {
           programme: req.body.programme,
           inclus: req.body.inclus,
           nbr_jours: req.body.nbr_jours,
+       
         };
         await VoyageModel.update(voyageDetails, {
           where: { id_offre: offreId },
@@ -226,6 +287,7 @@ exports.updateOffre = async (req, res) => {
           programme: req.body.programme,
           inclus: req.body.inclus,
           duree: req.body.duree,
+     
         };
         await ActiviteModel.update(activiteDetails, {
           where: { id_offre: offreId },
@@ -658,6 +720,11 @@ exports.createOffreFromCollab = async (req, res) => {
     const {
       titre,
       description,
+      nombre_enfants_gratuits,
+      age_limite_gratuite,
+      prix_enfants_payants,
+      conditions_speciales_enfants,
+      enfants_autorises,
       date_debut,
       date_fin,
       prix,
@@ -682,6 +749,18 @@ exports.createOffreFromCollab = async (req, res) => {
       inclus,
       nbr_jours,
       duree,
+      spa,
+      sauna,
+      hammam,
+      thalasso,
+      centre_esthetique,
+      toboggan,
+      pieds_dans_l_eau,
+      piscine_eau_de_mer,
+      baby_setting,
+      tennis_de_table,
+      location_de_voiture,
+      change_monetaire,
     } = req.body;
 
     const { id_collaborateur } = req.params;
@@ -689,6 +768,11 @@ exports.createOffreFromCollab = async (req, res) => {
     const offre = await OffreModel.create({
       titre,
       description,
+      nombre_enfants_gratuits,
+      age_limite_gratuite,
+      prix_enfants_payants,
+      conditions_speciales_enfants,
+      enfants_autorises,
       date_debut,
       date_fin,
       prix,
@@ -727,6 +811,18 @@ exports.createOffreFromCollab = async (req, res) => {
           ascenseur,
           salle_de_sport,
           aire_de_jeux_enfants,
+          spa,
+          sauna,
+          hammam,
+          thalasso,
+          centre_esthetique,
+          toboggan,
+          pieds_dans_l_eau,
+          piscine_eau_de_mer,
+          baby_setting,
+          tennis_de_table,
+          location_de_voiture,
+          change_monetaire,
         });
         break;
       case 'voyage':
@@ -735,6 +831,7 @@ exports.createOffreFromCollab = async (req, res) => {
           programme,
           inclus,
           nbr_jours,
+        
         });
         break;
       case 'activite':
@@ -743,6 +840,7 @@ exports.createOffreFromCollab = async (req, res) => {
           programme,
           inclus,
           duree,
+      
         });
         break;
     }
