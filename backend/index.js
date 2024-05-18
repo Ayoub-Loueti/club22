@@ -79,7 +79,47 @@ app.post('/upload-image', upload.single('file'), (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
 
   console.log(`Server is running on port ${PORT}`);
+});
+
+const connectedUsers = new Map();
+
+const io = require("socket.io")(server, {
+    pingTimeout: 60000,
+    cors: {
+      origin:"http://localhost:3000",
+    },
+});
+app.set('io', io);
+io.on("connection", (socket) => {
+
+  console.log("connected to socket io");
+
+  socket.on("setup", (userId) => {
+    socket.join(userId);
+    connectedUsers.set(socket.id, userId);
+    console.log(userId + " connected");
+    socket.emit("connected");
+    io.emit("users online", Array.from(connectedUsers.values()));
+  });
+
+  socket.on('disconnect', () => {
+    console.log(connectedUsers.get(socket.id) + " disconnected");
+    connectedUsers.delete(socket.id);
+    io.emit("users online", Array.from(connectedUsers.values()));
+  });
+  
+  socket.on('join chat', (room) => {
+    socket.join(room);
+    console.log('User joined Room: ' + room);
+  });
+  
+  socket.on ('typing',(room) => socket.in (room).emit("typing"));
+  socket.on ('stop typing',(room) => socket.in (room).emit("stop typing"));
+
+  socket.on("new message", (messageData) => {
+    io.to(messageData.room).emit("message received", messageData.message,messageData.userId);
+  });
 });
