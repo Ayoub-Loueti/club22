@@ -55,6 +55,7 @@
     "react-leaflet": "^4.2.1",
     "react-lottie": "^1.2.4",
     "react-modal": "^3.16.1",
+    "react-paginate": "^8.2.0",
     "react-phone-number-input": "^3.3.10",
     "react-range": "^1.8.14",
     "react-refresh": "^0.14.2",

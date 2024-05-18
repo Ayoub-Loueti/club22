@@ -7,8 +7,7 @@ const ActiviteModel = require('../models/ActiviteModel');
 const VoyageModel = require('../models/VoyageModel');
 const GrandHotelModel = require('../models/GrandHotelModel');
 const Evaluation = require('../models/EvaluationModel');
-const TypeChambreModel = require('../models/TypeChambreModel');
-const GrandHotelTypeChambres = require('../models/GrandHotelTypeChambres');
+
 
 exports.getOfferImages = async (req, res) => {
   const { offreId } = req.params;
