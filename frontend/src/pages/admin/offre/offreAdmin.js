@@ -4,11 +4,11 @@ import Swal from 'sweetalert2';
 import './OffreAdmin.css';
 import AddOffreModal from './AddOffreModal';
 import UpdateOffreModal from './UpdateOffreModal';
-import { FaArrowLeft } from 'react-icons/fa';
 import '../NavAdmin/navAdmin';
 import NavAdmin from '../NavAdmin/navAdmin';
 import { Link } from 'react-router-dom';
 import ScrollToTop from '../../../components/designs/ScrollToTop';
+import ReactPaginate from 'react-paginate';
 
 function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
   const [offres, setOffres] = useState([]);
@@ -19,6 +19,8 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
   const [offreAddedOrUpdated, setOffreAddedOrUpdated] = useState(false);
   const token = localStorage.getItem('login');
 const [categoryFilter, setCategoryFilter] = useState('tous');
+ const [currentPage, setCurrentPage] = useState(0);
+ const itemsPerPage = 6;
 
   useEffect(() => {
     const fetchOffres = async () => {
@@ -109,6 +111,15 @@ const [categoryFilter, setCategoryFilter] = useState('tous');
       offre.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       offre.prix.toString().toLowerCase().includes(searchTerm.toLowerCase())
   );
+    const offset = currentPage * itemsPerPage;
+ const currentOffres = filteredOffres
+   .filter(
+     (offre) => categoryFilter === 'tous' || offre.type === categoryFilter
+   )
+   .slice(offset, offset + itemsPerPage);
+  const handlePageClick = (data) => {
+    setCurrentPage(data.selected);
+  };
 /* function displayHotelAttributes(details) {
   const attributes = [
     { key: 'climatisation', label: 'Climatisation' },
@@ -174,7 +185,7 @@ const [categoryFilter, setCategoryFilter] = useState('tous');
           ))}
         </div>
         <div className="offre-cards-container">
-          {filteredOffres
+          {currentOffres
             .filter(
               (offre) =>
                 categoryFilter === 'tous' || offre.type === categoryFilter
@@ -200,12 +211,6 @@ const [categoryFilter, setCategoryFilter] = useState('tous');
                   </p>
                 </Link>
                 <div className="offre-card-actions">
-                  <Link
-                    to={`/OffreAdminDetails/${offre.id_offre}`}
-                    className="see-more-link"
-                  >
-                    VOIR PLUS
-                  </Link>
                   <button
                     onClick={() => handleUpdate(offre.id_offre)}
                     className="modifierOffreButton"
@@ -219,9 +224,34 @@ const [categoryFilter, setCategoryFilter] = useState('tous');
               </div>
             ))}
         </div>
+        <ReactPaginate
+          previousLabel={'⬅️'}
+          nextLabel={'➡️'}
+          breakLabel={'...'}
+          breakClassName={'break-me'}
+          pageCount={Math.ceil(
+            offres.filter(
+              (offre) =>
+                categoryFilter === 'tous' || offre.type === categoryFilter
+            ).length / itemsPerPage
+          )}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          onPageChange={handlePageClick}
+          containerClassName={'pagination'}
+          activeClassName={'active'}
+          previousClassName={'pagination-previous'}
+          nextClassName={'pagination-next'}
+        />
       </div>
     </>
   );
 }
 
 export default OffreAdmin;
+/*   <Link
+                    to={`/OffreAdminDetails/${offre.id_offre}`}
+                    className="see-more-link"
+                  >
+                    VOIR PLUS
+                  </Link> */

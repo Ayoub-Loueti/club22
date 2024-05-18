@@ -6,57 +6,70 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/navbar/navbar';
 import StarRating from './StarRating'; // Make sure this is imported correctly
 import ScrollToTop from '../../components/designs/ScrollToTop';
+import ReactPaginate from 'react-paginate'; 
 
 function OffreEmploye({ offers }) {
   const [offres, setOffres] = useState([]);
   const [filter, setFilter] = useState('tous');
   const token = localStorage.getItem('login');
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(0);
+  const [offresPerPage] = useState(6); 
 
- useEffect(() => {
-   // Si aucune offre n'est passée en props, fetch les offres
-   if (!offers || offers.length === 0) {
-     const fetchOffres = async () => {
-       try {
-         const response = await axios.get(
-           'http://localhost:5000/employeOffers',
-           {
-             headers: {
-               Authorization: `Bearer ${JSON.parse(token).token}`,
-             },
-           }
-         );
-         setOffres(
-           response.data.map((offre) => ({ ...offre, currentImageIndex: 0 }))
-         );
-       } catch (error) {
-         console.error('Error fetching offres:', error);
-       }
-     };
-     fetchOffres();
-   } else {
-     // Utilisez les offres passées en props
-     setOffres(offers);
-   }
- }, [token, offers]);
+  useEffect(() => {
+    // Si aucune offre n'est passée en props, fetch les offres
+    if (!offers || offers.length === 0) {
+      const fetchOffres = async () => {
+        try {
+          const response = await axios.get(
+            'http://localhost:5000/employeOffers',
+            {
+              headers: {
+                Authorization: `Bearer ${JSON.parse(token).token}`,
+              },
+            }
+          );
+          setOffres(
+            response.data.map((offre) => ({ ...offre, currentImageIndex: 0 }))
+          );
+        } catch (error) {
+          console.error('Error fetching offres:', error);
+        }
+      };
+      fetchOffres();
+    } else {
+      // Utilisez les offres passées en props
+      setOffres(offers);
+    }
+  }, [token, offers]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setOffres(prevOffres => prevOffres.map(offre => ({
-        ...offre,
-        currentImageIndex: (offre.currentImageIndex + 1) % offre.lesImages.length,
-      })));
+      setOffres((prevOffres) =>
+        prevOffres.map((offre) => ({
+          ...offre,
+          currentImageIndex:
+            (offre.currentImageIndex + 1) % offre.lesImages.length,
+        }))
+      );
     }, 4000);
 
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleVoirPlusClick = offreId => {
+  const handleVoirPlusClick = (offreId) => {
     navigate(`/OffrePageDetails/${offreId}`);
   };
 
-  const filteredOffres = offres.filter(offre => filter === 'tous' || offre.type === filter);
+  const filteredOffres = offres.filter(
+    (offre) => filter === 'tous' || offre.type === filter
+  );
 
+const pageCount = Math.ceil(filteredOffres.length / offresPerPage);
+const currentOffres = filteredOffres.slice(
+  currentPage * offresPerPage,
+  (currentPage + 1) * offresPerPage
+);
   return (
     <>
       <Navbar />
@@ -75,7 +88,7 @@ function OffreEmploye({ offers }) {
           ))}
         </div>
         <div className="offre-employee-cards-container">
-          {filteredOffres.map((offre, index) => (
+          {currentOffres.map((offre, index) => (
             <div key={index} className="offre-employee-card">
               <img
                 src={`http://localhost:5000/${
@@ -115,6 +128,19 @@ function OffreEmploye({ offers }) {
             </div>
           ))}
         </div>
+        <ReactPaginate
+          previousLabel={'⬅️'}
+          nextLabel={'➡️'}
+          pageCount={pageCount}
+          onPageChange={(data) => setCurrentPage(data.selected)}
+          containerClassName={'pagination'}
+          disabledClassName={'pagination-disabled'}
+          activeClassName={'active'}
+          previousClassName={'pagination-previous'}
+          nextClassName={'pagination-next'}
+          breakLabel={'...'}
+          breakClassName={'break-me'}
+        />
       </div>
     </>
   );

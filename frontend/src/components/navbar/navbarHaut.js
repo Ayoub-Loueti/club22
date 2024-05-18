@@ -12,14 +12,22 @@ import {
   faUser,
   faSignOutAlt,
   faTimes,
-  faPhone,faCheckCircle, faTimesCircle, faExclamationCircle,
+  faPhone,
+  faCheckCircle,
+  faTimesCircle,
+  faExclamationCircle,
+  faGlobe,
 } from '@fortawesome/free-solid-svg-icons';
 import '../navbar/navbar.css';
 import PostModal from '../postModal/postModal';
 import PhoneNumberModal from '../PhoneNumberModal/PhoneNumberModal';
+import { useTranslation } from 'react-i18next';
+import france from '../../assets/france.png';
+import uk from '../../assets/uk.png';
 
 function NavbarHaut() {
-  const [showDropdown, setShowDropdown] = useState(false);
+    const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [userId, setUserId] = useState(null); // Add this line
   const navigate = useNavigate();
@@ -29,7 +37,10 @@ function NavbarHaut() {
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const menuRef = useRef();
+    const languageRef = useRef();
+
   const notificationsRef = useRef();
+  
   const [searchInput, setSearchInput] = useState('');
   const [searchResults, setSearchResults] = useState({
     users: [],
@@ -39,6 +50,8 @@ function NavbarHaut() {
   const [userPoints, setUserPoints] = useState(null);
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false); // State to control the phone modal visibility
   const location = useLocation();
+    const { t, i18n } = useTranslation();
+
   // This function toggles the notification dropdown
   const handleBellClick = async () => {
     setShowNotifications(!showNotifications);
@@ -307,7 +320,7 @@ useEffect(() => {
   function handleClickOutside(event) {
     // Fermeture du menu utilisateur
     if (menuRef.current && !menuRef.current.contains(event.target)) {
-      setShowDropdown(false);
+      setShowUserDropdown(false);
     }
 
     // Fermeture du menu des notifications
@@ -317,6 +330,12 @@ useEffect(() => {
     ) {
       setShowNotifications(false);
     }
+    if (languageRef.current && !languageRef.current.contains(event.target)) {
+      setShowLanguageDropdown(false);
+    }
+
+    
+  
   }
 
   // Ajoute l'écouteur lors du montage
@@ -326,9 +345,10 @@ useEffect(() => {
   return () => {
     document.removeEventListener('mousedown', handleClickOutside);
   };
-}, [menuRef, notificationsRef]);
-  const toggleDropdown = () => setShowDropdown(!showDropdown);
-
+}, [menuRef, notificationsRef, languageRef]);
+  const toggleUserDropdown = () => {
+    setShowUserDropdown(!showUserDropdown);
+  };
   // Now, 'userId' is available here because it's part of the component's state
   const UserInfo = () => (
     <div className="user-info" ref={menuRef}>
@@ -419,6 +439,12 @@ useEffect(() => {
   const isProfilePage = location.pathname.includes('/profil/');
   const isHomePage = location.pathname.includes('/Home');
 
+   const changeLanguage = (language) => {
+     i18n.changeLanguage(language);
+   };
+    const toggleLanguageDropdown = () => {
+      setShowLanguageDropdown(!showLanguageDropdown);
+    };
   return (
     <div
       className={`navbar-horizontal ${
@@ -475,6 +501,7 @@ useEffect(() => {
               ))}
             </>
           )}
+
           {userInfo &&
             userInfo.type === 'employe' &&
             searchResults.offers.length > 0 && (
@@ -545,11 +572,31 @@ useEffect(() => {
         <span className="points">{userPoints} points</span>
       )}
       <div className="icon-containerr">
+        <div className="language-selector" ref={languageRef}>
+          <FontAwesomeIcon
+            icon={faGlobe}
+            onClick={toggleLanguageDropdown}
+            className="navbar-iconn globe-icon"
+          />
+          {showLanguageDropdown && (
+            <div className="language-dropdown">
+              <button onClick={() => changeLanguage('fr')}>
+                <img src={france} alt="Français" className="flag-icon" />
+                Français
+              </button>
+              <button onClick={() => changeLanguage('en')}>
+                <img src={uk} alt="English" className="flag-icon" />
+                English
+              </button>
+            </div>
+          )}
+        </div>
         <FontAwesomeIcon
           icon={faBell}
           className="navbar-iconn"
           onClick={handleBellClick}
         />
+
         {notificationsCount > 0 && (
           <span className="notifications-count">{notificationsCount}</span>
         )}
@@ -564,9 +611,9 @@ useEffect(() => {
               }
               alt="Profil"
               className="navbar-iconn user-photo"
-              onClick={toggleDropdown}
+              onClick={toggleUserDropdown}
             />
-            {showDropdown && <UserInfo />}
+            {showUserDropdown && <UserInfo />}
             <PostModal
               isOpen={isPostModalOpen}
               onRequestClose={() => setIsPostModalOpen(false)}
@@ -582,7 +629,7 @@ useEffect(() => {
             <FontAwesomeIcon
               icon={faUserCircle}
               className="navbar-iconn"
-              onClick={toggleDropdown}
+              onClick={toggleUserDropdown}
             />
           </>
         )}

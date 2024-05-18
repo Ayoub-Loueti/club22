@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import './posts.css';
 
 import Post from '../post/post';
-
+import ReactPaginate from 'react-paginate';
 const Posts = ({ posts, openModalForPost }) => {
   const [currentPosts, setCurrentPosts] = useState([]);
 
   useEffect(() => {
     setCurrentPosts([...posts].reverse());
   }, [posts]); // Cette dépendance s'assure que currentPosts est mis à jour lorsque les posts changent.
-
+  const [currentPage, setCurrentPage] = useState(0);
+  const [postsPerPage] = useState(8); // Nombre de posts par page
   const handlePostDeleted = (postId) => {
     const updatedPosts = currentPosts.filter((post) => post.id_post !== postId);
     setCurrentPosts(updatedPosts);
@@ -23,9 +24,23 @@ const Posts = ({ posts, openModalForPost }) => {
     });
     setCurrentPosts(updatedPosts);
   };
+
+  // Calculer le nombre total de pages
+  const pageCount = Math.ceil(currentPosts.length / postsPerPage);
+
+  // Changer la page
+  const changePage = ({ selected }) => {
+    setCurrentPage(selected);
+  };
+
+  // Obtenir les posts actuels à afficher
+  const currentDisplayPosts = currentPosts.slice(
+    currentPage * postsPerPage,
+    (currentPage + 1) * postsPerPage
+  );
   return (
     <div className="Posts">
-      {currentPosts.map((post) => (
+      {currentDisplayPosts.map((post) => (
         <Post
           key={post.id_post}
           data={post}
@@ -34,6 +49,20 @@ const Posts = ({ posts, openModalForPost }) => {
           openModalForPost={openModalForPost}
         />
       ))}
+      <ReactPaginate
+        previousLabel={'⬅️'}
+        nextLabel={'➡️'}
+        breakLabel={'...'}
+        breakClassName={'break-me'}
+        pageCount={pageCount}
+        marginPagesDisplayed={2}
+        pageRangeDisplayed={5}
+        onPageChange={changePage}
+        containerClassName={'pagination'}
+        activeClassName={'active'}
+        previousClassName={'pagination-previous'}
+        nextClassName={'pagination-next'}
+      />
     </div>
   );
 };

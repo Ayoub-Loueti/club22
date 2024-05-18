@@ -4,14 +4,16 @@ import './OffreEmploye.css'; // Assuming CSS from previous examples
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/navbar/navbar';
 import StarRating from './StarRating'; // Make sure this is imported correctly
+import ReactPaginate from 'react-paginate';
 
-function OffreCollabEmploye({ collaborateurId }) {
+function OffreCollabEmploye({ collaborateurId}) {
   const [offres, setOffres] = useState([]);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('tous'); // Added filter state
   const token = localStorage.getItem('login');
   const navigate = useNavigate();
-
+ const [currentPage, setCurrentPage] = useState(0);
+ const [offresPerPage] = useState(6); 
   useEffect(() => {
     if (collaborateurId) {
       const fetchOffres = async () => {
@@ -59,12 +61,16 @@ function OffreCollabEmploye({ collaborateurId }) {
     navigate(`/OffrePageDetails/${offreId}`);
   };
 
-  const filteredOffres = offres.filter(offre => filter === 'tous' || offre.type === filter);
-
+  const filteredOffres = offres.filter(
+    (offre) => filter === 'tous' || offre.type === filter
+  );
+  const pageCount = Math.ceil(filteredOffres.length / offresPerPage);
+  const currentOffres = filteredOffres.slice(
+    currentPage * offresPerPage,
+    (currentPage + 1) * offresPerPage
+  );
   return (
     <>
-
-
       <Navbar />
       <div className="offre-employee-container">
         <h1 className="offre-employee-title">LES OFFRES DISPONIBLES</h1>
@@ -86,7 +92,7 @@ function OffreCollabEmploye({ collaborateurId }) {
         ) : (
           <div className="offre-employee-cards-container">
             {filteredOffres.length > 0 ? (
-              filteredOffres.map((offre, index) => (
+              currentOffres.map((offre, index) => (
                 <div key={index} className="offre-employee-card">
                   <img
                     src={`http://localhost:5000/${
@@ -98,19 +104,19 @@ function OffreCollabEmploye({ collaborateurId }) {
                   />
                   <div className="remise-badge">{offre.remise}%</div>
                   <h2>{offre.titre}</h2>
-                      <h3
-                style={{
-                  margin: '10px 0',
-                  fontSize: '17px',
-                  color: '#232C5F',
-                  fontWeight: 'bold',
-                }}
-              >
-                Prix : A partir de{' '}
-                <span style={{ color: '#f00', fontSize: '23px' }}>
-                  {offre.prix} TND
-                </span>
-                </h3>
+                  <h3
+                    style={{
+                      margin: '10px 0',
+                      fontSize: '17px',
+                      color: '#232C5F',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    Prix : A partir de{' '}
+                    <span style={{ color: '#f00', fontSize: '23px' }}>
+                      {offre.prix} TND
+                    </span>
+                  </h3>
                   <StarRating
                     rating={parseFloat(offre.evaluation.averageVotes)}
                     numReviews={offre.evaluation.numberOfEvaluations}
@@ -130,6 +136,19 @@ function OffreCollabEmploye({ collaborateurId }) {
             )}
           </div>
         )}
+        <ReactPaginate
+          previousLabel={'⬅️'}
+          nextLabel={'➡️'}
+          pageCount={pageCount}
+          breakLabel={'...'}
+          breakClassName={'break-me'}
+          onPageChange={(data) => setCurrentPage(data.selected)}
+          containerClassName={'pagination'}
+          activeClassName={'active'}
+          previousClassName={'pagination-previous'}
+          nextClassName={'pagination-next'}
+          disabledClassName={'pagination-disabled'}
+        />
       </div>
     </>
   );

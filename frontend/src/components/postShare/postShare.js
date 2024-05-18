@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './postShare.css';
+import { useTranslation } from 'react-i18next';
+
 import {
   UilScenery,
-  UilPlayCircle,
   UilLocationPoint,
   UilSchedule,
   UilTimes,
@@ -10,8 +11,10 @@ import {
 import '../navbar/navbar.css';
 import Swal from 'sweetalert2';
 import axios from 'axios';
-import LocationModal from "./LocationModal";
+import LocationModal from './LocationModal';
 const PostShare = () => {
+  const { t } = useTranslation();
+
   const [image, setImage] = useState(null);
   const imageRef = useRef();
   const [contenu, setContenu] = useState('');
@@ -60,68 +63,68 @@ const PostShare = () => {
       setImage(files); // Set state with an array of files
     }
   };
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  let errorMessages = [];
-  if (!contenu.trim()) {
-    errorMessages.push('Veuillez saisir du contenu.');
-  }
-  if (type === '') {
-    errorMessages.push('Veuillez sélectionner une catégorie.');
-  }
-  if (contenu.length > 600) {
-    errorMessages.push("Vous ne pouvez saisir que jusqu'à 600 caractères.");
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    let errorMessages = [];
+    if (!contenu.trim()) {
+      errorMessages.push('Veuillez saisir du contenu.');
+    }
+    if (type === '') {
+      errorMessages.push('Veuillez sélectionner une catégorie.');
+    }
+    if (contenu.length > 600) {
+      errorMessages.push("Vous ne pouvez saisir que jusqu'à 600 caractères.");
+    }
 
-  if (errorMessages.length > 0) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Oops...',
-      html: errorMessages.join('<br />'),
-    });
-    return;
-  }
+    if (errorMessages.length > 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Oops...',
+        html: errorMessages.join('<br />'),
+      });
+      return;
+    }
 
-  const formData = new FormData();
-  formData.append('contenu', contenu);
-  formData.append('type', type);
-formData.append('lieu', lieu);
-  // Check if `image` is not null and has length before proceeding
-  if (image && image.length > 0) {
-    image.forEach((img) => {
-      formData.append('photos', img.file);
-    });
-  }
+    const formData = new FormData();
+    formData.append('contenu', contenu);
+    formData.append('type', type);
+    formData.append('lieu', lieu);
+    // Check if `image` is not null and has length before proceeding
+    if (image && image.length > 0) {
+      image.forEach((img) => {
+        formData.append('photos', img.file);
+      });
+    }
 
-  try {
-    const response = await axios.post(
-      'http://localhost:5000/createPost',
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    console.log(response.data.message);
-        window.location.reload();
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/createPost',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response.data.message);
+      window.location.reload();
 
-    setContenu('');
-    setImage(null);
-    // Consider not reloading the page; instead update the state or UI based on response
-  } catch (error) {
-    console.error(
-      'Error submitting the post: ',
-      error.response ? error.response.data : error.message
-    );
-    Swal.fire({
-      icon: 'error',
-      title: 'Erreur',
-      text: 'Un problème est survenu lors de la publication.',
-    });
-  }
-};
+      setContenu('');
+      setImage(null);
+      // Consider not reloading the page; instead update the state or UI based on response
+    } catch (error) {
+      console.error(
+        'Error submitting the post: ',
+        error.response ? error.response.data : error.message
+      );
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: 'Un problème est survenu lors de la publication.',
+      });
+    }
+  };
 
   /*
 const handleSubmit = async (e) => {
@@ -208,7 +211,7 @@ const handleSubmit = async (e) => {
       <div>
         <input
           type="text"
-          placeholder="À quoi penses-tu?"
+          placeholder={t('À quoi penses-tu?')}
           value={contenu}
           onChange={(e) => setContenu(e.target.value)}
         />
@@ -221,13 +224,13 @@ const handleSubmit = async (e) => {
             className="selectFieldd"
           >
             <option value="" disabled={categorySelected}>
-              Sélectionnez une catégorie
+              {t('Sélectionnez une catégorie')}
             </option>
-            <option value="hotel">Hôtel</option>
-            <option value="voyage">Voyage</option>
-            <option value="activité">Activité</option>
+            <option value="hotel">{t('Hôtel')}</option>
+            <option value="voyage">{t('Voyage')}</option>
+            <option value="activité">{t('Activité')}</option>
 
-            <option value="autre">Autre</option>
+            <option value="autre">{t('Autre')}</option>
           </select>
         </div>
         <div className="postOptions">
@@ -237,23 +240,23 @@ const handleSubmit = async (e) => {
             onClick={() => imageRef.current.click()}
           >
             <UilScenery />
-            Photo/Video
+            {t('Photo/Vidéo')}
           </div>
-         
+
           <div
             className="option"
             style={{ color: 'var(--location)' }}
             onClick={handleLocationClick}
           >
             <UilLocationPoint />
-            Location
+            {t('Lieu')}{' '}
           </div>
           <div className="option" style={{ color: 'var(--shedule)' }}>
             <UilSchedule />
-            Shedule
+           {t( 'Programme')}
           </div>
           <button className="postShare-button" onClick={handleSubmit}>
-            Partager
+          {t ( 'Partager')}
           </button>
           <div style={{ display: 'none' }}>
             <input

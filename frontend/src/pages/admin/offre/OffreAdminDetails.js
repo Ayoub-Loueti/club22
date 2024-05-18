@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
 import './OffreAdminDetails.css';
@@ -45,9 +45,6 @@ function OffreAdminDetails() {
     return <div>Chargement des détails de l'offre...</div>;
   }
 
-
-
- 
   const handleDelete = async (offreId) => {
     const confirmation = await Swal.fire({
       title: 'Confirmation',
@@ -77,9 +74,9 @@ function OffreAdminDetails() {
     setSelectedOffreId(offreId);
     setIsUpdateModalOpen(true);
   };
-   const handleUpdateSuccess = () => {
-     setOffreUpdated(!offreUpdated); // Basculer l'état pour forcer le rechargement
-   };
+  const handleUpdateSuccess = () => {
+    setOffreUpdated(!offreUpdated); // Basculer l'état pour forcer le rechargement
+  };
 
   return (
     <>
@@ -175,96 +172,275 @@ function OffreAdminDetails() {
                   <p>
                     <strong>Étoiles:</strong> {offre.details.etoiles}
                   </p>
-                  <p>
-                    <strong>Climatisation:</strong>{' '}
-                    {offre.details.climatisation ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Wi-Fi:</strong> {offre.details.wifi ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Piscine Extérieure:</strong>{' '}
-                    {offre.details.piscine_exterieure ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Piscine Couverte:</strong>{' '}
-                    {offre.details.piscine_couverte ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Bassin pour Enfants:</strong>{' '}
-                    {offre.details.bassin_enfants ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Parking:</strong>{' '}
-                    {offre.details.parking ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Discothèque:</strong>{' '}
-                    {offre.details.discotheque ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Plage Privée:</strong>{' '}
-                    {offre.details.plage_privee ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Ascenseur:</strong>{' '}
-                    {offre.details.ascenseur ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Salle de Sport:</strong>{' '}
-                    {offre.details.salle_de_sport ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Aire de Jeux pour Enfants:</strong>{' '}
-                    {offre.details.aire_de_jeux_enfants ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Spa:</strong> {offre.details.spa ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Sauna:</strong>{' '}
-                    {offre.details.sauna ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Hammam:</strong>{' '}
-                    {offre.details.hammam ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Thalasso:</strong>{' '}
-                    {offre.details.thalasso ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Centre Esthétique:</strong>{' '}
-                    {offre.details.centre_esthetique ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Toboggan:</strong>{' '}
-                    {offre.details.toboggan ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Pieds dans l'Eau:</strong>{' '}
-                    {offre.details.pieds_dans_l_eau ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Piscine Eau de Mer:</strong>{' '}
-                    {offre.details.piscine_eau_de_mer ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Baby Setting:</strong>{' '}
-                    {offre.details.baby_setting ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Tennis de Table:</strong>{' '}
-                    {offre.details.tennis_de_table ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Location de Voiture:</strong>{' '}
-                    {offre.details.location_de_voiture ? 'Oui' : 'Non'}
-                  </p>
-                  <p>
-                    <strong>Change Monétaire:</strong>{' '}
-                    {offre.details.change_monetaire ? 'Oui' : 'Non'}
-                  </p>
+                  <div className="details-grid">
+                    <div className="detail-card">
+                      <span className="detail-label">Climatisation:</span>
+                      <span
+                        className={`detail-badge ${
+                          offre.details.climatisation
+                            ? 'detail-oui'
+                            : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.climatisation ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Wi-Fi:</span>
+                      <span
+                        className={`detail-badge ${
+                          offre.details.wifi ? 'detail-oui' : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.wifi ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Piscine Extérieure:</span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.piscine_exterieure
+                            ? 'detail-oui'
+                            : 'detail-non'
+                        }`}
+                      >
+                        {' '}
+                        {offre.details.piscine_exterieure ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Piscine Couverte:</span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.piscine_couverte
+                            ? 'detail-oui'
+                            : 'detail-non'
+                        }`}
+                      >
+                        {' '}
+                        {offre.details.piscine_couverte ? 'Oui' : 'Non'}
+                      </span>{' '}
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Bassin pour Enfants:</span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.bassin_enfants
+                            ? 'detail-oui'
+                            : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.bassin_enfants ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Parking:</span>
+                      <span
+                        className={`detail-badge ${
+                          offre.details.parking ? 'detail-oui' : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.parking ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Discothèque:</span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.discotheque
+                            ? 'detail-oui'
+                            : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.discotheque ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Plage Privée:</span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.plage_privee
+                            ? 'detail-oui'
+                            : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.plage_privee ? 'Oui' : 'Non'}
+                      </span>
+                    </div>{' '}
+                    <div className="detail-card">
+                      <span className="detail-label">Ascenseur:</span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.ascenseur ? 'detail-oui' : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.ascenseur ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Salle de sport:</span>
+                      <span
+                        className={`detail-badge ${
+                          offre.details.salle_de_sport
+                            ? 'detail-oui'
+                            : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.salle_de_sport ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">
+                        Aire de Jeux pour Enfants:
+                      </span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.aire_de_jeux_enfants
+                            ? 'detail-oui'
+                            : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.aire_de_jeux_enfants ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Spa:</span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.spa ? 'detail-oui' : 'detail-non'
+                        }`}
+                      >
+                        {' '}
+                        {offre.details.spa ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Sauna:</span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.sauna ? 'detail-oui' : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.sauna ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Hammam:</span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.hammam ? 'detail-oui' : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.hammam ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Thalasso:</span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.thalasso ? 'detail-oui' : 'detail-non'
+                        }`}
+                      >
+                        {' '}
+                        {offre.details.thalasso ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Centre Esthétique:</span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.centre_esthetique
+                            ? 'detail-oui'
+                            : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.centre_esthetique ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Toboggan:</span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.toboggan ? 'detail-oui' : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.toboggan ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Pieds dans l'Eau:</span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.pieds_dans_l_eau
+                            ? 'detail-oui'
+                            : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.pieds_dans_l_eau ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Piscine Eau de Mer:</span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.piscine_eau_de_mer
+                            ? 'detail-oui'
+                            : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.piscine_eau_de_mer ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Baby Setting:</span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.baby_setting
+                            ? 'detail-oui'
+                            : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.baby_setting ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Tennis de Table:</span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.tennis_de_table
+                            ? 'detail-oui'
+                            : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.tennis_de_table ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Location de Voiture:</span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.location_de_voiture
+                            ? 'detail-oui'
+                            : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.location_de_voiture ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Change Monétaire:</span>{' '}
+                      <span
+                        className={`detail-badge ${
+                          offre.details.change_monetaire
+                            ? 'detail-oui'
+                            : 'detail-non'
+                        }`}
+                      >
+                        {offre.details.change_monetaire ? 'Oui' : 'Non'}
+                      </span>
+                    </div>
+                  </div>
+                  <br></br>
                 </>
               )}
               {offre.type === 'voyage' && (
