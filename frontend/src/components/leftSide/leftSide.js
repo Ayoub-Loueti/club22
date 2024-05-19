@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './leftSide.css';
 import oorepub2 from "../../assets/oorepub2.jpg";
 import oorepub3 from "../../assets/oorepub3.jpg";
+import { t } from 'i18next';
 
 const UserCard = ({ user, title }) => {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ const LeftSide = () => {
   const [bestPostData, setBestPostData] = useState(null);
   const [bestCmntrData, setBestCmntrData] = useState(null);
   const token = JSON.parse(localStorage.getItem('login'))?.token;
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchBestPosteur = async () => {
@@ -76,23 +78,29 @@ const LeftSide = () => {
     fetchBestPostData();
     fetchBestCmntrData();
 
-    const timeout = setTimeout(() => {
-      setShowUserCard(false);
-    }, 3000);
+    const interval = setInterval(() => {
+      setShowUserCard(show => !show);
+    }, 6000);
 
-    return () => clearTimeout(timeout);
+    return () => clearInterval(interval);
+
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
-      {showUserCard && (
-        <div className="left-side-container">
-          {bestPosteur && <UserCard user={bestPosteur.userWithHighestSemaineLike.utilisateur} title="Meilleur posteur" />}
-          {bestPostData && <UserCard user={bestPostData.utilisateur} title="Meilleur post" />}
-          {bestCmntrData && <UserCard user={bestCmntrData.utilisateur} title="Meilleur commentaire" />}
-        </div>
-      )}
-      {!showUserCard && <div className="photo-container"><img src={oorepub2} alt="Photo" /></div>}
+      <div className="left-side-container">
+        {showUserCard ? (
+          <>
+            {bestPosteur && <UserCard user={bestPosteur.userWithHighestSemaineLike.utilisateur} title={t('Meilleur posteur')} />}
+            {bestPostData && <UserCard user={bestPostData.utilisateur} title={t('Meilleur post')}/>}
+            {bestCmntrData && <UserCard user={bestCmntrData.utilisateur} title={t('Meilleur commentaire')} />}
+          </>
+        ) : (
+          <div className="photo-container">
+            <img src={oorepub2} alt="Ooredoo Advertisement" />
+          </div>
+        )}
+      </div>
     </>
   );
 };

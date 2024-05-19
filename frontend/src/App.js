@@ -37,6 +37,7 @@ import Message from './pages/message/message';
 import Dashboard from './pages/admin/dashboard/dashboard';
 import OffreAdminDetails from './pages/admin/offre/OffreAdminDetails';
 import AddFromCollaborateur from './pages/addFromCollab/addFromCollab';
+import ChatBot from './components/chatbot/chatbot';
 
 function App() {
   return (
@@ -73,6 +74,12 @@ function App() {
                   {' '}
                   <Signup />{' '}
                 </PublicRoute>
+              }
+            />
+            <Route
+              path="/chatbot"
+              element={
+                  <ChatBot />
               }
             />
             <Route
