@@ -3,8 +3,6 @@ const Utilisateur = require('../models/UtilisateurModel');
 const Message = require('../models/MessagesModel');
 const Discussion = require('../models/DiscussionModel');
 const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require("@google/generative-ai");
-const axios = require('axios');
-
 
 exports.createMessage = async (req, res) => {
     try {
@@ -143,7 +141,6 @@ const safetySettings = [
 exports.handleChatbotInteraction = async (req, res) => {
     try {
       const inputText = req.body.inputText;
-      const token =req.headers.authorization.split(' ')[1];
       const chatSession = model.startChat({
         generationConfig,
         safetySettings,
@@ -164,29 +161,10 @@ exports.handleChatbotInteraction = async (req, res) => {
       });
   
       const result = await chatSession.sendMessage(inputText);
-  
-      // Check if the inputText asks for offers
-      if (inputText.toLowerCase().includes('offre') || inputText.toLowerCase().includes('promotion')) {
-        // Fetch offers from the /allOffers endpoint
-        const offersResponse = await axios.get('http://localhost:5000/allOffers', { 
-        headers: { Authorization: `Bearer ${token}` } 
-        });
-
-  
-        const offers = offersResponse.data;
-        const offerText = offers.map(offer => `Titre: ${offer.titre},  Prix: ${offer.prix}, Remise: ${offer.remise}%`).join('\n');
-  
-        res.status(200).json({ response: result.response.text() + '\n\nVoici les offres disponibles :\n' + offerText });
-      } else {
-        res.status(200).json({ response: result.response.text() });
-      }
+      res.status(200).json({ response: result.response.text() });
     } catch (error) {
       console.error('Error with chatbot interaction:', error);
       res.status(500).json({ error: 'Internal server error', details: error.message });
     }
   };
-  
-  module.exports = exports;
-
-  
 module.exports = exports;
