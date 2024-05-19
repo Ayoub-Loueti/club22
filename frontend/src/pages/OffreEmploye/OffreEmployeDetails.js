@@ -24,6 +24,14 @@ import {
   faCalendarAlt,
   faCheckSquare,
   faClock,
+  faMoneyBillWave,
+  faCar,
+  faTableTennis,
+  faBaby,
+  faShoePrints,
+  faUserTie,
+  faTemperatureHigh,
+  faSpa,
 } from '@fortawesome/free-solid-svg-icons';
 import ProgramModal from './ProgramModal';
 import parse from 'html-react-parser';
@@ -156,9 +164,7 @@ const handleAuthorizationChange = () => {
             )}
             <h2 className="offre-titleDetails">{offre.titre}</h2>
             <p className="offre-rating">Rating: {offre.rating}</p>{' '}
-            <p className="offre-collaborateur">
-              Collaborateur: {offre.nom}
-            </p>
+            <p className="offre-collaborateur">Collaborateur: {offre.nom}</p>
             <h4 className="destination-details">
               <FontAwesomeIcon
                 icon={faMapMarkerAlt}
@@ -326,6 +332,105 @@ const handleAuthorizationChange = () => {
                         className="service-icon"
                       />{' '}
                       Aire de jeux pour enfants
+                    </p>
+                  )}
+                  {details.spa && (
+                    <p className="service-item">
+                      <FontAwesomeIcon icon={faSpa} className="service-icon" />{' '}
+                      Spa
+                    </p>
+                  )}
+                  {details.sauna && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faTemperatureHigh}
+                        className="service-icon"
+                      />{' '}
+                      Sauna
+                    </p>
+                  )}
+                  {details.hammam && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faWater}
+                        className="service-icon"
+                      />{' '}
+                      Hammam
+                    </p>
+                  )}
+                  {details.thalasso && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faSwimmer}
+                        className="service-icon"
+                      />{' '}
+                      Thalasso
+                    </p>
+                  )}
+                  {details.centre_esthetique && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faUserTie}
+                        className="service-icon"
+                      />{' '}
+                      Centre Esthétique
+                    </p>
+                  )}
+                  {details.toboggan && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faWater}
+                        className="service-icon"
+                      />{' '}
+                      Toboggan
+                    </p>
+                  )}
+                  {details.pieds_dans_l_eau && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faShoePrints}
+                        className="service-icon"
+                      />{' '}
+                      Pieds dans l'Eau
+                    </p>
+                  )}
+                  {details.piscine_eau_de_mer && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faWater}
+                        className="service-icon"
+                      />{' '}
+                      Piscine Eau de Mer
+                    </p>
+                  )}
+                  {details.baby_setting && (
+                    <p className="service-item">
+                      <FontAwesomeIcon icon={faBaby} className="service-icon" />{' '}
+                      Baby Setting
+                    </p>
+                  )}
+                  {details.tennis_de_table && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faTableTennis}
+                        className="service-icon"
+                      />{' '}
+                      Tennis de Table
+                    </p>
+                  )}
+                  {details.location_de_voiture && (
+                    <p className="service-item">
+                      <FontAwesomeIcon icon={faCar} className="service-icon" />{' '}
+                      Location de Voiture
+                    </p>
+                  )}
+                  {details.change_monetaire && (
+                    <p className="service-item">
+                      <FontAwesomeIcon
+                        icon={faMoneyBillWave}
+                        className="service-icon"
+                      />{' '}
+                      Change Monétaire
                     </p>
                   )}
                 </div>

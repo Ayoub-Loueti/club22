@@ -7,11 +7,15 @@ import 'react-phone-number-input/style.css';
 import './PhoneNumberModal.css'; // Make sure the path is correct based on your project structure
 import Swal from 'sweetalert2'; 
 import withReactContent from 'sweetalert2-react-content';
+import { useTranslation } from 'react-i18next';
+
 Modal.setAppElement('#root');
 
 const PhoneNumberModal = ({ isOpen, onRequestClose }) => {
   const [value, setValue] = useState('');
   const [error, setError] = useState('');
+   const { t } = useTranslation();
+ 
  const MySwal = withReactContent(Swal);
 
   const handleSubmit = async (event) => {
@@ -27,17 +31,16 @@ const PhoneNumberModal = ({ isOpen, onRequestClose }) => {
       onRequestClose(); // Close the modal on success
        MySwal.fire({
          icon: 'success',
-         title: 'SMS envoyé avec succès!',
+         title: t('SMS envoyé avec succès!'),
          showConfirmButton: false,
          timer: 1500, // Fermer automatiquement après 1.5 secondes
        });
     } catch (error) {
       console.error('Error sending SMS:', error);
-      setError('Failed to send SMS. Please try again.');
        MySwal.fire({
          icon: 'error',
-         title: "Échec de l'envoi du SMS",
-         text: 'Veuillez réessayer.',
+         title: t("Échec de l'envoi du SMS"),
+         text: t('Veuillez réessayer.'),
          confirmButtonText: 'OK',
        });
     }
@@ -70,7 +73,7 @@ const PhoneNumberModal = ({ isOpen, onRequestClose }) => {
 
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose} style={customStyles}>
-      <h2 style={{ textAlign: 'center' }}>Entrer votre numero téléphone :</h2>
+      <h2 style={{ textAlign: 'center' }}>{t('Entrer votre numero téléphone :')}</h2>
       <form
         onSubmit={handleSubmit}
         style={{
@@ -90,7 +93,7 @@ const PhoneNumberModal = ({ isOpen, onRequestClose }) => {
           <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>
         )}
         <button type="submit" className="phonenumb-but">
-          Envoyer SMS
+         { t('Envoyer SMS')}
         </button>
       </form>
     </Modal>

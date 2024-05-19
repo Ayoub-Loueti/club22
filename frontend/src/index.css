@@ -13,10 +13,11 @@ code {
 }
 ::-webkit-scrollbar {
   width: 0.4rem;
+   height: 0.3rem; 
   background-color: #14213d;
 }
 ::-webkit-scrollbar-thumb {
-  background-color: #4539e6;
+  background-color: #abdee6;
 }
 html {
   scroll-behavior: smooth;

@@ -3,12 +3,14 @@ import axios from 'axios';
 import './trendCard.css';
 import Posts from '../posts/posts';  // Adjust the import path as needed
 import Modal from 'react-modal'; // Import Modal
+import { useTranslation } from 'react-i18next';
 
 const TrendCard = () => {
     const [trends, setTrends] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPosts, setSelectedPosts] = useState([]);
     const [selectedPostId, setSelectedPostId] = useState(null);
+  const { t } = useTranslation();
 
     useEffect(() => {
         const token = localStorage.getItem('login');
@@ -56,7 +58,7 @@ const TrendCard = () => {
       };
     return (
       <div className="TrendCard">
-        <h3>Tendances</h3>
+        <h3>{t('Tendances')}</h3>
         {trends.map((trend, index) => (
           <div
             key={index}
@@ -64,7 +66,7 @@ const TrendCard = () => {
             className="trend"
           >
             <span>#{trend.hachtag}</span>
-            <span>{trend.nbr_hachtag} partage(s)</span>
+            <span>{trend.nbr_hachtag} { t('partage(s)')}</span>
           </div>
         ))}
 

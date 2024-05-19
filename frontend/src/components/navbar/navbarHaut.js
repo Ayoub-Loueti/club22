@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate, Link, useLocation  } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import nonotif from '../../assets/nonotif.png';
 import {
   faBell,
   faSearch,
@@ -12,14 +13,22 @@ import {
   faUser,
   faSignOutAlt,
   faTimes,
-  faPhone,faCheckCircle, faTimesCircle, faExclamationCircle,
+  faPhone,
+  faCheckCircle,
+  faTimesCircle,
+  faExclamationCircle,
+  faGlobe,
 } from '@fortawesome/free-solid-svg-icons';
 import '../navbar/navbar.css';
 import PostModal from '../postModal/postModal';
 import PhoneNumberModal from '../PhoneNumberModal/PhoneNumberModal';
+import { useTranslation } from 'react-i18next';
+import france from '../../assets/france.png';
+import uk from '../../assets/uk.png';
 
 function NavbarHaut() {
-  const [showDropdown, setShowDropdown] = useState(false);
+    const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [userId, setUserId] = useState(null); // Add this line
   const navigate = useNavigate();
@@ -29,7 +38,10 @@ function NavbarHaut() {
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const menuRef = useRef();
+    const languageRef = useRef();
+
   const notificationsRef = useRef();
+
   const [searchInput, setSearchInput] = useState('');
   const [searchResults, setSearchResults] = useState({
     users: [],
@@ -39,6 +51,8 @@ function NavbarHaut() {
   const [userPoints, setUserPoints] = useState(null);
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false); // State to control the phone modal visibility
   const location = useLocation();
+    const { t, i18n } = useTranslation();
+
   // This function toggles the notification dropdown
   const handleBellClick = async () => {
     setShowNotifications(!showNotifications);
@@ -189,7 +203,7 @@ function NavbarHaut() {
                 <div className="notification-text">
                   <strong>
                     {notification.utilisateur.prenom}{' '}
-                    {notification.utilisateur.nom}
+                    {notification.utilisateur.nom}{' '}
                   </strong>
                   <span>{notification.notifier}</span>
                 </div>
@@ -207,7 +221,18 @@ function NavbarHaut() {
           </div>
         ))
       ) : (
-        <div className="notification-item">Pas de notifications</div>
+        <div className="notification-no">
+          <img src={nonotif} alt="NoNotif" className="nonotif" />
+          <strong className="textNotif1">
+            {t('Aucune notification trouvée')}
+          </strong>
+          <p className="textNotif2">
+            {' '}
+            {t(
+              'Vous n avez actuellement aucune notification. Nous vous informerons quand quelque chose de nouveau arrivera!'
+            )}
+          </p>
+        </div>
       )}
     </div>
   );
@@ -307,7 +332,7 @@ useEffect(() => {
   function handleClickOutside(event) {
     // Fermeture du menu utilisateur
     if (menuRef.current && !menuRef.current.contains(event.target)) {
-      setShowDropdown(false);
+      setShowUserDropdown(false);
     }
 
     // Fermeture du menu des notifications
@@ -317,6 +342,12 @@ useEffect(() => {
     ) {
       setShowNotifications(false);
     }
+    if (languageRef.current && !languageRef.current.contains(event.target)) {
+      setShowLanguageDropdown(false);
+    }
+
+    
+  
   }
 
   // Ajoute l'écouteur lors du montage
@@ -326,9 +357,10 @@ useEffect(() => {
   return () => {
     document.removeEventListener('mousedown', handleClickOutside);
   };
-}, [menuRef, notificationsRef]);
-  const toggleDropdown = () => setShowDropdown(!showDropdown);
-
+}, [menuRef, notificationsRef, languageRef]);
+  const toggleUserDropdown = () => {
+    setShowUserDropdown(!showUserDropdown);
+  };
   // Now, 'userId' is available here because it's part of the component's state
   const UserInfo = () => (
     <div className="user-info" ref={menuRef}>
@@ -337,15 +369,15 @@ useEffect(() => {
           <div className="user-actions">
             <Link to={`/Home`} className="dropdown-item">
               <FontAwesomeIcon icon={faHome} className="acceuil-icon" />
-              <strong> Acceuil</strong>
+              <strong> {t('Acceuil')}</strong>
             </Link>
             <Link to={`/profil/${userId}`} className="dropdown-item">
               <FontAwesomeIcon icon={faUser} className="profil-icon" />
-              <strong> Profil</strong>
+              <strong> {t('Profil')}</strong>
             </Link>
             <button onClick={handleLogout} className="logout-button">
               <FontAwesomeIcon icon={faSignOutAlt} className="logout-icon" />
-              <strong>Déconnexion</strong>
+              <strong>{t('Déconnexion')}</strong>
             </button>
           </div>
         </>
@@ -419,6 +451,12 @@ useEffect(() => {
   const isProfilePage = location.pathname.includes('/profil/');
   const isHomePage = location.pathname.includes('/Home');
 
+   const changeLanguage = (language) => {
+     i18n.changeLanguage(language);
+   };
+    const toggleLanguageDropdown = () => {
+      setShowLanguageDropdown(!showLanguageDropdown);
+    };
   return (
     <div
       className={`navbar-horizontal ${
@@ -435,7 +473,7 @@ useEffect(() => {
         <input
           type="text"
           name="search"
-          placeholder="Recherche..."
+          placeholder={t('Recherche...')}
           id="search-input-navbar"
           className="searchh-inputt"
           value={searchInput}
@@ -451,7 +489,7 @@ useEffect(() => {
         <div className="search-results">
           {searchResults.users.length > 0 && (
             <>
-              <div className="search-results-title">Utilisateurs :</div>
+              <div className="search-results-title">{t('Utilisateurs')} :</div>
               {searchResults.users.map((user) => (
                 <Link
                   to={`/profil/${user.id_utilisateur}`}
@@ -475,11 +513,12 @@ useEffect(() => {
               ))}
             </>
           )}
+
           {userInfo &&
             userInfo.type === 'employe' &&
             searchResults.offers.length > 0 && (
               <>
-                <div className="search-results-title">Offres :</div>
+                <div className="search-results-title">{t('Offres')} :</div>
                 {searchResults.offers.map((offer) => (
                   <div
                     key={offer.id_offre}
@@ -502,7 +541,7 @@ useEffect(() => {
             userInfo.type === 'employe' &&
             searchResults.collaborators.length > 0 && (
               <>
-                <div className="search-results-title">collaborateurs :</div>
+                <div className="search-results-title">{t('collaborateurs')} :</div>
                 {searchResults.collaborators.map((collab) => (
                   <div
                     key={collab.id_collaborateur}
@@ -529,7 +568,7 @@ useEffect(() => {
       ) : (
         searchInput && (
           <div className="search-results search-no-results-message">
-            Aucun résultat trouvé pour votre recherche.{' '}
+           {t ('Aucun résultat trouvé pour votre recherche.')}{' '}
           </div>
         )
       )}
@@ -542,14 +581,34 @@ useEffect(() => {
         />
       )}
       {userPoints !== null && userInfo && userInfo.type === 'client' && (
-        <span className="points">{userPoints} points</span>
+        <span className="points">{userPoints} Points</span>
       )}
       <div className="icon-containerr">
+        <div className="language-selector" ref={languageRef}>
+          <FontAwesomeIcon
+            icon={faGlobe}
+            onClick={toggleLanguageDropdown}
+            className="navbar-iconn globe-icon"
+          />
+          {showLanguageDropdown && (
+            <div className="language-dropdown">
+              <button onClick={() => changeLanguage('fr')}>
+                <img src={france} alt="Français" className="flag-icon" />
+                Français
+              </button>
+              <button onClick={() => changeLanguage('en')}>
+                <img src={uk} alt="English" className="flag-icon" />
+                English
+              </button>
+            </div>
+          )}
+        </div>
         <FontAwesomeIcon
           icon={faBell}
           className="navbar-iconn"
           onClick={handleBellClick}
         />
+
         {notificationsCount > 0 && (
           <span className="notifications-count">{notificationsCount}</span>
         )}
@@ -564,9 +623,9 @@ useEffect(() => {
               }
               alt="Profil"
               className="navbar-iconn user-photo"
-              onClick={toggleDropdown}
+              onClick={toggleUserDropdown}
             />
-            {showDropdown && <UserInfo />}
+            {showUserDropdown && <UserInfo />}
             <PostModal
               isOpen={isPostModalOpen}
               onRequestClose={() => setIsPostModalOpen(false)}
@@ -582,7 +641,7 @@ useEffect(() => {
             <FontAwesomeIcon
               icon={faUserCircle}
               className="navbar-iconn"
-              onClick={toggleDropdown}
+              onClick={toggleUserDropdown}
             />
           </>
         )}

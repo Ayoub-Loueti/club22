@@ -17,7 +17,6 @@
   margin-left: auto; /* Automatically push the component to the right */
 }
 .no-posts-message {
-  background-color: #f5f5f5;
   color: black;
   padding: 30px;
   border-radius: 20px; /* Coins arrondis pour un look doux */
@@ -49,4 +48,12 @@
     transform: scale(1);
     opacity: 1;
   }
+}
+.soc1{
+   width: 300px;
+  justify-content: center;
+  align-items: center;
+    flex-direction: row;
+
+
 }

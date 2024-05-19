@@ -3,6 +3,8 @@ import axios from 'axios';
 import Posts from '../posts/posts';
 import PostShare from '../postShare/postShare';
 import PostModal from '../postModal/postModal';
+import { useTranslation } from 'react-i18next';
+
 import './postSide.css';
 
 const PostSide = () => {
@@ -10,6 +12,8 @@ const PostSide = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [postType, setPostType] = useState('tous');
+    const { t } = useTranslation();
+
   const token = JSON.parse(localStorage.getItem('login'))?.token;
 
   useEffect(() => {
@@ -51,7 +55,7 @@ const PostSide = () => {
           className={postType === 'tous' ? 'active' : ''}
           onClick={() => handlePostTypeChange('tous')}
         >
-          Tous
+          {t('Tous')}
         </button>
         <button
           className={postType === 'hotel' ? 'active' : ''}
@@ -63,13 +67,13 @@ const PostSide = () => {
           className={postType === 'voyage' ? 'active' : ''}
           onClick={() => handlePostTypeChange('voyage')}
         >
-          Voyages
+          {t('Voyages')}
         </button>
         <button
           className={postType === 'activité' ? 'active' : ''}
           onClick={() => handlePostTypeChange('activité')}
         >
-          Activités
+          {t('Activités')}
         </button>
       </div>
       {/* Posts component */}

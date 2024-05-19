@@ -63,7 +63,7 @@ const PostLink = () => {
       {postDetails ? (
         <Post data={postDetails} isModalView={true} />
       ) : (
-        <p>Loading post details...</p>
+        <p>Loading...</p>
       )}
     </Modal>
   );

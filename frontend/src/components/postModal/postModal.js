@@ -57,7 +57,7 @@ const PostModal = ({ isOpen, onRequestClose, postId }) => {
         // Render your Post component with the fetched post details
         <Post data={postDetails} isModalView={true} />
       ) : (
-        <p>Loading post details...</p>
+        <p>Loading ...</p>
       )}
     </Modal>
   );

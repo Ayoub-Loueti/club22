@@ -1,26 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import logo from '../../assets/logo.png';
 
 export default function ScrollToTop() {
-  const [scrollstate, setScrollState] = useState(false);
+  const [scrollState, setScrollState] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollState(window.pageYOffset > 200);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const toTop = () => {
-    window.scrollTo({ top: 0 });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  window.addEventListener('scroll', () => {
-    window.pageYOffset > 200 ? setScrollState(true) : setScrollState(false);
-  });
-
   return (
-    <ToTop onClick={toTop} scrollstate={scrollstate.toString()}>
-      <img src={logo} alt="" />
+    <ToTop onClick={toTop} $scrollState={scrollState}>
+      <img src={logo} alt="Back to top" />
     </ToTop>
   );
 }
 
 const ToTop = styled.div`
-  display: ${({ scrollstate }) => (scrollstate === 'true' ? 'block' : 'none')};
+  display: ${({ $scrollState }) => ($scrollState ? 'block' : 'none')};
   position: fixed;
   cursor: pointer;
   z-index: 10;
@@ -30,6 +36,6 @@ const ToTop = styled.div`
     height: 1.5rem;
   }
   border-radius: 2rem;
-  background-color: #ABDEE6;
+  background-color: #abdee6;
   padding: 1rem;
 `;
