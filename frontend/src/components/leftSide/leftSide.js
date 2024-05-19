@@ -3,10 +3,12 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './leftSide.css';
 import oorepub2 from "../../assets/oorepub2.jpg";
-import oorepub3 from "../../assets/oorepub3.jpg";
+import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 
 const UserCard = ({ user, title }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleClick = () => {
     navigate(`/profil/${user.id_utilisateur}`);
@@ -87,9 +89,9 @@ const LeftSide = () => {
     <>
       {showUserCard && (
         <div className="left-side-container">
-          {bestPosteur && <UserCard user={bestPosteur.userWithHighestSemaineLike.utilisateur} title="Meilleur posteur" />}
-          {bestPostData && <UserCard user={bestPostData.utilisateur} title="Meilleur post" />}
-          {bestCmntrData && <UserCard user={bestCmntrData.utilisateur} title="Meilleur commentaire" />}
+          {bestPosteur && <UserCard user={bestPosteur.userWithHighestSemaineLike.utilisateur} title={t('Meilleur posteur')} />}
+          {bestPostData && <UserCard user={bestPostData.utilisateur} title={t('Meilleur post')}/>}
+          {bestCmntrData && <UserCard user={bestCmntrData.utilisateur} title={t('Meilleur commentaire')} />}
         </div>
       )}
       {!showUserCard && <div className="photo-container"><img src={oorepub2} alt="Photo" /></div>}

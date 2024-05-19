@@ -15,9 +15,10 @@ import {
   faHeart,
   faComment,
   faFlag,
-  faEllipsisV,
   faMapMarkerAlt,
 } from '@fortawesome/free-solid-svg-icons';
+import { useTranslation } from 'react-i18next';
+
 import { faBookmark as farBookmark } from '@fortawesome/free-regular-svg-icons'; // Importing the regular (outline) bookmark icon
 
 import Swal from 'sweetalert2';
@@ -28,6 +29,7 @@ import LocationModal from '../postShare/LocationModal';
 const Post = (props) => {
   const { data, onPostDeleted, onPostUpdated, isModalView, openModalForPost } =
     props;
+  const { t } = useTranslation();
 
   const token = JSON.parse(localStorage.getItem('login'))?.token;
   const [liked, setLiked] = useState(data.isLikedByCurrentUser);
@@ -178,13 +180,13 @@ const Post = (props) => {
   const handleDeletePost = () => {
     // Demande de confirmation à l'utilisateur
     Swal.fire({
-      title: 'Êtes-vous sûr?',
-      text: 'Vous ne pourrez pas revenir en arrière!',
+      title: t('Êtes-vous sûr?'),
+      text: t('Vous ne pourrez pas revenir en arrière!'),
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Oui, supprimez-le!',
+      confirmButtonText: t('Oui, supprimez-le!'),
     }).then((result) => {
       if (result.isConfirmed) {
         // L'utilisateur a confirmé la suppression, appelez deletePost
@@ -201,13 +203,13 @@ const Post = (props) => {
       await axios.delete(`http://localhost:5000/posts/${data.id_post}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      Swal.fire('Supprimé!', 'Votre post a été supprimé.', 'success');
+      Swal.fire(t('Supprimé!'), t('Votre post a été supprimé.'), 'success');
       props.onPostDeleted(data.id_post);
     } catch (error) {
       console.error('Error deleting the post:', error);
       Swal.fire(
-        'Erreur!',
-        'Une erreur est survenue lors de la suppression du post.',
+        t('Erreur!'),
+        t('Une erreur est survenue lors de la suppression du post.'),
         'error'
       );
     }
@@ -241,14 +243,14 @@ const Post = (props) => {
   const handleDeleteComment = async (commentId) => {
     // Afficher la boîte de dialogue de confirmation SweetAlert
     Swal.fire({
-      title: 'Êtes-vous sûr?',
-      text: 'Vous ne pourrez pas revenir en arrière!',
+      title: t('Êtes-vous sûr?'),
+      text: t('Vous ne pourrez pas revenir en arrière!'),
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Oui, supprimez-le!',
-      cancelButtonText: 'Annuler',
+      confirmButtonText: t('Oui, supprimez-le!'),
+      cancelButtonText: t('Annuler'),
     }).then((result) => {
       if (result.isConfirmed) {
         // L'utilisateur a confirmé la suppression
@@ -264,7 +266,7 @@ const Post = (props) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       // Notifier l'utilisateur de la suppression réussie
-      Swal.fire('Supprimé!', 'Votre commentaire a été supprimé.', 'success');
+      Swal.fire(t('Supprimé!'), t('Votre commentaire a été supprimé.'), 'success');
       // Optionnellement rafraîchir la liste des commentaires ou retirer le commentaire supprimé de l'état
       // Par exemple, vous pouvez filtrer le commentaire supprimé de la manière suivante :
       setComments((prevComments) =>
@@ -273,8 +275,8 @@ const Post = (props) => {
     } catch (error) {
       console.error('Erreur lors de la suppression du commentaire :', error);
       Swal.fire(
-        'Erreur!',
-        "Une erreur s'est produite lors de la suppression du commentaire.",
+       t('Erreur!'),
+        t("Une erreur s'est produite lors de la suppression du commentaire."),
         'error'
       );
     }
@@ -351,8 +353,8 @@ const Post = (props) => {
         );
         setIsPostSaved(false);
         Swal.fire(
-          'Supprimée !',
-          'La publication a été supprimée des publications enregistrées.',
+          t('Supprimée !'),
+          t('La publication a été supprimée des publications enregistrées.'),
           'success'
         );
       } else {
@@ -364,8 +366,8 @@ const Post = (props) => {
         );
         setIsPostSaved(true);
         Swal.fire(
-          'Enregistrée !',
-          'La publication a été enregistrée.',
+          t('Enregistrée !'),
+          t('La publication a été enregistrée.'),
           'success'
         );
       }
@@ -375,8 +377,8 @@ const Post = (props) => {
         error
       );
       Swal.fire(
-        'Erreur !',
-        "Il y a eu un problème lors de l'enregistrement ou de la désenregistrement de la publication.",
+        t('Erreur !'),
+       t( "Il y a eu un problème lors de l'enregistrement ou de la désenregistrement de la publication."),
         'error'
       );
     }
@@ -521,14 +523,14 @@ const Post = (props) => {
 
   const handleDeleteResponse = async (responseId) => {
     Swal.fire({
-      title: 'Êtes-vous sûr?',
-      text: 'Vous ne pourrez pas revenir en arrière!',
+      title: t('Êtes-vous sûr?'),
+      text: t('Vous ne pourrez pas revenir en arrière!'),
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Oui, supprimez-le!',
-      cancelButtonText: 'Annuler',
+      confirmButtonText: t('Oui, supprimez-le!'),
+      cancelButtonText: t('Annuler'),
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -547,12 +549,12 @@ const Post = (props) => {
             }))
           );
 
-          Swal.fire('Supprimé!', 'Votre réponse a été supprimée.', 'success');
+          Swal.fire(t('Supprimé!'), t('Votre réponse a été supprimée.'), 'success');
         } catch (error) {
           console.error('Error deleting the response:', error);
           Swal.fire(
-            'Échec!',
-            'Un problème est survenu lors de la suppression de votre réponse.',
+            t('Échec!'),
+            t('Un problème est survenu lors de la suppression de votre réponse.'),
             'error'
           );
         }
@@ -597,24 +599,24 @@ const Post = (props) => {
 
  const handleReportPost = async () => {
    const { value: cause } = await Swal.fire({
-     title: 'Raison du signalement',
+     title: t('Raison du signalement'),
      input: 'radio',
      inputOptions: {
-       'Contenu inapproprié': 'Contenu inapproprié',
-       'Spam ou publicité': 'Spam ou publicité',
-       'Harcèlement ou intimidation': 'Harcèlement ou intimidation',
-       'Contenu erroné': 'Contenu erroné',
-       "Droits d'auteur": "Droits d'auteur",
-       'Incitation à la haine': 'Incitation à la haine',
-       'Contenu sensible': 'Contenu sensible',
-       Autre: 'Autre',
+       'Contenu inapproprié': t('Contenu inapproprié'),
+       'Spam ou publicité': t('Spam ou publicité'),
+       'Harcèlement ou intimidation': t('Harcèlement ou intimidation'),
+       'Contenu erroné': t('Contenu erroné'),
+       "Droits d'auteur": t("Droits d'auteur"),
+       'Incitation à la haine': t('Incitation à la haine'),
+       'Contenu sensible': t('Contenu sensible'),
+       Autre: t('Autre'),
      },
      inputValidator: (value) => {
-       return !value ? 'Vous devez choisir une raison!' : undefined;
+       return !value ? t('Vous devez choisir une raison!') : undefined;
      },
-     confirmButtonText: 'Signaler',
+     confirmButtonText: t('Signaler'),
      showCancelButton: true,
-     cancelButtonText: 'Annuler',
+     cancelButtonText: t('Annuler'),
      didOpen: () => {
        // Appliquer le style directement après l'ouverture de la boîte de dialogue
        const radios = document.querySelector('.swal2-radio');
@@ -641,35 +643,35 @@ const Post = (props) => {
          }
        );
 
-       Swal.fire('Signalé!', 'Le post a été signalé avec succès.', 'success');
+       Swal.fire(t('Signalé!'), t('Le post a été signalé avec succès.'), 'success');
      } catch (error) {
        console.error('Error reporting the post:', error);
-       Swal.fire('Échec!', 'Problème lors du signalement du post.', 'error');
+       Swal.fire(t('Échec!'), t('Problème lors du signalement du post.'), 'error');
      }
    }
  };
 
 const handleReportComment = async (commentId) => {
   const { value: cause } = await Swal.fire({
-    title: 'Raison du signalement',
+    title: t('Raison du signalement'),
     input: 'radio',
     inputOptions: {
-      'Contenu inapproprié': 'Contenu inapproprié',
-      'Spam ou publicité': 'Spam ou publicité',
-      'Harcèlement ou intimidation': 'Harcèlement ou intimidation',
-      'Contenu erroné': 'Contenu erroné',
-      "Droits d'auteur": "Droits d'auteur",
-      'Incitation à la haine': 'Incitation à la haine',
-      'Contenu sensible': 'Contenu sensible',
-      Autre: 'Autre',
+      'Contenu inapproprié': t('Contenu inapproprié'),
+      'Spam ou publicité': t('Spam ou publicité'),
+      'Harcèlement ou intimidation': t('Harcèlement ou intimidation'),
+      'Contenu erroné': t('Contenu erroné'),
+      "Droits d'auteur": t("Droits d'auteur"),
+      'Incitation à la haine': t('Incitation à la haine'),
+      'Contenu sensible': t('Contenu sensible'),
+      Autre: t('Autre'),
     },
     inputValidator: (value) => {
       return !value ? 'Vous devez choisir une raison!' : undefined;
     },
-    confirmButtonText: 'Signaler',
+    confirmButtonText: t('Signaler'),
     confirmButtonColor: '#3085d6',
     showCancelButton: true,
-    cancelButtonText: 'Annuler',
+    cancelButtonText: t('Annuler'),
     cancelButtonColor: '#aaa',
     didOpen: () => {
       const radios = document.querySelector('.swal2-radio');
@@ -697,15 +699,15 @@ const handleReportComment = async (commentId) => {
       );
 
       Swal.fire(
-        'Signalé!',
-        'Le commentaire a été signalé avec succès.',
+        t('Signalé!'),
+        t('Le commentaire a été signalé avec succès.'),
         'success'
       );
     } catch (error) {
       console.error('Error reporting the comment:', error);
       Swal.fire(
-        'Échec!',
-        'Problème lors du signalement du commentaire.',
+        t('Échec!'),
+        t('Problème lors du signalement du commentaire.'),
         'error'
       );
     }
@@ -714,25 +716,25 @@ const handleReportComment = async (commentId) => {
 
 const handleReportResponse = async (commentId, responseId) => {
   const { value: cause } = await Swal.fire({
-    title: 'Raison du signalement',
+    title: t('Raison du signalement'),
     input: 'radio',
     inputOptions: {
-      'Contenu inapproprié': 'Contenu inapproprié',
-      'Spam ou publicité': 'Spam ou publicité',
-      'Harcèlement ou intimidation': 'Harcèlement ou intimidation',
-      'Contenu erroné': 'Contenu erroné',
-      "Droits d'auteur": "Droits d'auteur",
-      'Incitation à la haine': 'Incitation à la haine',
-      'Contenu sensible': 'Contenu sensible',
-      'Autre': 'Autre',
+      'Contenu inapproprié': t('Contenu inapproprié'),
+      'Spam ou publicité': t('Spam ou publicité'),
+      'Harcèlement ou intimidation': t('Harcèlement ou intimidation'),
+      'Contenu erroné': t('Contenu erroné'),
+      "Droits d'auteur": t("Droits d'auteur"),
+      'Incitation à la haine': t('Incitation à la haine'),
+      'Contenu sensible': t('Contenu sensible'),
+      'Autre': t('Autre'),
     },
     inputValidator: (value) => {
-      return !value ? 'Vous devez choisir une raison!' : undefined;
+      return !value ? t('Vous devez choisir une raison!') : undefined;
     },
-    confirmButtonText: 'Signaler',
+    confirmButtonText: t('Signaler'),
     confirmButtonColor: '#3085d6',
     showCancelButton: true,
-    cancelButtonText: 'Annuler',
+    cancelButtonText: t('Annuler'),
     cancelButtonColor: '#aaa',
     didOpen: () => {
       const radios = document.querySelector('.swal2-radio');
@@ -755,10 +757,10 @@ const handleReportResponse = async (commentId, responseId) => {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      Swal.fire('Signalé!', 'La réponse a été signalée avec succès.', 'success');
+      Swal.fire(t('Signalé!'), t('La réponse a été signalée avec succès.'), 'success');
     } catch (error) {
       console.error('Error reporting the response:', error);
-      Swal.fire('Échec!', 'Problème lors du signalement de la réponse.', 'error');
+      Swal.fire(t('Échec!'), t('Problème lors du signalement de la réponse.'), 'error');
     }
   }
 };
@@ -855,17 +857,12 @@ const handleReportResponse = async (commentId, responseId) => {
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
             />
-            <input
-              type="text"
-              className="editLocationInput"
-              value={editLieu}
-              readOnly // make this input readonly if you do not want direct text entry
-            />
+           
             <button
               onClick={() => setShowLocationModal(true)}
               className="editLocationButton"
             >
-              Modifier le lieu
+              {t('Modifier le lieu')}
             </button>
           </>
         )}
@@ -886,7 +883,7 @@ const handleReportResponse = async (commentId, responseId) => {
                   {data.lesCollab.map((mention, index) => (
                     <div key={index} className="postOffer">
                       <hr></hr>
-                      <strong>Collaborateur</strong>{' '}
+                      <strong>{t('Collaborateur')}</strong>{' '}
                       <NavLink
                         to={`/collabPage/${mention.offre.collaborateur.id_collaborateur}`}
                       >
@@ -895,7 +892,7 @@ const handleReportResponse = async (commentId, responseId) => {
                       {mention.offre && (
                         <>
                           <p></p>
-                          <strong>Offre </strong>
+                          <strong>{t('Offre')} </strong>
                           <NavLink
                             to={`/OffrePageDetails/${mention.offre.id_offre}`}
                           >
@@ -959,11 +956,11 @@ const handleReportResponse = async (commentId, responseId) => {
           className="reactionIcon"
           onClick={handleShare}
         />
-        {showToast && <div className="toastShow show">Lien copié !</div>}{' '}
+        {showToast && <div className="toastShow show">{t('Lien copié !')}</div>}{' '}
       </div>
       <div className="likesCount">
-        <span onClick={showLikesModal} title="Voir qui a aimé ce post">
-          {likes} J'aime
+        <span onClick={showLikesModal} title={t("Voir qui a aimé ce post")}>
+          {likes} {t("J'aime")}
         </span>
       </div>
 
@@ -1044,7 +1041,7 @@ const handleReportResponse = async (commentId, responseId) => {
                       fetchLikesAndOpenModal(comment.id_cmntr, 'comment')
                     }
                   >
-                    {''} {comment.nbr_likeCom} J'aime
+                    {''} {comment.nbr_likeCom} {t("J'aime")}
                   </span>
                   <button
                     onClick={() => toggleReplyInput(comment.id_cmntr)}
@@ -1101,12 +1098,12 @@ const handleReportResponse = async (commentId, responseId) => {
                     type="text"
                     value={responseContent}
                     onChange={(e) => setResponseContent(e.target.value)}
-                    placeholder="Write a response..."
+                    placeholder={t('Ecrire une réponse...')}
                     className="responseInput"
                     required
                   />
                   <button type="submit" className="responseSubmitButton">
-                    Reply
+                   { t('Repondre')}
                   </button>
                 </form>
               )}
@@ -1130,7 +1127,7 @@ const handleReportResponse = async (commentId, responseId) => {
                       type="text"
                       value={responseContent}
                       onChange={(e) => setResponseContent(e.target.value)}
-                      placeholder="Écrire une réponse..."
+                      placeholder={t("Écrire une réponse...")}
                       className="commentContent"
                       style={{
                         width: '50%',
@@ -1146,7 +1143,7 @@ const handleReportResponse = async (commentId, responseId) => {
                         width: '20%',
                       }}
                     >
-                      Répondre
+                     { t('Répondre')}
                     </button>
                   </div>
                 </form>
@@ -1159,8 +1156,8 @@ const handleReportResponse = async (commentId, responseId) => {
                     className="showRepliesButton"
                   >
                     {visibleReplies[comment.id_cmntr]
-                      ? 'Masquer les réponses'
-                      : `Afficher les réponses (${comment.reponses.length})`}
+                      ? t('Masquer les réponses')
+                      : t('Afficher les réponses')+` (${comment.reponses.length})`}
                   </button>
                 </div>
               )}
@@ -1236,7 +1233,7 @@ const handleReportResponse = async (commentId, responseId) => {
                             )
                           }
                         >
-                          {''} {reponse.nbr_likeRep} J'aime
+                          {''} {reponse.nbr_likeRep}{ t("J'aime")}
                         </span>
                         {reponse.utilisateur.id_utilisateur.toString() !=
                           userId.toString() && (
@@ -1296,7 +1293,7 @@ const handleReportResponse = async (commentId, responseId) => {
           onClick={() => openModalForPost(data.id_post)}
           className="showAllCommentsText"
         >
-          Voir tous les commentaires{' '}
+          {t('Voir tous les commentaires')}{' '}
         </span>
       )}
     </div>

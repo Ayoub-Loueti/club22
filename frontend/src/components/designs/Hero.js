@@ -2,7 +2,7 @@ import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import homeImage from '../../assets/hero.png';
 import axios from 'axios';
-
+import { useTranslation } from 'react-i18next';
 import { Range } from 'react-range';
 
 
@@ -13,6 +13,7 @@ const [minPrice, setMinPrice] = useState(0);
 const [maxPrice, setMaxPrice] = useState(1000);
 const [prices, setPrices] = useState([minPrice, maxPrice]);
   const token = localStorage.getItem('login');
+  const { t } = useTranslation();
 
   const normalizeImagePath = (path) => {
     return path.replace(/\\/g, '/');
@@ -99,19 +100,17 @@ const [prices, setPrices] = useState([minPrice, maxPrice]);
       </div>
       <div className="content">
         <div className="title">
-          <h1>VOYAGEZ POUR DÉCOUVRIR</h1>
+          <h1>{t('VOYAGEZ POUR DÉCOUVRIR')}</h1>
           <p>
-            Partez à la découverte de destinations uniques et vivez des
-            expériences inoubliables. Explorez des cultures fascinantes et créez
-            des souvenirs mémorables.
+            {t('Partez à la découverte de destinations uniques et vivez des expériences inoubliables. Explorez des cultures fascinantes et créez des souvenirs mémorables.')}
           </p>
         </div>
         <div className="search">
           <div className="container">
-            <label htmlFor="">Où voulez-vous aller</label>
+            <label htmlFor="">{t('Où voulez-vous aller')}</label>
             <input
               type="text"
-              placeholder="Votre destination"
+              placeholder={t('Votre destination')}
               onChange={handleDestinationChange}
               style={{
                 padding: '0.5rem',
@@ -177,12 +176,12 @@ const [prices, setPrices] = useState([minPrice, maxPrice]);
                 color: '#000000',
               }}
             >
-              <option value="all">Toutes</option>
-              <option value="promo">Offres promotionnelles</option>
-              <option value="nonpromo">Offres non promotionnelles</option>
+              <option value="all">{t('Toutes')}</option>
+              <option value="promo">{t('Offres promotionnelles')}</option>
+              <option value="nonpromo">{t('Offres non promotionnelles')}</option>
             </select>
           </div>
-          <button onClick={handleSearch}>Découvrez</button>
+          <button onClick={handleSearch}>{t('Découvrez')}</button>
         </div>
       </div>
     </Section>

@@ -5,6 +5,11 @@ import PostShare from '../postShare/postShare'; // Adjust the import path as nee
 import { useParams } from 'react-router-dom';
 import './postProfil.css';
 import PostModal from '../postModal/postModal';
+import { useTranslation } from 'react-i18next';
+import soc1 from "../../assets/soc1.png";
+import soc2 from '../../assets/soc2.png';
+import soc3 from '../../assets/soc3.gif';
+
 
 const PostProfile = () => {
   const [posts, setPosts] = useState([]);
@@ -13,6 +18,7 @@ const PostProfile = () => {
   const loggedInUserId = JSON.parse(localStorage.getItem('userId'));
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchUserPosts = async () => {
@@ -49,10 +55,16 @@ const PostProfile = () => {
       )}
       <div className="PostsContainer">
         {posts.length > 0 ? (
-          <Posts posts={posts} className="PostsProfile" openModalForPost={openModalForPost} />
+          <Posts
+            posts={posts}
+            className="PostsProfile"
+            openModalForPost={openModalForPost}
+          />
         ) : (
           <p className="no-posts-message">
-            Cet utilisateur n'a aucune publication.
+            <img src={soc3} alt="SOC" className="soc1" />
+
+            {t("Cet utilisateur n'a aucune publication.")}
           </p>
         )}
       </div>

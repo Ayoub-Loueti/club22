@@ -3,12 +3,15 @@ import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { useTranslation } from 'react-i18next';
 
 const LocationModal = ({ isOpen, onClose, onLieuSubmit, lieu, setLieu }) => {
   const provider = new OpenStreetMapProvider();
   const [map, setMap] = useState(null);
   const [position, setPosition] = useState([48.8566, 2.3522]); // Coordonnées initiales (Paris)
   const [suggestions, setSuggestions] = useState([]);
+    const { t } = useTranslation();
+
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -56,7 +59,7 @@ L.Icon.Default.mergeOptions({
         <button style={styles.closeButton} onClick={onClose}>
           &times;
         </button>
-        <h2>Entrez le lieu</h2>
+        <h2>{t('Entrez le lieu')}</h2>
         <input
           type="text"
           value={lieu}

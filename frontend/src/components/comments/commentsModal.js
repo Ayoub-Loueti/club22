@@ -1,7 +1,10 @@
 import React from 'react';
 import Modal from 'react-modal';
+import { useTranslation } from 'react-i18next';
 
 const CommentsModal = ({ isOpen, onRequestClose, post }) => {
+    const { t } = useTranslation();
+
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
       <h2>All Comments</h2>
@@ -20,7 +23,7 @@ const CommentsModal = ({ isOpen, onRequestClose, post }) => {
           </div>
         ))
       ) : (
-        <p>No comments to display.</p> // Providing a fallback UI
+        <p>{t('Pas de commentaires à afficher.')}</p> // Providing a fallback UI
       )}
     </Modal>
   );

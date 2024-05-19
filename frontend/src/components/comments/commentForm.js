@@ -3,10 +3,12 @@ import axios from 'axios';
 import { Card } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { useTranslation } from 'react-i18next';
 
 const CommentForm = ({ postId, onCommentSubmitted }) => {
   const [commentText, setCommentText] = useState('');
   const [showError, setShowError] = useState(false);
+  const { t } = useTranslation();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -51,13 +53,13 @@ const CommentForm = ({ postId, onCommentSubmitted }) => {
         <input
           value={commentText}
           onChange={handleInputChange}
-          placeholder="Ecrire un commentaire..."
+          placeholder={t('Ecrire un commentaire...')}
           className="commentContent"
           style={{ width: '60%', minHeight: '30px', marginRight: '10px' }}
         />
         <button type="submit" className="postShare-button">
-          Commenter
-        </button>
+{          t('Commenter')
+}        </button>
       </div>
       {showError && (
         <div style={{ marginTop: '5px' }}>
@@ -73,8 +75,7 @@ const CommentForm = ({ postId, onCommentSubmitted }) => {
               icon={faExclamationTriangle}
               style={{ marginRight: '5px' }}
             />
-            Veuillez saisir un commentaire avant de soumettre.
-          </Card>
+{t('Veuillez saisir un commentaire avant de soumettre.')   }       </Card>
         </div>
       )}
     </form>

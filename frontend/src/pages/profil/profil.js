@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import {FaBookmark } from 'react-icons/fa';
+import { FaBookmark } from 'react-icons/fa';
 import Navbar from '../../components/navbar/navbar';
 import NavbarHaut from '../../components/navbar/navbarHaut';
 import './profil.css';
-
+import { useTranslation } from 'react-i18next';
 import PostProfile from '../../components/postProfil/postProfil';
 import PostSavedModal from '../../components/PostSavedModal/PostSavedModal'; // Adjust the import path as needed
 import ScrollToTop from '../../components/designs/ScrollToTop';
@@ -21,6 +21,8 @@ function Profil() {
   const isOwnProfile = userId?.toString() === id; // Safely check for equality
   const [modalOpened, setModalOpened] = useState(false); // State to control the modal
   const [utilisateur, setUtilisateur] = useState({});
+  const { t } = useTranslation();
+
   const [editing, setEditing] = useState({
     nom: false,
     prenom: false,
@@ -35,10 +37,8 @@ function Profil() {
   });
 
   const fileInputRef = useRef(null);
-const [showDropdown, setShowDropdown] = useState(false);
-const dropdownRef = useRef(null);
-
-
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -66,7 +66,7 @@ const dropdownRef = useRef(null);
           );
           Swal.fire(
             'Erreur',
-            'Impossible de récupérer les données de l’utilisateur.',
+            t('Impossible de récupérer les données de l’utilisateur.'),
             'error'
           );
         }
@@ -142,14 +142,14 @@ const dropdownRef = useRef(null);
   const handleDeleteProfilePicture = async () => {
     // Show confirmation dialog
     Swal.fire({
-      title: 'Êtes-vous sûr(e) ?',
-      text: 'Vous ne pourrez pas revenir en arrière !',
+      title: t('Êtes-vous sûr(e) ?'),
+      text: t('Vous ne pourrez pas revenir en arrière !'),
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Oui, supprimer !',
-      cancelButtonText: 'Annuler',
+      confirmButtonText: t('Oui, supprimer !'),
+      cancelButtonText: t('Annuler'),
     }).then((result) => {
       if (result.isConfirmed) {
         // User confirmed the deletion
@@ -169,8 +169,8 @@ const dropdownRef = useRef(null);
       if (response.status === 200) {
         // Afficher un message de succès avant de recharger la page
         Swal.fire({
-          title: 'Supprimée !',
-          text: 'Votre photo de profil a été supprimée.',
+          title: t('Supprimée !'),
+          text: t('Votre photo de profil a été supprimée.'),
           icon: 'success',
           confirmButtonText: 'OK',
         }).then((result) => {
@@ -186,32 +186,34 @@ const dropdownRef = useRef(null);
       );
       // Afficher un message d'erreur
       Swal.fire(
-        'Erreur !',
-        "Votre photo de profil n'a pas pu être supprimée. Veuillez réessayer plus tard.",
+        t('Erreur !'),
+        t(
+          "Votre photo de profil n'a pas pu être supprimée. Veuillez réessayer plus tard."
+        ),
         'error'
       );
     }
   };
-const toggleDropdown = () => {
-  setShowDropdown(!showDropdown);
-};
-function useOutsideClick(ref, callback) {
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (ref.current && !ref.current.contains(event.target)) {
-        callback();
+  const toggleDropdown = () => {
+    setShowDropdown(!showDropdown);
+  };
+  function useOutsideClick(ref, callback) {
+    useEffect(() => {
+      function handleClickOutside(event) {
+        if (ref.current && !ref.current.contains(event.target)) {
+          callback();
+        }
       }
-    }
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [ref, callback]);
-}
-useOutsideClick(dropdownRef, () => {
-  if (showDropdown) setShowDropdown(false);
-});
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [ref, callback]);
+  }
+  useOutsideClick(dropdownRef, () => {
+    if (showDropdown) setShowDropdown(false);
+  });
 
   return (
     <>
@@ -248,10 +250,10 @@ useOutsideClick(dropdownRef, () => {
                   <div className="dropdown-menu" ref={dropdownRef}>
                     <div onClick={() => fileInputRef.current.click()}>
                       {' '}
-                      📸 Changer photo
+                      📸 {t('Changer photo')}
                     </div>
                     <div onClick={handleDeleteProfilePicture}>
-                      🗑️ Supprimer photo
+                      🗑️ {t('Supprimer photo')}
                     </div>
                   </div>
                 )}
@@ -281,7 +283,7 @@ useOutsideClick(dropdownRef, () => {
               onClick={() => setModalOpened(true)}
             >
               <FaBookmark className="saved-posts-icon" />
-              <span>ENREGISTREMENTS</span>
+              <span>{t('ENREGISTREMENTS')}</span>
             </button>
           </div>
         )}
@@ -298,7 +300,8 @@ useOutsideClick(dropdownRef, () => {
           ) : (
             <p onClick={() => isOwnProfile && toggleEdit('description')}>
               {utilisateur.description ||
-                'Profil en cours de personnalisation!'}
+                t('Profil en cours de personnalisation!')
+                }
             </p>
           )}
           {isOwnProfile && (
@@ -317,7 +320,7 @@ useOutsideClick(dropdownRef, () => {
           </div>
           <div className="capital">
             <div className="info-item">
-              <span className="info-label">Nom:</span>
+              <span className="info-label">{t('Nom')}:</span>
               {editing.nom ? (
                 <input
                   type="text"
@@ -337,7 +340,7 @@ useOutsideClick(dropdownRef, () => {
               )}
             </div>
             <div className="info-item">
-              <span className="info-label">Prénom:</span>
+              <span className="info-label">{t('Prénom')}:</span>
               {editing.prenom ? (
                 <input
                   type="text"
@@ -360,7 +363,7 @@ useOutsideClick(dropdownRef, () => {
               )}
             </div>
             <div className="info-item">
-              <span className="info-label">Genre:</span>
+              <span className="info-label">{t('Genre')}:</span>
               {editing.genre ? (
                 <select
                   name="genre"
@@ -369,8 +372,8 @@ useOutsideClick(dropdownRef, () => {
                   onBlur={() => handleUpdate('genre')}
                   className="edit-input"
                 >
-                  <option value="homme">Homme</option>
-                  <option value="femme">Femme</option>
+                  <option value="homme">{t('Homme')}</option>
+                  <option value="femme">{t('Femme')}</option>
                 </select>
               ) : (
                 <span className="info-value">{utilisateur.genre}</span>
@@ -382,7 +385,7 @@ useOutsideClick(dropdownRef, () => {
               )}
             </div>
             <div className="info-item">
-              <span className="info-label">Téléphone:</span>
+              <span className="info-label">{t('Téléphone')}:</span>
               {editing.tel ? (
                 <input
                   type="text"
@@ -402,7 +405,7 @@ useOutsideClick(dropdownRef, () => {
               )}
             </div>
             <div className="info-item">
-              <span className="info-label">Rôle:</span>
+              <span className="info-label">{t('Rôle')}:</span>
               <span className="info-value">{utilisateur.type}</span>
             </div>
           </div>

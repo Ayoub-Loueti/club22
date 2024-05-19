@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate, Link, useLocation  } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import nonotif from '../../assets/nonotif.png';
 import {
   faBell,
   faSearch,
@@ -40,7 +41,7 @@ function NavbarHaut() {
     const languageRef = useRef();
 
   const notificationsRef = useRef();
-  
+
   const [searchInput, setSearchInput] = useState('');
   const [searchResults, setSearchResults] = useState({
     users: [],
@@ -202,7 +203,7 @@ function NavbarHaut() {
                 <div className="notification-text">
                   <strong>
                     {notification.utilisateur.prenom}{' '}
-                    {notification.utilisateur.nom}
+                    {notification.utilisateur.nom}{' '}
                   </strong>
                   <span>{notification.notifier}</span>
                 </div>
@@ -220,7 +221,18 @@ function NavbarHaut() {
           </div>
         ))
       ) : (
-        <div className="notification-item">Pas de notifications</div>
+        <div className="notification-no">
+          <img src={nonotif} alt="NoNotif" className="nonotif" />
+          <strong className="textNotif1">
+            {t('Aucune notification trouvée')}
+          </strong>
+          <p className="textNotif2">
+            {' '}
+            {t(
+              'Vous n avez actuellement aucune notification. Nous vous informerons quand quelque chose de nouveau arrivera!'
+            )}
+          </p>
+        </div>
       )}
     </div>
   );
@@ -357,15 +369,15 @@ useEffect(() => {
           <div className="user-actions">
             <Link to={`/Home`} className="dropdown-item">
               <FontAwesomeIcon icon={faHome} className="acceuil-icon" />
-              <strong> Acceuil</strong>
+              <strong> {t('Acceuil')}</strong>
             </Link>
             <Link to={`/profil/${userId}`} className="dropdown-item">
               <FontAwesomeIcon icon={faUser} className="profil-icon" />
-              <strong> Profil</strong>
+              <strong> {t('Profil')}</strong>
             </Link>
             <button onClick={handleLogout} className="logout-button">
               <FontAwesomeIcon icon={faSignOutAlt} className="logout-icon" />
-              <strong>Déconnexion</strong>
+              <strong>{t('Déconnexion')}</strong>
             </button>
           </div>
         </>
@@ -461,7 +473,7 @@ useEffect(() => {
         <input
           type="text"
           name="search"
-          placeholder="Recherche..."
+          placeholder={t('Recherche...')}
           id="search-input-navbar"
           className="searchh-inputt"
           value={searchInput}
@@ -477,7 +489,7 @@ useEffect(() => {
         <div className="search-results">
           {searchResults.users.length > 0 && (
             <>
-              <div className="search-results-title">Utilisateurs :</div>
+              <div className="search-results-title">{t('Utilisateurs')} :</div>
               {searchResults.users.map((user) => (
                 <Link
                   to={`/profil/${user.id_utilisateur}`}
@@ -506,7 +518,7 @@ useEffect(() => {
             userInfo.type === 'employe' &&
             searchResults.offers.length > 0 && (
               <>
-                <div className="search-results-title">Offres :</div>
+                <div className="search-results-title">{t('Offres')} :</div>
                 {searchResults.offers.map((offer) => (
                   <div
                     key={offer.id_offre}
@@ -529,7 +541,7 @@ useEffect(() => {
             userInfo.type === 'employe' &&
             searchResults.collaborators.length > 0 && (
               <>
-                <div className="search-results-title">collaborateurs :</div>
+                <div className="search-results-title">{t('collaborateurs')} :</div>
                 {searchResults.collaborators.map((collab) => (
                   <div
                     key={collab.id_collaborateur}
@@ -556,7 +568,7 @@ useEffect(() => {
       ) : (
         searchInput && (
           <div className="search-results search-no-results-message">
-            Aucun résultat trouvé pour votre recherche.{' '}
+           {t ('Aucun résultat trouvé pour votre recherche.')}{' '}
           </div>
         )
       )}
@@ -569,7 +581,7 @@ useEffect(() => {
         />
       )}
       {userPoints !== null && userInfo && userInfo.type === 'client' && (
-        <span className="points">{userPoints} points</span>
+        <span className="points">{userPoints} Points</span>
       )}
       <div className="icon-containerr">
         <div className="language-selector" ref={languageRef}>

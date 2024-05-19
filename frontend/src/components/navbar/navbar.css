@@ -312,7 +312,7 @@ body {
   position: absolute;
   right: 0;
   margin-right: 15px;
-  top: 45px;
+  top: 48px;
   background-color: #ffffff;
   width: 400px; /* Adjust based on your content width */
   max-height: 450px; /* Set your desired maximum height here */
@@ -347,6 +347,7 @@ body {
   padding: 12px;
   border-bottom: 1px solid #f0f0f0;
   transition: background-color 0.2s;
+
 }
 
 .notification-item:hover {
@@ -510,4 +511,38 @@ body {
 .globe-icon {
   width: 31px;
   margin-bottom: 20%;
+}
+.nonotif{
+   width: 70%;
+  height: 70%;
+  justify-content: center;
+  align-items: center;
+    flex-direction: row;
+
+
+}
+.textNotif1{
+  font-size: 12px;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+.textNotif2{
+     font-size: 12px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center; /* Centre le texte horizontalement */
+  flex-wrap: wrap;
+}
+.notification-no {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+      flex-direction: column;
+
+
 }

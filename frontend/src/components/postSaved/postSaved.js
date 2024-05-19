@@ -3,6 +3,7 @@ import axios from 'axios';
 import Posts from '../posts/posts'; // Adjust the import path as needed
 import './postSaved.css'; // Make sure you have this CSS file for styling
 import PostModal from '../postModal/postModal';
+import { useTranslation } from 'react-i18next';
 
 const PostSaved = () => {
   const [savedPosts, setSavedPosts] = useState([]);
@@ -10,6 +11,7 @@ const PostSaved = () => {
   const userId = JSON.parse(localStorage.getItem('userId'));
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchSavedPosts = async () => {
@@ -41,7 +43,7 @@ const PostSaved = () => {
         <Posts posts={savedPosts} openModalForPost={openModalForPost} />
       ) : (
         <p className="no-posts-msg">
-          Vous n'avez enregistré aucune publication.
+         { t('Vous n avez enregistré aucune publication.')}
         </p>
       )}
       <PostModal
