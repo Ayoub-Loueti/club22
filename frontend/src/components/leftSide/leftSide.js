@@ -5,9 +5,11 @@ import './leftSide.css';
 import oorepub2 from "../../assets/oorepub2.jpg";
 import oorepub3 from "../../assets/oorepub3.jpg";
 import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 const UserCard = ({ user, title }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleClick = () => {
     navigate(`/profil/${user.id_utilisateur}`);
@@ -32,7 +34,6 @@ const LeftSide = () => {
   const [bestPostData, setBestPostData] = useState(null);
   const [bestCmntrData, setBestCmntrData] = useState(null);
   const token = JSON.parse(localStorage.getItem('login'))?.token;
-  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchBestPosteur = async () => {
