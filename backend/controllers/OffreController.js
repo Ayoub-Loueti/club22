@@ -7,6 +7,7 @@ const ActiviteModel = require('../models/ActiviteModel');
 const VoyageModel = require('../models/VoyageModel');
 const GrandHotelModel = require('../models/GrandHotelModel');
 const Evaluation = require('../models/EvaluationModel');
+const TypeChambreModel = require('../models/TypeChambreModel');
 
 
 exports.getOfferImages = async (req, res) => {
@@ -102,7 +103,7 @@ exports.createOffre = async (req, res) => {
       tennis_de_table,
       location_de_voiture,
       change_monetaire,
-
+      typechambres,
       
     } = req.body;
 
@@ -166,7 +167,18 @@ exports.createOffre = async (req, res) => {
           change_monetaire,
         });
 
-
+  if (typechambres && Array.isArray(typechambres)) {
+    await Promise.all(
+      typechambres.map((typechambre) => {
+        return TypeChambreModel.create({
+          id_grandhotel: ho.id_grandhotel,
+          nom: typechambre.nom,
+          supplement: typechambre.supplement,
+          defaultChambre: typechambre.defaultChambre,
+        });
+      })
+    );
+  }
         break;  }
       case 'voyage':
         await VoyageModel.create({
