@@ -281,6 +281,24 @@ exports.updateOffre = async (req, res) => {
         await GrandHotelModel.update(hotelDetails, {
           where: { id_offre: offreId },
         });
+        if (req.body.typechambres && Array.isArray(req.body.typechambres)) {
+          await Promise.all(
+            req.body.typechambres.map((typechambre) => {
+              if (typechambre.id_TypeChambre) {
+                return TypeChambreModel.update(
+                  {
+                    nom: typechambre.nom,
+                    supplement: typechambre.supplement,
+                    defaultChambre: typechambre.defaultChambre,
+                  },
+                  {
+                    where: { id_TypeChambre: typechambre.id_TypeChambre },
+                  }
+                );
+              } 
+            })
+          );
+        }
         break;
       case 'voyage':
         const voyageDetails = {
@@ -418,9 +436,15 @@ exports.getAllOffres = async (req, res) => {
 
         switch (offre.type) {
           case 'hotel':
-            offreJson.details = await GrandHotelModel.findOne({
+            const grandHotel = await GrandHotelModel.findOne({
               where: { id_offre: offre.id_offre },
             });
+            if (grandHotel) {
+              const typechambres = await TypeChambreModel.findAll({
+                where: { id_grandhotel: grandHotel.id_grandhotel },
+              });
+              offreJson.details = { ...grandHotel.toJSON(), typechambres };
+            }
             break;
           case 'voyage':
             offreJson.details = await VoyageModel.findOne({
@@ -489,9 +513,15 @@ exports.getOffreById = async (req, res) => {
     // Ajout des détails supplémentaires basés sur le type de l'offre
     switch (offre.type) {
       case 'hotel':
-        offreDetail.details = await GrandHotelModel.findOne({
+        const grandHotel = await GrandHotelModel.findOne({
           where: { id_offre: offre.id_offre },
         });
+        if (grandHotel) {
+          const typechambres = await TypeChambreModel.findAll({
+            where: { id_grandhotel: grandHotel.id_grandhotel },
+          });
+          offreDetail.details = { ...grandHotel.toJSON(), typechambres };
+        }
         break;
       case 'voyage':
         offreDetail.details = await VoyageModel.findOne({
@@ -566,9 +596,15 @@ exports.getAllEmployeeOffers = async (req, res) => {
         // Dynamically include details based on the type of offre
         switch (offre.type) {
           case 'hotel':
-            offreJson.details = await GrandHotelModel.findOne({
+            const grandHotel = await GrandHotelModel.findOne({
               where: { id_offre: offre.id_offre },
             });
+            if (grandHotel) {
+              const typechambres = await TypeChambreModel.findAll({
+                where: { id_grandhotel: grandHotel.id_grandhotel },
+              });
+              offreJson.details = { ...grandHotel.toJSON(), typechambres };
+            }
             break;
           case 'voyage':
             offreJson.details = await VoyageModel.findOne({
@@ -629,9 +665,15 @@ exports.getEmployeeOfferById = async (req, res) => {
     // Fetch and include details based on the type of the offer
     switch (offre.type) {
       case 'hotel':
-        offreDetail.details = await GrandHotelModel.findOne({
+        const grandHotel = await GrandHotelModel.findOne({
           where: { id_offre: offre.id_offre },
         });
+        if (grandHotel) {
+          const typechambres = await TypeChambreModel.findAll({
+            where: { id_grandhotel: grandHotel.id_grandhotel },
+          });
+          offreDetail.details = { ...grandHotel.toJSON(), typechambres };
+        }
         break;
       case 'voyage':
         offreDetail.details = await VoyageModel.findOne({
@@ -702,9 +744,15 @@ exports.getAllOffresCollab = async (req, res) => {
         // Fetch details from the specific model based on the offre type
         switch (offre.type) {
           case 'hotel':
-            offreJson.details = await GrandHotelModel.findOne({
+            const grandHotel = await GrandHotelModel.findOne({
               where: { id_offre: offre.id_offre },
             });
+            if (grandHotel) {
+              const typechambres = await TypeChambreModel.findAll({
+                where: { id_grandhotel: grandHotel.id_grandhotel },
+              });
+              offreJson.details = { ...grandHotel.toJSON(), typechambres };
+            }
             break;
           case 'voyage':
             offreJson.details = await VoyageModel.findOne({
