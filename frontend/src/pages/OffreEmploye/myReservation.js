@@ -462,11 +462,16 @@ const downloadReservationPDF = async (reservation) => {
     'center'
   );
   const reservationData = {
-    reservationId: '12345',
-    guestName: 'John Doe',
-    checkInDate: '2022-12-01',
-    checkOutDate: '2022-12-05',
-    // Add more reservation details as needed
+    reservationId: reservation.id_reservation,
+    guestName:
+      reservation.employe.utilisateur.nom +
+      ' ' +
+      reservation.employe.utilisateur.prenom,
+    checkInDate: reservation.date_debut,
+    checkOutDate: reservation.date_fin,
+    totalPrice: reservation.prix_totale,
+    status: reservation.etat,
+    // Ajoutez d'autres détails selon le besoin
   };
   // Generate the QR code image
   const qrData = JSON.stringify(reservationData); // Convert reservation data to a string

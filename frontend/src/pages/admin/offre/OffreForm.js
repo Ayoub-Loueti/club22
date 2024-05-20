@@ -4,6 +4,17 @@ import Swal from 'sweetalert2';
 import './OffreForm.css';
 import { Editor } from '@tinymce/tinymce-react';
 import LocationSearchInput from './map/LocationSearchInput';
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Checkbox,
+  ListItemText,
+  TextField,
+  Button,
+  OutlinedInput,
+} from '@mui/material';
 
 function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
   const [titre, setTitre] = useState('');
@@ -65,7 +76,38 @@ const [prixEnfantsPayants, setPrixEnfantsPayants] = useState(0.0);
 const [conditions_speciales_enfants, setConditions_speciales_enfants] = useState("");
 
 //bch
+const [selectedTypes, setSelectedTypes] = useState([]);
+const [defaultChambre, setDefaultChambre] = useState('');
+const [supplements, setSupplements] = useState({});
 
+ const typesChambresOptions = [
+   { id: 'standard', nom: 'Chambre standard' },
+   { id: 'double', nom: 'Chambre double' },
+   { id: 'familiale', nom: 'Chambre familiale' },
+   { id: 'suite', nom: 'Suite' },
+ ];
+const typeChambresData = selectedTypes.map((typeId) => ({
+  nom: typesChambresOptions.find((type) => type.id === typeId).nom,
+  supplement: supplements[typeId] || 0,
+  defaultChambre: defaultChambre === typeId,
+}));
+ const handleTypeChambreChange = (event) => {
+   const {
+     target: { value },
+   } = event;
+   setSelectedTypes(
+     // On autofill we get a stringified value.
+     typeof value === 'string' ? value.split(',') : value
+   );
+ };
+
+ const handleDefaultChambreChange = (event) => {
+   setDefaultChambre(event.target.value);
+ };
+
+ const handleSupplementChange = (typeId, value) => {
+   setSupplements((prev) => ({ ...prev, [typeId]: value }));
+ };
 
 
   const token = localStorage.getItem('login');
@@ -273,6 +315,64 @@ setChangeMonetaire(data.details.changeMonetaire);
           required
         />
       </label>
+      <FormControl fullWidth>
+        <InputLabel id="demo-multiple-checkbox-label">
+          Type de Chambre
+        </InputLabel>
+        <Select
+          labelId="demo-multiple-checkbox-label"
+          id="demo-multiple-checkbox"
+          multiple
+          value={selectedTypes}
+          onChange={handleTypeChambreChange}
+          input={<OutlinedInput label="Type de Chambre" />}
+          renderValue={(selected) =>
+            selected
+              .map(
+                (id) => typesChambresOptions.find((type) => type.id === id).nom
+              )
+              .join(', ')
+          }
+        >
+          {typesChambresOptions.map((type) => (
+            <MenuItem key={type.id} value={type.id}>
+              <Checkbox checked={selectedTypes.includes(type.id)} />
+              <ListItemText primary={type.nom} />
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      <FormControl fullWidth>
+        <InputLabel id="default-chambre-label">Chambre par Défaut</InputLabel>
+        <Select
+          labelId="default-chambre-label"
+          id="default-chambre-select"
+          value={defaultChambre}
+          label="Chambre par Défaut"
+          onChange={handleDefaultChambreChange}
+        >
+          {selectedTypes.map((typeId) => (
+            <MenuItem key={typeId} value={typeId}>
+              {typesChambresOptions.find((type) => type.id === typeId).nom}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      
+      {selectedTypes.map((typeId) => (
+        <TextField
+          key={typeId}
+          label={`Supplément pour ${
+            typesChambresOptions.find((type) => type.id === typeId).nom
+          }`}
+          type="number"
+          value={supplements[typeId] || ''}
+          onChange={(e) => handleSupplementChange(typeId, e.target.value)}
+          fullWidth
+        />
+      ))}
+
       <label
         style={{
           flexDirection: 'row',
@@ -658,7 +758,7 @@ setChangeMonetaire(data.details.changeMonetaire);
       );
       return;
     }
-
+ 
     const formData = new FormData();
     formData.append('titre', titre);
     formData.append('description', description);
@@ -676,6 +776,7 @@ setChangeMonetaire(data.details.changeMonetaire);
       'conditions_speciales_enfants',
       conditions_speciales_enfants
     );
+    
     formData.append('remise', remise === '' ? 0 : parseInt(remise, 10));
 
 
@@ -698,19 +799,30 @@ setChangeMonetaire(data.details.changeMonetaire);
       formData.append('ascenseur', ascenseur);
       formData.append('salle_de_sport', salleDeSport);
       formData.append('aire_de_jeux_enfants', aireDeJeuxEnfants);
-        formData.append('spa', spa);
-        formData.append('sauna', sauna);
-        formData.append('hammam', hammam);
-        formData.append('thalasso', thalasso);
-        formData.append('centre_esthetique', centreEsthetique);
-        formData.append('toboggan', toboggan);
-        formData.append('pieds_dans_l_eau', piedsDansLEau);
-        formData.append('piscine_eau_de_mer', piscineEauDeMer);
-        formData.append('baby_setting', babySetting);
-        formData.append('tennis_de_table', tennisDeTable);
-        formData.append('location_de_voiture', locationDeVoiture);
-        formData.append('change_monetaire', changeMonetaire);
-    } else if (typeOffre === 'activite') {
+      formData.append('spa', spa);
+      formData.append('sauna', sauna);
+      formData.append('hammam', hammam);
+      formData.append('thalasso', thalasso);
+      formData.append('centre_esthetique', centreEsthetique);
+      formData.append('toboggan', toboggan);
+      formData.append('pieds_dans_l_eau', piedsDansLEau);
+      formData.append('piscine_eau_de_mer', piscineEauDeMer);
+      formData.append('baby_setting', babySetting);
+      formData.append('tennis_de_table', tennisDeTable);
+      formData.append('location_de_voiture', locationDeVoiture);
+      formData.append('change_monetaire', changeMonetaire);
+selectedTypes.forEach((typeId, index) => {
+  const typeChambre = typesChambresOptions.find((type) => type.id === typeId);
+  formData.append(`typechambres[${index}][nom]`, typeChambre.nom);
+  formData.append(
+    `typechambres[${index}][supplement]`,
+    supplements[typeId] || 0
+  );
+  formData.append(
+    `typechambres[${index}][defaultChambre]`,
+    defaultChambre === typeId
+  );
+});    } else if (typeOffre === 'activite') {
       formData.append('programme', programme);
       formData.append('inclus', inclus);
       formData.append('duree', duree);
