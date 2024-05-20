@@ -7,6 +7,7 @@ import NavbarHaut from '../../components/navbar/navbarHaut';
 import ShowReservationDialog from './ShowReservationDialog'; // Import the dialog component
 import ModifyReservation from './ModifyReservation'; // Import the ModifyReservation component
 import jsPDF from 'jspdf';
+import QRCode from 'qrcode';
 
 
 const MyReservations = () => {
@@ -439,15 +440,15 @@ const downloadReservationPDF = async (reservation) => {
     marginLeft,
     (currentY += lineHeight)
   );
- pdf.text(
-   `Téléphone: ${
-     reservation.employe && reservation.employe.utilisateur
-       ? reservation.employe.utilisateur.tel
-       : 'N/A'
-   }`,
-   marginLeft,
-   (currentY += lineHeight)
- );
+  pdf.text(
+    `Téléphone: ${
+      reservation.employe && reservation.employe.utilisateur
+        ? reservation.employe.utilisateur.tel
+        : 'N/A'
+    }`,
+    marginLeft,
+    (currentY += lineHeight)
+  );
 
   currentY += lineHeight * 2; // Espace avant la section suivante
 
@@ -460,7 +461,23 @@ const downloadReservationPDF = async (reservation) => {
     pdf.internal.pageSize.getHeight() - 30,
     'center'
   );
+  const reservationData = {
+    reservationId: '12345',
+    guestName: 'John Doe',
+    checkInDate: '2022-12-01',
+    checkOutDate: '2022-12-05',
+    // Add more reservation details as needed
+  };
+  // Generate the QR code image
+  const qrData = JSON.stringify(reservationData); // Convert reservation data to a string
+  const qrImage = await QRCode.toDataURL(qrData);
 
+  // Draw the QR code image on the PDF
+  const qrImageWidth = 100; // Adjust the size as needed
+  const qrImageHeight = 100; // Adjust the size as needed
+  const qrImageX = pageWidth - marginLeft - qrImageWidth - 20; // Adjust the position as needed
+  const qrImageY = currentY + 20; // Adjust the position as needed
+  pdf.addImage(qrImage, 'PNG', qrImageX, qrImageY, qrImageWidth, qrImageHeight);
   // Sauvegarde du PDF
   pdf.save('reservation.pdf');
 };
