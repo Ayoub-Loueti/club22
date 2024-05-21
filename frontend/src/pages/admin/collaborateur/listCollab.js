@@ -110,8 +110,12 @@ function ListCollaborateur() {
   };
 
   const getEmailLink = (collaborateur) => {
-    const subject = encodeURIComponent('From Ooredoo Club2');
-    const body = encodeURIComponent('Hello cher collab');
+    const subject = encodeURIComponent(
+      'Suivi de notre collaboration - Ooredoo Club22'
+    );
+    const body = encodeURIComponent(
+      "Cher Collaborateur,\n\nNous espérons que tout se passe bien pour vous. Nous tenions à vous contacter concernant notre collaboration en cours et discuter de quelques points importants.\n\nCordialement,\nL'équipe Ooredoo Club22"
+    );
     return `mailto:${collaborateur.email}?subject=${subject}&body=${body}`;
   };
 
@@ -157,9 +161,7 @@ function ListCollaborateur() {
     <>
       <NavAdmin />
       <div className="listCollaborateur-container">
-        <button className="retour-btn" onClick={() => window.history.back()}>
-          <FaArrowLeft /> Retour
-        </button>
+
         <h1 className="listCollaborateur-title">LISTE DES COLLABORATEURS</h1>
 
         <button onClick={handleOpenModal} className="list-coll-button">

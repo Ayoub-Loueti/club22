@@ -11,6 +11,11 @@ const VoyageModel = require('../models/VoyageModel');
 const GrandHotelModel = require('../models/GrandHotelModel');
 const Evaluation = require('../models/EvaluationModel');
 const NotificationSprintTroix = require('../models/NotifcationTModel');
+const nodemailer = require('nodemailer');
+require('dotenv').config(); // Assurez-vous d'inclure dotenv pour charger les variables d'environnement
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+const path = require('path');
 
 exports.createReservation = async (req, res) => {
   const {
@@ -59,7 +64,8 @@ exports.createReservation = async (req, res) => {
       return res.status(404).json({ error: 'Offer not found' });
     }
 
-    const statut_paiement = mode_paiement === 'especes' ? 'paye_especes' : 'en_attente';
+    const statut_paiement =
+      mode_paiement === 'especes' ? 'paye_especes' : 'en_attente';
     // Create the reservation
     const reservation = await Reservation.create({
       id_offre,
@@ -74,7 +80,7 @@ exports.createReservation = async (req, res) => {
       mode_paiement,
       autorisation_deduction_salaire,
       date_paiement,
-      montant_deduit:prix_totale,
+      montant_deduit: prix_totale,
       statut_paiement,
     });
 
@@ -92,12 +98,10 @@ exports.createReservation = async (req, res) => {
       );
     }
 
-    res
-      .status(201)
-      .json({
-        message: 'Reservation and hotel details created successfully',
-        reservation,
-      });
+    res.status(201).json({
+      message: 'Reservation and hotel details created successfully',
+      reservation,
+    });
   } catch (error) {
     console.error('Error creating reservation:', error);
     res.status(500).json({ error: 'Failed to create reservation' });
@@ -499,9 +503,18 @@ exports.reparationReservation = async (req, res) => {
   }
 };
 
+// Configuration de Nodemailer avec les variables d'environnement
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // ou autre service de messagerie
+  auth: {
+    user: process.env.MAILER_EMAIL_ID, // Utilisez la variable d'environnement pour l'email
+    pass: process.env.MAILER_PASSWORD, // Utilisez la variable d'environnement pour le mot de passe
+  },
+});
+
 exports.reparationReservations = async (req, res) => {
   const userId = req.userId;
-  const reservationIds = req.body.reservationIds; // Assuming reservation IDs are passed in the request body as an array
+  const reservationIds = req.body.reservationIds;
 
   try {
     const admin = await Utilisateur.findOne({
@@ -515,17 +528,125 @@ exports.reparationReservations = async (req, res) => {
     const reservations = await Reservation.findAll({
       where: {
         id_reservation: { [Op.in]: reservationIds },
-        etat: { [Op.ne]: 'reparee' }, // Only select reservations that are not already repaired
+        etat: { [Op.ne]: 'reparee' },
       },
+      include: [
+        {
+          model: Offre,
+          as: 'offre',
+          include: [{ model: Collaborateur, as: 'collaborateur' }],
+        },
+        {
+          model: Employe,
+          as: 'employe',
+          include: [{ model: Utilisateur, as: 'utilisateur' }],
+        },
+       
+      ],
     });
 
     await Promise.all(
       reservations.map(async (reservation) => {
         await reservation.update({ etat: 'reparation' });
+        // Création du PDF
+        const doc = new PDFDocument();
+        const pdfPath = path.join(
+          __dirname,
+          `Reservation_${reservation.id_reservation}.pdf`
+        );
+        doc.pipe(fs.createWriteStream(pdfPath));
+        doc
+          .fontSize(12)
+          .text(
+            `Détails de la réservation pour l'offre ${reservation.offre.titre}`,
+            { align: 'left' }
+          )
+          .moveDown(0.5);
+        doc
+          .text(`Date de début: ${reservation.date_debut}`, { align: 'left' })
+          .text(`Date de fin: ${reservation.date_fin}`, { align: 'left' })
+          .text(`Type: ${reservation.typeR}`, { align: 'left' })
+          .text(`Prix total: ${reservation.prix_totale.toFixed(2)} TND`, {
+            align: 'left',
+          })
+          .text(`Statut de paiement: ${reservation.statut_paiement}`, {
+            align: 'left',
+          })
+          .text(
+            `Nom de l'employé: ${reservation.employe.utilisateur.nom} ${reservation.employe.utilisateur.prenom}`,
+            { align: 'left' }
+          )
+          .text(
+            `Email de l'employé: ${reservation.employe.utilisateur.email}`,
+            { align: 'left' }
+          )
+          .text(
+            `Téléphone de l'employé: ${reservation.employe.utilisateur.tel}`,
+            { align: 'left' }
+          )
+          .moveDown(0.5);
+
+        // Ajout des détails spécifiques en fonction du type de réservation
+        switch (reservation.typeR) {
+          case 'hotel':
+            doc.text(`Nom de l'hôtel: ${reservation.offre.grandhotel.nom_hotel}`, {
+              align: 'left',
+            });
+            reservation.hotels.forEach((hotel, index) => {
+              doc.text(
+                `Chambre ${index + 1}: Adultes - ${
+                  hotel.nbr_adults
+                }, Enfants - ${hotel.nbr_enfants}, Prix - ${hotel.prix.toFixed(
+                  2
+                )} TND`,
+                { align: 'left' }
+              );
+            });
+            break;
+          case 'voyage':
+            doc
+              .text(`Nombre de jours: ${reservation.offre.voyage.nbr_jours}`, {
+                align: 'left',
+              })
+              .text(`Inclus: ${reservation.offre.voyage.inclus}`, {
+                align: 'left',
+              });
+            break;
+          case 'activite':
+            doc
+              .text(`Durée: ${reservation.offre.activite.duree} heures`, {
+                align: 'left',
+              })
+              .text(`Inclus: ${reservation.offre.activite.inclus}`, {
+                align: 'left',
+              });
+            break;
+        }
+
+        doc.end();
+
+        // Envoi de l'email
+        const mailOptions = {
+          from: process.env.MAILER_EMAIL_ID, // Utilisez l'email de l'expéditeur depuis les variables d'environnement
+          to: reservation.offre.collaborateur.email,
+          subject: 'Notification de réparation de réservation',
+          text: 'Veuillez trouver ci-joint le document PDF avec les détails de la réparation.',
+          attachments: [
+            {
+              filename: `Reservation_${reservation.id_reservation}.pdf`,
+              path: pdfPath,
+              contentType: 'application/pdf',
+            },
+          ],
+        };
+
+        await transporter.sendMail(mailOptions);
       })
     );
 
-    res.status(200).json({ message: 'Reservations repaired successfully' });
+    res
+      .status(200)
+      .json({ message: 'Reservations repaired and emails sent successfully' });
   } catch (error) {
     console.error('Error repairing reservations:', error);
     res
@@ -593,7 +714,6 @@ exports.refuserReservation = async (req, res) => {
           as: 'offre',
           include: [
             { model: Collaborateur, as: 'collaborateur' },
-            // Ensure other necessary models are included as needed
           ],
         },
         {
@@ -615,16 +735,21 @@ exports.refuserReservation = async (req, res) => {
     }
 
     // Update the reservation state to 'annuler'
-    await userReservation.update({ etat: 'refuser', statut_paiement: 'refuse' });
+    await userReservation.update({
+      etat: 'refuser',
+      statut_paiement: 'refuse',
+    });
 
     await NotificationSprintTroix.create({
       contenu: 'Votre réservation a été refusée',
       id_utilisateur: userReservation.employe.utilisateur.id_utilisateur,
       date_notif: new Date(),
-      type : 'reservrefuse',
+      type: 'reservrefuse',
     });
-    
-    const Owner = await Utilisateur.findByPk(userReservation.employe.utilisateur.id_utilisateur);
+
+    const Owner = await Utilisateur.findByPk(
+      userReservation.employe.utilisateur.id_utilisateur
+    );
     if (Owner) {
       await Owner.increment('nbr_notifs', { by: 1 });
     }
@@ -763,7 +888,7 @@ exports.getMyReservations = async (req, res) => {
           model: Offre,
           as: 'offre',
           include: [
-            { model: Collaborateur, as: 'collaborateur'},
+            { model: Collaborateur, as: 'collaborateur' },
             // Ensure other necessary models are included as needed
           ],
         },
@@ -1456,12 +1581,9 @@ exports.createEvaluation = async (req, res) => {
     });
 
     if (!existingReservation) {
-      return res
-        .status(404)
-        .json({
-          error:
-            'No reservation found with the provided employee and offer IDs.',
-        });
+      return res.status(404).json({
+        error: 'No reservation found with the provided employee and offer IDs.',
+      });
     }
 
     // Check if an evaluation already exists with the same id_offre and id_employe
@@ -1475,12 +1597,10 @@ exports.createEvaluation = async (req, res) => {
     if (existingEvaluation) {
       // Update the existing evaluation's vote
       await existingEvaluation.update({ vote: vote });
-      return res
-        .status(200)
-        .json({
-          message: 'Evaluation updated successfully',
-          evaluation: existingEvaluation,
-        });
+      return res.status(200).json({
+        message: 'Evaluation updated successfully',
+        evaluation: existingEvaluation,
+      });
     }
 
     // Create a new evaluation if it does not exist
@@ -1490,20 +1610,16 @@ exports.createEvaluation = async (req, res) => {
       vote: vote,
     });
 
-    res
-      .status(201)
-      .json({
-        message: 'Evaluation created successfully',
-        evaluation: newEvaluation,
-      });
+    res.status(201).json({
+      message: 'Evaluation created successfully',
+      evaluation: newEvaluation,
+    });
   } catch (error) {
     console.error('Failed to create or update evaluation:', error);
-    res
-      .status(500)
-      .json({
-        error: 'Failed to create or update evaluation',
-        details: error.message,
-      });
+    res.status(500).json({
+      error: 'Failed to create or update evaluation',
+      details: error.message,
+    });
   }
 };
 
@@ -1543,12 +1659,10 @@ exports.getOffreVote = async (req, res) => {
     res.status(200).json(response);
   } catch (error) {
     console.error('Failed to get votes for offre:', error);
-    res
-      .status(500)
-      .json({
-        error: 'Failed to retrieve offer votes',
-        details: error.message,
-      });
+    res.status(500).json({
+      error: 'Failed to retrieve offer votes',
+      details: error.message,
+    });
   }
 };
 
@@ -1577,11 +1691,9 @@ exports.getVoteByOffreAndEmployee = async (req, res) => {
     });
 
     if (!evaluation) {
-      return res
-        .status(200)
-        .json({
-          message: 'Evaluation not found for the specified offer and employee.',
-        });
+      return res.status(200).json({
+        message: 'Evaluation not found for the specified offer and employee.',
+      });
     }
 
     // Return the found evaluation

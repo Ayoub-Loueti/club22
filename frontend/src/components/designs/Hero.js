@@ -102,7 +102,7 @@ const [prices, setPrices] = useState([minPrice, maxPrice]);
         <div className="title">
           <h1>{t('VOYAGEZ POUR DÉCOUVRIR')}</h1>
           <p>
-            {t('Partez à la découverte de destinations uniques et vivez des expériences inoubliables. Explorez des cultures fascinantes et créez des souvenirs mémorables.')}
+          { t("En tant qu’adhérent de Club22,vous bénéficiez d'offres exclusives pour réserver votre prochain hôtel, voyage ou activité à un prix imbattable.vous trouverez sans doute l'offre qui correspond à vos envies et à votre budget !")}{' '}
           </p>
         </div>
         <div className="search">
@@ -178,7 +178,9 @@ const [prices, setPrices] = useState([minPrice, maxPrice]);
             >
               <option value="all">{t('Toutes')}</option>
               <option value="promo">{t('Offres promotionnelles')}</option>
-              <option value="nonpromo">{t('Offres non promotionnelles')}</option>
+              <option value="nonpromo">
+                {t('Offres non promotionnelles')}
+              </option>
             </select>
           </div>
           <button onClick={handleSearch}>{t('Découvrez')}</button>
@@ -225,6 +227,7 @@ const Section = styled.section`
         padding: 0 30vw;
         margin-top: 0.5rem;
         font-size: 1.2rem;
+        font-weight: bold;
       }
     }
     .search {

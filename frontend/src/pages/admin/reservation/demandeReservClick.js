@@ -56,7 +56,7 @@ const DemandeReserClick = ({ collaborateurId }) => {
        }
      };
 const handlerepair = async (id, event) => {
-  event.stopPropagation(); // Prevent opening the dialog
+  event.stopPropagation(); // Empêcher l'ouverture du dialogue
   const token = JSON.parse(localStorage.getItem('login'))?.token;
   try {
     const response = await axios.put(
@@ -73,13 +73,83 @@ const handlerepair = async (id, event) => {
         timerProgressBar: true,
         showConfirmButton: false,
       });
-      fetchDemandeReservations(); // Reload or update local state here
+
+      const reservation = demandeReservations.find(
+        (res) => res.id_reservation === id
+      );
+      if (reservation) {
+        const details = `
+        Détails de réservation:
+Date: De ${reservation.date_debut} à ${reservation.date_fin}
+Titre: ${reservation.offre.titre}
+Destination: ${reservation.offre.destination}
+Type: ${reservation.typeR}
+Nom de l'employé: ${reservation.employe.utilisateur.nom} ${
+          reservation.employe.utilisateur.prenom
+        }
+Email de l'employé: ${reservation.employe.utilisateur.email}
+Tél de l'employé: ${reservation.employe.utilisateur.tel}
+Prix: ${reservation.prix_totale.toFixed(2)} DT
+${
+  reservation.typeR === 'hotel'
+    ? `Nom de l'hôtel: ${reservation.details.nom_hotel}`
+    : ''
+}
+${
+  reservation.typeR === 'hotel'
+    ? 'Chambres: ' +
+      reservation.rooms
+        .map(
+          (room, index) =>
+            `Chambre ${index + 1}: Adultes - ${room.nbr_adults}, Enfants - ${
+              room.nbr_enfants
+            }, Prix - ${room.prix.toFixed(2)} DT`
+        )
+        .join(', ')
+    : ''
+}
+${
+  reservation.typeR === 'voyage'
+    ? `Nombre de jours: ${reservation.details.nbr_jours}`
+    : ''
+}
+${
+  reservation.typeR === 'voyage'
+    ? `Nombre de personnes: ${reservation.nombre}`
+    : ''
+}
+${reservation.typeR === 'voyage' ? `Inclus: ${reservation.details.inclus}` : ''}
+${
+  reservation.typeR === 'activité'
+    ? `Durée: ${reservation.details.duree} heures`
+    : ''
+}
+${
+  reservation.typeR === 'activité'
+    ? `Inclus: ${reservation.details.inclus}`
+    : ''
+}
+        `.replace(/^\s*[\r\n]/gm, ''); // Remove empty lines
+
+        const mailtoLink = `mailto:${
+          reservation.offre.collaborateur.email
+        }?subject=Les réservations de la part du club 22 Ooredoo&body=Bonjour ${
+          reservation.offre.collaborateur.nom
+        },%0D%0A%0D%0A${encodeURIComponent(
+          details
+        )}%0D%0A%0D%0ACordialement,%0D%0AL'équipe Ooredoo.`;
+        window.open(mailtoLink, '_blank');
+      }
+
+      fetchDemandeReservations(); // Recharger ou mettre à jour l'état local ici
     }
   } catch (error) {
     console.error('Erreur lors de la réparation de la réservation :', error);
     Swal.fire('Erreur !', 'Échec de la réparation de la réservation.', 'error');
   }
 };
+
+
 
 
 const markAllAsReparation = async (date) => {
@@ -360,7 +430,7 @@ const markAllAsReparation = async (date) => {
         pdf.text(`Nombre de personnes: ${reservation.nombre}`, 30, yPos + 10);
         pdf.text(`Inclus: ${reservation.details.inclus}`, 30, yPos + 20);
         break;
-      case 'activite':
+      case 'activité':
         pdf.text(`Durée: ${reservation.details.duree} heures`, 30, yPos);
         pdf.text(`Inclus: ${reservation.details.inclus}`, 30, yPos + 10);
         break;
@@ -502,7 +572,7 @@ const downloadPDFConfirmedByDate = async (date) => {
           pdf.text(`Inclus: ${reservation.details.inclus}`, 30, yPos + 20);
           // Add other specific details for voyage
           break;
-        case 'activite':
+        case 'activité':
           pdf.text(`Durée: ${reservation.details.duree} heures`, 30, yPos);
           pdf.text(`Inclus: ${reservation.details.inclus}`, 30, yPos + 10);
           // Add other specific details for activite
@@ -543,7 +613,7 @@ const calculateCardHeight = (reservation) => {
     case 'voyage':
       height += 30; // Add additional details for voyage
       break;
-    case 'activite':
+    case 'activité':
       height += 20; // Add additional details for activite
       break;
     default:
