@@ -650,7 +650,15 @@ exports.getEmployeeOfferById = async (req, res) => {
       });
     }
 
-    const offre = await OffreModel.findByPk(offreId);
+    const offre = await OffreModel.findByPk(offreId, {
+      include: [
+        {
+          model: CollaborateurModel,
+          as: 'collaborateur',
+        },
+      ],
+    });
+    
     if (!offre) {
       return res.status(404).json({ error: 'Offer not found' });
     }
@@ -661,7 +669,22 @@ exports.getEmployeeOfferById = async (req, res) => {
     });
     const offreDetail = offre.toJSON();
     offreDetail.lesImages = images;
-
+    const evaluations = await Evaluation.findAll({
+      where: { id_offre: offre.id_offre },
+    });
+    const totalVotes = evaluations.reduce(
+      (sum, evaluation) => sum + evaluation.vote,
+      0
+    );
+    const numberOfEvaluations = evaluations.length;
+    offreDetail.evaluation = {
+      averageVotes:
+        numberOfEvaluations > 0
+          ? (totalVotes / numberOfEvaluations).toFixed(2)
+          : 0,
+      totalVotes: totalVotes,
+      numberOfEvaluations: numberOfEvaluations,
+    };
     // Fetch and include details based on the type of the offer
     switch (offre.type) {
       case 'hotel':

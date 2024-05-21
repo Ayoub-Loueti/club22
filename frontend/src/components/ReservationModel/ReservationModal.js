@@ -28,6 +28,8 @@ import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete }) => {
+  const [childAges, setChildAges] = useState(Array(room.children).fill(1)); // Initialize with age 1
+
     const incrementAdults = () => {
         updateRoom(room.id, 'adults', room.adults + 1);
     };
@@ -37,12 +39,24 @@ const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete }) => {
     };
 
     const incrementChildren = () => {
-        updateRoom(room.id, 'children', room.children + 1);
-    };
+      updateRoom(room.id, 'children', room.children + 1);
+      setChildAges([...childAges, 1]); // Add default age 1 for the new child
+  };
 
-    const decrementChildren = () => {
-        updateRoom(room.id, 'children', Math.max(0, room.children - 1));
-    };
+  const decrementChildren = () => {
+      if (room.children > 0) {
+          updateRoom(room.id, 'children', room.children - 1);
+          setChildAges(childAges.slice(0, -1)); // Remove the last child's age
+      }
+  };
+
+  const handleAgeChange = (index, age) => {
+      const updatedAges = [...childAges];
+      updatedAges[index] = age;
+      setChildAges(updatedAges);
+  };
+
+    
 const adapter = new AdapterDateFns({ locale: fr });
     return (
         <Box sx={{ mb: 2, bgcolor: 'background.paper', p: 2, borderRadius: 'borderRadius', display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -85,33 +99,48 @@ const adapter = new AdapterDateFns({ locale: fr });
                     <AddCircleOutlineIcon />
                 </IconButton>
                 <Typography sx={{ ml: 2 }}>Enfants</Typography>
+                {childAges.map((age, index) => (
+                    <TextField
+                        key={index}
+                        type="number"
+                        size="small"
+                        value={age}
+                        onChange={(e) => handleAgeChange(index, parseInt(e.target.value))}
+                        inputProps={{ min: 1, max: 12, style: { width: '50px' } }}
+                        sx={{ mx: 1 }}
+                    />
+                ))}
             </Box>
             <Typography variant="body1">Prix de chambre : {room.prix.toFixed(2)} DT</Typography>
         </Box>
     );
 };
 
-const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise, type, isAdherant, debut , fin ,details}) => {
+const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise,nombre_enfants_gratuits,age_limit_gratuite, type, isAdherant, debut , fin ,details,prix_enfants_payants}) => {
   const calculateDaysMultiplier = (start, end) => {
     if (!start || !end) return 1;
     const diffDays = (end - start) / (1000 * 3600 * 24) + 1; // Add 1 to include both start and end day
     return Math.max(1, diffDays - 1); // Multiplier is (days - 1), minimum is 1
 };
 
-    const calculateRoomPrice = (adults, children, basePrice, isAdherant, daysMultiplier) => {
-        let priceIncrease = 0;
-        if (adults > 1) {
-            priceIncrease += (adults - 1) * (basePrice * 0.4);
-        }
-        priceIncrease += children * (basePrice * 0.2);
-        let totalCost = basePrice + priceIncrease;
+   const calculateRoomPrice = (adults, children, basePrice, isAdherant) => {
+    let priceIncrease = 0;
+    if (adults > 1) {
+        priceIncrease += (adults - 1) * (basePrice * 0.4);
+    }
 
-        if (isAdherant) {
-            totalCost *= (1 - remise / 100);
-        }
+    // Calculate the number of children that are not free
+    const chargeableChildren = Math.max(0, children - nombre_enfants_gratuits);
+    priceIncrease += chargeableChildren * prix_enfants_payants;
 
-        return totalCost;
-    };
+    let totalCost = basePrice + priceIncrease;
+
+    if (isAdherant) {
+        totalCost *= (1 - remise / 100);
+    }
+
+    return totalCost;
+};
 
     const initialRoomPrice = calculateRoomPrice(1, 0, prix, isAdherant);
 

@@ -36,6 +36,7 @@ import {
 import ProgramModal from './ProgramModal';
 import parse from 'html-react-parser';
 import ScrollToTop from '../../components/designs/ScrollToTop';
+import StarRating from './StarRating'; // Adjust the path as necessar
 
 function OffreEmployeDetails() {
   const [offre, setOffre] = useState(null);
@@ -95,6 +96,10 @@ function OffreEmployeDetails() {
     remise,
     type,
     details,
+    prix_enfants_payants,
+    nombre_enfants_gratuits,
+    age_limit_gratuite,
+    evaluation,
   } = offre;
 
   const handleImageClick = (clickedIndex) => {
@@ -163,8 +168,12 @@ const handleAuthorizationChange = () => {
               </div>
             )}
             <h2 className="offre-titleDetails">{offre.titre}</h2>
-            <p className="offre-rating">Rating: {offre.rating}</p>{' '}
-            <p className="offre-collaborateur">Collaborateur: {offre.nom}</p>
+            <p className="offre-rating">Rating: </p>{' '}
+            <StarRating
+                rating={parseFloat(offre.evaluation.averageVotes)}
+                numReviews={offre.evaluation.numberOfEvaluations}
+              />
+            <p className="offre-collaborateur">Collaborateur: {offre.collaborateur.nom}</p>
             <h4 className="destination-details">
               <FontAwesomeIcon
                 icon={faMapMarkerAlt}
@@ -193,6 +202,8 @@ const handleAuthorizationChange = () => {
                 debut={date_debut}
                 fin={date_fin}
                 details={details}
+                prix_enfants_payants={prix_enfants_payants}
+                nombre_enfants_gratuits={nombre_enfants_gratuits}
               />
               {isAdherant === false && (
                 <button
