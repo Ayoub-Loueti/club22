@@ -92,10 +92,21 @@ const AdminSignalsPage = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      Swal.fire('Succès', "L'utilisateur a été bloqué.", 'success');
+      Swal.fire(
+        'Succès',
+        "L'auteur du contenu signalé a été bloqué.",
+        'success'
+      );
     } catch (error) {
-      console.error("Erreur lors du blocage de l'utilisateur :", error);
-      Swal.fire('Erreur', "Impossible de bloquer l'utilisateur.", 'error');
+      console.error(
+        "Erreur lors du blocage de L'auteur du contenu signalé :",
+        error
+      );
+      Swal.fire(
+        'Erreur',
+        "Impossible de bloquer L'auteur du contenu signalé.",
+        'error'
+      );
     }
   };
 
@@ -123,7 +134,7 @@ const AdminSignalsPage = () => {
   // Fonction pour demander confirmation avant de bloquer un utilisateur
   const confirmBlockUser = async (signal) => {
     Swal.fire({
-      title: `Êtes-vous sûr de vouloir bloquer l'utilisateur ?`,
+      title: `Êtes-vous sûr de vouloir bloquer L'auteur du contenu signalé  ?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -235,7 +246,65 @@ const AdminSignalsPage = () => {
       },
     },
   };
+const confirmBlockSignalant = async (signal) => {
+  Swal.fire({
+    title: 'Êtes-vous sûr?',
+    text: "Vous êtes sur le point de bloquer l'utilisateur qui a effectué ce signalement.",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Oui, bloquez-le!',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      blockSignalant(signal.id_utilisateur);
+    }
+  });
+};const blockSignalant = async (userId) => {
+  try {
+    await axios.put(
+      `http://localhost:5000/block/${userId}`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    Swal.fire('Bloqué!', 'Le signalant a été bloqué avec succès.', 'success');
+    fetchSignals(); // Refresh the list to reflect the change
+  } catch (error) {
+    console.error('Erreur lors du blocage du signalant:', error);
+    Swal.fire('Erreur', 'Impossible de bloquer le signalant.', 'error');
+  }
+}; 
 
+const confirmBlockReporting = async (userId) => {
+  const { value: days } = await Swal.fire({
+    title: 'Nombre de jours de blocage',
+    input: 'number',
+    inputPlaceholder: 'Entrez le nombre de jours',
+    confirmButtonText: 'Bloquer',
+    cancelButtonText: 'Annuler',
+    showCancelButton: true,
+  });
+
+  if (days) {
+    try {
+      await axios.put(
+        `http://localhost:5000/block-reporting/${userId}`,
+        { days },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      Swal.fire(
+        'Bloqué!',
+        `L'utilisateur est bloqué de faire des signalements pour ${days} jours.`,
+        'success'
+      );
+    } catch (error) {
+      console.error('Erreur lors du blocage du signalant:', error);
+      Swal.fire('Erreur', 'Impossible de bloquer le signalant.', 'error');
+    }
+  }
+};
   return (
     <>
       <NavAdmin />
@@ -276,6 +345,7 @@ const AdminSignalsPage = () => {
                     alignItems="center"
                     gap={2}
                     marginBottom={2}
+                    component="div"
                   >
                     Signalé par:{' '}
                     <Link
@@ -299,12 +369,28 @@ const AdminSignalsPage = () => {
                         sx={{ marginLeft: 1 }}
                         color="#6b85a4"
                         underline="hover"
+                        component="span"
                       >
                         {' '}
-                        {/* Increased margin for better spacing */}
                         {signal.utilisateur.prenom} {signal.utilisateur.nom}
                       </Typography>{' '}
                     </Link>{' '}
+                    <Button
+                      variant="contained"
+                      sx={buttonStyles.blockUser}
+                      onClick={() => confirmBlockSignalant(signal)}
+                    >
+                      Bloquer le signalant
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={buttonStyles.blockUser}
+                      onClick={() =>
+                        confirmBlockReporting(signal.utilisateur.id_utilisateur)
+                      }
+                    >
+                      Bloquer les signalements
+                    </Button>
                   </Typography>
                 </Typography>
                 <Typography variant="body2">
@@ -346,7 +432,7 @@ const AdminSignalsPage = () => {
                   sx={buttonStyles.blockUser}
                   onClick={() => confirmBlockUser(signal)}
                 >
-                  Bloquer l'utilisateur
+                  Bloquer L'auteur du contenu signalé
                 </Button>
                 {!signal.isRead ? null : (
                   <Button

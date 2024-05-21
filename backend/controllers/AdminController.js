@@ -484,4 +484,48 @@ exports.deleteResponseAdmin = async (req, res) => {
   }
 };
 
+exports.blockUserFromReporting = async (req, res) => {
+  const userId = req.params.userId; // Récupérer l'ID de l'utilisateur depuis les paramètres de l'URL
+  const { days } = req.body; // Récupérer le nombre de jours depuis le corps de la requête
+
+  try {
+    // Vérifier si l'utilisateur qui fait la requête est un administrateur
+    const isAdmin = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: req.userId, // Utiliser req.userId pour obtenir l'ID de l'utilisateur connecté
+        type: 'admin',
+      },
+    });
+
+    if (!isAdmin) {
+      return res.status(403).json({
+        message:
+          'Accès refusé. Seuls les administrateurs peuvent effectuer cette action.',
+      });
+    }
+
+    // Calculer la date jusqu'à laquelle l'utilisateur est bloqué
+    const blockUntilDate = new Date();
+    blockUntilDate.setDate(blockUntilDate.getDate() + parseInt(days));
+
+    // Mettre à jour l'utilisateur pour bloquer ses capacités de signalement
+    const updated = await Utilisateur.update(
+      { blockSignalUntil: blockUntilDate },
+      { where: { id_utilisateur: userId } }
+    );
+
+    if (updated[0] > 0) {
+      res.status(200).json({
+        message: `L'utilisateur ${userId} est bloqué de faire des signalements pour ${days} jours.`,
+      });
+    } else {
+      res.status(404).json({
+        message: 'Utilisateur non trouvé ou déjà mis à jour.',
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = exports;

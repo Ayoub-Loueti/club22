@@ -18,7 +18,8 @@ import {
   faMapMarkerAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from 'react-i18next';
-
+import { format } from 'date-fns'; 
+import { fr, enUS } from 'date-fns/locale'; 
 import { faBookmark as farBookmark } from '@fortawesome/free-regular-svg-icons'; // Importing the regular (outline) bookmark icon
 
 import Swal from 'sweetalert2';
@@ -58,6 +59,14 @@ const Post = (props) => {
   const [showToast, setShowToast] = useState(false);
   const [editLieu, setEditLieu] = useState(data.lieu || ''); // Provide a default empty string if data.lieu is null
   const [showLocationModal, setShowLocationModal] = useState(false);
+
+  const { i18n } = useTranslation();
+  const [dateFormatted, setDateFormatted] = useState('');
+  useEffect(() => {
+    const locale = i18n.language.startsWith('fr') ? fr : enUS;
+    const dateFormat = `dd MMMM yyyy '${t('à')}' HH:mm`;
+    setDateFormatted(format(new Date(data.date_post), dateFormat, { locale }));
+  }, [data.date_post, i18n.language, t]); // Ajoutez t ici pour réagir aux changements de traduction
 
   useEffect(() => {
     const token = localStorage.getItem('login');
@@ -266,7 +275,11 @@ const Post = (props) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       // Notifier l'utilisateur de la suppression réussie
-      Swal.fire(t('Supprimé!'), t('Votre commentaire a été supprimé.'), 'success');
+      Swal.fire(
+        t('Supprimé!'),
+        t('Votre commentaire a été supprimé.'),
+        'success'
+      );
       // Optionnellement rafraîchir la liste des commentaires ou retirer le commentaire supprimé de l'état
       // Par exemple, vous pouvez filtrer le commentaire supprimé de la manière suivante :
       setComments((prevComments) =>
@@ -275,7 +288,7 @@ const Post = (props) => {
     } catch (error) {
       console.error('Erreur lors de la suppression du commentaire :', error);
       Swal.fire(
-       t('Erreur!'),
+        t('Erreur!'),
         t("Une erreur s'est produite lors de la suppression du commentaire."),
         'error'
       );
@@ -378,7 +391,9 @@ const Post = (props) => {
       );
       Swal.fire(
         t('Erreur !'),
-       t( "Il y a eu un problème lors de l'enregistrement ou de la désenregistrement de la publication."),
+        t(
+          "Il y a eu un problème lors de l'enregistrement ou de la désenregistrement de la publication."
+        ),
         'error'
       );
     }
@@ -549,12 +564,18 @@ const Post = (props) => {
             }))
           );
 
-          Swal.fire(t('Supprimé!'), t('Votre réponse a été supprimée.'), 'success');
+          Swal.fire(
+            t('Supprimé!'),
+            t('Votre réponse a été supprimée.'),
+            'success'
+          );
         } catch (error) {
           console.error('Error deleting the response:', error);
           Swal.fire(
             t('Échec!'),
-            t('Un problème est survenu lors de la suppression de votre réponse.'),
+            t(
+              'Un problème est survenu lors de la suppression de votre réponse.'
+            ),
             'error'
           );
         }
@@ -597,62 +618,26 @@ const Post = (props) => {
 
   const commentsToShow = isModalView ? comments : comments.slice(0, 2);
 
- const handleReportPost = async () => {
-   const { value: cause } = await Swal.fire({
-     title: t('Raison du signalement'),
-     input: 'radio',
-     inputOptions: {
-       'Contenu inapproprié': t('Contenu inapproprié'),
-       'Spam ou publicité': t('Spam ou publicité'),
-       'Harcèlement ou intimidation': t('Harcèlement ou intimidation'),
-       'Contenu erroné': t('Contenu erroné'),
-       "Droits d'auteur": t("Droits d'auteur"),
-       'Incitation à la haine': t('Incitation à la haine'),
-       'Contenu sensible': t('Contenu sensible'),
-       Autre: t('Autre'),
-     },
-     inputValidator: (value) => {
-       return !value ? t('Vous devez choisir une raison!') : undefined;
-     },
-     confirmButtonText: t('Signaler'),
-     showCancelButton: true,
-     cancelButtonText: t('Annuler'),
-     didOpen: () => {
-       // Appliquer le style directement après l'ouverture de la boîte de dialogue
-       const radios = document.querySelector('.swal2-radio');
-       if (radios) {
-         radios.style.display = 'flex';
-         radios.style.flexDirection = 'column';
-         radios.style.alignItems = 'flex-start';
-       }
-     },
-   });
+const handleReportPost = async () => {
+  const userStatus = await axios.get(
+    `http://localhost:5000/user-block-status/${userId}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
 
-   if (cause) {
-     try {
-       await axios.post(
-         `http://localhost:5000/signals`,
-         {
-           id_post: data.id_post,
-           id_cmntr: 0,
-           id_reponse: 0,
-           cause,
-         },
-         {
-           headers: { Authorization: `Bearer ${token}` },
-         }
-       );
-
-       Swal.fire(t('Signalé!'), t('Le post a été signalé avec succès.'), 'success');
-     } catch (error) {
-       console.error('Error reporting the post:', error);
-       Swal.fire(t('Échec!'), t('Problème lors du signalement du post.'), 'error');
-     }
-   }
- };
-
-const handleReportComment = async (commentId) => {
-  const { value: cause } = await Swal.fire({
+ if (
+   userStatus.data.blockSignalUntil &&
+   new Date(userStatus.data.blockSignalUntil) > new Date()
+ ) {
+   Swal.fire(
+     t('Bloqué!'),
+     t('Vous êtes temporairement bloqué de faire des signalements.'),
+     'error'
+   );
+   return;
+ }
+  const { value: cause, inputValue: customCause } = await Swal.fire({
     title: t('Raison du signalement'),
     input: 'radio',
     inputOptions: {
@@ -666,19 +651,32 @@ const handleReportComment = async (commentId) => {
       Autre: t('Autre'),
     },
     inputValidator: (value) => {
-      return !value ? 'Vous devez choisir une raison!' : undefined;
+      return !value ? t('Vous devez choisir une raison!') : undefined;
+    },
+    preConfirm: (cause) => {
+      if (cause === 'Autre') {
+        return Swal.fire({
+          title: t('Veuillez fournir plus de détails'),
+          input: 'textarea',
+          inputValidator: (value) => {
+            return !value ? t('Vous devez fournir des détails!') : undefined;
+          }
+        }).then((result) => {
+          return result.value || ''; // Assurez-vous que c'est une chaîne vide si rien n'est entré
+        });
+      }
+      return cause;
     },
     confirmButtonText: t('Signaler'),
-    confirmButtonColor: '#3085d6',
     showCancelButton: true,
     cancelButtonText: t('Annuler'),
-    cancelButtonColor: '#aaa',
     didOpen: () => {
+      // Appliquer le style directement après l'ouverture de la boîte de dialogue
       const radios = document.querySelector('.swal2-radio');
       if (radios) {
-        radios.style.display = 'flex';
-        radios.style.flexDirection = 'column';
-        radios.style.alignItems = 'flex-start';
+         radios.style.display = 'flex';
+         radios.style.flexDirection = 'column';
+         radios.style.alignItems = 'flex-start';
       }
     },
   });
@@ -689,9 +687,75 @@ const handleReportComment = async (commentId) => {
         `http://localhost:5000/signals`,
         {
           id_post: data.id_post,
+          id_cmntr: 0,
+          id_reponse: 0,
+          cause: cause === 'Autre' ? customCause : cause,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      Swal.fire(
+        t('Signalé!'),
+        t('Le post a été signalé avec succès.'),
+        'success'
+      );
+    } catch (error) {
+      console.error('Error reporting the post:', error);
+      Swal.fire(
+        t('Échec!'),
+        t('Problème lors du signalement du post.'),
+        'error'
+      );
+    }
+  }
+};
+const handleReportComment = async (commentId) => {
+  const { value: cause, inputValue: customCause } = await Swal.fire({
+    title: t('Raison du signalement'),
+    input: 'radio',
+    inputOptions: {
+      'Contenu inapproprié': t('Contenu inapproprié'),
+      'Spam ou publicité': t('Spam ou publicité'),
+      'Harcèlement ou intimidation': t('Harcèlement ou intimidation'),
+      'Contenu erroné': t('Contenu erroné'),
+      "Droits d'auteur": t("Droits d'auteur"),
+      'Incitation à la haine': t('Incitation à la haine'),
+      'Contenu sensible': t('Contenu sensible'),
+      Autre: t('Autre'),
+    },
+    inputValidator: (value) => {
+      return !value ? t('Vous devez choisir une raison!') : undefined;
+    },
+    preConfirm: (cause) => {
+      if (cause === 'Autre') {
+        return Swal.fire({
+          title: t('Veuillez fournir plus de détails'),
+          input: 'textarea',
+          inputValidator: (value) => {
+            return !value ? t('Vous devez fournir des détails!') : undefined;
+          },
+        }).then((result) => {
+          return result.value || ''; // Assurez-vous que c'est une chaîne vide si rien n'est entré
+        });
+      }
+      return cause;
+    },
+    confirmButtonText: t('Signaler'),
+    showCancelButton: true,
+    cancelButtonText: t('Annuler'),
+  });
+
+  if (cause) {
+    try {
+      await axios.post(
+        `http://localhost:5000/signals`,
+        {
+          id_post: data.id_post,
           id_cmntr: commentId,
           id_reponse: 0,
-          cause,
+          cause: cause === 'Autre' ? customCause : cause,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -715,7 +779,7 @@ const handleReportComment = async (commentId) => {
 };
 
 const handleReportResponse = async (commentId, responseId) => {
-  const { value: cause } = await Swal.fire({
+  const { value: cause, inputValue: customCause } = await Swal.fire({
     title: t('Raison du signalement'),
     input: 'radio',
     inputOptions: {
@@ -726,41 +790,57 @@ const handleReportResponse = async (commentId, responseId) => {
       "Droits d'auteur": t("Droits d'auteur"),
       'Incitation à la haine': t('Incitation à la haine'),
       'Contenu sensible': t('Contenu sensible'),
-      'Autre': t('Autre'),
+      Autre: t('Autre'),
     },
     inputValidator: (value) => {
       return !value ? t('Vous devez choisir une raison!') : undefined;
     },
+    preConfirm: (cause) => {
+      if (cause === 'Autre') {
+        return Swal.fire({
+          title: t('Veuillez fournir plus de détails'),
+          input: 'textarea',
+          inputValidator: (value) => {
+            return !value ? t('Vous devez fournir des détails!') : undefined;
+          },
+        }).then((result) => {
+          return result.value || ''; // Assurez-vous que c'est une chaîne vide si rien n'est entré
+        });
+      }
+      return cause;
+    },
     confirmButtonText: t('Signaler'),
-    confirmButtonColor: '#3085d6',
     showCancelButton: true,
     cancelButtonText: t('Annuler'),
-    cancelButtonColor: '#aaa',
-    didOpen: () => {
-      const radios = document.querySelector('.swal2-radio');
-      if (radios) {
-        radios.style.display = 'flex';
-        radios.style.flexDirection = 'column';
-        radios.style.alignItems = 'flex-start';
-      }
-    }
   });
 
   if (cause) {
     try {
-      await axios.post(`http://localhost:5000/signals`, {
-        id_post: data.id_post,
-        id_cmntr: commentId,
-        id_reponse: responseId,
-        cause
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await axios.post(
+        `http://localhost:5000/signals`,
+        {
+          id_post: data.id_post,
+          id_cmntr: commentId,
+          id_reponse: responseId,
+          cause: cause === 'Autre' ? customCause : cause,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-      Swal.fire(t('Signalé!'), t('La réponse a été signalée avec succès.'), 'success');
+      Swal.fire(
+        t('Signalé!'),
+        t('La réponse a été signalée avec succès.'),
+        'success'
+      );
     } catch (error) {
       console.error('Error reporting the response:', error);
-      Swal.fire(t('Échec!'), t('Problème lors du signalement de la réponse.'), 'error');
+      Swal.fire(
+        t('Échec!'),
+        t('Problème lors du signalement de la réponse.'),
+        'error'
+      );
     }
   }
 };
@@ -806,6 +886,7 @@ const handleReportResponse = async (commentId, responseId) => {
             </NavLink>
           </span>{' '}
         </div>
+
         {userInfo &&
           data.utilisateur.id_utilisateur.toString() === userId.toString() && (
             <div className="postManagementButtons">
@@ -825,6 +906,7 @@ const handleReportResponse = async (commentId, responseId) => {
               )}
             </div>
           )}
+
         <button
           className="iconButton"
           style={{ marginLeft: isEditing ? '0px' : 'auto' }}
@@ -839,6 +921,7 @@ const handleReportResponse = async (commentId, responseId) => {
             </button>
           )}
       </div>
+      <small className="dateRight">{dateFormatted}</small>{' '}
       <div className="postContent">
         {!isEditing ? (
           <>
@@ -857,7 +940,7 @@ const handleReportResponse = async (commentId, responseId) => {
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
             />
-           
+
             <button
               onClick={() => setShowLocationModal(true)}
               className="editLocationButton"
@@ -959,11 +1042,10 @@ const handleReportResponse = async (commentId, responseId) => {
         {showToast && <div className="toastShow show">{t('Lien copié !')}</div>}{' '}
       </div>
       <div className="likesCount">
-        <span onClick={showLikesModal} title={t("Voir qui a aimé ce post")}>
+        <span onClick={showLikesModal} title={t('Voir qui a aimé ce post')}>
           {likes} {t("J'aime")}
         </span>
       </div>
-
       <LikesModal
         isOpen={isLikesModalOpen}
         onRequestClose={() => setIsLikesModalOpen(false)}
@@ -980,7 +1062,6 @@ const handleReportResponse = async (commentId, responseId) => {
           onCommentSubmitted={reloadComments}
         />
       )}
-
       <div className="comments">
         {commentsToShow.map((comment, index) => (
           <div key={index} className="comment">
@@ -1103,7 +1184,7 @@ const handleReportResponse = async (commentId, responseId) => {
                     required
                   />
                   <button type="submit" className="responseSubmitButton">
-                   { t('Repondre')}
+                    {t('Repondre')}
                   </button>
                 </form>
               )}
@@ -1127,7 +1208,7 @@ const handleReportResponse = async (commentId, responseId) => {
                       type="text"
                       value={responseContent}
                       onChange={(e) => setResponseContent(e.target.value)}
-                      placeholder={t("Écrire une réponse...")}
+                      placeholder={t('Écrire une réponse...')}
                       className="commentContent"
                       style={{
                         width: '50%',
@@ -1143,7 +1224,7 @@ const handleReportResponse = async (commentId, responseId) => {
                         width: '20%',
                       }}
                     >
-                     { t('Répondre')}
+                      {t('Répondre')}
                     </button>
                   </div>
                 </form>
@@ -1157,7 +1238,8 @@ const handleReportResponse = async (commentId, responseId) => {
                   >
                     {visibleReplies[comment.id_cmntr]
                       ? t('Masquer les réponses')
-                      : t('Afficher les réponses')+` (${comment.reponses.length})`}
+                      : t('Afficher les réponses') +
+                        ` (${comment.reponses.length})`}
                   </button>
                 </div>
               )}
@@ -1233,7 +1315,8 @@ const handleReportResponse = async (commentId, responseId) => {
                             )
                           }
                         >
-                          {''} {reponse.nbr_likeRep}{ t("J'aime")}
+                          {''} {reponse.nbr_likeRep}
+                          {t("J'aime")}
                         </span>
                         {reponse.utilisateur.id_utilisateur.toString() !=
                           userId.toString() && (
