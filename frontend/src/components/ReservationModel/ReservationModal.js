@@ -27,9 +27,28 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
-const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete }) => {
-  const [childAges, setChildAges] = useState(Array(room.children).fill(1)); // Initialize with age 1
+const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete,details }) => {
+  const [childAges, setChildAges] = useState(Array(room.children).fill(1));
+  const defaultRoomType = details.typechambres.find(tc => tc.defaultChambre);
+  const [selectedRoomType, setSelectedRoomType] = useState(defaultRoomType?.id_TypeChambre || details.typechambres[0].id_TypeChambre);
+  const [roomSupplement, setRoomSupplement] = useState(0); // Start with no supplement
 
+  useEffect(() => {
+    // Update the room price when the supplement changes
+    updateRoom(room.id, 'supplement', roomSupplement);
+  }, [roomSupplement]);
+
+  const handleRoomTypeChange = (event) => {
+    const selectedTypeId = event.target.value;
+    const selectedType = details.typechambres.find(tc => tc.id_TypeChambre === selectedTypeId);
+    setSelectedRoomType(selectedTypeId);
+    // Apply supplement only if it's not the default room type
+    if (!selectedType.defaultChambre) {
+      setRoomSupplement(selectedType.supplement);
+    } else {
+      setRoomSupplement(0); // Reset supplement if default room type is selected
+    }
+  };
     const incrementAdults = () => {
         updateRoom(room.id, 'adults', room.adults + 1);
     };
@@ -70,6 +89,20 @@ const adapter = new AdapterDateFns({ locale: fr });
                     </IconButton>
                 )}
             </Box>
+            <FormControl fullWidth>
+        <InputLabel>Type de chambre</InputLabel>
+        <Select
+          value={selectedRoomType}
+          label="Type de chambre"
+          onChange={handleRoomTypeChange}
+        >
+          {details.typechambres.map((type) => (
+            <MenuItem key={type.id_TypeChambre} value={type.id_TypeChambre}>
+              {type.nom} {type.defaultChambre ? '' : `(+${type.supplement} DT)`}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <IconButton onClick={decrementAdults} disabled={room.adults <= 1} color="primary">
                     <RemoveCircleOutlineIcon />
@@ -123,23 +156,18 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise,nombre
     return Math.max(1, diffDays - 1); // Multiplier is (days - 1), minimum is 1
 };
 
-   const calculateRoomPrice = (adults, children, basePrice, isAdherant) => {
-    let priceIncrease = 0;
-    if (adults > 1) {
-        priceIncrease += (adults - 1) * (basePrice * 0.4);
-    }
-
-    // Calculate the number of children that are not free
-    const chargeableChildren = Math.max(0, children - nombre_enfants_gratuits);
-    priceIncrease += chargeableChildren * prix_enfants_payants;
-
-    let totalCost = basePrice + priceIncrease;
-
-    if (isAdherant) {
-        totalCost *= (1 - remise / 100);
-    }
-
-    return totalCost;
+const calculateRoomPrice = (adults, children, basePrice, isAdherant, supplement) => {
+  let priceIncrease = 0;
+  if (adults > 1) {
+    priceIncrease += (adults - 1) * (basePrice * 0.4);
+  }
+  const chargeableChildren = Math.max(0, children - nombre_enfants_gratuits);
+  priceIncrease += chargeableChildren * prix_enfants_payants;
+  let totalCost = basePrice + priceIncrease + supplement;
+  if (isAdherant) {
+    totalCost *= (1 - remise / 100);
+  }
+  return totalCost;
 };
 
     const initialRoomPrice = calculateRoomPrice(1, 0, prix, isAdherant);
@@ -210,10 +238,10 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise,nombre
     };
 
     const updateRoom = (roomId, field, value) => {
-        const room = rooms.find(room => room.id === roomId);
-        const updatedRoom = { ...room, [field]: value };
-        updatedRoom.prix = calculateRoomPrice(updatedRoom.adults, updatedRoom.children, prix, isAdherant);
-        setRooms(rooms.map(room => room.id === roomId ? updatedRoom : room));
+      const room = rooms.find(room => room.id === roomId);
+      const updatedRoom = { ...room, [field]: value };
+      updatedRoom.prix = calculateRoomPrice(updatedRoom.adults, updatedRoom.children, prix, isAdherant, updatedRoom.supplement);
+      setRooms(rooms.map(room => room.id === roomId ? updatedRoom : room));
     };
 const [modePaiement, setModePaiement] = useState('');
 const [autorisationDeductionSalaire, setAutorisationDeductionSalaire] =
@@ -515,6 +543,7 @@ const handleAuthorizationChange = (event) => {
                   updateRoom={updateRoom}
                   deleteRoom={handleRemoveRoom}
                   canDelete={rooms.length > 1}
+                  details={details}
                 />
               ))
             ) : (

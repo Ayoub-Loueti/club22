@@ -134,13 +134,19 @@ function NavbarHaut() {
   };
   const handleNotificationClick = (notification) => {
     if (
-      !['reservaccepte', 'signal', 'reservrefuse'].includes(notification.type)
+      ![ 'signal'].includes(notification.type)
     ) {
-      console.log(notification); // For debugging
-      setSelectedPostId(notification.post.id_post); // Use notification.post.id_post
-      setIsPostModalOpen(true);
-      setShowNotifications(false); // Close the notifications dropdown
-      markAsRead(notification.id_notif, notification.isRead); // Mark as read, assuming this function exists and works correctly
+
+      if (notification.type === 'reservaccepte' || notification.type === 'reservrefuse') {
+        navigate('/mesReservations');
+      } else {
+        // Existing logic for other types of notifications
+        console.log(notification); // For debugging
+        setSelectedPostId(notification.post.id_post); // Use notification.post.id_post
+        setIsPostModalOpen(true);
+        setShowNotifications(false); // Close the notifications dropdown
+        markAsRead(notification.id_notif, notification.isRead); // Mark as read, assuming this function exists and works correctly
+      }
     }
   };
 

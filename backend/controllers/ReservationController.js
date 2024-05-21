@@ -654,35 +654,78 @@ exports.reparationReservations = async (req, res) => {
       .json({ error: 'Failed to repair reservations', details: error.message });
   }
 };
+
 exports.acceptationReservation = async (req, res) => {
-  const reservationId = req.params.id;
+  const userId = req.userId;
+  const reservationId = req.params.id; // Assuming reservation ID is passed as a parameter
 
   try {
-    const reservation = await Reservation.findOne({
-      where: { id_reservation: reservationId },
+    // Find the employee corresponding to the logged-in user
+    const admin = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: userId,
+      },
     });
 
-    if (!reservation) {
-      return res.status(404).json({ error: 'Reservation not found' });
+    if (!admin) {
+      return res.status(404).json({ error: 'admin not found' });
     }
 
-    if (reservation.etat === 'accepter') {
-      return res.status(200).json({ message: 'Reservation already accepted' });
+    // Find the reservation to be cancelled
+    const userReservation = await Reservation.findOne({
+      where: {
+        id_reservation: reservationId,
+        etat: 'reparation',
+      },
+      include: [
+        {
+          model: Offre,
+          as: 'offre',
+          include: [
+            { model: Collaborateur, as: 'collaborateur' },
+          ],
+        },
+        {
+          model: Employe,
+          as: 'employe',
+          include: [
+            { model: Utilisateur, as: 'utilisateur' },
+            // Ensure other necessary models are included as needed
+          ],
+        },
+        // Ensure other necessary models are included as needed
+      ],
+    });
+
+    if (!userReservation) {
+      return res
+        .status(404)
+        .json({ error: 'Reservation not found or cannot be cancelled' });
     }
 
-    await reservation.update({ etat: 'accepter' });
+    // Update the reservation state to 'annuler'
+    await userReservation.update({
+      etat: 'accepter',
+    });
 
-    // const notification = await Notification.create({ ... });
-    // if (!notification) {
-    //   throw new Error('Failed to create notification');
-    // }
+    await NotificationSprintTroix.create({
+      contenu: 'Votre réservation a été acceptée',
+      id_utilisateur: userReservation.employe.utilisateur.id_utilisateur,
+      date_notif: new Date(),
+      type: 'reservaccepte',
+    });
+
+    const Owner = await Utilisateur.findByPk(
+      userReservation.employe.utilisateur.id_utilisateur
+    );
+    if (Owner) {
+      await Owner.increment('nbr_notifs', { by: 1 });
+    }
 
     res.status(200).json({ message: 'Reservation accepted successfully' });
   } catch (error) {
     console.error('Error confirming reservation:', error);
-    res
-      .status(500)
-      .json({ error: 'Failed to confirm reservation', details: error.message });
+    res.status(500).json({ error: 'Failed to confirm reservation' });
   }
 };
 
