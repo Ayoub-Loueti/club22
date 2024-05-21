@@ -123,3 +123,33 @@
     transform: scale(1.05); /* Légère augmentation de taille au survol */
     box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Ombre pour un effet de profondeur */
 }
+.type-chambre-container {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #f3f5f8; /* Couleur de fond légère */
+  border-radius: 5px; /* Bords arrondis */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Ombre subtile */
+}
+
+.type-chambre-info {
+  display: flex;
+  align-items: center; /* Alignement vertical */
+  justify-content: flex-start; /* Alignement horizontal au début */
+  font-size: 0.9rem; /* Taille de police réduite */
+  color: #191f43; /* Couleur de texte foncée */
+  margin-bottom: 5px; /* Marge en bas pour séparer les lignes */
+}
+
+.type-chambre-label {
+  font-weight: bold;
+  margin-right: 5px; /* Espace entre le label et la valeur */
+  color: #c50f10; /* Couleur pour les labels */
+}
+
+.type-chambre-value {
+  margin-right: 190px; /* Espace après la valeur avant le prochain label */
+}
+.type-chambre-info strong {
+  margin-right: 5px; /* Marge à droite pour le label */
+  color: #c50f10; /* Couleur pour les labels */
+}

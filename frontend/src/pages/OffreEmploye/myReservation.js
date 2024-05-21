@@ -461,32 +461,56 @@ const downloadReservationPDF = async (reservation) => {
     pdf.internal.pageSize.getHeight() - 30,
     'center'
   );
-  const reservationData = {
-    reservationId: reservation.id_reservation,
-    guestName:
-      reservation.employe.utilisateur.nom +
-      ' ' +
-      reservation.employe.utilisateur.prenom,
-    checkInDate: reservation.date_debut,
-    checkOutDate: reservation.date_fin,
-    totalPrice: reservation.prix_totale,
-    status: reservation.etat,
-    // Ajoutez d'autres détails selon le besoin
-  };
-  // Generate the QR code image
-  const qrData = JSON.stringify(reservationData); // Convert reservation data to a string
-  const qrImage = await QRCode.toDataURL(qrData);
 
-  // Draw the QR code image on the PDF
-  const qrImageWidth = 100; // Adjust the size as needed
-  const qrImageHeight = 100; // Adjust the size as needed
-  const qrImageX = pageWidth - marginLeft - qrImageWidth - 20; // Adjust the position as needed
-  const qrImageY = currentY + 20; // Adjust the position as needed
+  // Générer et ajouter le code QR
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const qrImageWidth = 100;
+  const qrImageHeight = 100;
+  const qrImageX = pageWidth - qrImageWidth - 20; // 20 points de marge
+  const qrImageY = pageHeight - qrImageHeight - 20; // 20 points de marge
+
+  // Générer et ajouter le code QR
+  const qrImage = await generateQRCode(reservation);
   pdf.addImage(qrImage, 'PNG', qrImageX, qrImageY, qrImageWidth, qrImageHeight);
+
+  
+
+  pdf.setFontSize(10);
   // Sauvegarde du PDF
   pdf.save('reservation.pdf');
 };
-
+const generateQRCode = async (reservation) => {
+  const formattedDetails = formatReservationDetailsForQR(reservation);
+  const qrImage = await QRCode.toDataURL(formattedDetails);
+  return qrImage;
+};
+const formatReservationDetailsForQR = (reservation) => {
+  return `De la part de Club22 Ooredoo Tunisie
+Réservation: ${reservation.offre.titre}
+Date: du ${reservation.date_debut} au ${reservation.date_fin}
+Prix Total: ${reservation.prix_totale.toFixed(2)} DT
+Remise: ${reservation.offre.remise}%
+Réservé par: ${
+    reservation.employe && reservation.employe.utilisateur
+      ? reservation.employe.utilisateur.nom +
+        ' ' +
+        reservation.employe.utilisateur.prenom
+      : 'N/A'
+  }
+Email: ${
+    reservation.employe && reservation.employe.utilisateur
+      ? reservation.employe.utilisateur.email
+      : 'N/A'
+  }
+Téléphone: ${
+    reservation.employe && reservation.employe.utilisateur
+      ? reservation.employe.utilisateur.tel
+      : 'N/A'
+  }
+Nom du collaborateur: ${reservation.offre.collaborateur.nom}
+Email du collaborateur: ${reservation.offre.collaborateur.email}
+Téléphone du collaborateur: ${reservation.offre.collaborateur.tel}`;
+};
  const fetchDeductionDetails = async () => {
         try {
             const response = await axios.get('http://localhost:5000/myReservationsDeduction', {

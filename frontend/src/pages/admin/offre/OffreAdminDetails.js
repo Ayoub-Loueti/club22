@@ -172,6 +172,35 @@ function OffreAdminDetails() {
                   <p>
                     <strong>Étoiles:</strong> {offre.details.etoiles}
                   </p>
+
+                  <div>
+                    <h3>Types de Chambres:</h3>
+                    {offre.details.typechambres &&
+                    offre.details.typechambres.length > 0 ? (
+                      offre.details.typechambres.map((typeChambre, index) => (
+                        <div key={index} className="type-chambre-container">
+                          <p className="type-chambre-info">
+                            <span className="type-chambre-label">Nom de chambre:</span>
+                            <span className="type-chambre-value">
+                              {typeChambre.nom}
+                            </span>
+                            <span className="type-chambre-label">
+                              Supplément:
+                            </span>
+                            <span className="type-chambre-value">
+                              {typeChambre.supplement} DT
+                            </span>
+                          </p>
+                          <p>
+                            <strong>Chambre par Défaut:</strong>{' '}
+                            {typeChambre.defaultChambre ? 'Oui' : 'Non'}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <p>Aucun type de chambre spécifié.</p>
+                    )}
+                  </div>
                   <div className="details-grid">
                     <div className="detail-card">
                       <span className="detail-label">Climatisation:</span>
