@@ -730,46 +730,56 @@ exports.checkIfPostIsSaved = async (req, res) => {
 
 //signaler
 
-exports.createSignal = async (req, res) => {
-  const { id_post, id_cmntr, id_reponse, cause } = req.body;
-  const id_utilisateur = req.userId; 
+ exports.createSignal = async (req, res) => {
+   const { id_post, id_cmntr, id_reponse, cause } = req.body;
+   const id_utilisateur = req.userId;
 
-  try {
-    // Check if a similar signal already exists
-    const signalExists = await Signaler.findOne({
-      where: {
-        id_post: id_post,
-        id_cmntr: id_cmntr || 0,
-        id_reponse: id_reponse || 0,
-        id_utilisateur: id_utilisateur
-      }
-    });
+   try {
+     const user = await Utilisateur.findByPk(id_utilisateur);
+     if (user.blockSignalUntil && user.blockSignalUntil > new Date()) {
+       return res
+         .status(403)
+         .json({
+           message:
+             'Vous êtes temporairement bloqué de faire des signalements.',
+         });
+     }
 
-    if (signalExists) {
-      return res.status(409).json({ message: 'Signal already exists' });
-    }
+     // Check if a similar signal already exists
+     const signalExists = await Signaler.findOne({
+       where: {
+         id_post: id_post,
+         id_cmntr: id_cmntr || 0,
+         id_reponse: id_reponse || 0,
+         id_utilisateur: id_utilisateur,
+       },
+     });
 
-    // Create a new signal
-    const newSignal = await Signaler.create({
-      id_post: id_post,
-      id_cmntr: id_cmntr || 0,
-      id_reponse: id_reponse || 0,
-      id_utilisateur: id_utilisateur,
-      cause:cause
-    });
+     if (signalExists) {
+       return res.status(409).json({ message: 'Signal already exists' });
+     }
 
-    return res.status(201).json({
-      message: 'Report submitted successfully',
-      signal: newSignal
-    });
-  } catch (error) {
-    console.error('Error submitting report:', error);
-    return res.status(500).json({
-      message: 'Error submitting report',
-      error: error.message
-    });
-  }
-};
+     // Create a new signal
+     const newSignal = await Signaler.create({
+       id_post: id_post,
+       id_cmntr: id_cmntr || 0,
+       id_reponse: id_reponse || 0,
+       id_utilisateur: id_utilisateur,
+       cause: cause,
+     });
+
+     return res.status(201).json({
+       message: 'Report submitted successfully',
+       signal: newSignal,
+     });
+   } catch (error) {
+     console.error('Error submitting report:', error);
+     return res.status(500).json({
+       message: 'Error submitting report',
+       error: error.message,
+     });
+   }
+ };
 
 exports.getAllSignaler = async (req, res) => {
   const userId = req.userId; // Ensure you have access to the userId, typically set from the auth middleware

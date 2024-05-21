@@ -744,5 +744,20 @@ exports.getPoints = async (req, res) => {
     res.status(500).json({ message: 'Error retrieving points', error: error.message });
   }
 };
-
+exports.getUserBlockStatus = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await Utilisateur.findOne({
+      where: { id_utilisateur: userId },
+      attributes: ['blockSignalUntil'], // Assurez-vous que 'blockSignalUntil' est correctement défini dans votre modèle
+    });
+    if (user) {
+      res.json({ blockSignalUntil: user.blockSignalUntil });
+    } else {
+      res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 module.exports = exports;

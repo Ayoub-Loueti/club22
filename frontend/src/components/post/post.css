@@ -614,3 +614,8 @@ margin-left: 200px;}
   cursor: pointer; /* Indique que le label est cliquable */
   transition: color 0.3s ease; /* Transition douce pour le changement de couleur */
 }
+/* Dans votre fichier post.css */
+.dateRight {
+  text-align: left;
+  display: block; /* Assurez-vous que c'est un bloc pour permettre l'alignement */
+}

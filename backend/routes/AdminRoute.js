@@ -20,4 +20,9 @@ router.delete('/post/:id/admin', authenticate, adminController.deletePostAdmin);
 router.delete('/comment/:id/admin', authenticate, adminController.deleteCommentAdmin);
 router.delete('/response/:id/admin', authenticate, adminController.deleteResponseAdmin);
 
+  router.put(
+    '/block-reporting/:userId',
+    authenticate,
+    adminController.blockUserFromReporting
+  );
 module.exports = router;

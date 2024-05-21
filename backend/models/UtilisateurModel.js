@@ -35,7 +35,7 @@ const UtilisateurModel = sequelize.define(
     },
     tel: {
       type: DataTypes.STRING,
-      allowNull: true, 
+      allowNull: true,
     },
     resetPasswordToken: {
       type: DataTypes.STRING,
@@ -59,6 +59,11 @@ const UtilisateurModel = sequelize.define(
     },
     nbr_notifs: {
       type: DataTypes.INTEGER,
+    },
+    blockSignalUntil: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
     },
   },
   {
