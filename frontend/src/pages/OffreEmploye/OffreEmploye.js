@@ -70,6 +70,19 @@ const currentOffres = filteredOffres.slice(
   currentPage * offresPerPage,
   (currentPage + 1) * offresPerPage
 );
+const calculateDaysUntil = (date) => {
+  const now = new Date();
+  const endDate = new Date(date);
+  const timeDiff = endDate.getTime() - now.getTime();
+  const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+  if (daysDiff > 0) {
+    return `Remise expire dans ${daysDiff} jours`;
+  } else if (daysDiff === 0) {
+    return "Remise expire aujourd'hui";
+  } else {
+    return null; 
+  }
+};
   return (
     <>
       <Navbar />
@@ -110,11 +123,16 @@ const currentOffres = filteredOffres.slice(
                   fontWeight: 'bold',
                 }}
               >
-                Prix : A partir de{' '}
-                <span style={{ color: '#f00', fontSize: '23px' }}>
+                <span className='apartir'>A partir de</span>{' '}
+                <span style={{ color: '#f00', fontSize: '21px' }}>
                   {offre.prix} TND
                 </span>
               </h3>
+              {offre.date_fin && (
+                <div className="date-expiration">
+                  <p>{calculateDaysUntil(offre.date_fin)}</p>
+                </div>
+              )}
               <StarRating
                 rating={parseFloat(offre.evaluation.averageVotes)}
                 numReviews={offre.evaluation.numberOfEvaluations}

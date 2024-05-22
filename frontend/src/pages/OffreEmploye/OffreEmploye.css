@@ -125,3 +125,13 @@
   font-weight: bold;
   background-color: #5a7184;
 }
+
+.date-expiration p {
+  color: #d9534f; /* Rouge pour l'urgence */
+  font-weight: bold;
+  margin-top: 5px;
+}
+.apartir{
+  font-size: medium;
+  color: #191f43;
+}
