@@ -9,6 +9,8 @@ router.get('/activateAccount/:userId/:token',utilisateurController.activateAccou
 router.post('/resendEmail', utilisateurController.resendActivationEmail);
 
 router.post('/login', utilisateurController.login);
+router.post('/changer-mdp', authenticate, utilisateurController.changerMdp);
+
 router.get('/auth/google', utilisateurController.googleAuth);
 router.get('/auth/google/callback', utilisateurController.googleAuthCallback);
 router.get('/auth/logout', utilisateurController.logout);

@@ -818,6 +818,7 @@ exports.getAllSignaler = async (req, res) => {
             attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
           },
         ],
+        order: [['id_offre', 'DESC']]
       });
 
       if (!allSignalerEntries.length) {

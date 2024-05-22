@@ -300,3 +300,77 @@ input[type='file']::file-selector-button:hover {
   background-color: var(--secondary-color); /* Highlight menu item on hover */
   color: var(--text-primary); /* White text for contrast */
 }
+
+.password-change-form {
+  background-color: var(--background-color);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.password-change-form .info-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.password-change-form .info-label {
+  font-weight: bold;
+  color: var(--text-secondary);
+  min-width: 150px;
+}
+
+.password-change-form .edit-input {
+  padding: 10px;
+  border: 1px solid var(--primary-color);
+  border-radius: 5px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  background-color: var(--text-primary);
+  transition: border-color 0.3s;
+  width: 100%;
+}
+
+.password-change-form .edit-input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+.button-groupee {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.confirm-buttonee,
+.cancel-buttonee {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.confirm-buttonee {
+  background-color: var(--primary-color);
+  color: var(--text-primary);
+}
+
+.confirm-buttonee:hover {
+  background-color: darken(var(--primary-color), 10%);
+  transform: translateY(-2px);
+}
+
+.cancel-buttonee {
+  background-color: var(--secondary-color);
+  color: var(--text-secondary);
+}
+
+.cancel-buttonee:hover {
+  background-color: darken(var(--secondary-color), 10%);
+  transform: translateY(-2px);
+}

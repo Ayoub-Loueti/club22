@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight, faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FaArrowLeft } from 'react-icons/fa';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import NavAdmin from '../NavAdmin/navAdmin';
 import { SHA256 } from 'crypto-js';
 function ListCollaborateur() {
@@ -120,14 +121,16 @@ function ListCollaborateur() {
   };
 
   const handleCopyLink = async (id_collaborateur) => {
-    const hashedId = SHA256(id_collaborateur.toString()).toString();
-    const postUrl = `http://localhost:3000/Club22/${id_collaborateur}`;
     try {
-      await navigator.clipboard.writeText(postUrl);
-      showAlert('Lien copié dans le presse-papier', 'green');
+      const response = await axios.put(
+        `http://localhost:5000/collaborateurs/${id_collaborateur}/validation`,
+        {},
+        { headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('login')).token}` } }
+      );
+      showAlert("Lien d'accès envoyé au collaborateur.", 'green');
     } catch (err) {
-      console.error('Failed to copy the text to clipboard', err);
-      showAlert('Failed to copy link', 'red');
+      console.error('Failed to update collaborateur validation:', err);
+      showAlert('Failed to update validation', 'red');
     }
   };
   
@@ -219,9 +222,9 @@ function ListCollaborateur() {
                   <h3 className="collaborateur-card-title">
                     {collaborateur.nom}
                     <FontAwesomeIcon
-                      icon={faCopy}
-                      className="copy-icon"
-                      onClick={() => handleCopyLink(collaborateur.id_collaborateur)}
+                    icon={faCheck}
+                    className="validation-icon"
+                    onClick={() => handleCopyLink(collaborateur.id_collaborateur)}
                     />
                   </h3>
                   <p className="collaborateur-card-description">

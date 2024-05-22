@@ -215,6 +215,76 @@ function Profil() {
     if (showDropdown) setShowDropdown(false);
   });
 
+  const [showPasswordChange, setShowPasswordChange] = useState(false); // State for password change form
+  const [passwordValues, setPasswordValues] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmNewPassword: '',
+  });
+  
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordValues({ ...passwordValues, [name]: value });
+  };
+
+  const handlePasswordUpdate = async () => {
+    if (passwordValues.newPassword !== passwordValues.confirmNewPassword) {
+      Swal.fire({
+        title: t('Erreur'),
+        text: t('Les nouveaux mots de passe ne correspondent pas'),
+        icon: 'error'
+      });
+      return;
+    }
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/changer-mdp',
+        {
+          motDePasse: passwordValues.currentPassword,
+          newMDP: passwordValues.newPassword,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (response.status === 200) {
+        setShowPasswordChange(false);
+        setPasswordValues({
+          currentPassword: '',
+          newPassword: '',
+          confirmNewPassword: '',
+        });
+        Swal.fire({
+          title: t('Succès'),
+          text: t('Your password has been successfully changed.'),
+          icon: 'success'
+        });
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('Erreur lors du changement de mot de passe', error.response.data);
+        Swal.fire({
+          title: t('Erreur'),
+          text: t("Mot de passe actuel incorrect."),
+          icon: 'error'
+        });
+      } else if (error.request) {
+        console.error('Erreur lors du changement de mot de passe', error.request);
+        Swal.fire({
+          title: t('Erreur'),
+          text: t('Aucune réponse du serveur'),
+          icon: 'error'
+        });
+      } else {
+        console.error('Erreur', error.message);
+        Swal.fire({
+          title: t('Erreur'),
+          text: t('Erreur lors de la requête'),
+          icon: 'error'
+        });
+      }
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -314,6 +384,49 @@ function Profil() {
           )}
         </div>
         <div className="profile-info">
+        {showPasswordChange ? (
+            <div className="password-change-form">
+            <div className="info-item">
+              <span className="info-label">{t('Mot de passe actuel')}:</span>
+              <input
+                type="password"
+                name="currentPassword"
+                value={passwordValues.currentPassword}
+                onChange={handlePasswordChange}
+                className="edit-input"
+              />
+            </div>
+            <div className="info-item">
+              <span className="info-label">{t('Nouveau mot de passe')}:</span>
+              <input
+                type="password"
+                name="newPassword"
+                value={passwordValues.newPassword}
+                onChange={handlePasswordChange}
+                className="edit-input"
+              />
+            </div>
+            <div className="info-item">
+              <span className="info-label">{t('Confirmer nouveau mot de passe')}:</span>
+              <input
+                type="password"
+                name="confirmNewPassword"
+                value={passwordValues.confirmNewPassword}
+                onChange={handlePasswordChange}
+                className="edit-input"
+              />
+            </div>
+            <div className="button-groupee">
+              <button onClick={handlePasswordUpdate} className="confirm-buttonee">
+                {t('Confirmer')}
+              </button>
+              <button onClick={() => setShowPasswordChange(false)} className="cancel-buttonee">
+                {t('Annuler')}
+              </button>
+            </div>
+          </div>
+          ) : (
+            <>
           <div className="info-item">
             <span className="info-label">Email:</span>
             <span className="info-value">{utilisateur.email}</span>
@@ -408,8 +521,16 @@ function Profil() {
               <span className="info-label">{t('Rôle')}:</span>
               <span className="info-value">{utilisateur.type}</span>
             </div>
+            <div className="info-item">
+           <span className="info-label">{t('Mot de passe')}</span>
+          <span onClick={() => setShowPasswordChange(true)} className="edit-icon">
+          🖊️
+          </span>
+          </div>
           </div>
           {/* Ajoutez d'autres informations ici */}
+        </>
+        )}
         </div>
         {/* Ajout d'un séparateur */}
         <div className="separator"></div>

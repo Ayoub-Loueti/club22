@@ -403,6 +403,7 @@ exports.getAllOffres = async (req, res) => {
         },
       ],
       attributes: { exclude: ['created_at', 'updated_at'] },
+      order: [['id_offre', 'DESC']]
     });
 
     if (!offres.length) {
@@ -728,7 +729,8 @@ exports.getAllOffresCollab = async (req, res) => {
         where: { id_collaborateur: collabId }, // Filter by collaborator ID
         attributes: ['nom', 'logo'],
       },
-      attributes: { exclude: ['created_at', 'updated_at'] }, // Exclude timestamps from OffreModel
+      attributes: { exclude: ['created_at', 'updated_at'] },
+      order: [['id_offre', 'DESC']] // Exclude timestamps from OffreModel
     });
 
     if (!offres.length) {
