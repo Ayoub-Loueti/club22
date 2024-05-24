@@ -209,6 +209,35 @@ exports.login = async (req, res) => {
   }
 };
 
+exports.changerMdp = async (req, res) => {
+  const { motDePasse, newMDP } = req.body;
+  const userId = req.userId; 
+
+  try {
+      const utilisateur = await Utilisateur.findByPk(userId);
+
+      if (!utilisateur) {
+          return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+      }
+
+      const passwordIsValid = await bcrypt.compare(motDePasse, utilisateur.motDePasse);
+
+      if (!passwordIsValid) {
+          return res.status(401).json({ message: 'Mot de passe actuel incorrect.' });
+      }
+
+      const newHashedPassword = await bcrypt.hash(newMDP, 10);
+
+      await Utilisateur.update({ motDePasse: newHashedPassword }, {
+          where: { id_utilisateur: userId }
+      });
+
+      res.status(200).json({ message: 'Mot de passe changé avec succès.' });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
 exports.googleAuth = passport.authenticate('google', {
   scope: ['profile', 'email'],
 });

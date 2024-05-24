@@ -1,5 +1,6 @@
 const Utilisateur = require('../models/UtilisateurModel');
 const Collaborateur = require('../models/CollaborateurModel');
+const nodemailer = require('nodemailer');
 
 exports.createCollaborateur = async (req, res) => {
     try {
@@ -288,6 +289,14 @@ exports.updateCollaborateur = async (req, res) => {
     }
 };
 
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // ou autre service de messagerie
+  auth: {
+    user: process.env.MAILER_EMAIL_ID, // Utilisez la variable d'environnement pour l'email
+    pass: process.env.MAILER_PASSWORD, // Utilisez la variable d'environnement pour le mot de passe
+  },
+});
+
 exports.updateCollaborateurValidation = async (req, res) => {
   const { collaboratorId } = req.params;
 
@@ -311,13 +320,33 @@ exports.updateCollaborateurValidation = async (req, res) => {
       return res.status(404).json({ error: 'Collaborateur not found' });
     }
 
-    // Calculate the date for tomorrow
     const now = new Date();
     const tomorrow = new Date(now);
     tomorrow.setDate(now.getDate() + 1);
 
     await collaborateur.update({ validation: tomorrow });
-    res.status(200).json({ message: 'Collaborateur validation date updated successfully' });
+
+    // Send email
+    const mailOptions = {
+      from: process.env.MAILER_EMAIL_ID,
+      to: collaborateur.email,
+      subject: 'Accès pour ajouter des offres',
+      html: `
+      <p>Bonjour Monsieur/Madame,</p>
+      <p><strong>Vous avez désormais la possibilité d'ajouter des offres directement sur notre plateforme.</strong></p>
+      <p>Accédez à l'application via ce lien pour commencer à ajouter vos offres:</p>
+      <a href="http://localhost:3000/Club22/${collaboratorId}" style="color: blue; font-weight: bold;">Cliquez ici</a>
+      <p><strong>Veuillez noter que ce lien sera valide pour les prochaines 24 heures uniquement, jusqu'au ${tomorrow.toLocaleString()}.</strong></p>
+      <p>Après ce délai, l'accès sera révoqué, et il ne sera plus possible d'ajouter des offres sans une nouvelle invitation.</p>
+      <p>Nous espérons que cette collaboration sera fructueuse et bénéfique pour nos deux parties.</p>
+      <p>Cordialement,</p>
+      <p><strong style="color: navy;">Club22 Ooredoo</strong></p>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: 'Collaborateur validation date updated successfully and email sent.' });
   } catch (error) {
     console.error('Failed to update collaborateur validation date:', error);
     res.status(500).json({ error: 'Failed to update collaborateur validation date' });

@@ -117,5 +117,14 @@
   "En tant qu’adhérent de Club22,vous bénéficiez d'offres exclusives pour réserver votre prochain hôtel, voyage ou activité à un prix imbattable.vous trouverez sans doute l'offre qui correspond à vos envies et à votre budget !":"As a Club22 member, you benefit from exclusive offers to book your next hotel, travel, or activity at an unbeatable price. You will undoubtedly find the offer that suits your desires and budget!",
   "à":"at",
   "Veuillez fournir plus de détails":"Provide more details",
-  "Vous devez fournir des détails!":"Please provide more details"
+  "Vous devez fournir des détails!":"Please provide more details",
+  "Mot de passe actuel":"Current password",
+  "Nouveau mot de passe":"New password",
+  "Confirmer nouveau mot de passe":"Confirm new password",
+  "Confirmer":"Confirm",
+  "Mot de passe":"Password",
+  "Les nouveaux mots de passe ne correspondent pas":"New passwords do not match",
+  "Succès":"Success",
+  "Aucune réponse du serveur":"No response from server",
+  "Mot de passe actuel incorrect.":"Invalid current password."
 }
