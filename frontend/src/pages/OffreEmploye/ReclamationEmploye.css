@@ -1,51 +1,65 @@
-.recl-container {
-  padding: 30px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  background-color: #f4f4f9;
-}
-
-.recl-input-container {
-  width: 80%;
-  margin-bottom: 20px;
-  background-color: #ffffff;
-  padding: 20px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  border-radius: 8px;
-}
-
-.recl-input {
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.recl-submit-button {
-  width: 100%;
-  background-color: #4CAF50; /* Couleur verte */
-  color: white;
-}
-
 .recl-cards-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
-max-width: 2000px;
+  max-width: 2000px;
   margin-top: 20px;
+}
+.status-success {
+  background-color: #cff6c8;
+  color: #ffffff;
+}
+
+.status-warning {
+  background-color: #ffeac7; 
+  color: #ffffff;
+}
+
+.status-error {
+  background-color: #ffbeae; 
+  color: #ffffff;
 }
 
 .recl-card {
-  width: 30%;
-  margin: 10px;
+  width: 600px; /* Largeur fixe */
+  height: 400px; /* Hauteur fixe */
+  margin: 20px;
   background-color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  border-radius: 10px;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Empêche le débordement de texte */
+}
+
+.recl-card-content {
+  flex: 1; /* Utilise tout l'espace disponible */
+  overflow: auto; /* Permet le défilement si le texte est trop long */
+  padding: 20px; /* Plus d'espace autour du texte */
+}
+
+.recl-card-status {
+  flex: 0 0 180px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.recl-input-container {
+  margin: 60px;
+  display: flex;
+  flex-direction: column;
+}
+
+.recl-input {
+  margin-bottom: 10px;
 }
 
 @media (max-width: 768px) {
   .recl-card {
-    width: 90%;
+    width: 90%; /* Ajustement pour les petits écrans */
+    height: auto; /* Hauteur ajustable pour les petits écrans */
   }
 }
