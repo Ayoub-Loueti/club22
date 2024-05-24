@@ -5,6 +5,7 @@ const Commentaire = require('../models/CommentairesModel');
 const Reponse = require('../models/ReponseModel');
 const Post = require('../models/PostModel'); 
 const NotificationSprintTroix = require('../models/NotifcationTModel');
+const ReclamationModel = require('../models/ReclamationModel');
 
 exports.getAllUsers = async (req, res) => {
   try {
@@ -528,4 +529,72 @@ exports.blockUserFromReporting = async (req, res) => {
   }
 };
 
+exports.getAllReclamations = async (req, res) => {
+  try {
+    const reclamations = await ReclamationModel.findAll({
+      include: [
+        {
+          model: Employe,
+          as: 'employe',
+          include: [
+            {
+              model: Utilisateur,
+              as: 'utilisateur',
+              attributes: ['nom', 'prenom', 'email'],
+            },
+          ],
+        },
+      ],
+      attributes: [
+        'id_reclamation',
+        'contenu',
+        'statut',
+        'createdAt',
+        'updatedAt',
+      ],
+    });
+    res.status(200).json(reclamations);
+  } catch (error) {
+    console.error('Error fetching reclamations:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+exports.updateReclamationStatus = async (req, res) => {
+  const { id } = req.params;
+  const { newStatus } = req.body;
+
+  try {
+    const reclamation = await ReclamationModel.findByPk(id);
+    if (!reclamation) {
+      return res.status(404).json({ message: 'Réclamation non trouvée' });
+    }
+
+    reclamation.statut = newStatus;
+    await reclamation.save();
+
+    res
+      .status(200)
+      .json({ message: 'Statut de la réclamation mis à jour avec succès' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+exports.updateReclamationMessage = async (req, res) => {
+  const { id } = req.params;
+  const { message_admin } = req.body;
+
+  try {
+    const reclamation = await ReclamationModel.findByPk(id);
+    if (!reclamation) {
+      return res.status(404).json({ message: 'Réclamation non trouvée' });
+    }
+
+    reclamation.message_admin = message_admin;
+    await reclamation.save();
+
+    res.status(200).json({ message: 'Message mis à jour avec succès' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 module.exports = exports;

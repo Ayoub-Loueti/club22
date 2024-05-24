@@ -13,6 +13,7 @@ import {
   faClipboardList,
   faHouseChimneyUser,
   faHouseUser,
+  faFileCircleExclamation,
 } from '@fortawesome/free-solid-svg-icons';
 
 function Navbar() {
@@ -124,6 +125,13 @@ function Navbar() {
               icon={faClipboardList}
               className="navbar-iconnn"
               onClick={() => navigate('/mesReservations')}
+            />
+          )}
+          {userInfo && userInfo.type === 'employe' && (
+            <FontAwesomeIcon
+              icon={faFileCircleExclamation}
+              className="navbar-iconnn"
+              onClick={() => navigate('/reclamation')}
             />
           )}
           {userInfo && userInfo.type === 'admin' && (

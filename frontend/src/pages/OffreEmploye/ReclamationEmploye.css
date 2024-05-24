@@ -1,0 +1,51 @@
+.recl-container {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  background-color: #f4f4f9;
+}
+
+.recl-input-container {
+  width: 80%;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border-radius: 8px;
+}
+
+.recl-input {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.recl-submit-button {
+  width: 100%;
+  background-color: #4CAF50; /* Couleur verte */
+  color: white;
+}
+
+.recl-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+max-width: 2000px;
+  margin-top: 20px;
+}
+
+.recl-card {
+  width: 30%;
+  margin: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+@media (max-width: 768px) {
+  .recl-card {
+    width: 90%;
+  }
+}

@@ -38,6 +38,8 @@ import Dashboard from './pages/admin/dashboard/dashboard';
 import OffreAdminDetails from './pages/admin/offre/OffreAdminDetails';
 import AddFromCollaborateur from './pages/addFromCollab/addFromCollab';
 import ChatBot from './components/chatbot/chatbot';
+import ReclamationEmploye from './pages/OffreEmploye/ReclamationEmploye';
+import ReclamationsAdmin from './pages/admin/reclamations/ReclamationsAdmin';
 
 function App() {
   return (
@@ -55,7 +57,10 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/Club22/:id_collaborateur" element={<AddFromCollaborateur />} />
+            <Route
+              path="/Club22/:id_collaborateur"
+              element={<AddFromCollaborateur />}
+            />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/message" element={<Message />} />
             <Route
@@ -76,12 +81,7 @@ function App() {
                 </PublicRoute>
               }
             />
-            <Route
-              path="/chatbot"
-              element={
-                  <ChatBot />
-              }
-            />
+            <Route path="/chatbot" element={<ChatBot />} />
             <Route
               path="/logout"
               element={
@@ -167,12 +167,34 @@ function App() {
               }
             />
             <Route
+              path="/reclamationsadmin"
+              element={
+                <ProtectedRoute>
+                  <AdminRestrictedRoute>
+                    {' '}
+                    <ReclamationsAdmin />{' '}
+                  </AdminRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/MesReservations"
               element={
                 <ProtectedRoute>
                   <ClientRestrictedRoute>
                     {' '}
                     <MyReservations />{' '}
+                  </ClientRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reclamation"
+              element={
+                <ProtectedRoute>
+                  <ClientRestrictedRoute>
+                    {' '}
+                    <ReclamationEmploye />{' '}
                   </ClientRestrictedRoute>
                 </ProtectedRoute>
               }

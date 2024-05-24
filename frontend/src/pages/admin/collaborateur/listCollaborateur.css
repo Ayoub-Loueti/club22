@@ -72,26 +72,7 @@
   text-align: center;
   white-space: nowrap; /* Empêche le texte de se couper sur plusieurs lignes */
 }
-.navigation-buttons {
-  display: flex;
-  justify-content: center;
-  padding-bottom: 10px;
-}
 
-.navigation-buttons button {
-  background-color: #191f43;
-  color: white;
-  border: none;
-  padding: 12px 25px;
-  margin: 0 5px;
-  cursor: pointer;
-  border-radius: 5px;
-  font-size: 16px;
-}
-
-.navigation-buttons button:hover {
-  background-color: #163172;
-}
 .listCollaborateur-table th, .listCollaborateur-table td {
   padding: 12px;
   text-align: center;
@@ -136,4 +117,118 @@ justify-content: center;}
 
 .collabo-butt:hover {
   background-color: #191f43; /* Plus sombre au survol */
+}
+
+.reclamation-table {
+    height: 610px;
+  margin: 25px auto;
+  border-collapse: collapse;
+  font-size: 1em;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  overflow-y: auto;
+  
+}
+
+.reclamation-table thead tr {
+  background-color: #bcf7f4;
+  text-align: left;
+
+}
+
+.reclamation-table tbody tr {
+  border-bottom: thin solid #dddddd;
+  
+}
+
+.reclamation-table tbody tr:nth-of-type(even) {
+  background-color: #f2f2f2;
+}
+
+.reclamation-table tbody tr:hover {
+  background-color: #eafdfb;
+}
+
+.reclamation-table th {
+   position: sticky;
+  top: 0;
+  z-index: 10; 
+  padding: 14px;
+  text-align: center;
+  white-space: nowrap;
+    background-color: #bcf7f4;
+
+}
+.reclamation-table td {
+  padding: 24px;
+  text-align: center;
+  white-space: nowrap; /* Empêche le texte de se couper sur plusieurs lignes */
+}
+.navigation-buttons {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 10px;
+}
+
+.navigation-buttons button {
+  background-color: #191f43;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.navigation-buttons button:hover {
+  background-color: #163172;
+}
+.reclamation-table th, .reclamation-table td {
+  padding: 12px;
+  text-align: center;
+  white-space: normal; /* Allows text wrapping */
+}
+.message-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espace entre l'input et le bouton */
+}
+
+.message-field {
+  flex-grow: 1; /* Permet à l'input de prendre la majorité de l'espace */
+}
+
+.send-button {
+  white-space: nowrap; /* Empêche le texte du bouton de passer à la ligne */
+}
+.reclamation-container {
+  padding: 60px;
+  
+}
+.reclamation-table td {
+  padding: 12px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px; 
+}
+.reclamation-table th, .reclamation-table td {
+  padding: 12px;
+  text-align: left;
+  white-space: nowrap;
+  box-sizing: border-box; /* Inclut le padding et la bordure dans la largeur totale */
+}
+
+/* Si les en-têtes et les cellules utilisent des polices de taille différente, cela peut aussi affecter l'alignement */
+.reclamation-table th, .reclamation-table td {
+  font-size: 16px; /* Assurez-vous que la taille de la police est la même */
+}
+
+/* Vérifiez les hauteurs pour s'assurer qu'elles sont uniformes */
+.reclamation-table th, .reclamation-table td {
+  height: 50px; /* Ajustez selon les besoins */
 }

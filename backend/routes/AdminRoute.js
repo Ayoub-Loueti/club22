@@ -25,4 +25,17 @@ router.delete('/response/:id/admin', authenticate, adminController.deleteRespons
     authenticate,
     adminController.blockUserFromReporting
   );
+
+
+  router.get('/reclamations', authenticate, adminController.getAllReclamations);
+  router.post(
+    '/reclamations/:id/status',
+    authenticate,
+    adminController.updateReclamationStatus
+  );
+  router.post(
+    '/reclamations/:id/message',
+    authenticate,
+    adminController.updateReclamationMessage
+  );
 module.exports = router;

@@ -24,6 +24,8 @@ import {
   faCalendarAlt,
   faRectangleList,
   faDashboard,
+  faRoadCircleExclamation,
+  faFileCircleExclamation,
 } from '@fortawesome/free-solid-svg-icons';
 
 function NavAdmin() {
@@ -147,6 +149,11 @@ function NavAdmin() {
         icon: faDashboard,
         label: 'Dashboard',
         path: '/dashboard',
+      },
+      {
+        icon: faFileCircleExclamation,
+        label: 'Réclamations',
+        path: '/ReclamationsAdmin',
       },
     ];
 
