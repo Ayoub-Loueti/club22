@@ -27,7 +27,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
-const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete,details }) => {
+const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete,details,updateRoomType }) => {
   const [childAges, setChildAges] = useState(Array(room.children).fill(1));
   const defaultRoomType = details.typechambres.find(tc => tc.defaultChambre);
   const [selectedRoomType, setSelectedRoomType] = useState(defaultRoomType?.id_TypeChambre || details.typechambres[0].id_TypeChambre);
@@ -42,7 +42,7 @@ const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete,details }) => {
     const selectedTypeId = event.target.value;
     const selectedType = details.typechambres.find(tc => tc.id_TypeChambre === selectedTypeId);
     setSelectedRoomType(selectedTypeId);
-    // Apply supplement only if it's not the default room type
+    updateRoomType(room.id, selectedType.nom); // Assuming 'nom' is the correct property for room type
     if (!selectedType.defaultChambre) {
       setRoomSupplement(selectedType.supplement);
     } else {
@@ -173,7 +173,7 @@ const calculateRoomPrice = (adults, children, basePrice, isAdherant, supplement)
     const initialRoomPrice = calculateRoomPrice(1, 0, prix, isAdherant);
 
     const [userInfo, setUserInfo] = useState(null);
-    const [rooms, setRooms] = useState([{ id: 1, adults: 1, children: 0, prix: initialRoomPrice }]);
+    const [rooms, setRooms] = useState([{ id: 1, adults: 2, children: 0, prix: initialRoomPrice }]);
     const today = new Date();
     const [reservationStart, setReservationStart] = useState();
     const [reservationEnd, setReservationEnd] = useState();
@@ -229,7 +229,7 @@ const calculateRoomPrice = (adults, children, basePrice, isAdherant, supplement)
 
     const handleAddRoom = () => {
         const newRoomId = rooms.length ? rooms[rooms.length - 1].id + 1 : 1;
-        const newRoom = { id: newRoomId, adults: 1, children: 0, prix: calculateRoomPrice(1, 0, prix, isAdherant) };
+        const newRoom = { id: newRoomId, adults: 2, children: 0, prix: calculateRoomPrice(1, 0, prix, isAdherant) };
         setRooms([...rooms, newRoom]);
     };
 
@@ -279,7 +279,9 @@ const handleAuthorizationChange = (event) => {
      alertBox.remove();
    }, 2000); // Remove the alert after 3 seconds
  };
-
+ const updateRoomType = (roomId, typechambreR) => {
+  setRooms(rooms.map(room => room.id === roomId ? { ...room, typechambreR } : room));
+};
     const handleReservation = async () => {
       if (
         !modePaiement ||
@@ -316,6 +318,7 @@ const handleAuthorizationChange = (event) => {
                   nbr_adults: room.adults,
                   nbr_enfants: room.children,
                   prix: room.prix,
+                  typechambreR: room.typechambreR,
                 }))
               : [],
           nombre: type !== 'hotel' ? nombre : rooms.length,
@@ -333,6 +336,7 @@ const handleAuthorizationChange = (event) => {
           statut_paiement: "", // Set statut_paiement based on payment mode
           montant_deduit: "",
         };
+        console.log(reservationData);
 
         try {
             await axios.post(
@@ -344,7 +348,7 @@ const handleAuthorizationChange = (event) => {
          
 
             console.log("Reservation successful");
-                 window.location.href = '/mesreservations';
+            window.location.href = '/mesreservations';  
 
              
             onRequestClose();
@@ -544,6 +548,7 @@ const handleAuthorizationChange = (event) => {
                   deleteRoom={handleRemoveRoom}
                   canDelete={rooms.length > 1}
                   details={details}
+                  updateRoomType={updateRoomType}
                 />
               ))
             ) : (

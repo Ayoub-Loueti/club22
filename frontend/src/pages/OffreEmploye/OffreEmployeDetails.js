@@ -100,6 +100,7 @@ function OffreEmployeDetails() {
     nombre_enfants_gratuits,
     age_limit_gratuite,
     evaluation,
+    enfants_autorises,
   } = offre;
 
   const handleImageClick = (clickedIndex) => {
@@ -204,6 +205,7 @@ const handleAuthorizationChange = () => {
                 details={details}
                 prix_enfants_payants={prix_enfants_payants}
                 nombre_enfants_gratuits={nombre_enfants_gratuits}
+                enfants_autorises={enfants_autorises}
               />
               {isAdherant === false && (
                 <button

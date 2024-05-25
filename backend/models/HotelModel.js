@@ -29,7 +29,17 @@ const HotelModel = sequelize.define('Hotel', {
             model: 'reservation', 
             key: 'id_reservation'
         }
-    }
+    },
+    typechambreR: {
+        type: DataTypes.ENUM(
+          'Chambre standard',
+          'Chambre double',
+          'Chambre familiale',
+          'Chambre communicante',
+          'Suite',
+          'Suite royale'
+        ),
+      },
 }, {
     tableName: 'hotel',
     timestamps: false,
