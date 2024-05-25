@@ -31,6 +31,7 @@ exports.createReservation = async (req, res) => {
     date_paiement,
     montant_deduit,
     statut_paiement,
+    months,
   } = req.body; // Extract hotels array from request body
   const userId = req.userId;
 
@@ -82,6 +83,7 @@ exports.createReservation = async (req, res) => {
       date_paiement,
       montant_deduit: prix_totale,
       statut_paiement,
+      months: months,
     });
 
     // Create associated hotel records
@@ -93,6 +95,7 @@ exports.createReservation = async (req, res) => {
             nbr_adults: hotel.nbr_adults,
             nbr_enfants: hotel.nbr_enfants,
             prix: hotel.prix,
+            typechambreR: hotel.typechambreR,
           });
         })
       );
@@ -174,7 +177,7 @@ exports.getReservationDemande = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix'],
+            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR'],
           });
 
           const totalPeople = hotels.reduce(
@@ -272,7 +275,7 @@ exports.getReservationReponse = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix'],
+            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR'],
           });
 
           const totalPeople = hotels.reduce(
@@ -984,7 +987,7 @@ exports.getMyReservations = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix'],
+            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR'],
           });
 
           const totalPeople = hotels.reduce(
@@ -1093,7 +1096,7 @@ exports.getMyReservationsBoxD = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix'],
+            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR'],
           });
 
           const totalPeople = hotels.reduce(
@@ -1199,7 +1202,7 @@ exports.getMyReservationsBoxT = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix'],
+            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR'],
           });
 
           const totalPeople = hotels.reduce(
@@ -1363,7 +1366,7 @@ exports.getReservByCollabA = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix'],
+            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR'],
           });
 
           const totalPeople = hotels.reduce(
@@ -1465,7 +1468,7 @@ exports.getReservByCollabB = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix'],
+            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR'],
           });
 
           const totalPeople = hotels.reduce(
