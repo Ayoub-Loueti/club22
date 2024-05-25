@@ -149,7 +149,7 @@ const adapter = new AdapterDateFns({ locale: fr });
     );
 };
 
-const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise,nombre_enfants_gratuits,age_limit_gratuite, type, isAdherant, debut , fin ,details,prix_enfants_payants}) => {
+const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise,nombre_enfants_gratuits,age_limit_gratuite, type, isAdherant, debut , fin ,details,prix_enfants_payants,enfants_autorises}) => {
   const calculateDaysMultiplier = (start, end) => {
     if (!start || !end) return 1;
     const diffDays = (end - start) / (1000 * 3600 * 24) + 1; // Add 1 to include both start and end day
@@ -282,6 +282,68 @@ const handleAuthorizationChange = (event) => {
  const updateRoomType = (roomId, typechambreR) => {
   setRooms(rooms.map(room => room.id === roomId ? { ...room, typechambreR } : room));
 };
+
+const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adult
+    const [nombreEnfants, setNombreEnfants] = useState(0); // Initialize with 0 children
+    const [totalPrice, setTotalPrice] = useState(prix);
+
+    const incrementAdults = () => {
+        setNombreAdultes(nombreAdultes + 1);
+    };
+
+    const decrementAdults = () => {
+        setNombreAdultes(Math.max(1, nombreAdultes - 1)); // Ensure the count doesn't go below 1
+    };
+
+    const incrementChildren = () => {
+        setNombreEnfants(nombreEnfants + 1);
+    };
+
+    const decrementChildren = () => {
+        setNombreEnfants(Math.max(0, nombreEnfants - 1));
+    };
+
+    useEffect(() => {
+      let newTotalPrice = prix; // Start with the base price for one adult
+  
+      if (type === 'hotel') {
+          newTotalPrice = rooms.reduce((acc, room) => acc + room.prix, 0);
+      } else {
+          if (nombreAdultes > 1) {
+              newTotalPrice += (nombreAdultes - 1) * prix; 
+          }
+            const chargeableChildren = Math.max(0, nombreEnfants - nombre_enfants_gratuits);
+          newTotalPrice += chargeableChildren * prix_enfants_payants;
+  
+          if (isAdherant) {
+              newTotalPrice *= (1 - remise / 100); 
+          }
+      } 
+      setTotalPrice(newTotalPrice);
+  }, [nombreAdultes, nombreEnfants, prix, prix_enfants_payants, nombre_enfants_gratuits, isAdherant, remise, rooms, type]);
+
+  const [nombreMoisDeduction, setNombreMoisDeduction] = useState(1);
+
+  const handleMoisDeductionChange = (event) => {
+    setNombreMoisDeduction(event.target.value);
+  };
+
+  const calculateMaxMonths = (totalPrice) => {
+    if (totalPrice < 300) return 1;
+    if (totalPrice < 500) return 2;
+    if (totalPrice < 700) return 3;
+    if (totalPrice < 1000) return 4;
+    if (totalPrice < 1300) return 5;
+    if (totalPrice < 1600) return 6;
+    return 8;
+  };
+  
+  const calculateMinMonths = (totalPrice) => {
+    if (totalPrice < 1000) return 1;
+    if (totalPrice < 1600) return 2;
+    return 3;
+  };
+
     const handleReservation = async () => {
       if (
         !modePaiement ||
@@ -300,7 +362,11 @@ const handleAuthorizationChange = (event) => {
         const token = JSON.parse(localStorage.getItem('login'))?.token;
         let reservationStartAdjusted = reservationStart;
   let reservationEndAdjusted = reservationEnd;
-
+  if (type === 'activite') {
+    const startDate = new Date(reservationStart);
+    startDate.setDate(startDate.getDate() + 1);
+    reservationStartAdjusted = startDate;
+}
   if (type === 'hotel') {
     // Add one day to reservationStart and reservationEnd
     reservationStartAdjusted = new Date(reservationStartAdjusted);
@@ -326,7 +392,7 @@ const handleAuthorizationChange = (event) => {
           prix_totale:
             type === 'hotel'
               ? rooms.reduce((acc, room) => acc + room.prix, 0).toFixed(2)
-              : (nombre * calculateRoomPrice(1, 0, prix, isAdherant)).toFixed(
+              : (totalPrice).toFixed(
                   2
                 ),
            date_debut: reservationStartAdjusted.toISOString(),
@@ -335,6 +401,7 @@ const handleAuthorizationChange = (event) => {
           autorisation_deduction_salaire: autorisationDeductionSalaire,
           statut_paiement: "", // Set statut_paiement based on payment mode
           montant_deduit: "",
+          months: nombreMoisDeduction || 0,
         };
         console.log(reservationData);
 
@@ -553,26 +620,45 @@ const handleAuthorizationChange = (event) => {
               ))
             ) : (
               <>
-                <br></br>
-                <TextField
-                  label="Nombre des personnes"
-                  type="number"
-                  InputProps={{
-                    endAdornment: (
-                      <React.Fragment>
-                        <IconButton onClick={decrementNombre}>
-                          <RemoveCircleOutlineIcon />
-                        </IconButton>
-                        <IconButton onClick={incrementNombre}>
-                          <AddCircleOutlineIcon />
-                        </IconButton>
-                      </React.Fragment>
-                    ),
-                  }}
-                  value={nombre}
-                  variant="outlined"
-                  fullWidth
-                />
+                 <Box>
+                            <Typography variant="h6">Nombre d'adultes:</Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <IconButton onClick={decrementAdults} disabled={nombreAdultes <= 1}>
+                                    <RemoveCircleOutlineIcon />
+                                </IconButton>
+                                <TextField
+                                    size="small"
+                                    value={nombreAdultes}
+                                    inputProps={{ readOnly: true, style: { textAlign: 'center' } }}
+                                    sx={{ width: '60px' }}
+                                />
+                                <IconButton onClick={incrementAdults}>
+                                    <AddCircleOutlineIcon />
+                                </IconButton>
+                            </Box>
+                        </Box>
+                        {enfants_autorises && (
+                            <Box>
+                                <Typography variant="h6">Nombre d'enfants:</Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <IconButton onClick={decrementChildren} disabled={nombreEnfants <= 0}>
+                                        <RemoveCircleOutlineIcon />
+                                    </IconButton>
+                                    <TextField
+                                        size="small"
+                                        value={nombreEnfants}
+                                        inputProps={{ readOnly: true, style: { textAlign: 'center' } }}
+                                        sx={{ width: '60px' }}
+                                    />
+                                    <IconButton onClick={incrementChildren}>
+                                        <AddCircleOutlineIcon />
+                                    </IconButton>
+                                </Box>
+                            </Box>
+                        )}
+                        <Typography variant="h6" sx={{ mt: 2 }}>
+                            Prix total: {totalPrice.toFixed(2)} DT
+                        </Typography>
               </>
             )}
           </Box>
@@ -591,26 +677,19 @@ const handleAuthorizationChange = (event) => {
             </Button>
           )}
 
-          <Typography
-            variant="h6"
-            sx={{
-              mt: 2,
-              fontWeight: 'medium',
-              color: '#555',
-              fontSize: '1.15rem',
-            }}
-          >
-            Prix totale:{' '}
-            {type === 'hotel'
-              ? (
-                  rooms.reduce((acc, room) => acc + room.prix, 0) *
-                  daysMultiplier
-                ).toFixed(2)
-              : (nombre * calculateRoomPrice(1, 0, prix, isAdherant)).toFixed(
-                  2
-                )}{' '}
-            DT
-          </Typography>
+{type === 'hotel' && (
+  <Typography
+    variant="h6"
+    sx={{
+      mt: 2,
+      fontWeight: 'medium',
+      color: '#555',
+      fontSize: '1.15rem',
+    }}
+  >
+    Prix totale: {(rooms.reduce((acc, room) => acc + room.prix, 0) * daysMultiplier).toFixed(2)} DT
+  </Typography>
+)}
 
           <Box sx={{ mt: 2 }}>
             <Typography
@@ -654,6 +733,29 @@ const handleAuthorizationChange = (event) => {
               </Select>
             </FormControl>
             {modePaiement === 'deduction_salaire' && (
+  <>
+    <Typography variant="h6" sx={{ mt: 2 }}>
+      Sur combien de mois souhaitez-vous étaler la déduction?
+    </Typography>
+    <FormControl fullWidth sx={{ mt: 1 }}>
+      <InputLabel id="mois-deduction-label">Nombre de mois</InputLabel>
+      <Select
+        labelId="mois-deduction-label"
+        id="mois-deduction-select"
+        value={nombreMoisDeduction}
+        onChange={handleMoisDeductionChange}
+        label="Nombre de mois"
+      >
+        {Array.from({ length: calculateMaxMonths(totalPrice) }, (_, i) => i + calculateMinMonths(totalPrice)).map(month => (
+          <MenuItem key={month} value={month}>
+            {month}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  </>
+)}
+            {modePaiement === 'deduction_salaire' && (
               <FormControlLabel
                 control={
                   <Checkbox
@@ -680,7 +782,7 @@ const handleAuthorizationChange = (event) => {
             onClick={handleReservation}
             variant="contained"
             color="secondary"
-            disabled={type === 'hotel' && !isDateSelected}
+            disabled={(type === 'hotel' && !isDateSelected) || (type === 'activite' && !reservationStart)}
           >
             Réserver
           </Button>

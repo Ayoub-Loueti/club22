@@ -31,6 +31,7 @@ exports.createReservation = async (req, res) => {
     date_paiement,
     montant_deduit,
     statut_paiement,
+    months,
   } = req.body; // Extract hotels array from request body
   const userId = req.userId;
 
@@ -82,6 +83,7 @@ exports.createReservation = async (req, res) => {
       date_paiement,
       montant_deduit: prix_totale,
       statut_paiement,
+      months: months,
     });
 
     // Create associated hotel records
@@ -94,6 +96,9 @@ exports.createReservation = async (req, res) => {
             nbr_enfants: hotel.nbr_enfants,
             prix: hotel.prix,
             typechambreR: hotel.typechambreR,
+            age1:hotel.age1,
+            age2:hotel.age2,
+            age3:hotel.age3,
           });
         })
       );
