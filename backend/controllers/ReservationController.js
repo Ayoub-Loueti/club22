@@ -96,9 +96,6 @@ exports.createReservation = async (req, res) => {
             nbr_enfants: hotel.nbr_enfants,
             prix: hotel.prix,
             typechambreR: hotel.typechambreR,
-            age1:hotel.age1,
-            age2:hotel.age2,
-            age3:hotel.age3,
           });
         })
       );
