@@ -19,6 +19,7 @@ const session = require('express-session');
 const passport = require('passport');
 const multer = require('multer');
 const path = require('path');
+const paymentRouter = require("./routes/payment");
 require('./passportSetup'); // Path to your passport configuration file
 dotenv.config();
 app.use(express.json());
@@ -60,7 +61,7 @@ app.use(dashboard);
 app.use(messages);
 
 app.use('/uploads', express.static('uploads'));
-
+app.use('/api', paymentRouter);
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/'); // save files to the 'uploads' directory
