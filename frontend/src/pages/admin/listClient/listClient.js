@@ -63,32 +63,51 @@ function ListClient() {
           }
           alt="Client"
           style={{ width: 50, height: 50, borderRadius: '50%' }}
+          onClick={() => navigate(`/profil/${cell.row.original.id_utilisateur}`)}
         />
       ),
     }),
     columnHelper.accessor('nom', {
       header: 'Nom',
+      Cell: ({ row }) => (
+        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+          {row.original.nom}
+        </span>
+      ),
     }),
     columnHelper.accessor('prenom', {
       header: 'Prénom',
+      Cell: ({ row }) => (
+        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+          {row.original.prenom}
+        </span>
+      ),
     }),
     columnHelper.accessor('email', {
       header: 'Email',
+      Cell: ({ row }) => (
+        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+          {row.original.email}
+        </span>
+      ),
     }),
     columnHelper.accessor('genre', {
       header: 'Genre',
-      Cell: ({ cell }) =>
-        cell.getValue().charAt(0).toUpperCase() + cell.getValue().slice(1),
+      Cell: ({ row }) => (
+        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+          {row.original.genre.charAt(0).toUpperCase() + row.original.genre.slice(1)}
+        </span>
+      ),
     }),
     columnHelper.accessor('etat', {
       header: 'État',
-      Cell: ({ cell }) => (
+      Cell: ({ row }) => (
         <div
           style={{
             backgroundColor:
-              cell.getValue().toLowerCase() === 'autorise'
+              row.original.etat.toLowerCase() === 'autorise'
                 ? '#34c38f'
-                : cell.getValue().toLowerCase() === 'bloque'
+                : row.original.etat.toLowerCase() === 'bloque'
                 ? '#f8d7da'
                 : '#ffecb3',
             borderRadius: '0.5rem',
@@ -96,8 +115,9 @@ function ListClient() {
             color: '#000',
             textAlign: 'center',
           }}
+          onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
         >
-          {cell.getValue().charAt(0).toUpperCase() + cell.getValue().slice(1)}
+          {row.original.etat.charAt(0).toUpperCase() + row.original.etat.slice(1)}
         </div>
       ),
     }),
@@ -131,7 +151,7 @@ function ListClient() {
       <div className="list-client-container">
         <div className="list-client-header">
           <h1>LISTE DES CLIENTS</h1>
-          <div className="navigaate-container">
+          <div className="navigate-container">
             <button
               className="list-client-navigate-button"
               onClick={() => navigate('/listEmploye')}
@@ -181,4 +201,4 @@ function ListClient() {
   );
 }
 
-export default ListClient;       
+export default ListClient;

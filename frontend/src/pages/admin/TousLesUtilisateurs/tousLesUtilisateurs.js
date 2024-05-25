@@ -39,29 +39,50 @@ function TousLesUtilisateurs() {
     }),
     columnHelper.accessor('photo', {
       header: 'Photo',
-      Cell: ({ cell }) => (
+      Cell: ({ row }) => (
         <img
           src={
-            cell.getValue()
-              ? `http://localhost:5000/${cell.getValue()}`
+            row.original.photo
+              ? `http://localhost:5000/${row.original.photo}`
               : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
           }
           alt="Profil"
           style={{ width: 50, height: 50, borderRadius: '50%' }}
+          onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
         />
       ),
     }),
     columnHelper.accessor('nom', {
       header: 'Nom',
+      Cell: ({ row }) => (
+        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+          {row.original.nom}
+        </span>
+      ),
     }),
     columnHelper.accessor('prenom', {
       header: 'Prénom',
+      Cell: ({ row }) => (
+        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+          {row.original.prenom}
+        </span>
+      ),
     }),
     columnHelper.accessor('email', {
       header: 'Email',
+      Cell: ({ row }) => (
+        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+          {row.original.email}
+        </span>
+      ),
     }),
     columnHelper.accessor('type', {
       header: 'Type',
+      Cell: ({ row }) => (
+        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+          {row.original.type}
+        </span>
+      ),
     }),
     columnHelper.accessor('etat', {
       header: 'État',
@@ -121,36 +142,31 @@ function TousLesUtilisateurs() {
               Employé
             </button>
           </div>
-          
         </div>
         <MaterialReactTable
           columns={columns}
           data={utilisateurs.filter(
             (utilisateur) =>
-              utilisateur.nom
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase()) ||
-              utilisateur.prenom
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase()) ||
+              utilisateur.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              utilisateur.prenom.toLowerCase().includes(searchTerm.toLowerCase()) ||
               utilisateur.email.toLowerCase().includes(searchTerm.toLowerCase())
-          )}
-          getRowId={(row) => row.id_utilisateur}
-          localization={MRT_Localization_FR}
-          muiSearchTextFieldProps={{
-            variant: 'outlined',
-            label: 'Rechercher des utilisateurs',
-          }}
-          muiTableHeadCellProps={{
-            sx: {
-              backgroundColor: '#A2C8CC', // Couleur de fond des cellules d'en-tête
-              '&:hover': {},
-            },
-          }}
-        />
-      </div>
-    </>
-  );
-}
-
-export default TousLesUtilisateurs;
+              )}
+              getRowId={(row) => row.id_utilisateur}
+              localization={MRT_Localization_FR}
+              muiSearchTextFieldProps={{
+                variant: 'outlined',
+                label: 'Rechercher des utilisateurs',
+              }}
+              muiTableHeadCellProps={{
+                sx: {
+                  backgroundColor: '#A2C8CC', // Couleur de fond des cellules d'en-tête
+                  '&:hover': {},
+                },
+              }}
+            />
+          </div>
+        </>
+      );
+    }
+    
+    export default TousLesUtilisateurs;

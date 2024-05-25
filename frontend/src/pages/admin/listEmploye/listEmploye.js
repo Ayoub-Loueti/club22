@@ -71,12 +71,27 @@ const ListEmploye = () => {
     }),
     columnHelper.accessor('nom', {
       header: 'Nom',
+      Cell: ({ row }) => (
+        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+          {row.original.nom}
+        </span>
+      ),
     }),
     columnHelper.accessor('prenom', {
       header: 'Prénom',
+      Cell: ({ row }) => (
+        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+          {row.original.prenom}
+        </span>
+      ),
     }),
     columnHelper.accessor('email', {
       header: 'Email',
+      Cell: ({ row }) => (
+        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+          {row.original.email}
+        </span>
+      ),
     }),
     columnHelper.accessor('genre', {
       header: 'Genre',
