@@ -126,5 +126,10 @@
   "Les nouveaux mots de passe ne correspondent pas":"New passwords do not match",
   "Succès":"Success",
   "Aucune réponse du serveur":"No response from server",
-  "Mot de passe actuel incorrect.":"Invalid current password."
+  "Mot de passe actuel incorrect.":"Invalid current password.",
+  "coeur":"heart",
+  "feu":"fire",
+  "pleur":"cry",
+  "dormir":"sleep",
+  "fache":"angry"
 }
