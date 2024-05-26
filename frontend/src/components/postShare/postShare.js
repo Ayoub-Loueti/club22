@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import './postShare.css';
 import { useTranslation } from 'react-i18next';
-
+import EmojiModal from './ReactModal';
 import {
   UilScenery,
   UilLocationPoint,
@@ -20,15 +20,22 @@ const PostShare = () => {
   const [contenu, setContenu] = useState('');
   const token = JSON.parse(localStorage.getItem('login'))?.token;
   const [userInfo, setUserInfo] = useState(null);
-  const [userId, setUserId] = useState(null); // Add this line
+  const [userId, setUserId] = useState(null); 
   const [type, setType] = useState('');
   const [categorySelected, setCategorySelected] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [lieu, setLieu] = useState('');
+  const [showEmojiModal, setShowEmojiModal] = useState(false); // State to control the Emoji Modal
+  const [react, setReact] = useState(''); // State to store selected react
+
+  const handleEmojiClick = (emojiName) => {
+    setReact(emojiName);
+    setShowEmojiModal(false); // Optionally close modal on emoji click
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('login');
-    const storedUserId = JSON.parse(localStorage.getItem('userId')); // Rename for clarity
+    const storedUserId = JSON.parse(localStorage.getItem('userId'));
     setUserId(storedUserId);
 
     if (token && storedUserId) {
@@ -53,6 +60,11 @@ const PostShare = () => {
       fetchUserData();
     }
   }, []);
+
+  const handleScheduleClick = () => {
+    setShowEmojiModal(true); // Function to open the Emoji Modal
+  };
+
   const onImageChange = (event) => {
     if (event.target.files) {
       const files = Array.from(event.target.files).map((file) => ({
@@ -60,9 +72,10 @@ const PostShare = () => {
         file: file,
       }));
 
-      setImage(files); // Set state with an array of files
+      setImage(files); 
     }
   };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     let errorMessages = [];
@@ -89,7 +102,7 @@ const PostShare = () => {
     formData.append('contenu', contenu);
     formData.append('type', type);
     formData.append('lieu', lieu);
-    // Check if `image` is not null and has length before proceeding
+    formData.append('react', react); // Append the selected react
     if (image && image.length > 0) {
       image.forEach((img) => {
         formData.append('photos', img.file);
@@ -112,7 +125,6 @@ const PostShare = () => {
 
       setContenu('');
       setImage(null);
-      // Consider not reloading the page; instead update the state or UI based on response
     } catch (error) {
       console.error(
         'Error submitting the post: ',
@@ -182,12 +194,12 @@ const handleSubmit = async (e) => {
     setImage(image.filter((file, i) => i !== index));
   };
 
-  const handleTypeChange = (e) => {
-    setType(e.target.value);
-    setCategorySelected(true); // Mettre à jour l'état pour indiquer qu'une catégorie a été sélectionnée
+  const handleTypeChange = (newType) => {
+    setType(newType);
+    setCategorySelected(true);
   };
   const handleLocationClick = () => {
-    setShowLocationModal(true); // Opens the modal
+    setShowLocationModal(true); 
   };
   return (
     <div className="PostShare">
@@ -215,24 +227,21 @@ const handleSubmit = async (e) => {
           value={contenu}
           onChange={(e) => setContenu(e.target.value)}
         />
-        <div className="seleccttContainer">
-          <select
-            id="type-select"
-            value={type}
-            onChange={handleTypeChange}
-            required
-            className="selectFieldd"
-          >
-            <option value="" disabled={categorySelected}>
-              {t('Sélectionnez une catégorie')}
-            </option>
-            <option value="hotel">{t('Hôtel')}</option>
-            <option value="voyage">{t('Voyage')}</option>
-            <option value="activité">{t('Activité')}</option>
-
-            <option value="autre">{t('Autre')}</option>
-          </select>
-        </div>
+       <div className="categoryContainer">
+      <span className="categoryLabel">{t('Sélectionnez une catégorie')}:</span>
+      <button className={`categoryButton ${type === 'hotel' ? 'active' : ''}`} onClick={() => handleTypeChange('hotel')}>
+        {t('Hôtel')}
+      </button>
+      <button className={`categoryButton ${type === 'voyage' ? 'active' : ''}`} onClick={() => handleTypeChange('voyage')}>
+        {t('Voyage')}
+      </button>
+      <button className={`categoryButton ${type === 'activité' ? 'active' : ''}`} onClick={() => handleTypeChange('activité')}>
+        {t('Activité')}
+      </button>
+      <button className={`categoryButton ${type === 'autre' ? 'active' : ''}`} onClick={() => handleTypeChange('autre')}>
+        {t('Autre')}
+      </button>
+    </div>
         <div className="postOptions">
           <div
             className="option"
@@ -251,10 +260,17 @@ const handleSubmit = async (e) => {
             <UilLocationPoint />
             {t('Lieu')}{' '}
           </div>
-          <div className="option" style={{ color: 'var(--shedule)' }}>
-            <UilSchedule />
-           {t( 'Programme')}
+         {react ? (
+          <div className="option" style={{ color: 'var(--react)' }} onClick={handleScheduleClick}>
+            <img src={require(`../../assets/${react}gif.gif`)} alt={react} style={{ width: '24px' }} />
+            {t(react)} {/* Assuming react names are translated in your i18n setup */}
           </div>
+        ) : (
+          <div className="option" style={{ color: 'var(--schedule)' }} onClick={handleScheduleClick}>
+            <UilSchedule />
+            {t('Programme')}
+          </div>
+        )}
           <button className="postShare-button" onClick={handleSubmit}>
           {t ( 'Partager')}
           </button>
@@ -289,6 +305,11 @@ const handleSubmit = async (e) => {
         }}
         lieu={lieu}
         setLieu={setLieu}
+      />
+      <EmojiModal
+        open={showEmojiModal}
+        handleClose={() => setShowEmojiModal(false)}
+        onEmojiClick={handleEmojiClick} // Pass the handler to EmojiModal
       />
     </div>
   );

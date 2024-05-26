@@ -25,7 +25,7 @@ exports.createPost = (req, res) => {
     } else {
       // Using req.userId set by your authentication middleware
       const id_utilisateur = req.userId; // Ensure your authentication middleware sets this
-      const { contenu, type,lieu } = req.body;
+      const { contenu, type,lieu,react } = req.body;
 
       try {
         const newPost = await Post.create({
@@ -33,6 +33,7 @@ exports.createPost = (req, res) => {
           type,
           date_post: new Date(),
           lieu,
+          react,
           id_utilisateur, // Use the authenticated user's ID
         });
 

@@ -883,6 +883,13 @@ const handleReportResponse = async (commentId, responseId) => {
               {`${capitalizeFirstLetter(
                 data.utilisateur.prenom
               )} ${capitalizeFirstLetter(data.utilisateur.nom)}`}
+              {data.react && (
+              <img
+                src={require(`../../assets/${data.react}gif.gif`)} // Ensure you have corresponding icons in your assets folder
+                alt={data.react}
+                className="reactIcon"
+              />
+            )}
             </NavLink>
           </span>{' '}
         </div>

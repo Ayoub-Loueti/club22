@@ -619,3 +619,10 @@ margin-left: 200px;}
   text-align: left;
   display: block; /* Assurez-vous que c'est un bloc pour permettre l'alignement */
 }
+
+.reactIcon {
+  width: 20px;
+  height: 20px;
+  margin-left: 10px; /* Adjust spacing as needed */
+  vertical-align: middle; /* Aligns the icon with the text */
+}
