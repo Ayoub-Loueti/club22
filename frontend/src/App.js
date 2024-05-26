@@ -40,6 +40,9 @@ import AddFromCollaborateur from './pages/addFromCollab/addFromCollab';
 import ChatBot from './components/chatbot/chatbot';
 import ReclamationEmploye from './pages/OffreEmploye/ReclamationEmploye';
 import ReclamationsAdmin from './pages/admin/reclamations/ReclamationsAdmin';
+import Payment from './pages/OffreEmploye/paiement/Payment';
+import Success from './pages/OffreEmploye/paiement/Success';
+import Fail from './pages/OffreEmploye/paiement/Fail';
 
 function App() {
   return (
@@ -60,6 +63,18 @@ function App() {
             <Route
               path="/Club22/:id_collaborateur"
               element={<AddFromCollaborateur />}
+            />
+            <Route path="/payment" element={<Payment />} />{' '}
+            <Route path="/success" element={<Success />} />{' '}
+            <Route path="/fail" element={<Fail />} />
+            <Route
+              path="/payment"
+              element={
+                <PublicRoute>
+                  {' '}
+                  <Payment />{' '}
+                </PublicRoute>
+              }
             />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/message" element={<Message />} />
