@@ -2,11 +2,12 @@ const axios = require('axios');
    
 module.exports = {
   Add: async (req, res) => {
+         const { offreId, prix } = req.body;
     const url = 'https://developers.flouci.com/api/generate_payment';
     const payload = {
       app_token: '2724dad8-3f89-4edd-94d1-7ad3a23826aa',
       app_secret: process.env.FLOUCI_SECRET,
-      amount: req.body.amount,
+      amount: prix,
       accept_card: 'true',
       session_timeout_secs: 1200,
       success_link: 'http://localhost:3000/success',

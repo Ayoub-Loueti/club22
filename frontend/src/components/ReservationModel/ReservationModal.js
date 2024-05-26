@@ -488,7 +488,7 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
             sx={{
               mt: 2,
               fontWeight: 'bold',
-              marginBottom:'10px',
+              marginBottom: '10px',
               color: '#555',
               '&:hover': {
                 color: '#555', // Changement de couleur au survol
@@ -498,7 +498,7 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
           >
             DATE DE RESERVATION :{' '}
           </Typography>
-          
+
           {type === 'hotel' && (
             <>
               <LocalizationProvider dateAdapter={AdapterDateFns} locale={fr}>
@@ -620,45 +620,57 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
               ))
             ) : (
               <>
-                 <Box>
-                            <Typography variant="h6">Nombre d'adultes:</Typography>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <IconButton onClick={decrementAdults} disabled={nombreAdultes <= 1}>
-                                    <RemoveCircleOutlineIcon />
-                                </IconButton>
-                                <TextField
-                                    size="small"
-                                    value={nombreAdultes}
-                                    inputProps={{ readOnly: true, style: { textAlign: 'center' } }}
-                                    sx={{ width: '60px' }}
-                                />
-                                <IconButton onClick={incrementAdults}>
-                                    <AddCircleOutlineIcon />
-                                </IconButton>
-                            </Box>
-                        </Box>
-                        {enfants_autorises && (
-                            <Box>
-                                <Typography variant="h6">Nombre d'enfants:</Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <IconButton onClick={decrementChildren} disabled={nombreEnfants <= 0}>
-                                        <RemoveCircleOutlineIcon />
-                                    </IconButton>
-                                    <TextField
-                                        size="small"
-                                        value={nombreEnfants}
-                                        inputProps={{ readOnly: true, style: { textAlign: 'center' } }}
-                                        sx={{ width: '60px' }}
-                                    />
-                                    <IconButton onClick={incrementChildren}>
-                                        <AddCircleOutlineIcon />
-                                    </IconButton>
-                                </Box>
-                            </Box>
-                        )}
-                        <Typography variant="h6" sx={{ mt: 2 }}>
-                            Prix total: {totalPrice.toFixed(2)} DT
-                        </Typography>
+                <Box>
+                  <Typography variant="h6">Nombre d'adultes:</Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <IconButton
+                      onClick={decrementAdults}
+                      disabled={nombreAdultes <= 1}
+                    >
+                      <RemoveCircleOutlineIcon />
+                    </IconButton>
+                    <TextField
+                      size="small"
+                      value={nombreAdultes}
+                      inputProps={{
+                        readOnly: true,
+                        style: { textAlign: 'center' },
+                      }}
+                      sx={{ width: '60px' }}
+                    />
+                    <IconButton onClick={incrementAdults}>
+                      <AddCircleOutlineIcon />
+                    </IconButton>
+                  </Box>
+                </Box>
+                {enfants_autorises && (
+                  <Box>
+                    <Typography variant="h6">Nombre d'enfants:</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <IconButton
+                        onClick={decrementChildren}
+                        disabled={nombreEnfants <= 0}
+                      >
+                        <RemoveCircleOutlineIcon />
+                      </IconButton>
+                      <TextField
+                        size="small"
+                        value={nombreEnfants}
+                        inputProps={{
+                          readOnly: true,
+                          style: { textAlign: 'center' },
+                        }}
+                        sx={{ width: '60px' }}
+                      />
+                      <IconButton onClick={incrementChildren}>
+                        <AddCircleOutlineIcon />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                )}
+                <Typography variant="h6" sx={{ mt: 2 }}>
+                  Prix total: {totalPrice.toFixed(2)} DT
+                </Typography>
               </>
             )}
           </Box>
@@ -677,19 +689,23 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
             </Button>
           )}
 
-{type === 'hotel' && (
-  <Typography
-    variant="h6"
-    sx={{
-      mt: 2,
-      fontWeight: 'medium',
-      color: '#555',
-      fontSize: '1.15rem',
-    }}
-  >
-    Prix totale: {(rooms.reduce((acc, room) => acc + room.prix, 0) * daysMultiplier).toFixed(2)} DT
-  </Typography>
-)}
+          {type === 'hotel' && (
+            <Typography
+              variant="h6"
+              sx={{
+                mt: 2,
+                fontWeight: 'medium',
+                color: '#555',
+                fontSize: '1.15rem',
+              }}
+            >
+              Prix totale:{' '}
+              {(
+                rooms.reduce((acc, room) => acc + room.prix, 0) * daysMultiplier
+              ).toFixed(2)}{' '}
+              DT
+            </Typography>
+          )}
 
           <Box sx={{ mt: 2 }}>
             <Typography
@@ -730,31 +746,37 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
                 <MenuItem value="deduction_salaire">
                   Déduction sur le salaire
                 </MenuItem>
+                <MenuItem value="paiement_en_ligne">Paiement en ligne</MenuItem>
               </Select>
             </FormControl>
             {modePaiement === 'deduction_salaire' && (
-  <>
-    <Typography variant="h6" sx={{ mt: 2 }}>
-      Sur combien de mois souhaitez-vous étaler la déduction?
-    </Typography>
-    <FormControl fullWidth sx={{ mt: 1 }}>
-      <InputLabel id="mois-deduction-label">Nombre de mois</InputLabel>
-      <Select
-        labelId="mois-deduction-label"
-        id="mois-deduction-select"
-        value={nombreMoisDeduction}
-        onChange={handleMoisDeductionChange}
-        label="Nombre de mois"
-      >
-        {Array.from({ length: calculateMaxMonths(totalPrice) }, (_, i) => i + calculateMinMonths(totalPrice)).map(month => (
-          <MenuItem key={month} value={month}>
-            {month}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-  </>
-)}
+              <>
+                <Typography variant="h6" sx={{ mt: 2 }}>
+                  Sur combien de mois souhaitez-vous étaler la déduction?
+                </Typography>
+                <FormControl fullWidth sx={{ mt: 1 }}>
+                  <InputLabel id="mois-deduction-label">
+                    Nombre de mois
+                  </InputLabel>
+                  <Select
+                    labelId="mois-deduction-label"
+                    id="mois-deduction-select"
+                    value={nombreMoisDeduction}
+                    onChange={handleMoisDeductionChange}
+                    label="Nombre de mois"
+                  >
+                    {Array.from(
+                      { length: calculateMaxMonths(totalPrice) },
+                      (_, i) => i + calculateMinMonths(totalPrice)
+                    ).map((month) => (
+                      <MenuItem key={month} value={month}>
+                        {month}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </>
+            )}
             {modePaiement === 'deduction_salaire' && (
               <FormControlLabel
                 control={
@@ -782,7 +804,10 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
             onClick={handleReservation}
             variant="contained"
             color="secondary"
-            disabled={(type === 'hotel' && !isDateSelected) || (type === 'activite' && !reservationStart)}
+            disabled={
+              (type === 'hotel' && !isDateSelected) ||
+              (type === 'activite' && !reservationStart)
+            }
           >
             Réserver
           </Button>

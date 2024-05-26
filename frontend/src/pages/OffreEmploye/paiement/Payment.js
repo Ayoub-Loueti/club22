@@ -1,37 +1,28 @@
-import React,{useState} from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
+
 function Payment() {
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const reservationDetails = JSON.parse(decodeURIComponent(urlParams.get('details')));
 
-const[form,setForm]=useState({})
-const onchange = (e)=>{
-    setForm({
-        ...form,
-        [e.target.name]:e.target.value,
-    });
-};
-const onsubmit = (e)=>{
-    e.preventDefault();
-axios
-.post("api/payment",form)
-.then(res =>
-    {
-        const{result}=res.data
-        window.location.href = result.link
-        console.log(res.data)
-    }
-)
-.catch(err => console.error(err));
-}
+    const submitPayment = async () => {
+      try {
+        const response = await axios.post('api/payment', reservationDetails);
+        window.location.href = response.data.result.link; // Redirection vers la page de succès ou d'échec
+      } catch (err) {
+        console.error(err);
+        // Gérer l'affichage d'une erreur à l'utilisateur
+      }
+    };
 
-
+    submitPayment();
+  }, []);
 
   return (
-    <div >
-    <h2>Page de paiement</h2>
-      <form  onSubmit={onsubmit}>
-        <input type="text" name="amount"  onChange={onchange} />
-        <button >Payer</button>
-      </form>
+    <div>
+      <h2>Redirection vers la page de paiement...</h2>
+      {/* Vous pouvez ajouter une animation de chargement ici */}
     </div>
   );
 }

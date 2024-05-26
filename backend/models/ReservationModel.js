@@ -42,17 +42,8 @@ const ReservationModel = sequelize.define(
         'refuser'
       ),
     },
-    months:{
-      type: DataTypes.ENUM(
-        '1',
-        '2',
-        '3',
-        '4',
-        '5',
-        '6',
-        '7',
-        '8'
-      ),
+    months: {
+      type: DataTypes.ENUM('1', '2', '3', '4', '5', '6', '7', '8'),
     },
     nombre: {
       type: DataTypes.INTEGER,
@@ -70,11 +61,11 @@ const ReservationModel = sequelize.define(
       type: DataTypes.DATE,
     },
     mode_paiement: {
-      type: DataTypes.ENUM('especes', 'deduction_salaire'),
+      type: DataTypes.ENUM('especes', 'deduction_salaire', 'paiement_en_ligne'),
     },
     autorisation_deduction_salaire: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false, 
+      defaultValue: false,
     },
     date_paiement: {
       type: DataTypes.DATE,
@@ -85,8 +76,8 @@ const ReservationModel = sequelize.define(
       defaultValue: 0,
     },
     statut_paiement: {
-      type: DataTypes.ENUM('en_attente', 'accepte', 'refuse', 'paye_especes'),
-      defaultValue: 'en_attente', 
+      type: DataTypes.ENUM('en_attente', 'accepte', 'refuse', 'paye_especes', 'payé'),
+      defaultValue: 'en_attente',
     },
   },
 
