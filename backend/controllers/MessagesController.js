@@ -2,8 +2,12 @@ const Employe = require('../models/EmployeModel');
 const Utilisateur = require('../models/UtilisateurModel');
 const Message = require('../models/MessagesModel');
 const Discussion = require('../models/DiscussionModel');
-const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require("@google/generative-ai");
-
+     const {
+       GoogleGenerativeAI,
+       HarmCategory,
+       HarmBlockThreshold,
+     } = require('@google/generative-ai');
+     console.log(GoogleGenerativeAI, HarmCategory, HarmBlockThreshold);
 exports.createMessage = async (req, res) => {
     try {
         const userId = req.userId; // id_utilisateur from req.userId
