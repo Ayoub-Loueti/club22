@@ -969,31 +969,21 @@ const handleReportResponse = async (commentId, responseId) => {
           data.lesCollab.length > 0 && (
             <div className="lesCollab">
               {data.lesCollab && data.lesCollab.length > 0 && (
-                <div className="postOffers">
-                  {data.lesCollab.map((mention, index) => (
-                    <div key={index} className="postOffer">
-                      <hr></hr>
-                      <strong>{t('Collaborateur')}</strong>{' '}
-                      <NavLink
-                        to={`/collabPage/${mention.offre.collaborateur.id_collaborateur}`}
-                      >
-                        {mention.offre.collaborateur.nom}
-                      </NavLink>{' '}
-                      {mention.offre && (
-                        <>
-                          <p></p>
-                          <strong>{t('Offre')} </strong>
-                          <NavLink
-                            to={`/OffrePageDetails/${mention.offre.id_offre}`}
-                          >
-                            {mention.offre.titre}
-                          </NavLink>
-                        </>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
+        <div className="lesCollab">
+          <h3>{t('Collaborateurs')}</h3>
+          {data.lesCollab.map((mention, index) => (
+            <div key={index} className="postCollaborator">
+              <hr />
+              <strong>{t('Collaborateur')}:</strong>
+              <NavLink to={`/collabPage/${mention.collaborateur.id_collaborateur}`}>
+                {mention.collaborateur.nom}
+              </NavLink>
+              <p>{mention.collaborateur.type}</p>
+              <p>{mention.collaborateur.adresse}</p>
+            </div>
+          ))}
+        </div>
+      )}
             </div>
           )}
       </div>

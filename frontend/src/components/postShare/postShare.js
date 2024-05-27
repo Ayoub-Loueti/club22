@@ -7,6 +7,7 @@ import {
   UilLocationPoint,
   UilSchedule,
   UilTimes,
+  UilSmile,
 } from '@iconscout/react-unicons';
 import '../navbar/navbar.css';
 import Swal from 'sweetalert2';
@@ -263,12 +264,12 @@ const handleSubmit = async (e) => {
          {react ? (
           <div className="option" style={{ color: 'var(--react)' }} onClick={handleScheduleClick}>
             <img src={require(`../../assets/${react}gif.gif`)} alt={react} style={{ width: '24px' }} />
-            {t(react)} {/* Assuming react names are translated in your i18n setup */}
+            {t(react)} 
           </div>
         ) : (
           <div className="option" style={{ color: 'var(--schedule)' }} onClick={handleScheduleClick}>
-            <UilSchedule />
-            {t('Programme')}
+            <UilSmile />
+            {t('Réagir')}
           </div>
         )}
           <button className="postShare-button" onClick={handleSubmit}>
