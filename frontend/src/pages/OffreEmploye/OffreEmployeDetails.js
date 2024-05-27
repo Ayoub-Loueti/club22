@@ -149,8 +149,9 @@ const handleAuthorizationChange = () => {
           className="details-link"
           onClick={() => (window.location = '#detailsSection')}
         >
-          Plus de détails
+          Découvrir plus 👇
         </button>
+        <h2 className="offre-titleDetails">{offre.titre}</h2>
 
         <div className="offre-cardDetails">
           {/* Image principale en grand format en dessous */}
@@ -168,13 +169,6 @@ const handleAuthorizationChange = () => {
                 {offre.remise.toString().padStart(2, '0')}%
               </div>
             )}
-            <h2 className="offre-titleDetails">{offre.titre}</h2>
-            <p className="offre-rating">Rating: </p>{' '}
-            <StarRating
-                rating={parseFloat(offre.evaluation.averageVotes)}
-                numReviews={offre.evaluation.numberOfEvaluations}
-              />
-            <p className="offre-collaborateur">Collaborateur: {offre.collaborateur.nom}</p>
             <h4 className="destination-details">
               <FontAwesomeIcon
                 icon={faMapMarkerAlt}
@@ -183,7 +177,18 @@ const handleAuthorizationChange = () => {
               Destination: {offre.destination}
             </h4>
             <p className="offre-priceDetails"> {offre.prix} DT</p>
+            <p className="offre-rating left-align-text">
+              Évaluations :
+              <StarRating
+                rating={parseFloat(offre.evaluation.averageVotes)}
+                numReviews={offre.evaluation.numberOfEvaluations}
+              />{' '}
+            </p>
+            <p className="offre-collaborateur left-align-text">
+              Collaborateur : {offre.collaborateur.nom}
+            </p>
             <p className="offre-descriptionDetails">{offre.description}</p>
+
             <div className="offre-buttonsDetails">
               <button
                 className="offre-button-reserverDetails"
