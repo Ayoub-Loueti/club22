@@ -14,6 +14,7 @@ import {
   TextField,
   Button,
   OutlinedInput,
+  FormControlLabel,
 } from '@mui/material';
 
 function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
@@ -64,6 +65,9 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
  const [tennisDeTable, setTennisDeTable] = useState(false);
  const [locationDeVoiture, setLocationDeVoiture] = useState(false);
  const [changeMonetaire, setChangeMonetaire] = useState(false);
+ const [interditCelibataires, setInterditCelibataires] = useState(false);
+ const [interditBurkini, setInterditBurkini] = useState(false);
+ const [interditAlcohol, setInterditAlcohol] = useState(false);
   // States for Activité-specific fields
 
   const [duree, setDuree] = useState(0);
@@ -169,7 +173,9 @@ setBabySetting(data.details.babySetting);
 setTennisDeTable(data.details.tennisDeTable);
 setLocationDeVoiture(data.details.locationDeVoiture);
 setChangeMonetaire(data.details.changeMonetaire);
-
+      setInterditCelibataires(data.details.interdit_celibataires);
+      setInterditBurkini(data.details.interdit_burkini);
+      setInterditAlcohol(data.details.interdit_alcohol);
 
           } else if (data.type === 'activite') {
             setDuree(data.details.duree);
@@ -359,7 +365,7 @@ setChangeMonetaire(data.details.changeMonetaire);
           ))}
         </Select>
       </FormControl>
-      
+
       {selectedTypes.map((typeId) => (
         <TextField
           key={typeId}
@@ -728,6 +734,40 @@ setChangeMonetaire(data.details.changeMonetaire);
           onChange={(e) => setChangeMonetaire(e.target.checked)}
         />
       </label>
+      
+      <div className="interdictions-section">
+        <h3>Interdictions</h3>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={interditCelibataires}
+              onChange={(e) => setInterditCelibataires(e.target.checked)}
+              name="interditCelibataires"
+            />
+          }
+          label="Célibataires"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={interditBurkini}
+              onChange={(e) => setInterditBurkini(e.target.checked)}
+              name="interditBurkini"
+            />
+          }
+          label="Burkini"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={interditAlcohol}
+              onChange={(e) => setInterditAlcohol(e.target.checked)}
+              name="interditAlcohol"
+            />
+          }
+          label="Alcool"
+        />
+      </div>
     </>
   );
 
@@ -811,6 +851,10 @@ setChangeMonetaire(data.details.changeMonetaire);
       formData.append('tennis_de_table', tennisDeTable);
       formData.append('location_de_voiture', locationDeVoiture);
       formData.append('change_monetaire', changeMonetaire);
+  formData.append('interdit_celibataires', interditCelibataires);
+  formData.append('interdit_burkini', interditBurkini);
+  formData.append('interdit_alcohol', interditAlcohol);
+
 selectedTypes.forEach((typeId, index) => {
   const typeChambre = typesChambresOptions.find((type) => type.id === typeId);
   formData.append(`typechambres[${index}][nom]`, typeChambre.nom);

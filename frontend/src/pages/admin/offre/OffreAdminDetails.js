@@ -77,6 +77,33 @@ function OffreAdminDetails() {
   const handleUpdateSuccess = () => {
     setOffreUpdated(!offreUpdated); // Basculer l'état pour forcer le rechargement
   };
+  //cc
+const renderInterdictions = () => {
+  const interdictions = [
+    { label: 'Célibataires', value: offre.details.interdit_celibataires },
+    { label: 'Burkini', value: offre.details.interdit_burkini },
+    { label: 'Alcool', value: offre.details.interdit_alcohol },
+  ];
+
+  return (
+    <div className="interdictions-container">
+      <h3>Interdictions</h3>
+      <ul>
+        {interdictions.map((interdiction, index) => (
+          <li
+            key={index}
+            className={`interdiction-item ${
+              interdiction.value ? 'not-allowed' : 'allowed'
+            }`}
+          >
+            {interdiction.label}:{' '}
+            {interdiction.value ? 'Non autorisé' : 'Autorisé'}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 
   return (
     <>
@@ -172,6 +199,7 @@ function OffreAdminDetails() {
                   <p>
                     <strong>Étoiles:</strong> {offre.details.etoiles}
                   </p>
+                  {renderInterdictions()}
 
                   <div>
                     <h3>Types de Chambres:</h3>
@@ -180,7 +208,9 @@ function OffreAdminDetails() {
                       offre.details.typechambres.map((typeChambre, index) => (
                         <div key={index} className="type-chambre-container">
                           <p className="type-chambre-info">
-                            <span className="type-chambre-label">Nom de chambre:</span>
+                            <span className="type-chambre-label">
+                              Nom de chambre:
+                            </span>
                             <span className="type-chambre-value">
                               {typeChambre.nom}
                             </span>
@@ -469,6 +499,7 @@ function OffreAdminDetails() {
                       </span>
                     </div>
                   </div>
+
                   <br></br>
                 </>
               )}

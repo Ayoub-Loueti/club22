@@ -32,6 +32,7 @@ import {
   faUserTie,
   faTemperatureHigh,
   faSpa,
+  faBan,
 } from '@fortawesome/free-solid-svg-icons';
 import ProgramModal from './ProgramModal';
 import parse from 'html-react-parser';
@@ -135,6 +136,28 @@ const handleAuthorizationChange = () => {
       !currentOffre.autorisation_deduction_salaire,
   }));
 };
+ const renderInterdictions = () => {
+   const interdictions = [
+     { label: 'Célibataires', value: offre.details.interdit_celibataires },
+     { label: 'Burkinis', value: offre.details.interdit_burkini },
+     { label: 'Alcool', value: offre.details.interdit_alcohol },
+   ];
+
+   // Filtrer pour ne garder que les interdictions actives
+  const interdictionsActives = interdictions.filter((inter) => inter.value);
+
+   return (
+     <span className="interdictionsEmp">
+       {interdictionsActives.map((interdiction, index) => (
+         <span key={index} className="interdiction-itemEmp">
+           <FontAwesomeIcon icon={faBan} className="interdiction-iconEmp" />
+          {""} {interdiction.label}
+           {index < interdictionsActives.length - 1 ? ' | ' : ''}
+         </span>
+       ))}
+     </span>
+   );
+ };
   return (
     <>
       <Navbar />
@@ -252,6 +275,7 @@ const handleAuthorizationChange = () => {
                   <p className="hotel-stars">
                     <strong>Étoiles:</strong> {'★'.repeat(details.etoiles)}
                   </p>
+                  <p>{renderInterdictions()}</p>
                 </div>
                 <div className="hotel-services hotel-details-card ">
                   <h3 className="hotel-name">Equipements</h3>

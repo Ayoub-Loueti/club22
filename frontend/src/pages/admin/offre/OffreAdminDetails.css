@@ -153,3 +153,31 @@
   margin-right: 5px; /* Marge à droite pour le label */
   color: #c50f10; /* Couleur pour les labels */
 }
+.interdictions-container {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  font-weight: bold;
+}
+
+.interdictions-container h3 {
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 18px;
+}
+
+.interdiction-item {
+  font-size: 16px;
+  color: #4A5568;
+  list-style-type: none; /* Supprime les puces */
+}
+
+.allowed {
+  color: #38a169; /* Vert pour autorisé */
+}
+
+.not-allowed {
+  color: #e53e3e; /* Rouge pour non autorisé */
+}

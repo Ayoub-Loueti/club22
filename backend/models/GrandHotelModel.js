@@ -45,6 +45,9 @@ const GrandHotelModel = sequelize.define(
     tennis_de_table: { type: DataTypes.BOOLEAN, allowNull: false },
     location_de_voiture: { type: DataTypes.BOOLEAN, allowNull: false },
     change_monetaire: { type: DataTypes.BOOLEAN, allowNull: false },
+    interdit_celibataires: { type: DataTypes.BOOLEAN, allowNull: false },
+    interdit_burkini: { type: DataTypes.BOOLEAN, allowNull: false },
+    interdit_alcohol: { type: DataTypes.BOOLEAN, allowNull: false },
   },
   {
     tableName: 'grandhotel',

@@ -388,3 +388,16 @@ margin-top: -25px;
 .offre-inclus::-webkit-scrollbar-thumb:hover {
   background-color: #879eb9; /* Darker grey when hovered */
 }
+.interdictionsEmp {
+  color: #e53e3e; /* Rouge pour les interdictions */
+  font-weight: bold; /* Texte en gras */
+}
+
+.interdiction-itemEmp {
+  display: inline; /* Affichage en ligne pour une intégration fluide dans le texte */
+}
+
+.interdiction-iconEmp {
+    color: #e53e3e;
+  margin-right: 5px; /* Espace entre l'icône et le texte */
+}

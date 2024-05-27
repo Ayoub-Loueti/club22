@@ -125,3 +125,22 @@ font-size: smaller;
 .suggestions-list li:hover {
   background-color: #ebf4ff;
 }
+.interdictions-section {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.interdictions-section h3 {
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 18px;
+}
+
+/* Style pour les labels des checkboxes */
+.offre-form-container .MuiFormControlLabel-label {
+  color: #4A5568;
+  font-weight: normal;
+}

@@ -104,7 +104,9 @@ exports.createOffre = async (req, res) => {
       location_de_voiture,
       change_monetaire,
       typechambres,
-      
+      interdit_celibataires,
+      interdit_burkini,
+      interdit_alcohol,
     } = req.body;
 
     const offre = await OffreModel.create({
@@ -138,34 +140,37 @@ exports.createOffre = async (req, res) => {
     // Create specific type details based on offre type
     switch (type) {
       case 'hotel':{
-     ho=   await GrandHotelModel.create({
-          id_offre: offre.id_offre,
-          nom_hotel,
-          etoiles,
-          climatisation,
-          wifi,
-          piscine_exterieure,
-          piscine_couverte,
-          bassin_enfants,
-          parking,
-          discotheque,
-          plage_privee,
-          ascenseur,
-          salle_de_sport,
-          aire_de_jeux_enfants,
-          spa,
-          sauna,
-          hammam,
-          thalasso,
-          centre_esthetique,
-          toboggan,
-          pieds_dans_l_eau,
-          piscine_eau_de_mer,
-          baby_setting,
-          tennis_de_table,
-          location_de_voiture,
-          change_monetaire,
-        });
+     ho = await GrandHotelModel.create({
+       id_offre: offre.id_offre,
+       nom_hotel,
+       etoiles,
+       climatisation,
+       wifi,
+       piscine_exterieure,
+       piscine_couverte,
+       bassin_enfants,
+       parking,
+       discotheque,
+       plage_privee,
+       ascenseur,
+       salle_de_sport,
+       aire_de_jeux_enfants,
+       spa,
+       sauna,
+       hammam,
+       thalasso,
+       centre_esthetique,
+       toboggan,
+       pieds_dans_l_eau,
+       piscine_eau_de_mer,
+       baby_setting,
+       tennis_de_table,
+       location_de_voiture,
+       change_monetaire,
+       interdit_celibataires,
+       interdit_burkini,
+       interdit_alcohol,
+     });
 
   if (typechambres && Array.isArray(typechambres)) {
     await Promise.all(
@@ -277,6 +282,9 @@ exports.updateOffre = async (req, res) => {
           tennis_de_table: req.body.tennis_de_table,
           location_de_voiture: req.body.location_de_voiture,
           change_monetaire: req.body.change_monetaire,
+          interdit_celibataires:req.body.interdit_celibataires,
+          interdit_burkini:req.body.interdit_burkini,
+          interdit_alcohol:req.body.interdit_alcohol,
         };
         await GrandHotelModel.update(hotelDetails, {
           where: { id_offre: offreId },
@@ -845,6 +853,9 @@ exports.createOffreFromCollab = async (req, res) => {
       tennis_de_table,
       location_de_voiture,
       change_monetaire,
+      interdit_celibataires,
+      interdit_burkini,
+      interdit_alcohol,
     } = req.body;
 
     const { id_collaborateur } = req.params;
@@ -907,6 +918,9 @@ exports.createOffreFromCollab = async (req, res) => {
           tennis_de_table,
           location_de_voiture,
           change_monetaire,
+          interdit_celibataires,
+          interdit_burkini,
+          interdit_alcohol,
         });
         break;
       case 'voyage':
