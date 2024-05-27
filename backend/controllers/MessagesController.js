@@ -7,7 +7,6 @@ const Discussion = require('../models/DiscussionModel');
        HarmCategory,
        HarmBlockThreshold,
      } = require('@google/generative-ai');
-     console.log(GoogleGenerativeAI, HarmCategory, HarmBlockThreshold);
 exports.createMessage = async (req, res) => {
     try {
         const userId = req.userId; // id_utilisateur from req.userId
