@@ -709,6 +709,7 @@ exports.acceptationReservation = async (req, res) => {
     // Update the reservation state to 'annuler'
     await userReservation.update({
       etat: 'accepter',
+      statut_paiement: 'accpete',
     });
 
     await NotificationSprintTroix.create({
@@ -1575,6 +1576,25 @@ exports.getMyReservationsDeduction = async (req, res) => {
     res
       .status(500)
       .json({ error: 'Internal server error', details: error.message });
+  }
+};
+
+exports.payeReservation = async (req, res) => {
+  const  reservationId  = req.params.id ;
+
+  try {
+      const reservation = await Reservation.findByPk(reservationId);
+      if (!reservation) {
+          return res.status(404).json({ error: 'Reservation not found' });
+      }
+      await reservation.update({
+          statut_paiement: 'payé'
+      });
+
+      res.status(200).json({ message: 'Payment status updated to paid successfully', reservation });
+  } catch (error) {
+      console.error('Error updating payment status:', error);
+      res.status(500).json({ error: 'Failed to update payment status', details: error.message });
   }
 };
 

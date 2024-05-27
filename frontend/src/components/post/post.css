@@ -34,7 +34,8 @@
 .postManagementButtons {
   display: flex;
   align-items: center;
-  padding-left: 50%;
+  gap: 0.5rem; /* Adjust spacing between buttons */
+  margin-left: 46%; /* Pushes the buttons to the right */
 }
 .postHeader .userName {
   font-weight: bold;
@@ -623,6 +624,6 @@ margin-left: 200px;}
 .reactIcon {
   width: 20px;
   height: 20px;
-  margin-left: 10px; /* Adjust spacing as needed */
-  vertical-align: middle; /* Aligns the icon with the text */
+  margin-left: 10px; 
+  vertical-align: middle; 
 }
