@@ -3,10 +3,11 @@
   justify-content: center;
   align-items: center; /* Centrer les cartes verticalement */
   position: relative; /* Ajoute un espace au-dessus de la carte */
+  margin-top: 50px;
 }
 
 .offre-cardDetails img {
-  width: 35%; /* Met la photo à gauche */
+  width: 37%; /* Met la photo à gauche */
   margin-bottom: 20px;  border-radius: 1%;
 
 }
@@ -19,14 +20,15 @@
 
 .offre-titleDetails {
   color: #191f43;
-  text-align: left;
-      font-size: 30px;
-       text-transform: uppercase; 
-            width: 450px;  
-margin-top: 1px;
-
+  text-align: center; /* Assure que le texte est centré */
+  font-size: 30px;
+  text-transform: uppercase; 
+  width: 100%; /* Utilisez 100% de la largeur pour centrer le titre */
+  margin-top: 10px;
 }
-
+.left-align-text {
+  text-align: left; /* Alignement du texte à gauche */
+}
 .offre-priceDetails {
   color: #c50f10;
   font-weight: bold; /* Met le prix en gras */
@@ -38,10 +40,10 @@ margin-top: 1px;
 }
 
  .offre-descriptionDetails {
-     width: 450px;  
+     width: 500px;  
  
-    max-width: 350px;  
-    height: 100px;  
+    max-width: 500px;  
+    height: 150px;  
     overflow-y: auto; 
     text-align: justify;  
     margin: 20px 0;
@@ -171,12 +173,12 @@ margin-bottom: -30%
 .remise-badgee {
   position: absolute;
   top: 2%;  /* Modifiez le pourcentage pour ajuster la position verticale */
-  left: 50%;  /* Modifiez le pourcentage pour ajuster la position horizontale, en le déplaçant vers la droite de l'image */
+  left: 49%;  /* Modifiez le pourcentage pour ajuster la position horizontale, en le déplaçant vers la droite de l'image */
   transform: translate(-50%, -50%); /* Centre le badge */
   background-color: #ED1C24;
   color: white;
   border-radius: 50%;
-  padding: 28px 28px;
+  padding: 17px 17px;
   font-size: 26px;
   font-weight: bold;
   z-index: 10; /* S'assure que le badge est bien au-dessus de l'image */
@@ -272,29 +274,34 @@ margin-bottom: -30%
 .details-link {
   padding: 10px 20px;
   margin-top: 20px;
-  background-color: #4a5568;
-  color: white;
+  background-color: #fffec4;
+  color: #191f43;
   text-align: center;
   text-decoration: none;
   border-radius: 5px;
   font-weight: bold;
   cursor: pointer;
   border: none;
+  border-radius: 50px;
 }
 /* Styles pour la zone de destination */
 .destination-details {
-    width: 450px;  
+    width: 500px;  
  
-  height:30px;  /* Ajustez la hauteur selon vos besoins */
+  height:65px;  /* Ajustez la hauteur selon vos besoins */
   overflow-y: auto; 
   text-align: justify;  
-  margin: 20px 0;
+margin-top: -25px;
   padding: 10px; 
   box-sizing: border-box;  
     text-align: left;
 
 }
-
+.offre-rating {
+  display: flex;
+  align-items: center; /* Centre verticalement les étoiles avec le texte */
+  gap: 5px; /* Ajoute un petit espace entre les étoiles et le texte */
+}
 /* Styles généraux pour le scrollbar */
 .destination-details::-webkit-scrollbar {
   width: 6px;  /* Épaisseur du scrollbar */
