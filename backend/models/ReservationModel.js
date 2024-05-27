@@ -43,7 +43,7 @@ const ReservationModel = sequelize.define(
       ),
     },
     months: {
-      type: DataTypes.ENUM('1', '2', '3', '4', '5', '6', '7', '8'),
+      type: DataTypes.ENUM('0','1', '2', '3', '4', '5', '6', '7', '8'),
     },
     nombre: {
       type: DataTypes.INTEGER,

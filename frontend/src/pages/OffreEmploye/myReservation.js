@@ -568,7 +568,9 @@ Téléphone du collaborateur: ${reservation.offre.collaborateur.tel}`;
     setShowModal(false);
   };
 
-const handlePayment = (reservation) => {
+const handlePayment = (event,reservation) => {
+  event.stopPropagation();
+  localStorage.setItem('reservationId', reservation.id_reservation);
   const reservationDetails = {
     offreId: reservation.id_offre,
     prix: reservation.prix_totale,
@@ -922,10 +924,10 @@ const handlePayment = (reservation) => {
                           <> {renderStars(reservation)}</>
                         )}
                       {reservation.etat === 'accepter' &&
-                        reservation.mode_paiement === 'paiement_en_ligne' && (
+                        reservation.mode_paiement === 'paiement_en_ligne' && reservation.statut_paiement === 'en_attente' && (
                           <Button
-                            onClick={() => handlePayment(reservation)}
-                            variant="contained"
+                          onClick={(event) => handlePayment(event, reservation)}
+                          variant="contained"
                             sx={{
                               backgroundColor: '#FF5722',
                               '&:hover': {

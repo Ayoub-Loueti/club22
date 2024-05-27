@@ -21,6 +21,8 @@ router.put('/reservation/:id/confirmer', authenticate, reservationController.con
 router.put('/reservation/:id/reparer', authenticate, reservationController.reparationReservation);
 router.put('/reservations/reparer', authenticate, reservationController.reparationReservations);
 
+router.put('/reservations/:id/payereserv', reservationController.payeReservation);
+
 router.get('/myReservationsDeduction', authenticate, reservationController.getMyReservationsDeduction);
 
 router.put('/reservation/:id/accepter', authenticate, reservationController.acceptationReservation);

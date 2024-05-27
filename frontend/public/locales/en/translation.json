@@ -16,6 +16,7 @@
   "Utilisateurs": "Users",
   "Offres": "Offers",
   "collaborateurs": "Collaborators",
+  "Collaborateurs":"Collaborators",
   "Aucun résultat trouvé pour votre recherche.": "No results found for your search.",
   "Pas de notifications": "No notifications",
   "Aucune notification trouvée": "No notifications found",
@@ -131,5 +132,6 @@
   "feu":"fire",
   "pleur":"cry",
   "dormir":"sleep",
-  "fache":"angry"
+  "fache":"angry",
+  "Réagir":"React"
 }

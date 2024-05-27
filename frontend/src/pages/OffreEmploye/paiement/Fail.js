@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 function Fail() {
   const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    localStorage.removeItem('reservationId');
+  }, []);
+
   const errorMessage =
     searchParams.get('error_message') || 'Erreur de paiement';
 

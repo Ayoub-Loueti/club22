@@ -49,29 +49,32 @@ exports.createPost = (req, res) => {
         }
 
         // Extract individual words from the post content (contenu)
-        const offers = await Offre.findAll();
+        const collaborators = await Collaborateur.findAll();
 
-        // Iterate over each offer to check if its title is mentioned in the post content
-        await Promise.all(offers.map(async (offer) => {
-          if (contenu.includes(offer.titre) || contenu.includes(offer.description)) {
+        await Promise.all(collaborators.map(async (collaborator) => {
+          // Check if any collaborator's details are mentioned in the post content
+          if (contenu.includes(collaborator.nom) || contenu.includes(collaborator.adresse) ||
+              contenu.includes(collaborator.tel) || contenu.includes(collaborator.email) ||
+              (collaborator.siteWeb && contenu.includes(collaborator.siteWeb))) {
             await Mention.create({
               id_post: newPost.id_post,
-              id_offre: offer.id_offre,
+              id_collaborateur: collaborator.id_collaborateur,
             });
           }
         }));
+
         const words = contenu.split(/\s+/);
         await Promise.all(words.map(async (word) => {
           if (word.startsWith('#') && word.length > 1 && !/\s/.test(word.slice(1))) {
-            const hashtag = word.slice(1); // Extract the hashtag without '#'
-            if (hashtag.length > 0) { 
+            const hashtag = word.slice(1);
+            if (hashtag.length > 0) {
               await Hachtag.create({
                 id_post: newPost.id_post,
                 hachtag: hashtag
               });
             }
           }
-        }));      
+        }));   
         // Check if the id_utilisateur exists in the client table
         const existingClient = await Client.findOne({ where: { id_utilisateur } });
         if (existingClient) {
@@ -204,16 +207,11 @@ exports.getAllPosts = async (req, res) => {
               },
               include: [
                 {
-                  model: Offre,
-                  as: 'offre',
-                  attributes: ['id_offre', 'titre'],
-                  include: [
-                    {
+                  
                       model: Collaborateur,
                       as: 'collaborateur',
-                      attributes: ['id_collaborateur', 'nom'],
-                    },
-                  ],
+                      attributes: ['id_collaborateur', 'nom','type','siteweb','adresse'],
+                    
                 },
               ],
             });
@@ -311,16 +309,12 @@ exports.getPostByIdWithDetails = async (req, res) => {
           },
           include: [
             {
-              model: Offre,
-              as: 'offre',
-              attributes: ['id_offre', 'titre'],
-              include: [
-                {
+             
+                
                   model: Collaborateur,
                   as: 'collaborateur',
-                  attributes: ['id_collaborateur', 'nom'],
-                },
-              ],
+                  attributes: ['id_collaborateur', 'nom','type','siteweb','adresse'],
+               
             },
           ],
         });
@@ -400,16 +394,11 @@ exports.getAllPostsByUserWithDetails = async (req, res) => {
               },
               include: [
                 {
-                  model: Offre,
-                  as: 'offre',
-                  attributes: ['id_offre', 'titre'],
-                  include: [
-                    {
+                  
                       model: Collaborateur,
                       as: 'collaborateur',
-                      attributes: ['id_collaborateur', 'nom'],
-                    },
-                  ],
+                      attributes: ['id_collaborateur', 'nom','type','siteweb','adresse'],
+                   
                 },
               ],
             });
@@ -501,17 +490,12 @@ exports.getPostsByType = async (req, res) => {
             id_post: post.id_post,
           },
           include: [
-            {
-              model: Offre,
-              as: 'offre',
-              attributes: ['id_offre', 'titre'],
-              include: [
+            
                 {
                   model: Collaborateur,
                   as: 'collaborateur',
-                  attributes: ['id_collaborateur', 'nom'],
-                },
-              ],
+                  attributes: ['id_collaborateur', 'nom','type','siteweb','adresse'],
+                
             },
           ],
         });
@@ -653,16 +637,12 @@ exports.getEnregistrementsByUser = async (req, res) => {
             },
             include: [
               {
-                model: Offre,
-                as: 'offre',
-                attributes: ['id_offre', 'titre'],
-                include: [
-                  {
+                
+                  
                     model: Collaborateur,
                     as: 'collaborateur',
-                    attributes: ['id_collaborateur', 'nom'],
-                  },
-                ],
+                    attributes: ['id_collaborateur', 'nom','type','siteweb','adresse'],
+                  
               },
             ],
           });
@@ -1028,16 +1008,15 @@ exports.getHashtagsWithPosts = async (req, res) => {
             where: {
               id_post: post.id_post,
             },
-            include: [{
-              model: Offre,
-              as: 'offre',
-              attributes: ['id_offre', 'titre'],
-              include: [{
+            include: [
+              {
+              
                 model: Collaborateur,
                 as: 'collaborateur',
-                attributes: ['id_collaborateur', 'nom'],
-              }],
-            }],
+                attributes: ['id_collaborateur', 'nom','type','siteweb','adresse'],
+              
+            }
+          ],
           });
           postJson.lesCollab = collabs;
 
