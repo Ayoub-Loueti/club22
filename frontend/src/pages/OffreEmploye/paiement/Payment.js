@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
+import loa from '../../../assets/loa.gif';
+
 
 function Payment() {
   useEffect(() => {
@@ -21,8 +23,7 @@ function Payment() {
 
   return (
     <div>
-      <h2>Redirection vers la page de paiement...</h2>
-      {/* Vous pouvez ajouter une animation de chargement ici */}
+      <img src={loa} alt="Redirection en cours..." />
     </div>
   );
 }

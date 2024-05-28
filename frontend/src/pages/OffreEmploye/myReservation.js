@@ -44,6 +44,7 @@ const MyReservations = () => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
+        
         setReservations(response.data);
       } catch (err) {
         setError('An error occurred while fetching reservations.');
@@ -577,6 +578,12 @@ const handlePayment = (event,reservation) => {
   };
   const encodedDetails = encodeURIComponent(JSON.stringify(reservationDetails));
   window.location.href = `/payment?details=${encodedDetails}`;
+      const updatedReservations = reservations.map((r) =>
+        r.id_reservation === reservation.id_reservation
+          ? { ...r, isPaid: true }
+          : r
+      );
+      setReservations(updatedReservations);
 };
   return (
     <>
@@ -924,10 +931,13 @@ const handlePayment = (event,reservation) => {
                           <> {renderStars(reservation)}</>
                         )}
                       {reservation.etat === 'accepter' &&
-                        reservation.mode_paiement === 'paiement_en_ligne' && reservation.statut_paiement === 'en_attente' && (
+                        reservation.mode_paiement === 'paiement_en_ligne' &&
+                        reservation.statut_paiement === 'en_attente' && (
                           <Button
-                          onClick={(event) => handlePayment(event, reservation)}
-                          variant="contained"
+                            onClick={(event) =>
+                              handlePayment(event, reservation)
+                            }
+                            variant="contained"
                             sx={{
                               backgroundColor: '#FF5722',
                               '&:hover': {
@@ -958,6 +968,19 @@ const handlePayment = (event,reservation) => {
                             </svg>
                             Payer
                           </Button>
+                        )}
+                      {reservation.etat === 'accepter' &&
+                        reservation.mode_paiement === 'paiement_en_ligne' &&
+                        reservation.statut_paiement === 'payé' && (
+                          <strong
+                            style={{
+                              color: 'green',
+                              fontSize: '18px',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            ✅ PAYÉ EN LIGNE 💳
+                          </strong>
                         )}
                       {reservation.etat === 'accepter' && (
                         <>

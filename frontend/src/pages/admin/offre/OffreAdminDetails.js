@@ -110,7 +110,12 @@ const renderInterdictions = () => {
       <NavAdmin />
 
       <ScrollToTop />
-
+<div   style={{
+          background: 'linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5)',
+          padding: '20px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+        }}>
       <UpdateOffreModal
         isOpen={isUpdateModalOpen}
         offreId={selectedOffreId}
@@ -558,7 +563,7 @@ const renderInterdictions = () => {
             </>
           )}
         </div>
-      </div>
+      </div></div>
     </>
   );
 }
