@@ -53,13 +53,12 @@ function CollaborateurPage2() {
 
   return (
     <>
-      <div>
-        {showOffreCollab2 && (
-          <button className="voir-tous-bttn" onClick={handleViewAllOffers}>
-            Tous les Réservations
-          </button>
-        )}
         <div className="PageCollaborateur-container">
+          {showOffreCollab2 && (
+            <button className="voir-tous-bttn" onClick={handleViewAllOffers}>
+              Tous les Réservations
+            </button>
+          )}
           <div className="collabora-scroll-container">
             {collaborateurs
               .slice(startIndex, startIndex + 6)
@@ -101,7 +100,6 @@ function CollaborateurPage2() {
             <DemandeReservation />
           )}
         </div>
-      </div>
     </>
   );
 }

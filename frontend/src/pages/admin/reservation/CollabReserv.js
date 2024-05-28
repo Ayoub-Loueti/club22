@@ -53,36 +53,52 @@ function CollaborateurPage() {
 
   return (
     <>
-      <div>
-      
+      <div className="PageCollaborateur-container">
         {showOffreCollab && (
           <button className="voir-tous-bttn" onClick={handleViewAllOffers}>
             Tous les Réservations
           </button>
         )}
-        <div className="PageCollaborateur-container">
-          <div className="collabora-scroll-container">
-            {collaborateurs.slice(startIndex, startIndex + 6).map((collaborateur, index) => (
+        <div className="collabora-scroll-container">
+          {collaborateurs
+            .slice(startIndex, startIndex + 6)
+            .map((collaborateur, index) => (
               <div
                 key={index}
-                className={`collab-card ${selectedCollaborateurId === collaborateur.id_collaborateur ? 'active' : ''}`}
-                onClick={() => handleCollaboratorClick(collaborateur.id_collaborateur)}
+                className={`collab-card ${
+                  selectedCollaborateurId === collaborateur.id_collaborateur
+                    ? 'active'
+                    : ''
+                }`}
+                onClick={() =>
+                  handleCollaboratorClick(collaborateur.id_collaborateur)
+                }
               >
-                <img src={`http://localhost:5000/${collaborateur.logo}`} alt={collaborateur.nom} />
+                <img
+                  src={`http://localhost:5000/${collaborateur.logo}`}
+                  alt={collaborateur.nom}
+                />
                 <div className="collab-card-title">{collaborateur.nom}</div>
               </div>
             ))}
-          </div>
-          <div className="navig-buttons">
-            <FaArrowLeft onClick={handlePrevious} className="nav-icon" disabled={startIndex === 0} />
-            <FaArrowRight onClick={handleNext} className="nav-icon" disabled={startIndex + 4 >= collaborateurs.length} />
-          </div>
-          {showOffreCollab ? (
-            <ListResevClick collaborateurId={selectedCollaborateurId} />
-          ) : (
-            <ListReservation />
-          )}
         </div>
+        <div className="navig-buttons">
+          <FaArrowLeft
+            onClick={handlePrevious}
+            className="nav-icon"
+            disabled={startIndex === 0}
+          />
+          <FaArrowRight
+            onClick={handleNext}
+            className="nav-icon"
+            disabled={startIndex + 4 >= collaborateurs.length}
+          />
+        </div>
+        {showOffreCollab ? (
+          <ListResevClick collaborateurId={selectedCollaborateurId} />
+        ) : (
+          <ListReservation />
+        )}
       </div>
     </>
   );
