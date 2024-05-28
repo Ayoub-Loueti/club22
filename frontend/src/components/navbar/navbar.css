@@ -3,7 +3,7 @@
   flex-direction: column; /* Align items vertically */
   justify-content: start; /* Adjust as needed based on your design */
   height: 100vh;
-  width: 120px;
+  width: 110px;
   position: fixed;
   left: 0;
   top: 0;
@@ -12,6 +12,8 @@
   transform: translateX(0); /* Affiche par défaut */
   transition: transform 0.3s ease;
   z-index: 3000;
+     border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
 }
 .navbar:not(.visible) {
   transform: translateX(-120px); /* Cache hors écran */
@@ -43,25 +45,34 @@
   flex-direction: column; /* Organise les éléments enfants verticalement */
   align-items: center; /* Centre les éléments enfants horizontalement */
   justify-content: start; /* Alignement vertical au début */
-  width: 63%;
+  width: 54%;
   background-color: #879eb9;
   height: 100%;
   position: absolute;
   right: 0;
   border-top-left-radius: 30px;
   border-bottom-left-radius: 30px;
+
   overflow-y: auto; /* Permet le défilement si la liste est longue */
 }
-
-.navbar-extension {
-  width: 30px;
-  height: 100%;
-  background-color: #f3f3f3;
+.navbar-inner::before,
+.navbar-inner::after {
+  content: '';
   position: absolute;
-  right: -3px;
-  border-top-left-radius: 30px;
-  border-bottom-left-radius: 30px;
+
+  background-color: #879eb9; /* Couleur de fond */
+  border-radius: 50%; /* Crée un cercle */
+  right: -15px; /* Positionne à droite */
 }
+
+.navbar-inner::before {
+  top: -15px; /* Positionne en haut */
+}
+
+.navbar-inner::after {
+  bottom: -15px; /* Positionne en bas */
+}
+
 
 .navbar-logo {
   height: 33px;
@@ -176,8 +187,8 @@
 .inner-user {
   color: #191f43; /* Couleur de l'icône */
   font-size: 24px; /* Taille de l'icône */
-  margin: 20px 20px 20px 0; /* Espacement autour de l'icône avec une marge droite de 10px */
-  margin-top: 50px;
+  margin: 2px 2px 20px 0; /* Espacement autour de l'icône avec une marge droite de 10px */
+  margin-top: 70px;
 
   cursor: pointer; /* Curseur de type pointer */
 }
@@ -195,12 +206,12 @@
   opacity: 0.6;
 }
 .user-photoo {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   object-fit: cover;
   margin: 5px 0;
-  margin-right: 23px;
+  margin-right: 1px;
   cursor: pointer; /* Rend les utilisateurs cliquables */
 }
 

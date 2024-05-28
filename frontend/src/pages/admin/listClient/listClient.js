@@ -151,7 +151,7 @@ function ListClient() {
       <div className="list-client-container">
         <div className="list-client-header">
           <h1>LISTE DES CLIENTS</h1>
-          <div className="navigate-container">
+          <div className="navigaate-container">
             <button
               className="list-client-navigate-button"
               onClick={() => navigate('/listEmploye')}
