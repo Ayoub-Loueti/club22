@@ -11,4 +11,6 @@ router.get('/discussions', authenticate,messagesController.getAllDiscussions);
 
 router.post('/chatbot', authenticate, messagesController.handleChatbotInteraction);
 
+router.get('/users/employes-admins', authenticate, messagesController.findEmployesAndAdmins);
+
 module.exports = router;

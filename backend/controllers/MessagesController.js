@@ -1,12 +1,16 @@
 const Employe = require('../models/EmployeModel');
 const Utilisateur = require('../models/UtilisateurModel');
 const Message = require('../models/MessagesModel');
+const MembreModel = require('../models/MembreModel');
+const { Sequelize } = require('sequelize'); 
+const { sequelize } = require('../config/db'); 
 const Discussion = require('../models/DiscussionModel');
      const {
        GoogleGenerativeAI,
        HarmCategory,
        HarmBlockThreshold,
      } = require('@google/generative-ai');
+     
 exports.createMessage = async (req, res) => {
     try {
         const userId = req.userId; // id_utilisateur from req.userId
@@ -75,36 +79,96 @@ exports.getMessages = async (req, res) => {
     }
 };
 
+exports.findEmployesAndAdmins = async (req, res) => {
+  const currentUserId = req.userId; 
+
+  try {
+      const employees = await Employe.findAll({
+          where: {
+              adherant: true 
+          },
+          include: [{
+              model: Utilisateur,
+              as: 'utilisateur', 
+              where: {
+                  [Sequelize.Op.and]: [
+                      { id_utilisateur: { [Sequelize.Op.ne]: currentUserId } }, // Exclude the current user
+                      { etat: 'autorise' }, // Ensure the user is authorized
+                      { type: 'employe' } // Ensure the user is of type 'employe'
+                  ]
+              },
+              attributes: ['id_utilisateur', 'nom', 'prenom', 'email', 'photo', 'type']
+          }]
+      });
+
+      const admins = await Utilisateur.findAll({
+          where: {
+              [Sequelize.Op.and]: [
+                  { id_utilisateur: { [Sequelize.Op.ne]: currentUserId } },
+                  { etat: 'autorise' },
+                  { type: 'admin' }
+              ]
+          },
+          attributes: ['id_utilisateur', 'nom', 'prenom', 'email', 'photo', 'type']
+      });
+
+      const results = [...employees.map(emp => emp.utilisateur), ...admins];
+
+      if (results.length === 0) {
+          return res.status(404).json({ message: 'No matching users found.' });
+      }
+
+      return res.status(200).json(results);
+  } catch (error) {
+      console.error('Error searching for employes and admins:', error);
+      return res.status(500).json({ error: error.message });
+  }
+};
+
 exports.createDiscussion = async (req, res) => {
-    const { nomDisc, nbr_jours_disc } = req.body;
-    
-    try {
-        const currentDate = new Date();
-        const daysToAdd = parseInt(nbr_jours_disc, 10);
-        currentDate.setDate(currentDate.getDate() + daysToAdd);
-        const newDiscussion = await Discussion.create({
-            nomDisc,
-            typeDisc: "temporaire",
-            nbr_jours_disc,
-            date_fin: currentDate
-        });
+  const { nomDisc, nbr_jours_disc, namedUsers, ispublic } = req.body;
+  
+  try {
+      const currentDate = new Date();
+      const daysToAdd = parseInt(nbr_jours_disc, 10);
+      currentDate.setDate(currentDate.getDate() + daysToAdd);
+      const newDiscussion = await Discussion.create({
+          nomDisc,
+          typeDisc: ispublic ? "infini" : "temporaire",
+          nbr_jours_disc,
+          date_fin: currentDate,
+          ispublic,
+      });
 
-        req.app.get('io').emit('new discussion', newDiscussion);
+      req.app.get('io').emit('new discussion', newDiscussion);
 
-        res.status(201).json(newDiscussion);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+      if (!ispublic && namedUsers && Array.isArray(namedUsers)) {
+          await Promise.all(namedUsers.map(userId => 
+              MembreModel.create({
+                  id_discussion: newDiscussion.id_disc,
+                  id_utilisateur: userId
+              })
+          ));
+      }
+
+      res.status(201).json(newDiscussion);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
 };
 
 exports.getAllDiscussions = async (req, res) => {
-    try {
-        const discussions = await Discussion.findAll({});
-        res.status(200).json(discussions);
-    } catch (error) {
-        console.error('Error fetching discussions:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+  try {
+      const discussions = await Discussion.findAll({
+          where: {
+              ispublic: true 
+          }
+      });
+      res.status(200).json(discussions);
+  } catch (error) {
+      console.error('Error fetching discussions:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
 };
 
 const apiKey ="AIzaSyCNG3ZPYzEW_V4m0Vz2Onq5BceRJ_1cAtg";

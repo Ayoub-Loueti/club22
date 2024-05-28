@@ -1,5 +1,5 @@
 import React, { useState, useEffect ,useRef} from 'react';
-import { Modal,Grid, Box, List, ListItem, ListItemText, Typography, Avatar, Paper , TextField, Button} from '@mui/material';
+import { Autocomplete,Switch,FormControlLabel,Modal,Grid, Box, List, ListItem, ListItemText, Typography, Avatar, Paper , TextField, Button} from '@mui/material';
 import axios from 'axios';
 import io from 'socket.io-client';
 import Lottie from 'react-lottie';
@@ -27,6 +27,10 @@ function MessagePage() {
     const typingTimeout = useRef(null); // Define typingTimeout using useRef
     const [connectedUsers, setConnectedUsers] = useState([]);
     const [noMessagesError, setNoMessagesError] = useState('');
+    const [searchTerm, setSearchTerm] = useState(''); // State for search term
+    const [isPublic, setIsPublic] = useState(true);
+    const [selectedUsers, setSelectedUsers] = useState([]);
+    const [selectableUsers, setSelectableUsers] = useState([]);
 
     const defaultOptions = {
         loop: true,
@@ -84,19 +88,46 @@ function MessagePage() {
   }, [socket]);
     
 
-    const handleCreateDiscussion = () => {
-        axios.post('http://localhost:5000/discussions', 
-            { nomDisc: discussionName, nbr_jours_disc: validityDays },
-            { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } }
-        )
-        .then(response => {
-            setDiscussions([...discussions, response.data]);
-            handleCloseModal();
-        })
-        .catch(error => console.error('Error creating discussion:', error));
-    };
+  const handleCreateDiscussion = () => {
+    axios.post('http://localhost:5000/discussions', 
+        {
+            nomDisc: discussionName,
+            nbr_jours_disc: validityDays,
+            ispublic: isPublic,  // Include the isPublic flag
+            namedUsers: selectedUsers  // Include the list of selected user IDs
+        },
+        { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } }
+    )
+    .then(response => {
+        setDiscussions([...discussions, response.data]);
+        handleCloseModal();
+    })
+    .catch(error => console.error('Error creating discussion:', error));
+};
     
-    
+    const filteredDiscussions = discussions.filter(discussion =>
+        discussion.nomDisc.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const fetchEmployesAndAdmins = async () => {
+    try {
+        const response = await axios.get('http://localhost:5000/users/employes-admins', {
+            headers: { Authorization: `Bearer ${JSON.parse(token).token}` }
+        });
+        setSelectableUsers(response.data); 
+    } catch (error) {
+        console.error('Error fetching employes and admins:', error);
+    }
+};
+
+useEffect(() => {
+    if (!isPublic) {
+        fetchEmployesAndAdmins();
+    }
+}, [isPublic, token]);
+
+    const handleTogglePublic = () => setIsPublic(!isPublic);
+
     const modalBody = (
         <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', boxShadow: 24, p: 4 }}>
             <Typography variant="h6" component="h2">
@@ -119,18 +150,38 @@ function MessagePage() {
                 sx={{ mt: 2 }}
                 required
             />
-            <Button 
-                variant="contained" 
-                color="primary" 
-                onClick={handleCreateDiscussion} 
+            <FormControlLabel
+                control={<Switch checked={!isPublic} onChange={handleTogglePublic} />}
+                label="Privée"
+            />
+            {!isPublic && (
+    <Autocomplete
+        multiple
+        options={selectableUsers}  // Use selectableUsers here
+        getOptionLabel={(option) => `${option.nom} ${option.prenom}`}
+        onChange={(event, value) => setSelectedUsers(value.map(user => user.id_utilisateur))}
+        renderInput={(params) => (
+            <TextField
+                {...params}
+                variant="standard"
+                label="Ajouter des utilisateurs"
+                placeholder="Sélectionner"
+            />
+        )}
+    />
+)}
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={handleCreateDiscussion}
                 sx={{ mt: 2 }}
-                disabled={!discussionName || !validityDays || validityDays <= 0}  // Disable button if fields are empty or days are not positive
+                disabled={!discussionName || !validityDays || validityDays <= 0 || (!isPublic && selectedUsers.length === 0)}
             >
                 Ajouter
             </Button>
         </Box>
     );
-    // Fetch discussions
+
     useEffect(() => {
         axios.get('http://localhost:5000/discussions', 
         { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } })
@@ -140,7 +191,6 @@ function MessagePage() {
             .catch(error => console.error('Error fetching discussions:', error));
     }, [token]);
 
-    // Fetch messages for selected discussion
     useEffect(() => {
       console.log(selectedDiscussion); // Add this to check if the state updates
       if (selectedDiscussion && selectedDiscussion.id_disc) {
@@ -235,15 +285,23 @@ const fetchUserDetails = async (userId) => {
 
 return (
     <Grid container spacing={2}>
-        <Grid item xs={3}>  
-            <Box sx={{ maxHeight: '90vh', overflow: 'auto' }}>
+        <Grid item xs={3}>
+        <Box sx={{ maxHeight: '90vh', overflow: 'auto' }}>
                 <Typography variant="h6">
                     Discussions
                     <Button variant="contained" color="primary" onClick={handleOpenModal}>
                         Créer nouvelle discussion
                     </Button>
                 </Typography>
-                <Modal
+                <TextField
+                    fullWidth
+                    variant="outlined"
+                    placeholder="Rechercher une discussion..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    sx={{ mb: 2 }}
+                />
+            <Modal
                     open={openModal}
                     onClose={handleCloseModal}
                     aria-labelledby="modal-modal-title"
@@ -252,12 +310,14 @@ return (
                     {modalBody}
                 </Modal>
                 <List>
-                    {discussions.map((discussion) => (
+                    {filteredDiscussions.map((discussion) => (
                         <ListItem button key={discussion.id_disc} onClick={() => setSelectedDiscussion(discussion)}>
-                           <ListItemText 
-    primary={discussion.nomDisc} 
-    secondary={discussion.date_fin ? `valable jusqu'à ${new Date(discussion.date_fin).toLocaleDateString('fr-FR')}` : ''}
-/>
+                            <Box sx={{ width: '100%', bgcolor: '#4299e1', boxShadow: 3, p: 2, borderRadius: 2 }}>
+                                <ListItemText
+                                    primary={discussion.nomDisc}
+                                    secondary={discussion.date_fin ? `valable jusqu'à ${new Date(discussion.date_fin).toLocaleDateString('fr-FR')}` : ''}
+                                />
+                            </Box>
                         </ListItem>
                     ))}
                 </List>

@@ -24,6 +24,10 @@ const DiscussionModel = sequelize.define(
       type: DataTypes.DATE,
       allowNull: true,
     },
+    ispublic: {  
+      type: DataTypes.BOOLEAN,
+      defaultValue: true, 
+    },
   },
   {
     tableName: 'discussion',
