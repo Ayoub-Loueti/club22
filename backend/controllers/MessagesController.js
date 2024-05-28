@@ -127,11 +127,13 @@ exports.findEmployesAndAdmins = async (req, res) => {
 
 exports.createDiscussion = async (req, res) => {
   const { nomDisc, nbr_jours_disc, namedUsers, ispublic } = req.body;
-  
+  const userId = req.userId; // Assuming req.userId is set correctly and contains the ID of the current user
+
   try {
       const currentDate = new Date();
       const daysToAdd = parseInt(nbr_jours_disc, 10);
       currentDate.setDate(currentDate.getDate() + daysToAdd);
+
       const newDiscussion = await Discussion.create({
           nomDisc,
           typeDisc: ispublic ? "infini" : "temporaire",
@@ -142,32 +144,67 @@ exports.createDiscussion = async (req, res) => {
 
       req.app.get('io').emit('new discussion', newDiscussion);
 
-      if (!ispublic && namedUsers && Array.isArray(namedUsers)) {
-          await Promise.all(namedUsers.map(userId => 
-              MembreModel.create({
-                  id_discussion: newDiscussion.id_disc,
-                  id_utilisateur: userId
-              })
-          ));
+      // Create an array to hold all user IDs including the creator
+      let allUserIds = [userId]; // Start with the creator's ID
+      if (Array.isArray(namedUsers)) {
+          allUserIds = allUserIds.concat(namedUsers); // Add other named users
       }
+
+      // Remove duplicates, if any
+      allUserIds = [...new Set(allUserIds)];
+
+      // Add all users to the 'membre' table
+      await Promise.all(allUserIds.map(userId => 
+          MembreModel.create({
+              id_discussion: newDiscussion.id_disc,
+              id_utilisateur: userId
+          })
+      ));
 
       res.status(201).json(newDiscussion);
   } catch (error) {
+      console.error('Error creating discussion:', error);
       res.status(500).json({ error: error.message });
   }
 };
 
 exports.getAllDiscussions = async (req, res) => {
+  const userId = req.userId; // Assuming req.userId is set correctly and contains the ID of the current user
+
   try {
-      const discussions = await Discussion.findAll({
-          where: {
-              ispublic: true 
-          }
+      // Fetch discussions where the user is a member
+      const memberDiscussions = await MembreModel.findAll({
+          where: { id_utilisateur: userId },
+          include: [{
+              model: Discussion,
+              as: 'discussion',
+              required: true
+          }]
       });
-      res.status(200).json(discussions);
+
+      // Fetch all public discussions
+      const publicDiscussions = await Discussion.findAll({
+          where: { ispublic: true }
+      });
+
+      // Extract discussions from the memberDiscussions array
+      const discussionsFromMembers = memberDiscussions.map(membre => membre.discussion);
+
+      // Combine both arrays and remove duplicates
+      const allDiscussions = [ ...publicDiscussions,...discussionsFromMembers];
+      const uniqueDiscussions = Array.from(new Set(allDiscussions.map(disc => disc.id_disc)))
+          .map(id => {
+              return allDiscussions.find(disc => disc.id_disc === id);
+          });
+
+      if (uniqueDiscussions.length === 0) {
+          return res.status(404).json({ message: 'No discussions found.' });
+      }
+
+      res.status(200).json(uniqueDiscussions);
   } catch (error) {
       console.error('Error fetching discussions:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 };
 
