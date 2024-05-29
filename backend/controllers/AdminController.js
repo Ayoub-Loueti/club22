@@ -340,6 +340,7 @@ exports.getAllDemandes = async (req, res) => {
           ],
         },
       ],
+      order: [['id_demande', 'DESC']]
     });
     res.status(200).json(demandes);
   } catch (error) {

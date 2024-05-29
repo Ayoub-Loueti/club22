@@ -574,7 +574,7 @@ exports.getAllEmployeeOffers = async (req, res) => {
           attributes: ['nom', 'logo'],
         },
       ],
-      attributes: { exclude: ['created_at', 'updated_at'] },
+      order: [['id_offre', 'DESC']]
     });
 
     const detailedOffres = await Promise.all(

@@ -14,6 +14,7 @@ import {
   TextField,
   Button,
 } from '@mui/material';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { IconButton } from '@mui/material';
 import { Visibility } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -541,7 +542,7 @@ function MessagePage() {
       <ListItemText primary={`${member.utilisateur.prenom} ${member.utilisateur.nom}`} />
       {isAdmin && member.id_utilisateur !== userId && (
         <IconButton onClick={() => handleKickMember(member.id_membre)}>
-          <DeleteIcon />
+          <HighlightOffIcon />
         </IconButton>
       )}
     </ListItem>
