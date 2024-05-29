@@ -15,14 +15,19 @@ import {
   faHouseUser,
   faFileCircleExclamation,
   faMessage,
+  faCommentSlash,
+  faComment,
 } from '@fortawesome/free-solid-svg-icons';
+import AdherantModal from "../AdherantModal/AdherantModal" ;
 
 function Navbar() {
   const [isVisible, setIsVisible] = useState(true);
   const [randomUsers, setRandomUsers] = useState([]);
   const [navbarExtensionColor, setNavbarExtensionColor] = useState('#f3f3f3'); // Default color
   const [userInfo, setUserInfo] = useState(null);
-  const [userId, setUserId] = useState(null); // Add this line
+  const [userId, setUserId] = useState(null); 
+  const [isAdherent, setIsAdherent] = useState(false); 
+  const [isAdherantModalOpen, setIsAdherantModalOpen] = useState(false); 
 
   const navigate = useNavigate();
   // Current user's ID for navigation to the profile page
@@ -84,6 +89,7 @@ function Navbar() {
             }
           );
           setUserInfo(response.data.user);
+          checkAdherentStatus(storedUserId, JSON.parse(token).token);
         } catch (error) {
           console.error(
             "Erreur lors de la récupération des données de l'utilisateur",
@@ -94,6 +100,21 @@ function Navbar() {
       fetchUserData();
     }
   }, []);
+
+  const checkAdherentStatus = async (userId, token) => {
+    try {
+      const response = await axios.get('http://localhost:5000/isAdherant', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.data.adherant);
+      setIsAdherent(response.data.adherant);
+      console.log(isAdherent);    
+    } catch (error) {
+      console.error('Error checking adherent status:', error);
+    }
+  };
 
   return (
     <div>
@@ -136,16 +157,30 @@ function Navbar() {
             />
           )}
 
-          {userInfo && userInfo.type === 'employe' && (
+            {userInfo && userInfo.type === 'employe' && isAdherent && (
             <FontAwesomeIcon
-              icon={faMessage}
+              icon={faComment}
               className="navbar-iconnn"
               onClick={() => navigate('/message')}
             />
           )}
+          {userInfo && userInfo.type === 'employe' && !isAdherent && (
+            <>
+          <FontAwesomeIcon
+          icon={faCommentSlash}
+          className="navbar-iconnn"
+          onClick={() => setIsAdherantModalOpen(true)} // This line changes to open the modal
+          />
+          <AdherantModal
+          isOpen={isAdherantModalOpen}
+          onRequestClose={() => setIsAdherantModalOpen(false)}
+          user={currentUserId}
+          />
+          </>
+          )}
           {userInfo && userInfo.type === 'admin' && (
             <FontAwesomeIcon
-              icon={faMessage}
+              icon={faComment}
               className="navbar-iconnn"
               onClick={() => navigate('/message')}
             />

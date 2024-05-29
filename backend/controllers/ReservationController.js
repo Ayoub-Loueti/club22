@@ -949,6 +949,7 @@ exports.getMyReservations = async (req, res) => {
         },
         // Ensure other necessary models are included as needed
       ],
+      order: [['id_reservation', 'DESC']]
     });
 
     reservations = await Promise.all(
@@ -1058,6 +1059,7 @@ exports.getMyReservationsBoxD = async (req, res) => {
         },
         // Ensure other necessary models are included as needed
       ],
+      order: [['id_reservation', 'DESC']]
     });
 
     reservations = await Promise.all(
@@ -1164,6 +1166,7 @@ exports.getMyReservationsBoxT = async (req, res) => {
         },
         // Ensure other necessary models are included as needed
       ],
+      order: [['id_reservation', 'DESC']]
     });
 
     reservations = await Promise.all(

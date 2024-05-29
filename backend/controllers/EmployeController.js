@@ -209,6 +209,7 @@ exports.getEmployeDetails = async (req, res) => {
           'updatedAt',
           'message_admin',
         ],
+        order: [['id_reclamation', 'DESC']]
       });
 
       res.status(200).json(reclamations);
