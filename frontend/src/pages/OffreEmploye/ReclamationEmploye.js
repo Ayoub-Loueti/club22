@@ -2,11 +2,9 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from '../../components/navbar/navbar';
 import { useNavigate } from 'react-router-dom';
-import Card from '@mui/joy/Card';
-import CardContent from '@mui/joy/CardContent';
-import CardOverflow from '@mui/joy/CardOverflow';
-import Typography from '@mui/joy/Typography';
-import Button from '@mui/joy/Button';
+import { Card, CardContent, CardHeader, CardActions } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Swal from 'sweetalert2';
 import Dialog from '@mui/material/Dialog';
@@ -14,14 +12,17 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import './ReclamationEmploye.css'; // Assurez-vous que le chemin est correct
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useSpring, animated } from '@react-spring/web';
+import './ReclamationEmploye.css';
 
 function ReclamationEmploye() {
   const [contenu, setContenu] = useState('');
   const [reclamations, setReclamations] = useState([]);
   const [open, setOpen] = useState(false);
   const [selectedContent, setSelectedContent] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
   const token = JSON.parse(localStorage.getItem('login'))?.token;
   const [idEmploye, setIdEmploye] = useState(null);
@@ -60,6 +61,7 @@ function ReclamationEmploye() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setReclamations(response.data);
+      setLoading(false);
     } catch (error) {
       console.error('Erreur lors de la récupération des réclamations:', error);
       Swal.fire({
@@ -68,6 +70,7 @@ function ReclamationEmploye() {
         timer: 1500,
         showConfirmButton: false,
       });
+      setLoading(false);
     }
   };
 
@@ -83,7 +86,8 @@ function ReclamationEmploye() {
     }
 
     try {
-      const response = await axios.post(
+      setSubmitting(true);
+      await axios.post(
         'http://localhost:5000/reclamations',
         { contenu, id_employe: idEmploye },
         { headers: { Authorization: `Bearer ${token}` } }
@@ -97,6 +101,7 @@ function ReclamationEmploye() {
         timer: 1500,
         showConfirmButton: false,
       });
+      setSubmitting(false);
     } catch (error) {
       console.error('Erreur lors de la création de la réclamation:', error);
       Swal.fire({
@@ -107,6 +112,7 @@ function ReclamationEmploye() {
         timer: 1500,
         showConfirmButton: false,
       });
+      setSubmitting(false);
     }
   };
 
@@ -118,17 +124,19 @@ function ReclamationEmploye() {
   const handleClose = () => {
     setOpen(false);
   };
-function getStatusClass(statut) {
-  const normalizedStatus = statut.trim().toLowerCase();
-  console.log('Statut normalisé:', normalizedStatus); // Pour déboguer
-  if (normalizedStatus === 'traitée') {
-    return 'status-success';
-  } else if (normalizedStatus === 'en attente') {
-    return 'status-warning';
-  } else {
-    return 'status-error';
-  }
-}
+
+  const getStatusClass = (statut) => {
+    const normalizedStatus = statut.trim().toLowerCase();
+    if (normalizedStatus === 'traitée') {
+      return 'status-success';
+    } else if (normalizedStatus === 'en attente') {
+      return 'status-warning';
+    } else {
+      return 'status-error';
+    }
+  };
+
+  const props = useSpring({ to: { opacity: 1 }, from: { opacity: 0 } });
 
   return (
     <>
@@ -148,71 +156,63 @@ function getStatusClass(statut) {
           />
           <Button
             className="recl-submit-button"
-            variant="solid"
+            variant="contained"
+            color="primary"
             onClick={handleReclamationSubmit}
+            disabled={submitting}
           >
-            Soumettre la Réclamation
+            {submitting ? 'Soumission en cours...' : 'Soumettre la Réclamation'}
           </Button>
         </div>
         <div className="recl-cards-container">
-          {reclamations.map((reclamation) => (
-            <Card
-              key={reclamation.id_reclamation}
-              variant="outlined"
-              sx={{ width: 600, height: 400, m: 2 }}
-              orientation="horizontal"
-              className="recl-card"
-            >
-              <CardOverflow
-                className={`recl-card-status ${getStatusClass(reclamation.statut)}`}
-                sx={{
-                  p: 1,
-                }}
-              >
-                <Typography level="body2" sx={{ fontSize: '0.875rem' }}>
-                  Statut: {reclamation.statut}
-                </Typography>
-              </CardOverflow>
-              <CardContent
-                className="recl-card-content"
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 1,
-                }}
-                onClick={() => handleClickOpen(reclamation.contenu)}
-              >
-                <Typography sx={{ color: 'text.secondary' }}>
-                  Date de création:{' '}
-                  {new Date(reclamation.createdAt).toLocaleString()}
-                </Typography>
-                <Typography
-                  level="h2"
-                  sx={{
-                    fontSize: '1.25rem',
-                    fontWeight: 'md',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'wrap',
-                  }}
-                >
-                  Contenu: {reclamation.contenu}
-                </Typography>
-                <Button
-                  endIcon={<ExpandMoreIcon />}
-                  onClick={() => handleClickOpen(reclamation.contenu)}
-                  sx={{ alignSelf: 'center', mt: 1 }}
-                >
-                  Voir plus
-                </Button>
-
-                <Typography sx={{ color: 'text.secondary' }}>
-                  Message de l'admin:{' '}
-                  {reclamation.message_admin || 'Aucun message'}
-                </Typography>
-              </CardContent>
-            </Card>
-          ))}
+          {loading ? (
+            <Typography>Chargement des réclamations...</Typography>
+          ) : (
+            reclamations.map((reclamation) => (
+              <animated.div style={props} key={reclamation.id_reclamation}>
+                <Card className="recl-card">
+                  <CardHeader
+                    className={`recl-card-status ${getStatusClass(
+                      reclamation.statut
+                    )}`}
+                    title={` ${reclamation.statut}`}
+                  />
+                  <CardContent
+                    className="recl-card-content"
+                    onClick={() => handleClickOpen(reclamation.contenu)}
+                  >
+                    <Typography sx={{ color: 'text.secondary' }}>
+                      Date de création:{' '}
+                      {new Date(reclamation.createdAt).toLocaleString()}
+                    </Typography>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontSize: '1.25rem',
+                        fontWeight: 'bold',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'wrap',
+                      }}
+                    >
+                      Contenu: {reclamation.contenu}
+                    </Typography>
+                    <Button
+                      endIcon={<ExpandMoreIcon />}
+                      onClick={() => handleClickOpen(reclamation.contenu)}
+                      sx={{ alignSelf: 'center', mt: 2 }}
+                    >
+                      Voir plus
+                    </Button>
+                    <Typography sx={{ color: 'text.secondary' }}>
+                      Message de l'admin:{' '}
+                      {reclamation.message_admin || 'Aucun message'}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </animated.div>
+            ))
+          )}
         </div>
       </div>
       <Dialog open={open} onClose={handleClose}>

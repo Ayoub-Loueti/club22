@@ -29,7 +29,7 @@
 
 .navbar-toggle {
   position: fixed;
-  left: 10px;
+  left: 20px;
   z-index: 2000;
   cursor: pointer;
   padding: 10px;
