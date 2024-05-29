@@ -14,24 +14,24 @@ body, html {
 }*/
 .signup-white-square {
   background-color: white;
-  width: 500px;
-  height: 650px;
+  width: 600px;
+  height: 691px;
 }
 
 .signup-green-square {
-  width: 700px;
-  height: 650px;
+  width: 1000px;
+  height: 687px;
   position: relative;
 }
 
 .signup-gray-rectangle {
   background-color: #e4e4e4;
-  width: 140px;
-  height: 350px;
+  width: 240px;
+  height: 280px;
   padding: 130px;
   border-radius: 10px;
   position: absolute;
-  left: calc(90% - 0px); /* Adjust to move the rectangle to the left */
+  left: calc(84% - 0px); /* Adjust to move the rectangle to the left */
   top: 50%;
   transform: translateY(-50%);
   z-index: 1;

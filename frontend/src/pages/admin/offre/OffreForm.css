@@ -143,4 +143,36 @@ font-size: smaller;
 .offre-form-container .MuiFormControlLabel-label {
   color: #4A5568;
   font-weight: normal;
+}/* Espacement pour les sélections de type de chambre et les champs associés */
+.offre-form-container .type-chambre-selection,
+.offre-form-container .default-chambre-selection,
+.offre-form-container .supplement-input {
+  margin-bottom: 20px; /* Ajoute un espace en dessous de chaque élément */
+}
+.offre-form-container .type-chambre-selection {
+  margin-top: 20px;}
+/* Style spécifique pour les labels dans les sections de type de chambre */
+.offre-form-container .type-chambre-label,
+.offre-form-container .default-chambre-label,
+.offre-form-container .supplement-label {
+  font-weight: bold;
+  color: #4A5568;
+  text-transform: uppercase;
+  margin-top: 20px; /* Espacement au-dessus du label */
+}
+.offre-radio-group {
+  display: flex;
+  align-items: center; /* Alignement vertical centré */
+  gap: 10px; /* Espace entre le bouton radio et le label */
+}
+
+.offre-radio-label {
+  margin: 0; /* Ajustement pour éviter tout espace supplémentaire */
+  font-weight: normal;
+  color: #4A5568;
+}
+.offre-checkbox-groupInterdit {
+  display: flex;
+  align-items: center; /* Alignement vertical centré */
+  gap: 10px; /* Espace entre la checkbox et le label */
 }

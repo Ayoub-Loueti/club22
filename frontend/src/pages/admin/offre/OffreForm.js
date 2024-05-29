@@ -321,14 +321,15 @@ setChangeMonetaire(data.details.changeMonetaire);
           required
         />
       </label>
-      <FormControl fullWidth>
-        <InputLabel id="demo-multiple-checkbox-label">
+      <FormControl fullWidth className="type-chambre-selection">
+        <InputLabel id="demo-multiple-checkbox-label" >
           Type de Chambre
         </InputLabel>
         <Select
           labelId="demo-multiple-checkbox-label"
           id="demo-multiple-checkbox"
           multiple
+          required
           value={selectedTypes}
           onChange={handleTypeChambreChange}
           input={<OutlinedInput label="Type de Chambre" />}
@@ -349,7 +350,7 @@ setChangeMonetaire(data.details.changeMonetaire);
         </Select>
       </FormControl>
 
-      <FormControl fullWidth>
+      <FormControl fullWidth className="default-chambre-selection">
         <InputLabel id="default-chambre-label">Chambre par Défaut</InputLabel>
         <Select
           labelId="default-chambre-label"
@@ -357,6 +358,7 @@ setChangeMonetaire(data.details.changeMonetaire);
           value={defaultChambre}
           label="Chambre par Défaut"
           onChange={handleDefaultChambreChange}
+          required
         >
           {selectedTypes.map((typeId) => (
             <MenuItem key={typeId} value={typeId}>
@@ -378,6 +380,7 @@ setChangeMonetaire(data.details.changeMonetaire);
               value={supplements[typeId] || ''}
               onChange={(e) => handleSupplementChange(typeId, e.target.value)}
               fullWidth
+              className="supplement-input"
             />
           )
       )}
@@ -739,6 +742,7 @@ setChangeMonetaire(data.details.changeMonetaire);
 
       <div className="interdictions-section">
         <h3>Interdictions</h3>
+        <div className='offre-checkbox-groupInterdit '> 
         <FormControlLabel
           control={
             <Checkbox
@@ -768,7 +772,7 @@ setChangeMonetaire(data.details.changeMonetaire);
             />
           }
           label="Alcool"
-        />
+        /></div>
       </div>
     </>
   );
@@ -1009,8 +1013,8 @@ selectedTypes.forEach((typeId, index) => {
       </label>
       <label>
         Enfants autorisés:
-        <div>
-          <label>
+        <div className="offre-radio-group">
+          <label className="offre-radio-label">
             <input
               type="radio"
               name="enfantsAutorises"
@@ -1020,7 +1024,7 @@ selectedTypes.forEach((typeId, index) => {
             />{' '}
             Oui
           </label>
-          <label>
+          <label className="offre-radio-label">
             <input
               type="radio"
               name="enfantsAutorises"

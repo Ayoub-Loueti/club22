@@ -7,7 +7,7 @@ module.exports = {
     const payload = {
       app_token: '2724dad8-3f89-4edd-94d1-7ad3a23826aa',
       app_secret: process.env.FLOUCI_SECRET,
-      amount: prix,
+      amount: prix*1000,
       accept_card: 'true',
       session_timeout_secs: 1200,
       success_link: 'http://localhost:3000/success',

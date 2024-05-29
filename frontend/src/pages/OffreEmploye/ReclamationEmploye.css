@@ -1,12 +1,9 @@
-/* ReclamationEmploye.css */
 .recl-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  background: #7F7FD5;
-	background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
-	background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+  
 }
 
 .recl-input-container {
@@ -29,41 +26,36 @@
   font-size: 16px;
 }
 
-.recl-cards-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+.recl-cards-slider {
+  position: relative;
   width: 100%;
-  gap: 20px;
-}
-
-.status-success {
-  background-color: #e0f7fa;
-  color: #00796b;
-}
-
-.status-warning {
-  background-color: #fff3e0;
-  color: #e65100;
-}
-
-.status-error {
-  background-color: #ffebee;
-  color: #c62828;
+  max-width: 1140px; /* Adjust based on your layout */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
 }
 
 .recl-card {
-  width: 300px;
-  height: 300px;
+  width: 550px; /* Adjust card width */
+  height: 300px; /* Set a fixed height for all cards */
+  flex: 0 0 auto;
   margin: 10px;
-  background-color: #ffffff;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  border-radius: 10px;
+  border-radius: 15px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
+
+.recl-cards-container {
+  display: flex;
+  width: calc(100% + 20px); /* Adjust margin for card spacing */
+  height: 320px; /* Set a fixed height for the container */
+  transition: transform 0.5s ease-in-out;
+}
+
 
 .recl-card:hover {
   transform: translateY(-10px);
@@ -73,6 +65,7 @@
 .recl-card-content {
   flex: 1;
   padding: 20px;
+  font-family: 'Roboto', sans-serif;
 }
 
 .recl-card-status {
@@ -81,6 +74,29 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  background: linear-gradient(135deg, #c3cfe2 0%, #f5f7fa 100%);
+}
+
+.recl-slider-arrow {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.recl-slider-arrow-left {
+  left: 80px;
+  margin-top: 380px;
+}
+
+.recl-slider-arrow-right {
+  right: 80px;
+  margin-top: 380px;
+  border-radius: 3%;
+
 }
 
 @media (max-width: 768px) {

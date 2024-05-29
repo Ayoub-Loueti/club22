@@ -481,7 +481,7 @@ if (isMobile) {
                   fontWeight: 'bold',
                   cursor: 'pointer',
                   position: 'absolute',
-                  top: '71%',
+                  top: '77%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
                   zIndex: '1',
@@ -496,7 +496,7 @@ if (isMobile) {
                   color: '#4F5475',
                   textAlign: 'center',
                   position: 'absolute',
-                  top: '76%',
+                  top: '82%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
                   zIndex: '1',
@@ -510,7 +510,7 @@ if (isMobile) {
                 className="google-auth-link"
                 style={{
                   position: 'absolute',
-                  top: '85%',
+                  top: '92%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
                   zIndex: '1',
