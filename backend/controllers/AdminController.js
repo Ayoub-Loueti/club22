@@ -540,7 +540,7 @@ exports.getAllReclamations = async (req, res) => {
             {
               model: Utilisateur,
               as: 'utilisateur',
-              attributes: ['nom', 'prenom', 'email'],
+              attributes: ['nom', 'prenom', 'email','photo'],
             },
           ],
         },

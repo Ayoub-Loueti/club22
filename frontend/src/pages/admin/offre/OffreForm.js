@@ -366,19 +366,21 @@ setChangeMonetaire(data.details.changeMonetaire);
         </Select>
       </FormControl>
 
-      {selectedTypes.map((typeId) => (
-        <TextField
-          key={typeId}
-          label={`Supplément pour ${
-            typesChambresOptions.find((type) => type.id === typeId).nom
-          }`}
-          type="number"
-          value={supplements[typeId] || ''}
-          onChange={(e) => handleSupplementChange(typeId, e.target.value)}
-          fullWidth
-        />
-      ))}
-
+      {selectedTypes.map(
+        (typeId) =>
+          typeId !== defaultChambre && (
+            <TextField
+              key={typeId}
+              label={`Supplément pour ${
+                typesChambresOptions.find((type) => type.id === typeId).nom
+              }`}
+              type="number"
+              value={supplements[typeId] || ''}
+              onChange={(e) => handleSupplementChange(typeId, e.target.value)}
+              fullWidth
+            />
+          )
+      )}
       <label
         style={{
           flexDirection: 'row',
@@ -734,7 +736,7 @@ setChangeMonetaire(data.details.changeMonetaire);
           onChange={(e) => setChangeMonetaire(e.target.checked)}
         />
       </label>
-      
+
       <div className="interdictions-section">
         <h3>Interdictions</h3>
         <FormControlLabel
