@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Visibility } from '@mui/icons-material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 import io from 'socket.io-client';
 import Lottie from 'react-lottie';
@@ -51,6 +52,7 @@ function MessagePage() {
   const [isPrivate, setIsPrivate] = useState(false);
   const [members, setMembers] = useState([]);
   const [isMembersModalOpen, setIsMembersModalOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const handleOpenMembersModal = () => setIsMembersModalOpen(true);
   const handleCloseMembersModal = () => setIsMembersModalOpen(false);
@@ -183,6 +185,40 @@ function MessagePage() {
   useEffect(() => {
     if (selectedDiscussion && selectedDiscussion.id_disc) {
       fetchPrivacyStatus(selectedDiscussion.id_disc);
+      fetchMembers(selectedDiscussion.id_disc);
+    }
+  }, [selectedDiscussion]);
+
+  const checkAdminStatus = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/discussion/${selectedDiscussion.id_disc}/is-admin`, {
+        headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
+      });
+      setIsAdmin(response.data.isAdmin);  // Ensure this matches the actual response structure
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+    }
+  };
+  
+  useEffect(() => {
+    if (selectedDiscussion) {
+      checkAdminStatus();
+    }
+  }, [selectedDiscussion]);
+
+  const handleKickMember = async (memberId) => {
+    try {
+      await axios.delete(`http://localhost:5000/discussion/${selectedDiscussion.id_disc}/member/${memberId}`, {
+        headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
+      });
+      fetchMembers(selectedDiscussion.id_disc); // Refresh members list
+    } catch (error) {
+      console.error('Error kicking member:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedDiscussion && selectedDiscussion.id_disc) {
       fetchMembers(selectedDiscussion.id_disc);
     }
   }, [selectedDiscussion]);
@@ -495,17 +531,22 @@ function MessagePage() {
          Les membres de cette discussion
        </Typography>
        <List dense>
-     {members.map((member, index) => (
-       <ListItem key={index}>
-         <Avatar
-           src={member.utilisateur.photo ? `http://localhost:5000/${member.utilisateur.photo}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'}
-           alt={`${member.utilisateur.prenom} ${member.utilisateur.nom}`}
-           sx={{ width: 56, height: 56, marginRight: 2 }}
-         />
-         <ListItemText primary={`${member.utilisateur.prenom} ${member.utilisateur.nom}`} />
-       </ListItem>
-     ))}
-   </List>
+  {members.map((member, index) => (
+    <ListItem key={index}>
+      <Avatar
+        src={member.utilisateur.photo ? `http://localhost:5000/${member.utilisateur.photo}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'}
+        alt={`${member.utilisateur.prenom} ${member.utilisateur.nom}`}
+        sx={{ width: 56, height: 56, marginRight: 2 }}
+      />
+      <ListItemText primary={`${member.utilisateur.prenom} ${member.utilisateur.nom}`} />
+      {isAdmin && member.id_utilisateur !== userId && (
+        <IconButton onClick={() => handleKickMember(member.id_membre)}>
+          <DeleteIcon />
+        </IconButton>
+      )}
+    </ListItem>
+  ))}
+</List>
      </Box>
    </Modal>
                 <List>

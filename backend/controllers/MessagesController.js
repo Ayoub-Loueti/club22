@@ -302,7 +302,7 @@ exports.deleteMemberFromDiscussion = async (req, res) => {
 
         const result = await MembreModel.destroy({
             where: {
-                id_utilisateur: userId,
+                id_membre: userId,
                 id_discussion: id_disc
             }
         });
