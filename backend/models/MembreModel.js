@@ -26,6 +26,11 @@ const MembreModel = sequelize.define(
         model: 'utilisateur', 
         key: 'id_utilisateur',
       }
+    },
+    isAdmin: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   },
   {

@@ -14,6 +14,8 @@ import {
   TextField,
   Button,
 } from '@mui/material';
+import { IconButton } from '@mui/material';
+import { Visibility } from '@mui/icons-material';
 import axios from 'axios';
 import io from 'socket.io-client';
 import Lottie from 'react-lottie';
@@ -46,6 +48,12 @@ function MessagePage() {
   const [isPublic, setIsPublic] = useState(true);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [selectableUsers, setSelectableUsers] = useState([]);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [members, setMembers] = useState([]);
+  const [isMembersModalOpen, setIsMembersModalOpen] = useState(false);
+
+  const handleOpenMembersModal = () => setIsMembersModalOpen(true);
+  const handleCloseMembersModal = () => setIsMembersModalOpen(false);
 
   const defaultOptions = {
     loop: true,
@@ -148,6 +156,36 @@ function MessagePage() {
   }, [isPublic, token]);
 
   const handleTogglePublic = () => setIsPublic(!isPublic);
+
+  const fetchPrivacyStatus = async (id_disc) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/discussion/${id_disc}/is-private`, {
+        headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
+      });
+      setIsPrivate(response.data.isPrivate);
+    } catch (error) {
+      console.error('Error fetching privacy status:', error);
+    }
+  };
+
+  const fetchMembers = async (id_disc) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/discussion/${id_disc}/members`, {
+        headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
+      });
+      console.log(response.data); // Log to see the structure
+      setMembers(response.data);
+    } catch (error) {
+      console.error('Error fetching members:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedDiscussion && selectedDiscussion.id_disc) {
+      fetchPrivacyStatus(selectedDiscussion.id_disc);
+      fetchMembers(selectedDiscussion.id_disc);
+    }
+  }, [selectedDiscussion]);
 
   const modalBody = (
     <Box
@@ -425,10 +463,51 @@ function MessagePage() {
                 className="msg_card_bodyMsgs"
               >
                 <Typography variant="h6" className="msg_headMsgs">
-                  {selectedDiscussion
-                    ? selectedDiscussion.nomDisc
-                    : 'Sélectionnez une discussion'}
+                  {selectedDiscussion ? (
+       <>
+         {selectedDiscussion.nomDisc}
+         {isPrivate && (
+              <IconButton onClick={handleOpenMembersModal}>
+     <Visibility />
+   </IconButton>
+         )}
+       </>
+     ) : 'Sélectionnez une discussion'}
                 </Typography>
+                <Modal
+     open={isMembersModalOpen}
+     onClose={handleCloseMembersModal}
+     aria-labelledby="members-modal-title"
+     aria-describedby="members-modal-description"
+   >
+     <Box sx={{
+       position: 'absolute',
+       top: '50%',
+       left: '50%',
+       transform: 'translate(-50%, -50%)',
+       width: 400,
+       bgcolor: 'background.paper',
+       boxShadow: 24,
+       p: 4,
+       borderRadius: '20px',
+     }}>
+       <Typography id="members-modal-title" variant="h6" component="h2">
+         Les membres de cette discussion
+       </Typography>
+       <List dense>
+     {members.map((member, index) => (
+       <ListItem key={index}>
+         <Avatar
+           src={member.utilisateur.photo ? `http://localhost:5000/${member.utilisateur.photo}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'}
+           alt={`${member.utilisateur.prenom} ${member.utilisateur.nom}`}
+           sx={{ width: 56, height: 56, marginRight: 2 }}
+         />
+         <ListItemText primary={`${member.utilisateur.prenom} ${member.utilisateur.nom}`} />
+       </ListItem>
+     ))}
+   </List>
+     </Box>
+   </Modal>
                 <List>
                   {messages.length > 0 ? (
                     messages.map((message) => (

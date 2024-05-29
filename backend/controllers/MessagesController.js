@@ -13,9 +13,9 @@ const Discussion = require('../models/DiscussionModel');
      
 exports.createMessage = async (req, res) => {
     try {
-        const userId = req.userId; // id_utilisateur from req.userId
-        const { contenu } = req.body; // contenu from body
-        const { id_disc } = req.params; // id_disc from path
+        const userId = req.userId; 
+        const { contenu } = req.body; 
+        const { id_disc } = req.params; 
 
         const utilisateur = await Utilisateur.findOne({
             where: { id_utilisateur: userId },
@@ -57,7 +57,7 @@ exports.createMessage = async (req, res) => {
 
 exports.getMessages = async (req, res) => {
     try {
-        const { id_disc } = req.params; // Get id_disc from path
+        const { id_disc } = req.params; 
 
         const messages = await Message.findAll({
             where: { id_disc: id_disc },
@@ -68,7 +68,7 @@ exports.getMessages = async (req, res) => {
             }],
         });
 
-        if (!messages.length) { // Check if the messages array is empty
+        if (!messages.length) { 
             return res.status(404).json({ error: 'No messages found for this discussion' });
         }
 
@@ -92,9 +92,9 @@ exports.findEmployesAndAdmins = async (req, res) => {
               as: 'utilisateur', 
               where: {
                   [Sequelize.Op.and]: [
-                      { id_utilisateur: { [Sequelize.Op.ne]: currentUserId } }, // Exclude the current user
-                      { etat: 'autorise' }, // Ensure the user is authorized
-                      { type: 'employe' } // Ensure the user is of type 'employe'
+                      { id_utilisateur: { [Sequelize.Op.ne]: currentUserId } }, 
+                      { etat: 'autorise' },
+                      { type: 'employe' } 
                   ]
               },
               attributes: ['id_utilisateur', 'nom', 'prenom', 'email', 'photo', 'type']
@@ -126,53 +126,50 @@ exports.findEmployesAndAdmins = async (req, res) => {
 };
 
 exports.createDiscussion = async (req, res) => {
-  const { nomDisc, nbr_jours_disc, namedUsers, ispublic } = req.body;
-  const userId = req.userId; // Assuming req.userId is set correctly and contains the ID of the current user
-
-  try {
-      const currentDate = new Date();
-      const daysToAdd = parseInt(nbr_jours_disc, 10);
-      currentDate.setDate(currentDate.getDate() + daysToAdd);
-
-      const newDiscussion = await Discussion.create({
-          nomDisc,
-          typeDisc: ispublic ? "infini" : "temporaire",
-          nbr_jours_disc,
-          date_fin: currentDate,
-          ispublic,
-      });
-
-      req.app.get('io').emit('new discussion', newDiscussion);
-
-      // Create an array to hold all user IDs including the creator
-      let allUserIds = [userId]; // Start with the creator's ID
-      if (Array.isArray(namedUsers)) {
-          allUserIds = allUserIds.concat(namedUsers); // Add other named users
-      }
-
-      // Remove duplicates, if any
-      allUserIds = [...new Set(allUserIds)];
-
-      // Add all users to the 'membre' table
-      await Promise.all(allUserIds.map(userId => 
-          MembreModel.create({
-              id_discussion: newDiscussion.id_disc,
-              id_utilisateur: userId
-          })
-      ));
-
-      res.status(201).json(newDiscussion);
-  } catch (error) {
-      console.error('Error creating discussion:', error);
-      res.status(500).json({ error: error.message });
-  }
-};
+    const { nomDisc, nbr_jours_disc, namedUsers, ispublic } = req.body;
+    const userId = req.userId; 
+  
+    try {
+        const currentDate = new Date();
+        const daysToAdd = parseInt(nbr_jours_disc, 10);
+        currentDate.setDate(currentDate.getDate() + daysToAdd);
+  
+        const newDiscussion = await Discussion.create({
+            nomDisc,
+            typeDisc: "temporaire",
+            nbr_jours_disc,
+            date_fin: currentDate,
+            ispublic,
+        });
+  
+        req.app.get('io').emit('new discussion', newDiscussion);
+  
+        let allUserIds = [userId]; // This will include the creator's ID first
+        if (Array.isArray(namedUsers)) {
+            allUserIds = allUserIds.concat(namedUsers); 
+        }
+  
+        allUserIds = [...new Set(allUserIds)]; // Ensure no duplicates
+  
+        await Promise.all(allUserIds.map((id, index) => 
+            MembreModel.create({
+                id_discussion: newDiscussion.id_disc,
+                id_utilisateur: id,
+                isAdmin: id === userId // Set isAdmin true only for the creator
+            })
+        ));
+  
+        res.status(201).json(newDiscussion);
+    } catch (error) {
+        console.error('Error creating discussion:', error);
+        res.status(500).json({ error: error.message });
+    }
+  };
 
 exports.getAllDiscussions = async (req, res) => {
-  const userId = req.userId; // Assuming req.userId is set correctly and contains the ID of the current user
+  const userId = req.userId;
 
   try {
-      // Fetch discussions where the user is a member
       const memberDiscussions = await MembreModel.findAll({
           where: { id_utilisateur: userId },
           include: [{
@@ -182,15 +179,12 @@ exports.getAllDiscussions = async (req, res) => {
           }]
       });
 
-      // Fetch all public discussions
       const publicDiscussions = await Discussion.findAll({
           where: { ispublic: true }
       });
 
-      // Extract discussions from the memberDiscussions array
       const discussionsFromMembers = memberDiscussions.map(membre => membre.discussion);
 
-      // Combine both arrays and remove duplicates
       const allDiscussions = [ ...publicDiscussions,...discussionsFromMembers];
       const uniqueDiscussions = Array.from(new Set(allDiscussions.map(disc => disc.id_disc)))
           .map(id => {
@@ -206,6 +200,122 @@ exports.getAllDiscussions = async (req, res) => {
       console.error('Error fetching discussions:', error);
       res.status(500).json({ error: 'Internal server error', details: error.message });
   }
+};
+
+exports.getDiscussionMembers = async (req, res) => {
+    const { id_disc } = req.params; 
+    try {
+        const discussion = await Discussion.findOne({
+            where: {
+                id_disc: id_disc,
+                ispublic: false 
+            }
+        });
+
+        if (!discussion) {
+            return res.status(404).json({ error: 'Private discussion not found.' });
+        }
+
+        const members = await MembreModel.findAll({
+            where: { id_discussion: id_disc },
+            include: [{
+                model: Utilisateur,
+                as: 'utilisateur',
+                attributes: ['id_utilisateur', 'nom', 'prenom', 'email','photo'] 
+            }]
+        });
+
+        if (!members.length) {
+            return res.status(404).json({ error: 'No members found for this discussion.' });
+        }
+
+        res.status(200).json(members);
+    } catch (error) {
+        console.error('Error fetching discussion members:', error);
+        res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+};
+
+exports.checkIfDiscussionIsPrivate = async (req, res) => {
+    const { id_disc } = req.params; 
+
+    try {
+        const discussion = await Discussion.findOne({
+            where: { id_disc: id_disc },
+            attributes: ['id_disc', 'ispublic'] 
+        });
+
+        if (!discussion) {
+            return res.status(404).json({ error: 'Discussion not found.' });
+        }
+
+        const isPrivate = !discussion.ispublic;
+
+        res.status(200).json({ id_disc: discussion.id_disc, isPrivate: isPrivate });
+    } catch (error) {
+        console.error('Error checking if discussion is private:', error);
+        res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+};
+
+exports.checkIfUserIsAdmin = async (req, res) => {
+    const userId = req.userId; 
+    const { id_disc } = req.params;
+
+    try {
+        const member = await MembreModel.findOne({
+            where: {
+                id_utilisateur: userId,
+                id_discussion: id_disc
+            },
+            attributes: ['isAdmin']
+        });
+
+        if (!member) {
+            return res.status(404).json({ message: 'Member not found in the discussion.' });
+        }
+
+        res.status(200).json({ isAdmin: member.isAdmin });
+    } catch (error) {
+        console.error('Error checking admin status:', error);
+        res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+};
+
+exports.deleteMemberFromDiscussion = async (req, res) => {
+    const { userId } = req.params; 
+    const { id_disc } = req.params; 
+    const adminUserId = req.userId; 
+
+    try {
+        const adminMember = await MembreModel.findOne({
+            where: {
+                id_utilisateur: adminUserId,
+                id_discussion: id_disc,
+                isAdmin: true
+            }
+        });
+
+        if (!adminMember) {
+            return res.status(403).json({ message: 'Only admins can remove members from the discussion.' });
+        }
+
+        const result = await MembreModel.destroy({
+            where: {
+                id_utilisateur: userId,
+                id_discussion: id_disc
+            }
+        });
+
+        if (result === 0) {
+            return res.status(404).json({ message: 'Member not found or already removed.' });
+        }
+
+        res.status(200).json({ message: 'Member removed successfully.' });
+    } catch (error) {
+        console.error('Error removing member from discussion:', error);
+        res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
 };
 
 const apiKey ="AIzaSyCNG3ZPYzEW_V4m0Vz2Onq5BceRJ_1cAtg";
