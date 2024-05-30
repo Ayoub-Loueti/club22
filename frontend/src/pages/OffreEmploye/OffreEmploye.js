@@ -7,6 +7,9 @@ import Navbar from '../../components/navbar/navbar';
 import StarRating from './StarRating'; // Make sure this is imported correctly
 import ScrollToTop from '../../components/designs/ScrollToTop';
 import ReactPaginate from 'react-paginate'; 
+import { useTranslation } from 'react-i18next';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleChevronLeft, faCircleChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 function OffreEmploye({ offers }) {
   const [offres, setOffres] = useState([]);
@@ -15,9 +18,9 @@ function OffreEmploye({ offers }) {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
   const [offresPerPage] = useState(6); 
+  const { t } = useTranslation();
 
   useEffect(() => {
-    // Si aucune offre n'est passée en props, fetch les offres
     if (!offers || offers.length === 0) {
       const fetchOffres = async () => {
         try {
@@ -38,7 +41,6 @@ function OffreEmploye({ offers }) {
       };
       fetchOffres();
     } else {
-      // Utilisez les offres passées en props
       setOffres(offers);
     }
   }, [token, offers]);
@@ -76,9 +78,9 @@ const calculateDaysUntil = (date) => {
   const timeDiff = endDate.getTime() - now.getTime();
   const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
   if (daysDiff > 0) {
-    return `Remise expire dans ${daysDiff} jours`;
+return `${t('Remise expire dans ')} ${daysDiff} ${t('jours')}`;
   } else if (daysDiff === 0) {
-    return "Remise expire aujourd'hui";
+      return t("Remise expire aujourd'hui");
   } else {
     return null; 
   }
@@ -88,9 +90,9 @@ const calculateDaysUntil = (date) => {
       <Navbar />
       <ScrollToTop />
       <div className="offre-employee-container">
-        <h1 className="offre-employee-title">LES OFFRES DISPONIBLES</h1>
+        <h1 className="offre-employee-title">{t('LES OFFRES DISPONIBLES')}</h1>
         <div className="filters">
-          {['tous', 'hotel', 'voyage', 'activite'].map((f) => (
+          {[t('tous'), t('hotel'), t('voyage'), t('activite')].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -123,7 +125,7 @@ const calculateDaysUntil = (date) => {
                   fontWeight: 'bold',
                 }}
               >
-                <span className='apartir'>A partir de</span>{' '}
+                <span className="apartir">{t('A partir de')}</span>{' '}
                 <span style={{ color: '#f00', fontSize: '21px' }}>
                   {offre.prix} TND
                 </span>
@@ -141,14 +143,14 @@ const calculateDaysUntil = (date) => {
                 className="voirPlusOffre"
                 onClick={() => handleVoirPlusClick(offre.id_offre)}
               >
-                VOIR PLUS
+                {t('VOIR PLUS')}
               </button>
             </div>
           ))}
         </div>
         <ReactPaginate
-          previousLabel={'⬅️'}
-          nextLabel={'➡️'}
+          previousLabel={<FontAwesomeIcon icon={faCircleChevronLeft} />}
+          nextLabel={<FontAwesomeIcon icon={faCircleChevronRight} />}
           pageCount={pageCount}
           onPageChange={(data) => setCurrentPage(data.selected)}
           containerClassName={'pagination'}

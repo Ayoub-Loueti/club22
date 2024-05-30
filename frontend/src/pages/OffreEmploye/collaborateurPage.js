@@ -7,13 +7,15 @@ import OffreCollabEmploye from './OffreCollabEmploye';
 import NavbarHaut from '../../components/navbar/navbarHaut';
 import Hero from '../../components/designs/Hero';
 import scrollreveal from 'scrollreveal';
+import { useTranslation } from 'react-i18next';
 
 function CollaborateurPage() {
   const [collaborateurs, setCollaborateurs] = useState([]);
   const [selectedCollaborateurId, setSelectedCollaborateurId] = useState(null);
   const [startIndex, setStartIndex] = useState(0);
   const [showOffreCollab, setShowOffreCollab] = useState(false);
- 
+   const { t } = useTranslation();
+
   const [filteredOffers, setFilteredOffers] = useState([]);
 
   useEffect(() => {
@@ -85,7 +87,7 @@ function CollaborateurPage() {
       <div>
         {showOffreCollab && (
           <button className="voir-tous-btn" onClick={handleViewAllOffers}>
-            Tous les offres
+            {t('Tous les offres')}
           </button>
         )}
         <div className="PageCollaborateur-container">

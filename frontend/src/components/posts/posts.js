@@ -3,6 +3,8 @@ import './posts.css';
 
 import Post from '../post/post';
 import ReactPaginate from 'react-paginate';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleChevronLeft, faCircleChevronRight } from '@fortawesome/free-solid-svg-icons';
 const Posts = ({ posts, openModalForPost }) => {
   const [currentPosts, setCurrentPosts] = useState([]);
 
@@ -50,8 +52,8 @@ const Posts = ({ posts, openModalForPost }) => {
         />
       ))}
       <ReactPaginate
-        previousLabel={'⬅️'}
-        nextLabel={'➡️'}
+        previousLabel={<FontAwesomeIcon icon={faCircleChevronLeft} />}
+        nextLabel={<FontAwesomeIcon icon={faCircleChevronRight} />}
         breakLabel={'...'}
         breakClassName={'break-me'}
         pageCount={pageCount}

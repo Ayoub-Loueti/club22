@@ -1,10 +1,13 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+
 import ReactDOM from 'react-dom';
 
 const ProgramModal = ({ isOpen, onClose, content }) => {
+  const { t } = useTranslation(); 
+
   if (!isOpen) return null;
 
-  // Styles pour l'arrière-plan sombre semi-transparent
   const overlayStyle = {
     position: 'fixed',
     top: 0,
@@ -15,29 +18,25 @@ const ProgramModal = ({ isOpen, onClose, content }) => {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backdropFilter: 'blur(3px)', // Flou léger pour l'arrière-plan
+    backdropFilter: 'blur(3px)',
   };
 
-  // Styles pour la boîte de contenu du modal
   const contentStyle = {
     background: 'white',
     padding: '20px',
     borderRadius: '5px',
     minWidth: '500px',
     maxWidth: '800px',
-    margin: 'auto', // Centre le modal verticalement et horizontalement
-    overflowY: 'auto', // Active le défilement vertical si nécessaire
-    maxHeight: '80vh', // Hauteur maximale pour permettre le défilement
-    position: 'relative', // Position relative pour le positionnement interne
+    margin: 'auto',
+    overflowY: 'auto',
+    maxHeight: '80vh',
+    position: 'relative',
   };
 
   return ReactDOM.createPortal(
     <div style={overlayStyle} onClick={() => onClose()}>
-      <div
-        style={contentStyle}
-        onClick={(e) => e.stopPropagation()} // Empêche le clic de fermer le modal
-      >
-        <h2>Programme</h2>
+      <div style={contentStyle} onClick={(e) => e.stopPropagation()}>
+        <h2>{t('Programme')}</h2>
         <div>{content}</div>{' '}
         <button
           onClick={onClose}
@@ -53,7 +52,7 @@ const ProgramModal = ({ isOpen, onClose, content }) => {
             alignSelf: 'flex-end',
           }}
         >
-          Fermer
+         {t('Fermer')}
         </button>
       </div>
     </div>,

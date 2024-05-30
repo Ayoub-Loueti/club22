@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+
 import {
   Autocomplete,
   Switch,
@@ -54,6 +56,7 @@ function MessagePage() {
   const [members, setMembers] = useState([]);
   const [isMembersModalOpen, setIsMembersModalOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const { t } = useTranslation();
 
   const handleOpenMembersModal = () => setIsMembersModalOpen(true);
   const handleCloseMembersModal = () => setIsMembersModalOpen(false);
@@ -122,8 +125,8 @@ function MessagePage() {
         {
           nomDisc: discussionName,
           nbr_jours_disc: validityDays,
-          ispublic: isPublic, // Include the isPublic flag
-          namedUsers: selectedUsers, // Include the list of selected user IDs
+          ispublic: isPublic, 
+          namedUsers: selectedUsers, 
         },
         { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } }
       )
@@ -176,7 +179,7 @@ function MessagePage() {
       const response = await axios.get(`http://localhost:5000/discussion/${id_disc}/members`, {
         headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
       });
-      console.log(response.data); // Log to see the structure
+      console.log(response.data);
       setMembers(response.data);
     } catch (error) {
       console.error('Error fetching members:', error);
@@ -195,7 +198,7 @@ function MessagePage() {
       const response = await axios.get(`http://localhost:5000/discussion/${selectedDiscussion.id_disc}/is-admin`, {
         headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
       });
-      setIsAdmin(response.data.isAdmin);  // Ensure this matches the actual response structure
+      setIsAdmin(response.data.isAdmin);  
     } catch (error) {
       console.error('Error checking admin status:', error);
     }
@@ -212,7 +215,7 @@ function MessagePage() {
       await axios.delete(`http://localhost:5000/discussion/${selectedDiscussion.id_disc}/member/${memberId}`, {
         headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
       });
-      fetchMembers(selectedDiscussion.id_disc); // Refresh members list
+      fetchMembers(selectedDiscussion.id_disc);
     } catch (error) {
       console.error('Error kicking member:', error);
     }
@@ -239,11 +242,11 @@ function MessagePage() {
       }}
     >
       <Typography variant="h6" component="h2">
-        Nouvelle Discussion
+        {t('Nouvelle Discussion')}
       </Typography>
       <TextField
         fullWidth
-        label="Nom de la conversation"
+        label={t("Nom de la conversation")}
         value={discussionName}
         onChange={(e) => setDiscussionName(e.target.value)}
         sx={{ mt: 2 }}
@@ -251,7 +254,7 @@ function MessagePage() {
       />
       <TextField
         fullWidth
-        label="Nombre de jours valable"
+        label={t('Nombre de jours valable')}
         type="number"
         value={validityDays}
         onChange={(e) => setValidityDays(e.target.value)}
@@ -260,7 +263,7 @@ function MessagePage() {
       />
       <FormControlLabel
         control={<Switch checked={!isPublic} onChange={handleTogglePublic} />}
-        label="Privée"
+        label={t('Privée')}
       />
       {!isPublic && (
         <Autocomplete
@@ -274,8 +277,8 @@ function MessagePage() {
             <TextField
               {...params}
               variant="standard"
-              label="Ajouter des utilisateurs"
-              placeholder="Sélectionner"
+              label={t('Ajouter des utilisateurs')}
+              placeholder={t('Sélectionner')}
             />
           )}
         />
@@ -292,7 +295,7 @@ function MessagePage() {
           (!isPublic && selectedUsers.length === 0)
         }
       >
-        Ajouter
+       { t('Ajouter')}
       </Button>
     </Box>
   );
@@ -309,7 +312,7 @@ function MessagePage() {
   }, [token]);
 
   useEffect(() => {
-    console.log(selectedDiscussion); // Add this to check if the state updates
+    console.log(selectedDiscussion); 
     if (selectedDiscussion && selectedDiscussion.id_disc) {
       axios
         .get(`http://localhost:5000/messages/${selectedDiscussion.id_disc}`, {
@@ -335,12 +338,12 @@ function MessagePage() {
         .then((response) => {
           setMessages(response.data);
           setNoMessagesError(''); // Clear any previous error messages
-          socket.emit('join chat', selectedDiscussion.id_disc);
+          socket.emit(t('rejoindre le chat'), selectedDiscussion.id_disc);
         })
         .catch((error) => {
           if (error.response && error.response.status === 404) {
             setNoMessagesError(
-              "Il n'y a pas de messages pour cette discussion. Soyez le premier à envoyer un message."
+              t("Il n'y a pas de messages pour cette discussion. Soyez le premier à envoyer un message.")
             );
           } else {
             console.error('Error fetching messages:', error);
@@ -351,7 +354,7 @@ function MessagePage() {
 
   useEffect(() => {
     if (selectedDiscussion && selectedDiscussion.id_disc) {
-      socket.emit('join chat', selectedDiscussion.id_disc);
+      socket.emit(t('rejoindre le chat'), selectedDiscussion.id_disc);
     }
   }, [selectedDiscussion]);
 
@@ -367,12 +370,12 @@ function MessagePage() {
           const sentMessage = response.data;
           setNewMessage('');
           fetchMessages();
-          socket.emit('new message', {
+          socket.emit(t('nouveau message'), {
             room: selectedDiscussion.id_disc,
             message: sentMessage,
             userId: userId,
           });
-          socket.emit('stop typing', selectedDiscussion.id_disc);
+          socket.emit(t('arrêter de taper'), selectedDiscussion.id_disc);
         })
         .catch((error) => console.error('Error sending message:', error));
     }
@@ -382,12 +385,12 @@ function MessagePage() {
     setNewMessage(e.target.value);
     if (!typing) {
       setTyping(true);
-      socket.emit('typing', selectedDiscussion.id_disc);
+      socket.emit(t('en train de taper'), selectedDiscussion.id_disc);
     }
     clearTimeout(typingTimeout.current);
     typingTimeout.current = setTimeout(() => {
       setTyping(false);
-      socket.emit('stop typing', selectedDiscussion.id_disc);
+      socket.emit(t('arrêter de taper'), selectedDiscussion.id_disc);
     }, 3000);
   };
 
@@ -436,12 +439,12 @@ function MessagePage() {
               <Typography variant="h6" className="card-headerMsgs">
                 Discussions
                 <Button onClick={handleOpenModal} className="send_btnMsgs">
-                  Créer nouvelle discussion
+                  {t('Créer nouvelle discussion')}
                 </Button>
               </Typography>
               <TextField
                 fullWidth
-                placeholder="Rechercher une discussion..."
+                placeholder={t('Rechercher une discussion...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 sx={{ mb: 2 }}
@@ -478,7 +481,7 @@ function MessagePage() {
                         primary={discussion.nomDisc}
                         secondary={
                           discussion.date_fin
-                            ? `valable jusqu'à ${new Date(
+                            ? `${t("valable jusqu'à")} ${new Date(
                                 discussion.date_fin
                               ).toLocaleDateString('fr-FR')}`
                             : ''
@@ -501,55 +504,71 @@ function MessagePage() {
               >
                 <Typography variant="h6" className="msg_headMsgs">
                   {selectedDiscussion ? (
-       <>
-         {selectedDiscussion.nomDisc}
-         {isPrivate && (
-              <IconButton onClick={handleOpenMembersModal}>
-     <Visibility />
-   </IconButton>
-         )}
-       </>
-     ) : 'Sélectionnez une discussion'}
+                    <>
+                      {selectedDiscussion.nomDisc}
+                      {isPrivate && (
+                        <IconButton onClick={handleOpenMembersModal}>
+                          <Visibility />
+                        </IconButton>
+                      )}
+                    </>
+                  ) : (
+                    t('Sélectionnez une discussion')
+                  )}
                 </Typography>
                 <Modal
-     open={isMembersModalOpen}
-     onClose={handleCloseMembersModal}
-     aria-labelledby="members-modal-title"
-     aria-describedby="members-modal-description"
-   >
-     <Box sx={{
-       position: 'absolute',
-       top: '50%',
-       left: '50%',
-       transform: 'translate(-50%, -50%)',
-       width: 400,
-       bgcolor: 'background.paper',
-       boxShadow: 24,
-       p: 4,
-       borderRadius: '20px',
-     }}>
-       <Typography id="members-modal-title" variant="h6" component="h2">
-         Les membres de cette discussion
-       </Typography>
-       <List dense>
-  {members.map((member, index) => (
-    <ListItem key={index}>
-      <Avatar
-        src={member.utilisateur.photo ? `http://localhost:5000/${member.utilisateur.photo}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'}
-        alt={`${member.utilisateur.prenom} ${member.utilisateur.nom}`}
-        sx={{ width: 56, height: 56, marginRight: 2 }}
-      />
-      <ListItemText primary={`${member.utilisateur.prenom} ${member.utilisateur.nom}`} />
-      {isAdmin && member.id_utilisateur !== userId && (
-        <IconButton onClick={() => handleKickMember(member.id_membre)}>
-          <HighlightOffIcon />
-        </IconButton>
-      )}
-    </ListItem>
-  ))}
-</List>
-     </Box>
-   </Modal>
+                  open={isMembersModalOpen}
+                  onClose={handleCloseMembersModal}
+                  aria-labelledby="members-modal-title"
+                  aria-describedby="members-modal-description"
+                >
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: 400,
+                      bgcolor: 'background.paper',
+                      boxShadow: 24,
+                      p: 4,
+                      borderRadius: '20px',
+                    }}
+                  >
+                    <Typography
+                      id="members-modal-title"
+                      variant="h6"
+                      component="h2"
+                    >
+                      {t('Les membres de cette discussion')}
+                    </Typography>
+                    <List dense>
+                      {members.map((member, index) => (
+                        <ListItem key={index}>
+                          <Avatar
+                            src={
+                              member.utilisateur.photo
+                                ? `http://localhost:5000/${member.utilisateur.photo}`
+                                : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+                            }
+                            alt={`${member.utilisateur.prenom} ${member.utilisateur.nom}`}
+                            sx={{ width: 56, height: 56, marginRight: 2 }}
+                          />
+                          <ListItemText
+                            primary={`${member.utilisateur.prenom} ${member.utilisateur.nom}`}
+                          />
+                          {isAdmin && member.id_utilisateur !== userId && (
+                            <IconButton
+                              onClick={() => handleKickMember(member.id_membre)}
+                            >
+                              <HighlightOffIcon />
+                            </IconButton>
+                          )}
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+                </Modal>
                 <List>
                   {messages.length > 0 ? (
                     messages.map((message) => (
@@ -568,7 +587,7 @@ function MessagePage() {
                           alt={
                             message.utilisateur
                               ? `${message.utilisateur.prenom} ${message.utilisateur.nom}`
-                              : 'Unknown User'
+                              : t('Utilisateur Inconnu')
                           }
                           sx={{ width: 56, height: 56, marginRight: 2 }}
                           className="user_imgMsgs"
@@ -581,7 +600,7 @@ function MessagePage() {
                           >
                             {message.utilisateur
                               ? `${message.utilisateur.prenom} ${message.utilisateur.nom}`
-                              : 'Unknown User'}
+                              : t('Utilisateur Inconnu')}
                           </Typography>
                           <Typography
                             component="span"
@@ -596,7 +615,9 @@ function MessagePage() {
                   ) : (
                     <Typography sx={{ mt: 2, textAlign: 'center' }}>
                       {noMessagesError ||
-                        'Cliquez sur une discussion pour commencer à chatter.'}
+                        t(
+                          'Cliquez sur une discussion pour commencer à chatter.'
+                        )}
                     </Typography>
                   )}
                 </List>
@@ -613,14 +634,14 @@ function MessagePage() {
                 )}
                 <TextField
                   fullWidth
-                  placeholder="Tapez un message..."
+                  placeholder={t('Tapez un message...')}
                   value={newMessage}
                   onChange={handleTyping}
                   sx={{ mr: 1 }}
                   className="type_msgMsgs"
                 />
                 <Button onClick={handleSendMessage} className="send_btnMsgs">
-                  Envoyer
+                  {t('Envoyer')}
                 </Button>
               </Box>
             </Box>
@@ -631,7 +652,7 @@ function MessagePage() {
               className="contacts_bodyMsgs"
             >
               <Typography variant="h6" className="user_connected_title">
-                Utilisateurs connectés
+                {t('Utilisateurs connectés')}
               </Typography>{' '}
               <List>
                 {connectedUsers.map((user, index) => (

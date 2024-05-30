@@ -8,6 +8,9 @@ import { FaArrowLeft } from 'react-icons/fa';
 import Navbar from '../../components/navbar/navbar';
 import NavbarHaut from '../../components/navbar/navbarHaut';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useTranslation } from 'react-i18next';
+import loa from '../../assets/loa.gif';
+
 import {
   faSnowflake,
   faWifi,
@@ -37,9 +40,10 @@ import {
 import ProgramModal from './ProgramModal';
 import parse from 'html-react-parser';
 import ScrollToTop from '../../components/designs/ScrollToTop';
-import StarRating from './StarRating'; // Adjust the path as necessar
+import StarRating from './StarRating'; 
 
 function OffreEmployeDetails() {
+    const { t } = useTranslation();
   const [offre, setOffre] = useState(null);
   const token = localStorage.getItem('login');
   const { offreId } = useParams();
@@ -54,15 +58,15 @@ function OffreEmployeDetails() {
     const fetchOffreDetails = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/employeOffer/${offreId}`, // Remplacez ID_DE_LOFFRE par l'ID de l'offre que vous souhaitez afficher
+          `http://localhost:5000/employeOffer/${offreId}`, 
           {
             headers: {
               Authorization: `Bearer ${JSON.parse(token).token}`,
             },
           }
         );
-        setOffre(response.data); // Met à jour l'état avec les détails de l'offre
-        console.log('API Response:', response.data); // Log the response data
+        setOffre(response.data); 
+        console.log('API Response:', response.data); 
       } catch (error) {
         console.error('Error fetching offre details:', error);
       }
@@ -76,7 +80,7 @@ function OffreEmployeDetails() {
         setIsAdherant(response.data.adherant);
       } catch (error) {
         console.error('Error checking adherant status:', error);
-        setIsAdherant(false); // Assume non-adherant if there's an error
+        setIsAdherant(false); 
       }
     };
 
@@ -85,7 +89,11 @@ function OffreEmployeDetails() {
   }, [offreId, token]);
 
   if (!offre) {
-    return <div>Loading...</div>; // Affiche un message de chargement tant que les données de l'offre ne sont pas disponibles
+    return (
+      <div>
+        <img src={loa} alt="Loading..." />
+      </div>
+    );
   }
   const {
     titre,
@@ -107,7 +115,6 @@ function OffreEmployeDetails() {
   const handleImageClick = (clickedIndex) => {
     setOffre((currentOffre) => {
       let newLesImages = [...currentOffre.lesImages];
-      // Échanger la première image avec celle cliquée
       [newLesImages[0], newLesImages[clickedIndex]] = [
         newLesImages[clickedIndex],
         newLesImages[0],
@@ -115,21 +122,17 @@ function OffreEmployeDetails() {
       return { ...currentOffre, lesImages: newLesImages };
     });
   };
-  // Fonction pour ouvrir le modal
   const openProgramModal = () => setIsProgramModalOpen(true);
 
-  // Fonction pour fermer le modal
 const closeProgramModal = () => {
   console.log('Fermeture du modal');
   setIsProgramModalOpen(false);
 };
 const handlePaymentMethod = (method) => {
-  // Update the mode_paiement state based on the selected method
   setOffre((currentOffre) => ({ ...currentOffre, mode_paiement: method }));
 };
 
 const handleAuthorizationChange = () => {
-  // Toggle the authorization state for salary deduction
   setOffre((currentOffre) => ({
     ...currentOffre,
     autorisation_deduction_salaire:
@@ -138,12 +141,11 @@ const handleAuthorizationChange = () => {
 };
  const renderInterdictions = () => {
    const interdictions = [
-     { label: 'Célibataires', value: offre.details.interdit_celibataires },
+     { label: t('Célibataires'), value: offre.details.interdit_celibataires },
      { label: 'Burkinis', value: offre.details.interdit_burkini },
-     { label: 'Alcool', value: offre.details.interdit_alcohol },
+     { label: t('Alcool'), value: offre.details.interdit_alcohol },
    ];
 
-   // Filtrer pour ne garder que les interdictions actives
   const interdictionsActives = interdictions.filter((inter) => inter.value);
 
    return (
@@ -166,18 +168,18 @@ const handleAuthorizationChange = () => {
 
       <div>
         <button className="retour-btn" onClick={() => window.history.back()}>
-          <FaArrowLeft /> Retour
+          <FaArrowLeft />
+         {''} {t('Retour')}
         </button>
         <button
           className="details-link"
           onClick={() => (window.location = '#detailsSection')}
         >
-          Découvrir plus 👇
+          {t('Découvrir plus')} 👇
         </button>
         <h2 className="offre-titleDetails">{offre.titre}</h2>
 
         <div className="offre-cardDetails">
-          {/* Image principale en grand format en dessous */}
           {offre.lesImages.length > 0 && (
             <img
               src={`http://localhost:5000/${offre.lesImages[0].image}`}
@@ -199,16 +201,16 @@ const handleAuthorizationChange = () => {
               />{' '}
               Destination: {offre.destination}
             </h4>
-            <p className="offre-priceDetails"> {offre.prix} DT</p>
+            <p className="offre-priceDetails"> {offre.prix} TND</p>
             <p className="offre-rating left-align-text">
-              Évaluations :
+              {t('Évaluations')} :
               <StarRating
                 rating={parseFloat(offre.evaluation.averageVotes)}
                 numReviews={offre.evaluation.numberOfEvaluations}
               />{' '}
             </p>
             <p className="offre-collaborateur left-align-text">
-              Collaborateur : {offre.collaborateur.nom}
+              {t('Collaborateur')} : {offre.collaborateur.nom}
             </p>
             <p className="offre-descriptionDetails">{offre.description}</p>
 
@@ -217,7 +219,7 @@ const handleAuthorizationChange = () => {
                 className="offre-button-reserverDetails"
                 onClick={() => setIsModalOpen(true)}
               >
-                Réserver
+                {t('Réserver')}
               </button>
               <ReservationModal
                 isOpen={isModalOpen}
@@ -240,7 +242,7 @@ const handleAuthorizationChange = () => {
                   className="offre-button-adherantDetails"
                   onClick={() => setIsAdherantModalOpen(true)}
                 >
-                  Adhérent
+                  {t('Adhérent')}
                 </button>
               )}
               <AdherantModal
@@ -259,7 +261,7 @@ const handleAuthorizationChange = () => {
               src={`http://localhost:5000/${image.image}`}
               alt={`Image supplémentaire ${index + 1}`}
               className="offre-additional-image"
-              onClick={() => handleImageClick(index + 1)} // Notez l'index + 1 ici
+              onClick={() => handleImageClick(index + 1)}
             />
           ))}
         </div>
@@ -268,17 +270,21 @@ const handleAuthorizationChange = () => {
             {type === 'hotel' && (
               <>
                 <div className="details-card ">
-                  <h3 className="hotel-name"> Présentation de l'Hôtel </h3>
+                  <h3 className="hotel-name">
+                    {' '}
+                    {t("Présentation de l'Hôtel")}{' '}
+                  </h3>
                   <p className="hotel-name">
                     <strong>Hotel:</strong> {details.nom_hotel}
                   </p>
                   <p className="hotel-stars">
-                    <strong>Étoiles:</strong> {'★'.repeat(details.etoiles)}
+                    <strong>{t('Étoiles')}:</strong>{' '}
+                    {'★'.repeat(details.etoiles)}
                   </p>
                   <p>{renderInterdictions()}</p>
                 </div>
                 <div className="hotel-services hotel-details-card ">
-                  <h3 className="hotel-name">Equipements</h3>
+                  <h3 className="hotel-name">{t('Equipements')}</h3>
 
                   {details.climatisation && (
                     <p className="service-item">
@@ -286,7 +292,7 @@ const handleAuthorizationChange = () => {
                         icon={faSnowflake}
                         className="service-icon"
                       />{' '}
-                      Climatisation
+                      {t('Climatisation')}
                     </p>
                   )}
                   {details.wifi && (
@@ -301,7 +307,7 @@ const handleAuthorizationChange = () => {
                         icon={faSwimmer}
                         className="service-icon"
                       />{' '}
-                      Piscine Extérieure
+                      {t('Piscine Extérieure')}
                     </p>
                   )}
                   {details.piscine_couverte && (
@@ -310,7 +316,7 @@ const handleAuthorizationChange = () => {
                         icon={faWater}
                         className="service-icon"
                       />{' '}
-                      Piscine Couverte
+                      {t('Piscine Couverte')}
                     </p>
                   )}
                   {details.bassin_enfants && (
@@ -319,7 +325,7 @@ const handleAuthorizationChange = () => {
                         icon={faChild}
                         className="service-icon"
                       />{' '}
-                      Bassin pour enfants
+                      {t('Bassin pour enfants')}
                     </p>
                   )}
                   {details.parking && (
@@ -337,7 +343,7 @@ const handleAuthorizationChange = () => {
                         icon={faMusic}
                         className="service-icon"
                       />{' '}
-                      Discothèque
+                      {t('Discothèque')}
                     </p>
                   )}
                   {details.plage_privee && (
@@ -346,7 +352,7 @@ const handleAuthorizationChange = () => {
                         icon={faUmbrellaBeach}
                         className="service-icon"
                       />{' '}
-                      Plage privée
+                      {t('Plage privée')}
                     </p>
                   )}
                   {details.ascenseur && (
@@ -355,7 +361,7 @@ const handleAuthorizationChange = () => {
                         icon={faArrowUp}
                         className="service-icon"
                       />{' '}
-                      Ascenseur
+                      {t('Ascenseur')}
                     </p>
                   )}
                   {details.salle_de_sport && (
@@ -364,7 +370,7 @@ const handleAuthorizationChange = () => {
                         icon={faDumbbell}
                         className="service-icon"
                       />{' '}
-                      Salle de sport
+                      {t('Salle de sport')}
                     </p>
                   )}
                   {details.aire_de_jeux_enfants && (
@@ -373,7 +379,7 @@ const handleAuthorizationChange = () => {
                         icon={faGamepad}
                         className="service-icon"
                       />{' '}
-                      Aire de jeux pour enfants
+                      {t('Aire de jeux pour enfants')}
                     </p>
                   )}
                   {details.spa && (
@@ -415,7 +421,7 @@ const handleAuthorizationChange = () => {
                         icon={faUserTie}
                         className="service-icon"
                       />{' '}
-                      Centre Esthétique
+                      {t('Centre Esthétique')}
                     </p>
                   )}
                   {details.toboggan && (
@@ -424,7 +430,7 @@ const handleAuthorizationChange = () => {
                         icon={faWater}
                         className="service-icon"
                       />{' '}
-                      Toboggan
+                      {t('Toboggan')}
                     </p>
                   )}
                   {details.pieds_dans_l_eau && (
@@ -433,7 +439,7 @@ const handleAuthorizationChange = () => {
                         icon={faShoePrints}
                         className="service-icon"
                       />{' '}
-                      Pieds dans l'Eau
+                      {t("Pieds dans l'Eau")}
                     </p>
                   )}
                   {details.piscine_eau_de_mer && (
@@ -442,13 +448,13 @@ const handleAuthorizationChange = () => {
                         icon={faWater}
                         className="service-icon"
                       />{' '}
-                      Piscine Eau de Mer
+                      {t('Piscine Eau de Mer')}
                     </p>
                   )}
                   {details.baby_setting && (
                     <p className="service-item">
                       <FontAwesomeIcon icon={faBaby} className="service-icon" />{' '}
-                      Baby Setting
+                      {t("Garde d'enfants")}
                     </p>
                   )}
                   {details.tennis_de_table && (
@@ -457,13 +463,13 @@ const handleAuthorizationChange = () => {
                         icon={faTableTennis}
                         className="service-icon"
                       />{' '}
-                      Tennis de Table
+                      {t('Tennis de Table')}
                     </p>
                   )}
                   {details.location_de_voiture && (
                     <p className="service-item">
                       <FontAwesomeIcon icon={faCar} className="service-icon" />{' '}
-                      Location de Voiture
+                      {t('Location de Voiture')}
                     </p>
                   )}
                   {details.change_monetaire && (
@@ -472,7 +478,7 @@ const handleAuthorizationChange = () => {
                         icon={faMoneyBillWave}
                         className="service-icon"
                       />{' '}
-                      Change Monétaire
+                      {t('Change Monétaire')}
                     </p>
                   )}
                 </div>
@@ -490,7 +496,7 @@ const handleAuthorizationChange = () => {
                   content={
                     details.programme
                       ? parse(offre.details.programme)
-                      : 'Non spécifié'
+                      : t('Non spécifié')
                   }
                 />
 
@@ -499,14 +505,14 @@ const handleAuthorizationChange = () => {
                     icon={faCalendarAlt}
                     className="service-icon"
                   />{' '}
-                  Nombre de jours: {details.nbr_jours}
+                  {'Nombre de jours'}: {details.nbr_jours}
                 </p>
                 <p className="offre-inclus">
                   <FontAwesomeIcon
                     icon={faCheckSquare}
                     className="service-icon"
                   />{' '}
-                  Inclus: {details.inclus}
+                  {t('Inclus')}: {details.inclus}
                 </p>
               </div>
             )}
@@ -515,7 +521,7 @@ const handleAuthorizationChange = () => {
               <div className="details-card">
                 <h3>Détails de l'Activité</h3>
                 <button onClick={openProgramModal} className="program-button">
-                  Voir Programme
+                  {t('Voir Programme')}
                 </button>
                 <ProgramModal
                   isOpen={isProgramModalOpen}
@@ -523,19 +529,19 @@ const handleAuthorizationChange = () => {
                   content={
                     details.programme
                       ? parse(offre.details.programme)
-                      : 'Non spécifié'
+                      : t('Non spécifié')
                   }
                 />
                 <p>
                   <FontAwesomeIcon icon={faClock} className="service-icon" />{' '}
-                  Durée: {details.duree} heures
+                  {t('Durée')}: {details.duree} heures
                 </p>
                 <p className="offre-inclus">
                   <FontAwesomeIcon
                     icon={faCheckSquare}
                     className="service-icon"
                   />{' '}
-                  Inclus: {details.inclus}
+                  {t('Inclus')}: {details.inclus}
                 </p>
               </div>
             )}

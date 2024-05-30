@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import { addDays } from 'date-fns';
 import { fr } from 'date-fns/locale'; 
+import { useTranslation } from 'react-i18next';
 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
@@ -28,25 +29,29 @@ import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete,details,updateRoomType }) => {
+      const { t } = useTranslation(); 
+
   const [childAges, setChildAges] = useState(Array(room.children).fill(1));
   const defaultRoomType = details.typechambres.find(tc => tc.defaultChambre);
   const [selectedRoomType, setSelectedRoomType] = useState(defaultRoomType?.id_TypeChambre || details.typechambres[0].id_TypeChambre);
-  const [roomSupplement, setRoomSupplement] = useState(0); // Start with no supplement
+  const [roomSupplement, setRoomSupplement] = useState(0); 
 
   useEffect(() => {
-    // Update the room price when the supplement changes
     updateRoom(room.id, 'supplement', roomSupplement);
   }, [roomSupplement]);
 
   const handleRoomTypeChange = (event) => {
+
     const selectedTypeId = event.target.value;
-    const selectedType = details.typechambres.find(tc => tc.id_TypeChambre === selectedTypeId);
+    const selectedType = details.typechambres.find(
+      (tc) => tc.id_TypeChambre === selectedTypeId
+    );
     setSelectedRoomType(selectedTypeId);
-    updateRoomType(room.id, selectedType.nom); // Assuming 'nom' is the correct property for room type
+    updateRoomType(room.id, selectedType.nom);
     if (!selectedType.defaultChambre) {
       setRoomSupplement(selectedType.supplement);
     } else {
-      setRoomSupplement(0); // Reset supplement if default room type is selected
+      setRoomSupplement(0);
     }
   };
     const incrementAdults = () => {
@@ -59,13 +64,13 @@ const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete,details,updateRoo
 
     const incrementChildren = () => {
       updateRoom(room.id, 'children', room.children + 1);
-      setChildAges([...childAges, 1]); // Add default age 1 for the new child
+      setChildAges([...childAges, 1]);
   };
 
   const decrementChildren = () => {
       if (room.children > 0) {
           updateRoom(room.id, 'children', room.children - 1);
-          setChildAges(childAges.slice(0, -1)); // Remove the last child's age
+          setChildAges(childAges.slice(0, -1)); 
       }
   };
 
@@ -78,82 +83,117 @@ const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete,details,updateRoo
     
 const adapter = new AdapterDateFns({ locale: fr });
     return (
-        <Box sx={{ mb: 2, bgcolor: 'background.paper', p: 2, borderRadius: 'borderRadius', display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Typography variant="h6" gutterBottom component="div">
-                    Chambre {room.id}
-                </Typography>
-                {canDelete && (
-                    <IconButton onClick={() => deleteRoom(room.id)} color="error">
-                        <DeleteIcon />
-                    </IconButton>
-                )}
-            </Box>
-            <FormControl fullWidth>
-        <InputLabel>Type de chambre</InputLabel>
-        <Select
-          value={selectedRoomType}
-          label="Type de chambre"
-          onChange={handleRoomTypeChange}
+      <Box
+        sx={{
+          mb: 2,
+          bgcolor: 'background.paper',
+          p: 2,
+          borderRadius: 'borderRadius',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1,
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
         >
-          {details.typechambres.map((type) => (
-            <MenuItem key={type.id_TypeChambre} value={type.id_TypeChambre}>
-              {type.nom} {type.defaultChambre ? '' : `(+${type.supplement} DT)`}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <IconButton onClick={decrementAdults} disabled={room.adults <= 1} color="primary">
-                    <RemoveCircleOutlineIcon />
-                </IconButton>
-                <TextField
-                    size="small"
-                    value={room.adults}
-                    inputProps={{ readOnly: true, style: { textAlign: 'center' } }}
-                    sx={{ width: '60px', mx: 1 }}
-                />
-                <IconButton onClick={incrementAdults} disabled={room.adults >= 4} color="primary">
-                    <AddCircleOutlineIcon />
-                </IconButton>
-                <Typography sx={{ ml: 2 }}>Adult(s)</Typography>
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <IconButton onClick={decrementChildren} disabled={room.children <= 0} color="primary">
-                    <RemoveCircleOutlineIcon />
-                </IconButton>
-                <TextField
-                    size="small"
-                    value={room.children}
-                    inputProps={{ readOnly: true, style: { textAlign: 'center' } }}
-                    sx={{ width: '60px', mx: 1 }}
-                />
-                <IconButton onClick={incrementChildren} disabled={room.children >= 3} color="primary">
-                    <AddCircleOutlineIcon />
-                </IconButton>
-                <Typography sx={{ ml: 2 }}>Enfants</Typography>
-                {childAges.map((age, index) => (
-                    <TextField
-                        key={index}
-                        type="number"
-                        size="small"
-                        value={age}
-                        onChange={(e) => handleAgeChange(index, parseInt(e.target.value))}
-                        inputProps={{ min: 1, max: 12, style: { width: '50px' } }}
-                        sx={{ mx: 1 }}
-                    />
-                ))}
-            </Box>
-            <Typography variant="body1">Prix de chambre : {room.prix.toFixed(2)} DT</Typography>
+          <Typography variant="h6" gutterBottom component="div">
+            {t('Chambre')} {room.id}
+          </Typography>
+          {canDelete && (
+            <IconButton onClick={() => deleteRoom(room.id)} color="error">
+              <DeleteIcon />
+            </IconButton>
+          )}
         </Box>
+        <FormControl fullWidth>
+          <InputLabel>{t('Type de chambre')}</InputLabel>
+          <Select
+            value={selectedRoomType}
+            label={t('Type de chambre')}
+            onChange={handleRoomTypeChange}
+          >
+            {details.typechambres.map((type) => (
+              <MenuItem key={type.id_TypeChambre} value={type.id_TypeChambre}>
+                {type.nom}{' '}
+                {type.defaultChambre ? '' : `(+${type.supplement} DT)`}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton
+            onClick={decrementAdults}
+            disabled={room.adults <= 1}
+            color="primary"
+          >
+            <RemoveCircleOutlineIcon />
+          </IconButton>
+          <TextField
+            size="small"
+            value={room.adults}
+            inputProps={{ readOnly: true, style: { textAlign: 'center' } }}
+            sx={{ width: '60px', mx: 1 }}
+          />
+          <IconButton
+            onClick={incrementAdults}
+            disabled={room.adults >= 4}
+            color="primary"
+          >
+            <AddCircleOutlineIcon />
+          </IconButton>
+          <Typography sx={{ ml: 2 }}>{t('Adulte(s)')}</Typography>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton
+            onClick={decrementChildren}
+            disabled={room.children <= 0}
+            color="primary"
+          >
+            <RemoveCircleOutlineIcon />
+          </IconButton>
+          <TextField
+            size="small"
+            value={room.children}
+            inputProps={{ readOnly: true, style: { textAlign: 'center' } }}
+            sx={{ width: '60px', mx: 1 }}
+          />
+          <IconButton
+            onClick={incrementChildren}
+            disabled={room.children >= 3}
+            color="primary"
+          >
+            <AddCircleOutlineIcon />
+          </IconButton>
+          <Typography sx={{ ml: 2 }}>{t('Enfant(s)')}</Typography>
+          {childAges.map((age, index) => (
+            <TextField
+              key={index}
+              type="number"
+              size="small"
+              value={age}
+              onChange={(e) => handleAgeChange(index, parseInt(e.target.value))}
+              inputProps={{ min: 1, max: 12, style: { width: '50px' } }}
+              sx={{ mx: 1 }}
+            />
+          ))}
+        </Box>
+        <Typography variant="body1">
+        { t(' Prix de chambre :')} {room.prix.toFixed(2)} DT
+        </Typography>
+      </Box>
     );
 };
 
 const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise,nombre_enfants_gratuits,age_limit_gratuite, type, isAdherant, debut , fin ,details,prix_enfants_payants,enfants_autorises}) => {
   const calculateDaysMultiplier = (start, end) => {
     if (!start || !end) return 1;
-    const diffDays = (end - start) / (1000 * 3600 * 24) + 1; // Add 1 to include both start and end day
-    return Math.max(1, diffDays - 1); // Multiplier is (days - 1), minimum is 1
+    const diffDays = (end - start) / (1000 * 3600 * 24) + 1; 
+    return Math.max(1, diffDays - 1); 
 };
 
 const calculateRoomPrice = (adults, children, basePrice, isAdherant, supplement) => {
@@ -277,14 +317,14 @@ const handleAuthorizationChange = (event) => {
 
    setTimeout(() => {
      alertBox.remove();
-   }, 2000); // Remove the alert after 3 seconds
+   }, 2000); 
  };
  const updateRoomType = (roomId, typechambreR) => {
   setRooms(rooms.map(room => room.id === roomId ? { ...room, typechambreR } : room));
 };
 
-const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adult
-    const [nombreEnfants, setNombreEnfants] = useState(0); // Initialize with 0 children
+const [nombreAdultes, setNombreAdultes] = useState(1); 
+    const [nombreEnfants, setNombreEnfants] = useState(0); 
     const [totalPrice, setTotalPrice] = useState(prix);
 
     const incrementAdults = () => {
@@ -292,7 +332,7 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
     };
 
     const decrementAdults = () => {
-        setNombreAdultes(Math.max(1, nombreAdultes - 1)); // Ensure the count doesn't go below 1
+        setNombreAdultes(Math.max(1, nombreAdultes - 1)); 
     };
 
     const incrementChildren = () => {
@@ -304,7 +344,7 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
     };
 
     useEffect(() => {
-      let newTotalPrice = prix; // Start with the base price for one adult
+      let newTotalPrice = prix; 
   
       if (type === 'hotel') {
           newTotalPrice = rooms.reduce((acc, room) => acc + room.prix, 0);
@@ -343,19 +383,21 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
     if (totalPrice < 1600) return 2;
     return 3;
   };
+          const { t } = useTranslation(); 
 
     const handleReservation = async () => {
+
       if (
         !modePaiement ||
         (modePaiement === 'deduction_salaire' && !autorisationDeductionSalaire)
       ) {
         let alertMessage = '';
         if (!modePaiement) {
-          alertMessage = 'Veuillez sélectionner le mode de paiement.';
+          alertMessage = t('Veuillez sélectionner le mode de paiement.');
         } else {
-          alertMessage = 'Veuillez autoriser la déduction sur votre salaire.';
+          alertMessage = t('Veuillez autoriser la déduction sur votre salaire.');
         }
-        showAlert(alertMessage, 'red'); // Utilisation de showAlert au lieu de alert
+        showAlert(alertMessage, 'red');
         return;
       }
       
@@ -368,7 +410,6 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
     reservationStartAdjusted = startDate;
 }
   if (type === 'hotel') {
-    // Add one day to reservationStart and reservationEnd
     reservationStartAdjusted = new Date(reservationStartAdjusted);
     reservationStartAdjusted.setDate(reservationStartAdjusted.getDate() + 1);
     reservationEndAdjusted = new Date(reservationEndAdjusted);
@@ -397,9 +438,9 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
                 ),
            date_debut: reservationStartAdjusted.toISOString(),
            date_fin: type === 'activite' ? null : reservationEndAdjusted.toISOString(),
-           mode_paiement: modePaiement, // Include payment mode
+           mode_paiement: modePaiement, 
           autorisation_deduction_salaire: autorisationDeductionSalaire,
-          statut_paiement: "", // Set statut_paiement based on payment mode
+          statut_paiement: "", 
           montant_deduit: "",
           months: nombreMoisDeduction || 0,
         };
@@ -433,7 +474,7 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
 
     return (
       <Dialog open={isOpen} onClose={onRequestClose} maxWidth="sm" fullWidth>
-        <DialogTitle>Reservation Details</DialogTitle>
+        <DialogTitle>{t('Détails de la réservation')}</DialogTitle>
         <DialogContent dividers>
           {userInfo && (
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -459,14 +500,14 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
               variant="body"
               sx={{
                 mt: 1,
-                color: 'error.main', // Couleur pour les remises
+                color: 'error.main',
                 fontSize: '1rem',
                 '&:hover': {
-                  color: 'error.dark', // Assombrir la couleur au survol
+                  color: 'error.dark',
                 },
               }}
             >
-              Remise d'Adhésion Club22: {remise}%
+              {t("Remise d'Adhésion Club22:")} {remise}%
             </Typography>
           )}
           <Typography
@@ -476,12 +517,12 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
               fontWeight: 'bold',
               color: '#555',
               '&:hover': {
-                color: '#555', // Changement de couleur au survol
+                color: '#555',
               },
-              fontSize: '1.25rem', // Taille de la police
+              fontSize: '1.25rem',
             }}
           >
-            Prix: {prix.toFixed(2)} DT
+            {t('Prix')}: {prix.toFixed(2)} TND{' '}
           </Typography>
           <Typography
             variant="h6"
@@ -491,12 +532,12 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
               marginBottom: '10px',
               color: '#555',
               '&:hover': {
-                color: '#555', // Changement de couleur au survol
+                color: '#555',
               },
-              fontSize: '1.25rem', // Taille de la police
+              fontSize: '1.25rem',
             }}
           >
-            DATE DE RESERVATION :{' '}
+            {t('DATE DE RESERVATION')} :{' '}
           </Typography>
 
           {type === 'hotel' && (
@@ -504,35 +545,35 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
               <LocalizationProvider dateAdapter={AdapterDateFns} locale={fr}>
                 {' '}
                 <MobileDatePicker
-                  label="Arrivée"
+                  label={t('Arrivée')}
                   value={reservationStart}
                   onChange={handleStartDateChange}
                   minDate={today}
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      placeholder="jj/mm/aaaa"
+                      placeholder={t('jj/mm/aaaa')}
                       fullWidth
                       error={!reservationStart}
                       helperText={
-                        !reservationStart ? 'Sélection obligatoire' : ''
+                        !reservationStart ? t('Sélection obligatoire') : ''
                       }
                     />
                   )}
                 />
                 <MobileDatePicker
-                  label="Départ"
+                  label={t('Départ')}
                   value={reservationEnd}
                   onChange={handleEndDateChange}
                   minDate={addDays(reservationStart, 1)}
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      placeholder="jj/mm/aaaa"
+                      placeholder={t('jj/mm/aaaa')}
                       fullWidth
                       error={!reservationEnd}
                       helperText={
-                        !reservationEnd ? 'Sélection obligatoire' : ''
+                        !reservationEnd ? t('Sélection obligatoire') : ''
                       }
                     />
                   )}
@@ -544,36 +585,36 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
             <>
               <LocalizationProvider dateAdapter={AdapterDateFns} locale={fr}>
                 <MobileDatePicker
-                  label="Départ"
+                  label={t('Départ')}
                   value={reservationStart}
                   onChange={handleStartDateChange}
                   minDate={today}
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      placeholder="jj/mm/aaaa"
+                      placeholder={t('jj/mm/aaaa')}
                       fullWidth
                       error={!reservationStart}
                       helperText={
-                        !reservationStart ? 'Sélection obligatoire' : ''
+                        !reservationStart ? t('Sélection obligatoire') : ''
                       }
                     />
                   )}
                 />
                 <MobileDatePicker
-                  label="Retour"
+                  label={t('Retour')}
                   value={reservationEnd}
                   onChange={handleEndDateChange}
                   minDate={reservationStart}
-                  disabled={type === 'voyage'} // Disable the field if type is 'voyage'
+                  disabled={type === 'voyage'}
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      placeholder="jj/mm/aaaa"
+                      placeholder={t('jj/mm/aaaa')}
                       fullWidth
                       error={!reservationEnd}
                       helperText={
-                        !reservationEnd ? 'Sélection obligatoire' : ''
+                        !reservationEnd ? t('Sélection obligatoire') : ''
                       }
                     />
                   )}
@@ -585,18 +626,18 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
             <>
               <LocalizationProvider dateAdapter={AdapterDateFns} locale={fr}>
                 <MobileDatePicker
-                  label="Date de début"
+                  label={t('Date de début')}
                   value={reservationStart}
                   onChange={handleStartDateChange}
                   minDate={today}
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      placeholder="jj/mm/aaaa"
+                      placeholder={t('jj/mm/aaaa')}
                       fullWidth
                       error={!reservationStart}
                       helperText={
-                        !reservationStart ? 'Sélection obligatoire' : ''
+                        !reservationStart ? t('Sélection obligatoire') : ''
                       }
                     />
                   )}
@@ -621,7 +662,7 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
             ) : (
               <>
                 <Box>
-                  <Typography variant="h6">Nombre d'adultes:</Typography>
+                  <Typography variant="h6">{t("Nombre d'adultes:")}</Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <IconButton
                       onClick={decrementAdults}
@@ -645,7 +686,9 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
                 </Box>
                 {enfants_autorises && (
                   <Box>
-                    <Typography variant="h6">Nombre d'enfants:</Typography>
+                    <Typography variant="h6">
+                      {t("Nombre d'enfants:")}
+                    </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <IconButton
                         onClick={decrementChildren}
@@ -669,7 +712,7 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
                   </Box>
                 )}
                 <Typography variant="h6" sx={{ mt: 2 }}>
-                  Prix total: {totalPrice.toFixed(2)} DT
+                  {t('Prix total:')} {totalPrice.toFixed(2)} DT
                 </Typography>
               </>
             )}
@@ -685,7 +728,7 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
                 '&:hover': { bgcolor: 'primary.dark' },
               }}
             >
-              Ajouter une chambre
+              {t('Ajouter une chambre')}
             </Button>
           )}
 
@@ -699,11 +742,11 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
                 fontSize: '1.15rem',
               }}
             >
-              Prix totale:{' '}
+              {t('Prix total:')}{' '}
               {(
                 rooms.reduce((acc, room) => acc + room.prix, 0) * daysMultiplier
               ).toFixed(2)}{' '}
-              DT
+              TND
             </Typography>
           )}
 
@@ -716,16 +759,16 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
                 fontWeight: 'bold',
                 color: '#555',
                 '&:hover': {
-                  color: '#555', // Changement de couleur au survol
+                  color: '#555',
                 },
-                fontSize: '1.25rem', // Taille de la police
+                fontSize: '1.25rem',
               }}
             >
-              PAIEMENT :
+              {t('PAIEMENT')} :
             </Typography>
             <FormControl fullWidth sx={{ mb: 3 }}>
               <InputLabel id="mode-paiement-label" sx={{}}>
-                Mode de paiement
+                {t('Mode de paiement')}
               </InputLabel>
               <Select
                 labelId="mode-paiement-label"
@@ -734,29 +777,29 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
                 onChange={handlePaymentModeChange}
                 fullWidth
                 required
-                label="Mode de paiement" // Assurez-vous d'ajouter la prop 'label' ici pour que le label se déplace correctement
+                label={t('Mode de paiement')}
                 sx={{
                   '& .MuiSelect-select': {
-                    pl: 2, // Padding à gauche pour le texte
-                    pr: 1, // Padding à droite pour l'icône
+                    pl: 2,
+                    pr: 1,
                   },
                 }}
               >
-                <MenuItem value="especes">Espèces</MenuItem>
+                <MenuItem value="especes">{t('Espèces')}</MenuItem>
                 <MenuItem value="deduction_salaire">
-                  Déduction sur le salaire
+                  {t('Déduction sur le salaire')}
                 </MenuItem>
-                <MenuItem value="paiement_en_ligne">Paiement en ligne</MenuItem>
+                <MenuItem value="paiement_en_ligne">{t('En ligne')}</MenuItem>
               </Select>
             </FormControl>
             {modePaiement === 'deduction_salaire' && (
               <>
                 <Typography variant="h6" sx={{ mt: 2 }}>
-                  Sur combien de mois souhaitez-vous étaler la déduction?
+                  {t('Sur combien de mois souhaitez-vous étaler la déduction?')}
                 </Typography>
                 <FormControl fullWidth sx={{ mt: 1 }}>
                   <InputLabel id="mois-deduction-label">
-                    Nombre de mois
+                    {t('Nombre de mois')}
                   </InputLabel>
                   <Select
                     labelId="mois-deduction-label"
@@ -786,7 +829,9 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
                     required
                   />
                 }
-                label="J'autorise la déduction sur mon salaire pour cette réservation"
+                label={t(
+                  "J'autorise la déduction sur mon salaire pour cette réservation"
+                )}
                 sx={{ mb: 2 }}
               />
             )}
@@ -798,7 +843,7 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
             color="secondary"
             onClick={onRequestClose}
           >
-            Annuler
+          {t('Annuler')}
           </Button>
           <Button
             onClick={handleReservation}
@@ -809,7 +854,7 @@ const [nombreAdultes, setNombreAdultes] = useState(1); // Initialize with 1 adul
               (type === 'activite' && !reservationStart)
             }
           >
-            Réserver
+            {t('Réserver')}
           </Button>
         </DialogActions>
       </Dialog>

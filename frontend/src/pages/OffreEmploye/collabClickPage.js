@@ -8,14 +8,16 @@ import OffreCollabEmploye from './OffreCollabEmploye';
 import NavbarHaut from '../../components/navbar/navbarHaut';
 import Hero from '../../components/designs/Hero';
 import ScrollToTop from '../../components/designs/ScrollToTop';
+import { useTranslation } from 'react-i18next';
 
 function CollaborateurPage() {
   const [collaborateurs, setCollaborateurs] = useState([]);
   const [selectedCollaborateurId, setSelectedCollaborateurId] = useState(null);
   const [startIndex, setStartIndex] = useState(0);
   const [showOffreCollab, setShowOffreCollab] = useState(false);
+  const { t } = useTranslation();
 
-  const { collabId } = useParams(); // Destructure collabId from useParams
+  const { collabId } = useParams(); 
 
   useEffect(() => {
     const token = localStorage.getItem('login');
@@ -31,7 +33,6 @@ function CollaborateurPage() {
             }
           );
           setCollaborateurs(response.data);
-          // Check if collabId is in the response data and select it
           if (collabId && response.data.some(collab => collab.id_collaborateur.toString() === collabId)) {
             setSelectedCollaborateurId(collabId);
             setShowOffreCollab(true);
@@ -42,12 +43,12 @@ function CollaborateurPage() {
       };
       fetchCollaborateurs();
     }
-  }, [collabId]); // Include collabId in the dependency array
+  }, [collabId]);
 
   const handleCollaboratorClick = (collaborateurId) => {
     setSelectedCollaborateurId(collaborateurId);
     setShowOffreCollab(true);
-    window.history.pushState({}, '', `/collabPage/${collaborateurId}`); // Manually update URL without useHistory
+    window.history.pushState({}, '', `/collabPage/${collaborateurId}`); 
   };
 
   const handlePrevious = () => {
@@ -65,7 +66,7 @@ function CollaborateurPage() {
   const handleViewAllOffers = () => {
     setShowOffreCollab(false);
     setSelectedCollaborateurId(null);
-    window.history.pushState({}, '', '/collabPage'); // Manually update URL to general offers view
+    window.history.pushState({}, '', '/collabPage'); 
   };
   const [filteredOffers, setFilteredOffers] = useState([]);
 
@@ -79,7 +80,7 @@ function CollaborateurPage() {
       <div>
         {showOffreCollab && (
           <button className="voir-tous-btn" onClick={handleViewAllOffers}>
-            Tous les offres
+           { t('Tous les offres')}
           </button>
         )}
         <div className="PageCollaborateur-container">

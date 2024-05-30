@@ -1,6 +1,5 @@
-// StarRating.js
 import React from 'react';
-import './StarRating.css'; // Ensure this file exists and is correctly linked
+import './StarRating.css'; 
 
 const StarRating = ({ rating, numReviews }) => {
   const fullStars = Math.floor(rating);

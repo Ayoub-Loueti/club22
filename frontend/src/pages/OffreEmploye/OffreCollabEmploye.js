@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/navbar/navbar';
 import StarRating from './StarRating'; // Make sure this is imported correctly
 import ReactPaginate from 'react-paginate';
+import { useTranslation } from 'react-i18next';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleChevronLeft, faCircleChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 function OffreCollabEmploye({ collaborateurId}) {
   const [offres, setOffres] = useState([]);
@@ -14,6 +17,8 @@ function OffreCollabEmploye({ collaborateurId}) {
   const navigate = useNavigate();
  const [currentPage, setCurrentPage] = useState(0);
  const [offresPerPage] = useState(6); 
+   const { t } = useTranslation();
+
   useEffect(() => {
     if (collaborateurId) {
       const fetchOffres = async () => {
@@ -33,7 +38,7 @@ function OffreCollabEmploye({ collaborateurId}) {
           setOffres(updatedOffres);
           setError(null);
         } catch (error) {
-          setError("Il n'y a pas d'offres disponibles pour ce collaborateur à ce moment.");
+          setError(t("Il n'y a pas d'offres disponibles pour ce collaborateur à ce moment."));
           console.error('Error fetching offres:', error);
         }
       };
@@ -75,9 +80,9 @@ function OffreCollabEmploye({ collaborateurId}) {
     const timeDiff = endDate.getTime() - now.getTime();
     const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
     if (daysDiff > 0) {
-      return `Remise expire dans ${daysDiff} jours`;
+return `${t('Remise expire dans ')} ${daysDiff} ${t('jours')}`;
     } else if (daysDiff === 0) {
-      return "Remise expire aujourd'hui";
+      return t("Remise expire aujourd'hui");
     } else {
       return null;
     }
@@ -86,7 +91,7 @@ function OffreCollabEmploye({ collaborateurId}) {
     <>
       <Navbar />
       <div className="offre-employee-container">
-        <h1 className="offre-employee-title">LES OFFRES DISPONIBLES</h1>
+        <h1 className="offre-employee-title">{t('LES OFFRES DISPONIBLES')}</h1>
         <div className="filters">
           {['tous', 'hotel', 'voyage', 'activite'].map((f) => (
             <button
@@ -125,7 +130,7 @@ function OffreCollabEmploye({ collaborateurId}) {
                       fontWeight: 'bold',
                     }}
                   >
-                    <span className="apartir">A partir de</span>{' '}
+                    <span className="apartir">{t('A partir de')}</span>{' '}
                     <span style={{ color: '#f00', fontSize: '21px' }}>
                       {offre.prix} TND
                     </span>
@@ -143,20 +148,20 @@ function OffreCollabEmploye({ collaborateurId}) {
                     className="voirPlusOffre"
                     onClick={() => handleVoirPlusClick(offre.id_offre)}
                   >
-                    VOIR PLUS
+                    {t('VOIR PLUS')}
                   </button>
                 </div>
               ))
             ) : (
               <div className="no-offres-message">
-                <h2>Il n'y a pas d'offres à ce moment.</h2>
+                <h2>{t("Il n'y a pas d'offres à ce moment.")}</h2>
               </div>
             )}
           </div>
         )}
         <ReactPaginate
-          previousLabel={'⬅️'}
-          nextLabel={'➡️'}
+          previousLabel={<FontAwesomeIcon icon={faCircleChevronLeft} />}
+          nextLabel={<FontAwesomeIcon icon={faCircleChevronRight} />}
           pageCount={pageCount}
           breakLabel={'...'}
           breakClassName={'break-me'}
