@@ -8,18 +8,21 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Swal from 'sweetalert2';
+import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 
 const RoomDetails = ({ roomNumber, room, updateRoom, deleteRoom, canDelete, adherent, remise }) => {
   const incrementAdults = () => updateRoom(room.id_hotel, 'nbr_adults', room.nbr_adults + 1);
   const decrementAdults = () => updateRoom(room.id_hotel, 'nbr_adults', Math.max(1, room.nbr_adults - 1));
   const incrementChildren = () => updateRoom(room.id_hotel, 'nbr_enfants', room.nbr_enfants + 1);
   const decrementChildren = () => updateRoom(room.id_hotel, 'nbr_enfants', Math.max(0, room.nbr_enfants - 1));
+  const { t } = useTranslation();
 
   return (
     <Box sx={{ mb: 2, bgcolor: 'background.paper', p: 2, borderRadius: 'borderRadius', display: 'flex', flexDirection: 'column', gap: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography variant="h6" gutterBottom component="div">
-          Chambre {roomNumber}
+          {t('Chambre')} {roomNumber}
         </Typography>
         {canDelete && (
           <IconButton onClick={() => deleteRoom(room.id_hotel)} color="error">
@@ -40,7 +43,7 @@ const RoomDetails = ({ roomNumber, room, updateRoom, deleteRoom, canDelete, adhe
         <IconButton onClick={incrementAdults} color="primary">
           <AddCircleOutlineIcon />
         </IconButton>
-        <Typography sx={{ ml: 2 }}>Adult(s)</Typography>
+        <Typography sx={{ ml: 2 }}>{t('Adulte(s)')}</Typography>
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <IconButton onClick={decrementChildren} disabled={room.nbr_enfants <= 0} color="primary">
@@ -55,9 +58,9 @@ const RoomDetails = ({ roomNumber, room, updateRoom, deleteRoom, canDelete, adhe
         <IconButton onClick={incrementChildren} color="primary">
           <AddCircleOutlineIcon />
         </IconButton>
-        <Typography sx={{ ml: 2 }}>Enfants</Typography>
+        <Typography sx={{ ml: 2 }}>{t('Enfant(s)')}</Typography>
       </Box>
-      <Typography variant="body1">Prix de chambre : {room.prix.toFixed(2)} DT</Typography>
+      <Typography variant="body1">{t('Prix de chambre')} : {room.prix.toFixed(2)} TND</Typography>
     </Box>
   );
 };
@@ -77,7 +80,6 @@ const ModifyReservation = ({
   const remise = reservationData.offre.remise / 100;
 
   useEffect(() => {
-    // Update total price whenever rooms or deletedRooms change
     updateTotalPrice(rooms);
   }, [rooms, deletedRooms]);
 
@@ -112,7 +114,7 @@ const ModifyReservation = ({
     const updatedRooms = rooms.filter((room) => room.id_hotel !== roomId);
     const deletedRoom = rooms.find((room) => room.id_hotel === roomId);
     setRooms(updatedRooms);
-    setDeletedRooms([...deletedRooms, deletedRoom]); // Add the deleted room to deletedRooms
+    setDeletedRooms([...deletedRooms, deletedRoom]); 
   };
 
   const updateTotalPrice = (updatedRooms) => {
@@ -140,7 +142,6 @@ const ModifyReservation = ({
     };
 
     try {
-      // Delete any rooms marked for deletion
       await Promise.all(
         deletedRooms.map(async (deletedRoom) => {
           await axios.delete(
@@ -152,7 +153,6 @@ const ModifyReservation = ({
         })
       );
 
-      // Update the reservation with the modified data
       const response = await axios.put(
         `http://localhost:5000/updateReservation/${reservationData.id_reservation}`,
         updatedData,
@@ -161,17 +161,17 @@ const ModifyReservation = ({
         }
       );
       Swal.fire(
-        'Mise à jour !',
-        'Votre réservation a été mise à jour avec succès.',
+        t('Mise à jour !'),
+        t('Votre réservation a été mise à jour avec succès.'),
         'success'
       );
-      onReservationUpdated(updatedData); // Envoyer les données mises à jour
+      onReservationUpdated(updatedData); 
 
-      onRequestClose(); // Assuming this method closes the dialog
+      onRequestClose();
     } catch (error) {
       Swal.fire(
-        'Échec !',
-        'Échec de la mise à jour de la réservation.',
+        t('Échec !'),
+        t('Échec de la mise à jour de la réservation.'),
         'error'
       );
       console.error('Failed to update reservation:', error);
@@ -180,7 +180,7 @@ const ModifyReservation = ({
 
   return (
     <Dialog open={isOpen} onClose={onRequestClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Modifier Réservation</DialogTitle>
+      <DialogTitle>{t('Modifier Réservation')}</DialogTitle>
       <DialogContent>
         {reservationData.typeR === 'hotel' ? (
           rooms.map((room, index) => (
@@ -199,7 +199,7 @@ const ModifyReservation = ({
           <>
             <br />
             <TextField
-              label="Nombre des personnes"
+              label={t("Nombre des personnes")}
               type="number"
               fullWidth
               variant="outlined"
@@ -217,12 +217,12 @@ const ModifyReservation = ({
         )}
       </DialogContent>
       <Typography variant="h6" sx={{ mt: 2 }}>
-        &nbsp;&nbsp;&nbsp;&nbsp;Prix totale: {prixTotal.toFixed(2)} DT
+        &nbsp;&nbsp;&nbsp;&nbsp;{t('Prix totale')}: {prixTotal.toFixed(2)} TND
       </Typography>
       <DialogActions>
-        <Button onClick={onRequestClose}>Annuler</Button>
+        <Button onClick={onRequestClose}>{t('Annuler')}</Button>
         <Button onClick={handleSaveChanges} color="primary">
-          Enregistrer
+          {t('Enregistrer')}
         </Button>
       </DialogActions>
     </Dialog>

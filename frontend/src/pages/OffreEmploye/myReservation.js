@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useTranslation } from 'react-i18next';
 
 import {
   Grid,
@@ -20,6 +21,8 @@ import jsPDF from 'jspdf';
 import QRCode from 'qrcode';
 
 const MyReservations = () => {
+    const { t } = useTranslation();
+
   const [reservations, setReservations] = useState([]);
   const [boxDReservations, setBoxDReservations] = useState([]);
   const [boxTReservations, setBoxTReservations] = useState([]);
@@ -47,7 +50,7 @@ const MyReservations = () => {
         
         setReservations(response.data);
       } catch (err) {
-        setError('An error occurred while fetching reservations.');
+        setError(t("Une erreur s'est produite lors de la récupération des réservations."));
         console.error('Error fetching reservations:', err);
       }
     };
@@ -94,7 +97,7 @@ const MyReservations = () => {
       });
       setReservations(response.data);
     } catch (err) {
-      setError('An error occurred while fetching reservations.');
+      setError(t("Une erreur s'est produite lors de la récupération des réservations."));
       console.error('Error fetching reservations:', err);
     }
   };
@@ -103,12 +106,12 @@ const MyReservations = () => {
     const token = JSON.parse(localStorage.getItem('login'))?.token;
     try {
       const result = await Swal.fire({
-        title: 'Êtes-vous sûr(e) ?',
-        text: 'Voulez-vous confirmer cette réservation ?',
+        title: t('Êtes-vous sûr(e) ?'),
+        text: t('Voulez-vous confirmer cette réservation ?'),
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Oui, confirmer !',
-        cancelButtonText: 'Non, annuler !',
+        confirmButtonText: t('Oui, confirmer !'),
+        cancelButtonText: t('Non, annuler !'),
         reverseButtons: true,
       });
       if (result.isConfirmed) {
@@ -119,7 +122,7 @@ const MyReservations = () => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        Swal.fire('Confirmé !', 'La réservation a été confirmée.', 'success');
+        Swal.fire(t('Confirmé !'), t('La réservation a été confirmée.'), 'success');
         setReservations(reservations.filter((r) => r.id_reservation !== id));
         const confirmedReservation = reservations.find(
           (r) => r.id_reservation === id
@@ -131,8 +134,8 @@ const MyReservations = () => {
       }
     } catch (err) {
       Swal.fire(
-        'Échec !',
-        "Une erreur s'est produite lors de la confirmation de la réservation.",
+        t('Échec !'),
+        t("Une erreur s'est produite lors de la confirmation de la réservation."),
         'error'
       );
     }
@@ -145,7 +148,7 @@ const MyReservations = () => {
           : reservation
       )
     );
-    setModifyDialogOpen(false); // Fermer le dialogue après la mise à jour
+    setModifyDialogOpen(false); 
   };
 
   const cancelReservation = async (event, id) => {
@@ -153,12 +156,12 @@ const MyReservations = () => {
     const token = JSON.parse(localStorage.getItem('login'))?.token;
     try {
       const result = await Swal.fire({
-        title: 'Êtes-vous sûr(e) ?',
-        text: 'Voulez-vous annuler cette réservation ?',
+        title: t('Êtes-vous sûr(e) ?'),
+        text: t('Voulez-vous annuler cette réservation ?'),
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Oui, annuler',
-        cancelButtonText: 'Non, la garder',
+        confirmButtonText: t('Oui, annuler'),
+        cancelButtonText: t('Non, la garder'),
         reverseButtons: true,
       });
       if (result.isConfirmed) {
@@ -169,7 +172,7 @@ const MyReservations = () => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        Swal.fire('Annulé !', 'La réservation a été annulée.', 'success');
+        Swal.fire(t('Annulé !'), t('La réservation a été annulée.'), 'success');
         fetchReservations();
 
         setReservations(
@@ -180,8 +183,8 @@ const MyReservations = () => {
       }
     } catch (err) {
       Swal.fire(
-        'Échec !',
-        "Une erreur s'est produite lors de l'annulation de la réservation.",
+        t('Échec !'),
+        t("Une erreur s'est produite lors de l'annulation de la réservation."),
         'error'
       );
     }
@@ -288,7 +291,7 @@ const MyReservations = () => {
       }
     } catch (err) {
       console.error('Error submitting vote:', err);
-      Swal.fire('Failed!', 'Échec de la soumission du vote.', 'error');
+      Swal.fire(t('Échec !'), t('Échec de la soumission du vote.'), 'error');
     }
   };
 
@@ -605,7 +608,7 @@ const handlePayment = (event,reservation) => {
           textTransform: 'uppercase',
         }}
       >
-        Historique déduction salaire
+        {t('Historique déduction salaire')}
       </Button>
       <Modal open={showModal} onClose={handleCloseModal} closeAfterTransition>
         <Fade in={showModal}>
@@ -632,13 +635,13 @@ const handlePayment = (event,reservation) => {
                     <Typography variant="h6" style={{ marginBottom: '10px' }}>
                       {detail.offre.titre}
                     </Typography>
-                    <Typography
-                      style={{ marginBottom: '5px' }}
-                    >{`Date Paiement: ${new Date(
-                      detail.date_paiement
-                    ).toLocaleDateString()}`}</Typography>
+                    <Typography style={{ marginBottom: '5px' }}>
+                      {`${t('Date Paiement')}: ${new Date(
+                        detail.date_paiement
+                      ).toLocaleDateString()}`}
+                    </Typography>
                     <Typography>
-                      {`Montant Deduit: ${detail.montant_deduit}`} DT
+                      {`${t('Montant Deduit')}: ${detail.montant_deduit} TND`}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -655,7 +658,7 @@ const handlePayment = (event,reservation) => {
                 marginTop: '150px',
               }}
             >
-              <Typography>Aucun détail de déduction à afficher.</Typography>
+              <Typography>{t('Aucun détail de déduction à afficher.')}</Typography>
             </div>
           )}
         </Fade>
@@ -674,7 +677,7 @@ const handlePayment = (event,reservation) => {
                     textTransform: 'uppercase',
                   }}
                 >
-                  Vos réservations en attente
+                  {t('Vos réservations en attente')}
                 </Typography>
                 <Card raised sx={{ height: 308, overflowY: 'auto' }}>
                   <CardContent>
@@ -725,7 +728,7 @@ const handlePayment = (event,reservation) => {
                               <Typography
                                 style={{ color: 'red', fontWeight: 'bold' }}
                               >
-                                Réservation annulée
+                                {t('Réservation annulée')}
                               </Typography>
                             )}
                           </Box>
@@ -746,7 +749,7 @@ const handlePayment = (event,reservation) => {
                                   )
                                 }
                               >
-                                Confirmer
+                                {t('Confirmer')}
                               </Button>
                               <Button
                                 size="small"
@@ -761,7 +764,7 @@ const handlePayment = (event,reservation) => {
                                   handleModifyDialogOpen(reservation);
                                 }}
                               >
-                                Modifier
+                                {t('Modifier')}
                               </Button>
                               <Button
                                 size="small"
@@ -777,7 +780,7 @@ const handlePayment = (event,reservation) => {
                                   )
                                 }
                               >
-                                Annuler
+                                {t('Annuler')}
                               </Button>
                             </Box>
                           )}
@@ -800,7 +803,7 @@ const handlePayment = (event,reservation) => {
                     textTransform: 'uppercase',
                   }}
                 >
-                  Vos réservations confirmées
+                  {('Vos réservations confirmées')}
                 </Typography>
                 <Card raised sx={{ height: 290, overflowY: 'auto' }}>
                   <CardContent>
@@ -853,7 +856,7 @@ const handlePayment = (event,reservation) => {
                               <Typography
                                 style={{ color: 'red', fontWeight: 'bold' }}
                               >
-                                Demande envoyée au collaborateur
+                                {t('Demande envoyée au collaborateur')}
                               </Typography>
                             )}
                           </Box>
@@ -878,7 +881,7 @@ const handlePayment = (event,reservation) => {
                 textTransform: 'uppercase',
               }}
             >
-              État des réservations traitées
+              {t('État des réservations traitées')}
             </Typography>
             <Card raised sx={{ height: 670, overflowY: 'auto' }}>
               <CardContent>
@@ -945,10 +948,10 @@ const handlePayment = (event,reservation) => {
                               },
                               padding: '6px 16px',
                               width: '40%',
-                              display: 'block', // Utiliser display block pour centrer
-                              marginLeft: 'auto', // Marges automatiques pour centrer
+                              display: 'block', 
+                              marginLeft: 'auto', 
                               marginRight: 'auto',
-                              width: 'fit-content', // Adapter la largeur au contenu
+                              width: 'fit-content', 
                               marginBottom: '10px',
                             }}
                           >
@@ -957,7 +960,7 @@ const handlePayment = (event,reservation) => {
                               fill="none"
                               viewBox="0 0 24 24"
                               stroke="currentColor"
-                              style={{ marginRight: 8, width: 14, height: 14 }} // Icone de paiement
+                              style={{ marginRight: 8, width: 14, height: 14 }} 
                             >
                               <path
                                 strokeLinecap="round"
@@ -966,7 +969,7 @@ const handlePayment = (event,reservation) => {
                                 d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                               />
                             </svg>
-                            Payer
+                            {t('Payer')}
                           </Button>
                         )}
                       {reservation.etat === 'accepter' &&
@@ -979,7 +982,7 @@ const handlePayment = (event,reservation) => {
                               fontWeight: 'bold',
                             }}
                           >
-                            ✅ PAYÉ EN LIGNE 💳
+                            ✅ {t('PAYÉE EN LIGNE')} 💳
                           </strong>
                         )}
                       {reservation.etat === 'accepter' && (

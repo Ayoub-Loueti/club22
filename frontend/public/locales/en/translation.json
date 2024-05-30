@@ -229,9 +229,113 @@
 "Nombre de jours":"Number of days",
 "Inclus":"Included",
 "Voir Programme":"See program",
-"Durée":"Duration"
+"Durée":"Duration",
+"Une erreur s'est produite lors de la récupération des réservations.":"An error occurred while fetching reservations.",
+"Voulez-vous confirmer cette réservation ?":"Would you like to confirm this reservation ?",
+"Oui, confirmer !":"Yes, confirm!",
+"Non, annuler !":"No, cancel !",
+"Confirmé !":"Confirmed !",
+"La réservation a été confirmée.":"The reservation has been confirmed.",
+"Échec !":"Failure !",
+"Une erreur s'est produite lors de la confirmation de la réservation.":"An error occurred while confirming the reservation.",
+"Voulez-vous annuler cette réservation ?":"Do you want to cancel this reservation ?",
+"Oui, annuler":"Yes, cancel",
+"Non, la garder":"No, keep it.",
+"Annulé !":"Cancelled !",
+"La réservation a été annulée.":"The reservation has been cancelled.",
+"Une erreur s'est produite lors de l'annulation de la réservation.":"An error occurred while cancelling the reservation.",
+"Échec de la soumission du vote.":"Failed to submit the vote.",
+"Historique déduction salaire":"History of salary deductions",
+"Date Paiement":"Payment Date",
+"Montant Deduit":"Deducted Amount",
+"Aucun détail de déduction à afficher.":"No deduction details to display.",
+"Vos réservations en attente":"Your reservations pending",
+"Réservation annulée":"Reservation canceled",
+"Modifier":"Modify",
+"Vos réservations confirmées":"Your reservations confirmed",
+"Demande envoyée au collaborateur":"Request sent to collaborator",
+"État des réservations traitées":"Status of processed reservations",
+"PAYÉE EN LIGNE":"PAID ONLINE",
+"Payer":"Pay",
+"Prix de chambre":"Room price",
+"Mise à jour !":"Update!",
+"Votre réservation a été mise à jour avec succès.":"Your reservation has been successfully updated.",
+"Échec de la mise à jour de la réservation.":"Failed to update the reservation.",
+"Modifier Réservation":"Edit Reservation",
+"Nombre des personnes":"Number of people",
+"Prix totale":"Total price",
+"Enregistrer":"Save",
+"Détails de réservation":"Reservation details",
+"Employé":"Employee",
+"Nom et Prénom":"First and Last Name",
+"Date de réservation":"Reservation date",
+"De":"From",
+"Jusq'ua":"Until",
+"Nom de l'hotel":"Hotel name",
+"Nombres de personnes":"Number of people",
+"heures":"hours"
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 
 
 
