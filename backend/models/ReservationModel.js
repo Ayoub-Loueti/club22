@@ -79,6 +79,10 @@ const ReservationModel = sequelize.define(
       type: DataTypes.ENUM('en_attente', 'accepte', 'refuse', 'paye_especes', 'payé'),
       defaultValue: 'en_attente',
     },
+    nbr_enfants:{
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
   },
 
   {

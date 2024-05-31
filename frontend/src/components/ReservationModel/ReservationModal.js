@@ -199,7 +199,7 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise,nombre
 const calculateRoomPrice = (adults, children, basePrice, isAdherant, supplement) => {
   let priceIncrease = 0;
   if (adults > 1) {
-    priceIncrease += (adults - 1) * (basePrice * 0.4);
+    priceIncrease += (adults - 1) * basePrice;
   }
   const chargeableChildren = Math.max(0, children - nombre_enfants_gratuits);
   priceIncrease += chargeableChildren * prix_enfants_payants;
@@ -218,7 +218,8 @@ const calculateRoomPrice = (adults, children, basePrice, isAdherant, supplement)
     const [reservationStart, setReservationStart] = useState();
     const [reservationEnd, setReservationEnd] = useState();
     const [nombre, setNombre] = useState(1);
-    
+    const [nombreEnfants2, setNombreEnfants2] = useState(0);
+
     useEffect(() => {
       if (type === 'voyage' && debut) {
           const startDate = new Date(debut);
@@ -443,6 +444,7 @@ const [nombreAdultes, setNombreAdultes] = useState(1);
           statut_paiement: "", 
           montant_deduit: "",
           months: nombreMoisDeduction || 0,
+          nbr_enfants:  nombreEnfants || 0, 
         };
         console.log(reservationData);
 
@@ -699,6 +701,7 @@ const [nombreAdultes, setNombreAdultes] = useState(1);
                       <TextField
                         size="small"
                         value={nombreEnfants}
+                        onChange={(e) => setNombreEnfants2(Number(e.target.value))}
                         inputProps={{
                           readOnly: true,
                           style: { textAlign: 'center' },

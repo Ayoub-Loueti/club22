@@ -32,6 +32,7 @@ exports.createReservation = async (req, res) => {
     montant_deduit,
     statut_paiement,
     months,
+    nbr_enfants,
   } = req.body; // Extract hotels array from request body
   const userId = req.userId;
 
@@ -84,6 +85,7 @@ exports.createReservation = async (req, res) => {
       montant_deduit: prix_totale,
       statut_paiement,
       months: months,
+      nbr_enfants:nbr_enfants,
     });
 
     // Create associated hotel records
@@ -592,10 +594,16 @@ exports.reparationReservations = async (req, res) => {
         // Ajout des détails spécifiques en fonction du type de réservation
         switch (reservation.typeR) {
           case 'hotel':
-            doc.text(`Nom de l'hôtel: ${reservation.offre.grandhotel.nom_hotel}`, {
+            const grandhot = await GrandHotelModel.findOne({
+              where: { id_offre: reservation.id_offre },
+            });
+            doc.text(`Nom de l'hôtel: ${grandhot.nom_hotel}`, {
               align: 'left',
             });
-            reservation.hotels.forEach((hotel, index) => {
+              const hotelss = await Hotel.findAll({
+                where: { id_reservation: reservation.id_reservation },
+              });
+            hotelss.forEach((hotel, index) => {
               doc.text(
                 `Chambre ${index + 1}: Adultes - ${
                   hotel.nbr_adults
@@ -607,20 +615,26 @@ exports.reparationReservations = async (req, res) => {
             });
             break;
           case 'voyage':
+            const voyag = await VoyageModel.findOne({
+              where: { id_offre: reservation.id_offre },
+            });
             doc
-              .text(`Nombre de jours: ${reservation.offre.voyage.nbr_jours}`, {
+              .text(`Nombre de jours: ${voyag.nbr_jours}`, {
                 align: 'left',
               })
-              .text(`Inclus: ${reservation.offre.voyage.inclus}`, {
+              .text(`Inclus: ${voyag.inclus}`, {
                 align: 'left',
               });
             break;
           case 'activite':
+            const activi = await ActiviteModel.findOne({
+              where: { id_offre: reservation.id_offre },
+            });
             doc
-              .text(`Durée: ${reservation.offre.activite.duree} heures`, {
+              .text(`Durée: ${activi.duree} heures`, {
                 align: 'left',
               })
-              .text(`Inclus: ${reservation.offre.activite.inclus}`, {
+              .text(`Inclus: ${activi.inclus}`, {
                 align: 'left',
               });
             break;
@@ -1248,6 +1262,7 @@ exports.modifyReservation = async (req, res) => {
     hotels,
     mode_paiement,
     autorisation_deduction_salaire,
+    nbr_enfants,
   } = req.body;
 
   try {
@@ -1261,6 +1276,7 @@ exports.modifyReservation = async (req, res) => {
       prix_totale,
       mode_paiement,
       autorisation_deduction_salaire,
+      nbr_enfants,
     });
 
     // Update hotel details if any
