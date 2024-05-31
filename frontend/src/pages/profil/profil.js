@@ -8,18 +8,17 @@ import NavbarHaut from '../../components/navbar/navbarHaut';
 import './profil.css';
 import { useTranslation } from 'react-i18next';
 import PostProfile from '../../components/postProfil/postProfil';
-import PostSavedModal from '../../components/PostSavedModal/PostSavedModal'; // Adjust the import path as needed
+import PostSavedModal from '../../components/PostSavedModal/PostSavedModal';
 import ScrollToTop from '../../components/designs/ScrollToTop';
 
 function Profil() {
-  const { id } = useParams(); // Get user ID from URL
+  const { id } = useParams(); 
   const navigate = useNavigate();
-  // Assuming 'login' is a JSON string that contains the token
   const storedData = JSON.parse(localStorage.getItem('login'));
-  const token = storedData?.token; // Retrieve the token without JSON.parse on the token itself
-  const userId = JSON.parse(localStorage.getItem('userId')); // Assuming 'userId' is stored directly
-  const isOwnProfile = userId?.toString() === id; // Safely check for equality
-  const [modalOpened, setModalOpened] = useState(false); // State to control the modal
+  const token = storedData?.token; 
+  const userId = JSON.parse(localStorage.getItem('userId')); 
+  const isOwnProfile = userId?.toString() === id; 
+  const [modalOpened, setModalOpened] = useState(false); 
   const [utilisateur, setUtilisateur] = useState({});
   const { t } = useTranslation();
 
@@ -48,7 +47,7 @@ function Profil() {
             `http://localhost:5000/profil/${id}`,
             {
               headers: {
-                Authorization: `Bearer ${token}`, // Use token directly
+                Authorization: `Bearer ${token}`, 
               },
             }
           );
@@ -73,7 +72,7 @@ function Profil() {
       }
     };
     fetchUserData();
-  }, [token, id]); // Dependency array
+  }, [token, id]); 
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
@@ -106,7 +105,7 @@ function Profil() {
       await axios.put(
         'http://localhost:5000/updateCompte',
         { [field]: editValues[field] },
-        { headers: { Authorization: `Bearer ${token}` } } // Corrected usage of token
+        { headers: { Authorization: `Bearer ${token}` } } 
       );
       setUtilisateur({ ...utilisateur, [field]: editValues[field] });
       toggleEdit(field);
@@ -126,12 +125,12 @@ function Profil() {
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`, // Corrected usage of token
+            Authorization: `Bearer ${token}`, 
           },
         }
       );
       if (response.status === 200) {
-        window.location.reload(); // Reload the page to reflect the changes
+        window.location.reload(); 
       } else {
         console.error('Failed to upload the image');
       }
@@ -140,7 +139,6 @@ function Profil() {
     }
   };
   const handleDeleteProfilePicture = async () => {
-    // Show confirmation dialog
     Swal.fire({
       title: t('Êtes-vous sûr(e) ?'),
       text: t('Vous ne pourrez pas revenir en arrière !'),
@@ -152,8 +150,7 @@ function Profil() {
       cancelButtonText: t('Annuler'),
     }).then((result) => {
       if (result.isConfirmed) {
-        // User confirmed the deletion
-        deleteProfilePicture(); // Proceed with the deletion
+        deleteProfilePicture(); 
       }
     });
   };
@@ -167,7 +164,6 @@ function Profil() {
         }
       );
       if (response.status === 200) {
-        // Afficher un message de succès avant de recharger la page
         Swal.fire({
           title: t('Supprimée !'),
           text: t('Votre photo de profil a été supprimée.'),
@@ -175,7 +171,7 @@ function Profil() {
           confirmButtonText: 'OK',
         }).then((result) => {
           if (result.isConfirmed) {
-            window.location.reload(); // Recharge la page pour refléter les changements
+            window.location.reload();
           }
         });
       }
@@ -184,7 +180,6 @@ function Profil() {
         'Erreur lors de la suppression de la photo de profil :',
         error
       );
-      // Afficher un message d'erreur
       Swal.fire(
         t('Erreur !'),
         t(
@@ -215,7 +210,7 @@ function Profil() {
     if (showDropdown) setShowDropdown(false);
   });
 
-  const [showPasswordChange, setShowPasswordChange] = useState(false); // State for password change form
+  const [showPasswordChange, setShowPasswordChange] = useState(false); 
   const [passwordValues, setPasswordValues] = useState({
     currentPassword: '',
     newPassword: '',
@@ -315,7 +310,6 @@ function Profil() {
                 >
                   ⋮
                 </button>{' '}
-                {/* This is the button to toggle the dropdown */}
                 {showDropdown && (
                   <div className="dropdown-menu" ref={dropdownRef}>
                     <div onClick={() => fileInputRef.current.click()}>
@@ -528,11 +522,9 @@ function Profil() {
           </span>
           </div>
           </div>
-          {/* Ajoutez d'autres informations ici */}
         </>
         )}
         </div>
-        {/* Ajout d'un séparateur */}
         <div className="separator"></div>
       </div>
       <PostProfile />
@@ -541,19 +533,4 @@ function Profil() {
 }
 
 export default Profil;
-/*
-<div className="profile-stats">
-          <div className="stat">
-            <h3>Followers</h3>
-            <p>1000</p>
-          </div>
-          <div className="stat">
-            <h3>Following</h3>
-            <p>500</p>
-          </div>
-          <div className="stat">
-            <h3>Posts</h3>
-            <p>500</p>
-          </div>
-        </div> 
-*/
+

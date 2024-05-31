@@ -184,3 +184,24 @@
 .categoryButton.active {
   background-color: rgb(228, 133, 133);
 }
+@media (max-width: 768px) {
+  .PostShare {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .postOptions {
+    flex-direction: column;
+  }
+
+  .postShare-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .option {
+    padding: 8px;
+    font-size: 10px;
+  }
+}

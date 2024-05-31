@@ -10,9 +10,9 @@ const Posts = ({ posts, openModalForPost }) => {
 
   useEffect(() => {
     setCurrentPosts([...posts].reverse());
-  }, [posts]); // Cette dépendance s'assure que currentPosts est mis à jour lorsque les posts changent.
+  }, [posts]); 
   const [currentPage, setCurrentPage] = useState(0);
-  const [postsPerPage] = useState(8); // Nombre de posts par page
+  const [postsPerPage] = useState(8); 
   const handlePostDeleted = (postId) => {
     const updatedPosts = currentPosts.filter((post) => post.id_post !== postId);
     setCurrentPosts(updatedPosts);
@@ -20,7 +20,7 @@ const Posts = ({ posts, openModalForPost }) => {
   const handlePostUpdated = (updatedPost) => {
     const updatedPosts = currentPosts.map((post) => {
       if (post.id_post === updatedPost.id_post) {
-        return updatedPost; // Remplace le post par sa nouvelle version
+        return updatedPost; 
       }
       return post;
     });
@@ -35,7 +35,6 @@ const Posts = ({ posts, openModalForPost }) => {
     setCurrentPage(selected);
   };
 
-  // Obtenir les posts actuels à afficher
   const currentDisplayPosts = currentPosts.slice(
     currentPage * postsPerPage,
     (currentPage + 1) * postsPerPage

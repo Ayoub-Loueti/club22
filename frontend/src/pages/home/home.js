@@ -10,17 +10,15 @@ import Chatbot from "../../components/chatbot/chatbot";
 
 const Home = () => {
   useEffect(() => {
-    // Appliquer la couleur de fond à la page Home lors du montage
     document.body.style.backgroundColor = '#f3f3f3';
 
-    // Nettoyer le style lors du démontage de la page Home
     return () => {
-      document.body.style.backgroundColor = ''; // Réinitialiser ou définir sur une autre couleur par défaut
+      document.body.style.backgroundColor = '';
     };
   }, []);
   
   return (
-    <div>
+    <div >
       <Chatbot />
       <Navbar />
       <NavbarHaut />

@@ -1,40 +1,34 @@
 .PostProfile {
-  /* Add styles to adjust the size */
-  width: 80%; /* Adjust the width as needed */
-  margin: 0 auto; /* Center the component horizontally */
+  width: 80%; 
+  margin: 0 auto; 
 
-  /* Add styles to move the component to the right */
-  margin-left: auto; /* Automatically push the component to the right */
+  margin-left: auto; 
 }
 
-/* Optionally, you can also style the no-posts-message */
 .PostsContainer {
-  /* Add styles to adjust the size */
-  width: 80%; /* Adjust the width as needed */
-  margin: 0 auto; /* Center the component horizontally */
+  width: 80%; 
+  margin: 0 auto; 
   margin-top: 5%;
-  /* Add styles to move the component to the right */
-  margin-left: auto; /* Automatically push the component to the right */
+  margin-left: auto;
 }
 .no-posts-message {
   color: black;
   padding: 30px;
-  border-radius: 20px; /* Coins arrondis pour un look doux */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Ombre portée subtile pour la profondeur */
-  width: 70%; /* Ajustez en fonction de votre préférence */
-  height: 40vh; /* Hauteur fixe pour le message */
-  font-size: 30px; /* Taille de police plus grande pour la lisibilité */
-  border: none; /* Pas de bordure pour un look moderne */
-  animation: popIn 0.6s ease-out forwards; /* Animation pour attirer l'attention */
-  opacity: 0; /* Commencez invisible pour l'animation */
-  display: flex; /* Utilise flexbox pour centrer le contenu */
-  flex-direction: column; /* Organise les éléments enfants en colonne */
-  justify-content: center; /* Centre verticalement */
-  align-items: center; /* Centre horizontalement */
+  border-radius: 20px; 
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); 
+  width: 70%;
+  height: 40vh; 
+  font-size: 30px; 
+  border: none; 
+  animation: popIn 0.6s ease-out forwards; 
+  opacity: 0;
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center;
   margin-top: 20%;
 }
 
-/* Animation keyframes */
 @keyframes popIn {
   0% {
     transform: scale(0.9);
@@ -56,4 +50,20 @@
     flex-direction: row;
 
 
+}
+@media (max-width: 768px) {
+  .PostProfile, .PostsContainer {
+    width: 100%;
+  }
+
+  .no-posts-message {
+    font-size: 16px;
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .soc1 {
+    width: 80%;
+  }
 }

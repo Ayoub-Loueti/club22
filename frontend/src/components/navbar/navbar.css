@@ -1,7 +1,7 @@
 .navbar {
   display: flex;
-  flex-direction: column; /* Align items vertically */
-  justify-content: start; /* Adjust as needed based on your design */
+  flex-direction: column; 
+  justify-content: start; 
   height: 100vh;
   width: 110px;
   position: fixed;
@@ -9,16 +9,15 @@
   top: 0;
   background-color: #191f43;
   overflow: hidden;
-  transform: translateX(0); /* Affiche par défaut */
+  transform: translateX(0); 
   transition: transform 0.3s ease;
   z-index: 3000;
      border-top-right-radius: 30px;
   border-bottom-right-radius: 30px;
 }
 .navbar:not(.visible) {
-  transform: translateX(-120px); /* Cache hors écran */
+  transform: translateX(-120px); 
 }
-/* Show navbar */
 .navbar.visible {
   transform: translateX(0);
 }
@@ -42,9 +41,9 @@
 
 .navbar-inner {
   display: flex;
-  flex-direction: column; /* Organise les éléments enfants verticalement */
-  align-items: center; /* Centre les éléments enfants horizontalement */
-  justify-content: start; /* Alignement vertical au début */
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: start; 
   width: 54%;
   background-color: #879eb9;
   height: 100%;
@@ -53,24 +52,24 @@
   border-top-left-radius: 30px;
   border-bottom-left-radius: 30px;
 
-  overflow-y: auto; /* Permet le défilement si la liste est longue */
+  overflow-y: auto; 
 }
 .navbar-inner::before,
 .navbar-inner::after {
   content: '';
   position: absolute;
 
-  background-color: #879eb9; /* Couleur de fond */
-  border-radius: 50%; /* Crée un cercle */
-  right: -15px; /* Positionne à droite */
+  background-color: #879eb9; 
+  border-radius: 50%; 
+  right: -15px; 
 }
 
 .navbar-inner::before {
-  top: -15px; /* Positionne en haut */
+  top: -15px; 
 }
 
 .navbar-inner::after {
-  bottom: -15px; /* Positionne en bas */
+  bottom: -15px; 
 }
 
 
@@ -82,14 +81,13 @@
   left: 10px;
 }
 
-/* Styles pour la navbar horizontale */
 .navbar-horizontal {
   display: flex;
-  height: 40px; /* Hauteur réduite comme précédemment mentionné */
-  margin-left: 600px; /* Réduisez cette valeur pour diminuer l'espace à gauche */
+  height: 40px; 
+  margin-left: 600px; 
   width: calc(
     100% - 150px
-  ); /* Ajustez la largeur en conséquence pour maintenir la cohérence */
+  ); 
   background-color: transparent;
   align-items: center;
   z-index: 1000;
@@ -98,111 +96,107 @@
 .searchh-formm {
   display: flex;
   align-items: center;
-  justify-content: center; /* Centrer horizontalement les éléments enfants */
-  margin-right: auto; /* Mettre à auto pour déplacer la barre de recherche à gauche */
+  justify-content: center; 
+  margin-right: auto; 
 }
 
 .hide-search-bar .searchh-formm {
-  display: none; /* Hide the search bar */
+  display: none; 
 }
 
 .khat {
-  border-left: 1px solid transparent; /* Make the line transparent */
-  width: 1px; /* Adjust width as needed */
-  height: 100%; /* Match the height of the navbar */
+  border-left: 1px solid transparent; 
+  width: 1px; 
+  height: 100%; 
   position: absolute;
   top: 0;
   left: 0;
 }
 
 .searchh-inputt {
-  color: #191f43; /* Change la couleur du texte en blanc */
-  border-radius: 20px; /* Arrondi des bords de l'input */
-  padding: 5px 10px; /* Espacement interne pour le texte */
-  width: 250px; /* Largeur de la barre de recherche */
-  outline: none; /* Supprime l'outline par défaut au focus */
+  color: #191f43; 
+  border-radius: 20px; 
+  padding: 5px 10px;
+  width: 250px; 
+  outline: none; 
 }
-/* Styles pour l'icône de recherche */
 .search-iconn {
-  color: #191f43; /* Couleur de l'icône de recherche */
-  font-size: 22px; /* Taille de l'icône */
-  background-color: transparent; /* Fond transparent */
-  border: none; /* Pas de bordure */
-  cursor: pointer; /* Curseur de type pointer */
-  padding: 0; /* Aucun espacement interne */
-  margin-left: -32px; /* Ajustement horizontal de la position */
-  margin-top: 1px; /* Ajustement vertical de la position */
+  color: #191f43;
+  font-size: 22px;
+  background-color: transparent; 
+  border: none; 
+  cursor: pointer;
+  padding: 0; 
+  margin-left: -32px;
+  margin-top: 1px;
 }
 
 .navbar-iconn {
-  cursor: pointer; /* Change le curseur pour indiquer la cliquabilité */
+  cursor: pointer; 
 }
 #search-input-navbar::placeholder {
-  color: #191f43; /* Définit la couleur du placeholder en blanc uniquement pour cet input */
-  opacity: 1; /* Assure que la couleur du placeholder est pleinement visible */
+  color: #191f43; 
+  opacity: 1; 
 }
 .vertical-icon {
-  color: white; /* Définit la couleur des icônes en blanc */
-  font-size: 24px; /* Taille des icônes */
-  margin: 10px 0; /* Espacement vertical entre les icônes */
-  cursor: pointer; /* Indique que les icônes sont cliquables */
+  color: white;
+  font-size: 24px;
+  margin: 10px 0;
+  cursor: pointer; 
 }
 .icon-containerrr {
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Alignement à gauche */
-  height: 100%; /* Prend toute la hauteur disponible */
-  padding-left: 10px; /* Déplace toutes les icônes un peu plus à droite */
-  padding-top: 180px; /* Espacement optionnel en haut */
-  padding-bottom: 10px; /* Espacement optionnel en bas */
+  align-items: flex-start; 
+  height: 100%; 
+  padding-left: 10px; 
+  padding-top: 180px; 
+  padding-bottom: 10px; 
 }
 
 .icon-containerrr .navbar-iconnn {
-  margin-bottom: 15px; /* Ajoute un espacement en bas de chaque icône */
+  margin-bottom: 15px; 
 }
 
 .icon-containerrr .navbar-iconnn:last-child {
-  margin-bottom: 0; /* Supprime la marge en bas de la dernière icône */
+  margin-bottom: 0; 
 }
 
 .navbar-iconnn {
-  width: 25px; /* Définit une largeur fixe pour toutes les icônes */
-  height: 25px; /* Définit une hauteur fixe pour toutes les icônes */
-  margin-bottom: 15px; /* Espacement vertical uniforme */
-  color: white; /* Assure la visibilité contre l'arrière-plan du navbar */
+  width: 25px; 
+  height: 25px; 
+  margin-bottom: 15px; 
+  color: white; 
   font-size: 23px;
   cursor: pointer;
 }
-/* notif icon*/
 .icon-containerr {
   display: flex;
-  gap: 22px; /* Espacement entre les icônes */
-  padding-right: 500px; /* Espacement à droite */
+  gap: 22px; 
+  padding-right: 500px;
   color: #191f43;
-  font-size: 34px; /* Taille des icônes */
+  font-size: 34px; 
   margin-top: 20px;
 }
 
-/* Styles pour l'icône d'utilisateur */
 .inner-user {
-  color: #191f43; /* Couleur de l'icône */
-  font-size: 24px; /* Taille de l'icône */
-  margin: 2px 2px 20px 0; /* Espacement autour de l'icône avec une marge droite de 10px */
+  color: #191f43; 
+  font-size: 24px; 
+  margin: 2px 2px 20px 0; 
   margin-top: 70px;
 
-  cursor: pointer; /* Curseur de type pointer */
+  cursor: pointer; 
 }
 .user-photo {
-  font-size: 34px; /* Taille de l'icône */
+  font-size: 34px;
 
-  width: 37px; /* Réduction de la taille de la photo de profil */
-  height: 37px; /* Garde la photo de profil circulaire */
-  border-radius: 50%; /* Rend l'image complètement ronde */
-  object-fit: cover; /* Assure que l'image couvre bien l'espace sans être déformée */
+  width: 37px;
+  height: 37px; 
+  border-radius: 50%; 
+  object-fit: cover; 
 }
 
 .user-photo:hover {
-  /* Facultatif : Style de survol pour indiquer qu'il est cliquable */
   opacity: 0.6;
 }
 .user-photoo {
@@ -212,21 +206,19 @@
   object-fit: cover;
   margin: 5px 0;
   margin-right: 1px;
-  cursor: pointer; /* Rend les utilisateurs cliquables */
+  cursor: pointer; 
 }
 
 .user-photoo:hover {
-  /* Facultatif : Style de survol pour indiquer qu'il est cliquable */
   opacity: 0.6;
 }
 
 body {
   overflow-x: hidden;
 }
-/* Styles généraux pour le menu déroulant */
 .user-info {
   position: absolute;
-  top: 50px; /* Adjusted for better positioning */
+  top: 50px; 
   right: 20px;
   background-color: #ffffff;
   padding: 10px;
@@ -238,22 +230,21 @@ body {
   align-items: start;
   transition: all 0.3s ease;
   opacity: 0.95;
-  border: 1px solid #e2e8f0; /* Light grey border for subtle definition */
-  max-width: 200px; /* Restrict maximum width */
+  border: 1px solid #e2e8f0;
+  max-width: 200px; 
 }
 
 .user-info:hover {
-  opacity: 1; /* Full opacity on hover */
-  transform: translateY(-2px); /* Slight lift effect */
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow for lifted effect */
+  opacity: 1; 
+  transform: translateY(-2px); 
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); 
 }
-/* Styles pour les actions de l'utilisateur */
 .user-actions a,
 .user-actions button {
-  color: #4a5568; /* Darker text for better readability */
-  background-color: #ffffff; /* Background to match the dropdown */
-  padding: 12px 20px; /* Larger padding for a roomier feel */
-  font-size: 15px; /* Slightly larger font size */
+  color: #4a5568; 
+  background-color: #ffffff; 
+  padding: 12px 20px; 
+  font-size: 15px; 
   border: none;
   cursor: pointer;
   display: flex;
@@ -264,30 +255,26 @@ body {
 
 .user-actions a:hover,
 .user-actions button:hover {
-  background-color: #edf2f7; /* Lighter grey for hover background */
-  color: #2d3748; /* Slightly darker text on hover for contrast */
+  background-color: #edf2f7; 
+  color: #2d3748; 
 }
 
-/* Icons color now uses primary color scheme for consistency */
 .acceuil-icon,
 .profil-icon,
 .logout-icon {
-  margin-right: 8px; /* Ensures spacing between icon and text */
-  color: #879eb9; /* Bright blue for a pop of color */
+  margin-right: 8px;
+  color: #879eb9; 
 }
 
-/* Improved logout button for distinction */
 .logout-button {
-  color: #e53e3e; /* Red color for logout to indicate a distinct action */
+  color: #e53e3e; 
 }
 
-/* Additional hover effects for icons within the dropdown for visual feedback */
 .user-actions i:hover {
-  transform: scale(1.1); /* Slightly enlarge icons on hover */
+  transform: scale(1.1); 
   transition: transform 0.2s;
 }
 
-/* Add this for a subtle entrance animation for the dropdown */
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -303,7 +290,6 @@ body {
   animation: slideDown 0.3s ease forwards;
 }
 
-/* Notifications Count Badge */
 .notifications-count {
   position: absolute;
   background-color: #ed1c24;
@@ -318,24 +304,23 @@ body {
   margin-left:3% ;
 }
 
-/* Dropdown Menu for Notifications */
 .notifications-dropdown {
   position: absolute;
   right: 0;
   margin-right: 15px;
   top: 48px;
   background-color: #ffffff;
-  width: 400px; /* Adjust based on your content width */
-  max-height: 450px; /* Set your desired maximum height here */
+  width: 400px; 
+  max-height: 450px; 
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 5;
   border-radius: 15px;
-  overflow-y: auto; /* Makes content scrollable vertically if it exceeds the max height */
+  overflow-y: auto; 
   cursor: pointer;
   text-align: left;
 }
 .notifications-dropdown::-webkit-scrollbar {
-  width: 6px; /* Reducing the width of the scrollbar */
+  width: 6px; 
 }
 
 .notifications-dropdown::-webkit-scrollbar-track {
@@ -362,11 +347,11 @@ body {
 }
 
 .notification-item:hover {
-  background-color: #f8f8f8; /* Light gray background on hover */
+  background-color: #f8f8f8; 
 }
 
 .notification-item.unseen {
-  background-color: #edf2fa; /* Slightly different color for unseen notifications */
+  background-color: #edf2fa; 
 }
 
 .notification-user-photo {
@@ -388,36 +373,36 @@ body {
 
 .notification-icon-Comment {
   margin-right: 10px;
-  color: green; /* Couleur des icônes pour un aspect plus subtil */
-  font-size: 16px; /* Taille des icônes */
+  color: green; 
+  font-size: 16px; 
 }
 .notification-icon-jaime {
   margin-right: 10px;
-  color: #ed1c24; /* Couleur des icônes pour un aspect plus subtil */
-  font-size: 16px; /* Taille des icônes */
+  color: #ed1c24; 
+  font-size: 16px; 
 }
 .notification-delete-icon {
-  margin-left: auto; /* Pushes the icon to the right */
-  color: #cb2431; /* A standard delete color, adjust as needed */
-  cursor: pointer; /* Indicates the icon is clickable */
-  padding: 5px; /* Easier to click */
-  font-size: 14px; /* Adjust icon size as needed */
-  display: flex; /* Centers the icon */
-  align-items: center; /* Centers vertically in case your notification item has variable height */
-  justify-content: center; /* Centers horizontally */
-  border-radius: 50%; /* Optional: makes the hover background circle */
-  transition: background-color 0.2s, color 0.2s; /* Smooth transition for hover effects */
+  margin-left: auto; 
+  color: #cb2431;
+  cursor: pointer; 
+  padding: 5px; 
+  font-size: 14px; 
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%; 
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .notification-delete-icon:hover {
-  color: #ffffff; /* Change color on hover */
-  background-color: #cb2431; /* Add a background color on hover */
+  color: #ffffff; 
+  background-color: #cb2431; 
 }
 
 .notification-item {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Ensures space between the notification text and delete icon */
+  justify-content: space-between; 
 }
 
 .search-results {
@@ -427,17 +412,17 @@ body {
   background-color: #fff;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   width: 50%;
-  z-index: 1002; /* Ensure it appears above other content */
-  border-radius: 5px; /* Optional: for rounded corners */
-  overflow: hidden; /* Optional: to ensure the border-radius applies to child elements */
+  z-index: 1002; 
+  border-radius: 5px;
+  overflow: hidden; 
 }
 
 .search-result-item {
   display: flex;
   align-items: center;
   padding: 10px;
-  text-decoration: none; /* Remove underline from links */
-  color: inherit; /* Ensure text inherits the default color, not link color */
+  text-decoration: none; 
+  color: inherit; 
 }
 
 .user-photooo {
@@ -448,21 +433,21 @@ body {
   object-fit: cover;
   margin: 5px 0;
   margin-right: 23px;
-  cursor: pointer; /* Indicates the element is clickable */
+  cursor: pointer; 
 }
 
 .search-no-results-message {
   padding: 10px;
   text-align: center;
-  color: #666; /* Optional: Change the text color to differentiate the message */
-  font-style: italic; /* Optional: Italicize the message */
+  color: #666;
+  font-style: italic; 
 }
 
 .points {
   position: absolute;
   top: 10px;
   margin-left: 36%;
-  background-color: #4299e1; /* Match the color with your theme */
+  background-color: #4299e1; 
   color: #ffffff;
   padding: 4px 8px;
   border-radius: 50%;
@@ -473,10 +458,10 @@ body {
 .phone-icon {
   font-size: 27px;
   margin-right: 15%;
-  color: #191f43; /* Couleur de l'icône de recherche */
-  background-color: transparent; /* Fond transparent */
-  border: none; /* Pas de bordure */
-  cursor: pointer; /* Curseur de type pointer */
+  color: #191f43; 
+  background-color: transparent; 
+  border: none;
+  cursor: pointer; 
   margin-top: 1px;
 }
 .language-selector {
@@ -489,7 +474,7 @@ body {
   display: flex;
   flex-direction: column;
   position: absolute;
-  top: 50px; /* Ajustez selon vos besoins */
+  top: 50px; 
   right: 0;
   background-color: #ffffff;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
@@ -544,7 +529,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center; /* Centre le texte horizontalement */
+  text-align: center;
   flex-wrap: wrap;
 }
 .notification-no {
@@ -554,6 +539,47 @@ body {
   border-bottom: 1px solid #f0f0f0;
   transition: background-color 0.2s;
       flex-direction: column;
+}
+@media (max-width: 768px) {
+  .navbar {
+    width: 60px; /* Réduire la largeur pour les petits écrans */
+    transform: translateX(-60px); /* Cache la navbar hors de l'écran */
+    transition: transform 0.3s ease;
+  }
 
+  .navbar.visible {
+    transform: translateX(0); /* Affiche la navbar quand elle est active */
+  }
 
+  .navbar-toggle {
+    left: 65px; /* Ajuster la position du bouton pour qu'il soit visible */
+  }
+
+  .navbar-horizontal {
+    margin-left: 0; /* Supprimer la marge gauche pour maximiser l'espace */
+    width: 100%; /* Utiliser toute la largeur disponible */
+  }
+
+  .icon-containerr {
+    padding-right: 20px; /* Réduire l'espacement à droite pour les icônes */
+  }
+
+  .searchh-formm {
+    width: calc(100% - 40px); /* Ajuster la largeur de la barre de recherche */
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    width: 50px; /* Encore plus petit pour les très petits écrans */
+  }
+
+  .user-info {
+    right: 5px; /* Ajuster la position des infos utilisateur */
+    width: 95%; /* Utiliser presque toute la largeur de l'écran */
+  }
+
+  .language-dropdown {
+    right: 5px; /* Ajuster la position du menu déroulant de langue */
+  }
 }

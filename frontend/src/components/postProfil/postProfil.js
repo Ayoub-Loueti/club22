@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Posts from '../posts/posts'; // Adjust the import path as needed
-import PostShare from '../postShare/postShare'; // Adjust the import path as needed
+import Posts from '../posts/posts'; 
+import PostShare from '../postShare/postShare'; 
 import { useParams } from 'react-router-dom';
 import './postProfil.css';
 import PostModal from '../postModal/postModal';
 import { useTranslation } from 'react-i18next';
-import soc1 from "../../assets/soc1.png";
-import soc2 from '../../assets/soc2.png';
+
 import soc3 from '../../assets/soc3.gif';
 
 
 const PostProfile = () => {
   const [posts, setPosts] = useState([]);
-  const { id } = useParams(); // Make sure this matches the backend route parameter
+  const { id } = useParams(); 
   const token = JSON.parse(localStorage.getItem('login'))?.token;
   const loggedInUserId = JSON.parse(localStorage.getItem('userId'));
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,7 +30,6 @@ const PostProfile = () => {
         setPosts(response.data);
       } catch (error) {
         console.error('Error fetching user posts:', error);
-        // Handle 404 specifically or use a state variable to indicate no posts found
         if (error.response && error.response.status === 404) {
           setPosts([]);
         }

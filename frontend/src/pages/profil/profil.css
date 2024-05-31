@@ -1,23 +1,25 @@
 :root {
-  --primary-color: #191f43; /* Bleu foncé */
-  --secondary-color: #879eb9; /* Bleu clair */
-  --background-color: #f5f5f5; /* Gris clair */
-  --text-primary: #ffffff; /* Blanc */
-  --text-secondary: #000000; /* Noir */
+  --primary-color: #191f43; 
+  --secondary-color: #879eb9; 
+  --background-color: #f5f5f5; 
+  --text-primary: #ffffff; 
+  --text-secondary: #000000; 
 }
 
 .profile-container {
  max-width: 100%; 
- width: 400px;
-   margin: 30px auto; /* Centrage horizontal et espacement par rapport au haut */
-  padding: 20px; /* Vous pouvez ajuster ceci selon vos besoins */
+  width: 28vw;
+   margin: 30px auto; 
+  padding: 20px;
   background-color: var(--secondary-color);
   position: relative;
-  float: right; /* Ajouté pour aligner le conteneur à gauche */
-  margin-right: 15px; /* Ajustez cette valeur pour éloigner le conteneur du bord gauche */
-  height: 100%; /* Fait en sorte que le conteneur occupe toute la hauteur de la fenêtre de visualisation */
+  float: right;
+  margin-right: 15px; 
+  height: 100%; 
   border-radius: 10px;
-  margin-top: 1.1%; /* hedhi mta3 thabt lfou9 */
+  margin-top: 1.1%;
+  
+
 }
 
 .profile-header {
@@ -28,21 +30,21 @@
 }
 
 .profile-picturee {
-  width: 180px; /* Réduction de la taille de l'image de profil */
-  height: 180px;
-  border: 2px solid var(--primary-color); /* Bordure de couleur primaire ajoutée */
+  width: 12vw;
+  height: 12vw;
+    border: 2px solid var(--primary-color); 
   border-radius: 50%;
-  object-fit: cover; /* Assurez-vous que l'image couvre bien l'espace */
+  object-fit: cover; 
 }
 .delete-profile-picture-icon{
     position: absolute;
   cursor: pointer;
   left: calc(
     100% - 170px
-  ); /* Exemple d'ajustement, à modifier selon vos besoins */
+  ); 
   bottom: calc(100% - 190px);
   top: 20%;
-  color: #191f43; /* Couleur de l'icône */
+  color: #191f43; 
   padding: 5px;
   display: flex;
   justify-content: center;
@@ -53,10 +55,10 @@
   cursor: pointer;
   right: calc(
     100% - 170px
-  ); /* Exemple d'ajustement, à modifier selon vos besoins */
+  ); 
   bottom: calc(100% - 170px);
   top: auto;
-  color: #191f43; /* Couleur de l'icône */
+  color: #191f43; 
   padding: 5px;
   display: flex;
   justify-content: center;
@@ -79,7 +81,7 @@
   text-align: center;
   padding: 20px;
   border-radius: 10px;
-  background-color: #ffffff; /* Arrière-plan blanc pour détacher du fond */
+  background-color: #ffffff; 
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
@@ -99,9 +101,9 @@
   border-radius: 10px;
   margin-bottom: 20px;
 
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Légère ombre pour du relief */
-  transition: all 0.3s ease; /* Transition douce pour les effets de survol */
-  overflow-wrap: break-word; /* Assure que le texte se casse pour éviter le débordement */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  overflow-wrap: break-word; 
 }
 .capital {
   text-transform: capitalize;
@@ -109,7 +111,7 @@
 .profile-info {
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Aligner les éléments enfants au début */
+  align-items: flex-start; 
   background-color: var(--background-color);
   color: var(--primary-color);
   padding: 20px;
@@ -119,11 +121,15 @@
   transition: all 0.3s ease;
 }
 
+.profile-info, .profile-bio {
+  display: flex;
+  flex-direction: column;
+}
+
 .info-item {
   display: flex;
-  align-items: center; /* Centrer les éléments verticalement */
-  width: 100%; /* Assurez-vous que l'info-item prend toute la largeur */
-  margin-bottom: 10px;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .info-label {
@@ -133,23 +139,21 @@
 }
 
 .info-value {
-  flex-grow: 1; /* Permet à l'info-value de prendre l'espace restant */
-  text-align: left; /* Alignement du texte à gauche */
+  flex-grow: 1; 
+  text-align: left; 
   margin-left: 10px;
   word-break: break-all;
 }
 
-/* Hover effects pour bio et info pour un feedback interactif */
 .profile-bio:hover,
 .profile-info:hover {
-  transform: translateY(-5px); /* Légère remontée pour un effet dynamique */
+  transform: translateY(-5px); 
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .separator {
-  height: 50px; /* Ajustement selon le besoin */
+  height: 50px; 
 }
-/* Style spécifique pour l'input de modification */
 .edit-input {
   padding: 5px 0px;
   border: 1px solid #191f43;
@@ -157,24 +161,23 @@
   font-size: 14px;
   color: #000000;
   background-color: #f5f5f5;
-  transition: border-color 0.3s; /* Transition douce pour la bordure */
+  transition: border-color 0.3s; 
 }
 
 .edit-input:focus {
-  border-color: #0056b3; /* Couleur de bordure plus foncée lors du focus */
-  outline: none; /* Supprime le contour par défaut lors du focus */
+  border-color: #0056b3; 
+  outline: none; 
 }
 
-/* Style spécifique pour l'icône d'édition */
 .edit-icon {
   margin-left: 10px;
   cursor: pointer;
-  color: #191f43; /* Couleur de l'icône d'édition */
-  transition: color 0.3s; /* Transition de couleur douce */
+  color: #191f43; 
+  transition: color 0.3s; 
 }
 
 .edit-icon:hover {
-  color: #0056b3; /* Couleur de l'icône d'édition au survol */
+  color: #0056b3; 
 }
 
 .edit-input-desc {
@@ -184,20 +187,19 @@
   font-size: 14px;
   color: #191f43;
   background-color: #f5f5f5;
-  transition: border-color 0.3s; /* Transition douce pour la bordure */
+  transition: border-color 0.3s; 
 }
 
 .edit-icon-desc {
   cursor: pointer;
-  margin-left: 8px; /* Ajustez selon l'espacement désiré */
-  font-size: 20px; /* Ajustez la taille si nécessaire */
-
+  margin-left: 8px; 
+  font-size: 20px;
 }
 
 input[type='file'] {
   cursor: pointer;
   font-size: 16px;
-  margin-top: 10px; /* Espacement ajouté au-dessus du bouton */
+  margin-top: 10px; 
 }
 
 input[type='file']::file-selector-button {
@@ -213,54 +215,54 @@ input[type='file']::file-selector-button:hover {
 }
 .view-saved-posts-container {
   display: flex;
-  justify-content: center; /* Center the button horizontally */
-  margin: 20px 0; /* Add some margin around */
+  justify-content: center; 
+  margin: 20px 0; 
 }
 
 .open-saved-posts-btn {
-  background-color: var(--primary-color); /* Use your primary color */
+  background-color: var(--primary-color); 
   color: var(--text-primary);
   border: none;
   padding: 10px 15px;
-  border-radius: 20px; /* Rounded corners */
+  border-radius: 20px; 
   display: flex;
-  align-items: center; /* Align icon and text */
-  gap: 10px; /* Space between icon and text */
+  align-items: center; 
+  gap: 10px; 
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s; /* Smooth transition for hover */
-  text-decoration: none; /* Remove underline from icons or text */
-  font-size: 13px; /* Adjust based on your preference */
+  transition: background-color 0.3s, transform 0.2s; 
+  text-decoration: none; 
+  font-size: 13px; 
 }
 
 .open-saved-posts-btn:hover {
   background-color: darken(
     var(--primary-color),
     10%
-  ); /* Darken or adjust the color as needed */
-  outline: none; /* Remove default focus outline */
-  box-shadow: 0 0 0 2px #191f43; /* Optional: add a custom focus shadow for accessibility */
+  );
+  outline: none; 
+  box-shadow: 0 0 0 2px #191f43;
   color: #191f43;
 }
 .open-saved-posts-btn:hover .saved-posts-icon {
-  color: #191f43; /* Change the icon color on hover */
+  color: #191f43; 
 }
 
 .saved-posts-icon {
-  color: var(--text-primary); /* Icon color */
-  font-size: 20px; /* Icon size */
+  color: var(--text-primary); 
+  font-size: 20px;
 }
 .profile-picture-options {
-  position: relative; /* This makes the dropdown position relative to this div */
+  position: relative; 
 }
 .profile-picture-wrapper {
   position: relative;
-  display: inline-block; /* Or flex, depending on your layout */
+  display: inline-block;
 }
 .dropdown-toggle-btn {
  position: absolute;
   right: 10;
   top: 0;
-    color: var(--primary-color); /* Use primary color for the button */
+    color: var(--primary-color); 
 
   cursor: pointer;
   background: none;
@@ -268,27 +270,26 @@ input[type='file']::file-selector-button:hover {
   font-size: 27px;
     padding: 5px;
 
-    border-radius: 50%; /* Circular shape */
+    border-radius: 50%; 
   transition: background-color 0.2s ease-in-out;
 
 }
 
 .dropdown-menu {
   position: absolute;
-  top: 35px; /* Adjust according to the button's size */
+  top: 35px;
   right: 0;
-  background-color: var(--text-primary); /* Light background for the menu */
-  border: 1px solid var(--primary-color); /* Border color similar to primary */
-  border-radius: 5px; /* Rounded corners for the dropdown */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  background-color: var(--text-primary); 
+  border: 1px solid var(--primary-color);
+  border-radius: 5px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 100;
-  min-width: 120px; /* Ensure menu has enough width */
+  min-width: 120px; 
   text-align: left;
 }
 
-/* Dropdown Menu Items */
 .dropdown-menu div {
-  color: var(--primary-color); /* Dark text for readability */
+  color: var(--primary-color); 
   padding: 10px 15px;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
@@ -297,8 +298,8 @@ input[type='file']::file-selector-button:hover {
 }
 
 .dropdown-menu div:hover {
-  background-color: var(--secondary-color); /* Highlight menu item on hover */
-  color: var(--text-primary); /* White text for contrast */
+  background-color: var(--secondary-color); 
+  color: var(--text-primary); 
 }
 
 .password-change-form {
@@ -373,4 +374,35 @@ input[type='file']::file-selector-button:hover {
 .cancel-buttonee:hover {
   background-color: darken(var(--secondary-color), 10%);
   transform: translateY(-2px);
+}
+@media (max-width: 768px) {
+  .profile-container {
+    width: 100%;
+    padding: 10px;
+    margin-right: 0;
+  }
+
+  .profile-header, .profile-info, .profile-bio {
+    padding: 10px;
+  }
+
+  .edit-input, .edit-input-desc {
+    width: 100%;
+  }
+
+  .profile-picturee {
+    width: 50vw;
+    height: 50vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .info-label, .info-value {
+    width: 100%;
+  }
 }

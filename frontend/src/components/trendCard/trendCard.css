@@ -28,3 +28,9 @@
 {
     font-size: 13px;
 }
+@media (max-width: 768px) {
+  .trendCard {
+    width: 100%;
+    padding: 10px;
+  }
+}

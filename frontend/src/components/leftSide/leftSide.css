@@ -75,4 +75,15 @@
     width: 260px; /* Adjust as needed */
     height: 550px; /* Adjust as needed */
   }
-  
+  @media (max-width: 768px) {
+  .leftSide {
+    display: none; 
+  }
+}
+
+@media (max-width: 480px) {
+  .leftSide {
+    display: block;
+    width: 100%;
+  }
+}

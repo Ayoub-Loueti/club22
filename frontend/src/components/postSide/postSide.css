@@ -6,27 +6,37 @@
 }
 
 .mini-navbar {
-    text-align: left; /* Aligns the navigation to the right */
-    padding-right: 1rem; /* Optional: Adds padding on the right for better spacing */
+    text-align: left; 
+    padding-right: 1rem;
 }
 
 .mini-navbar button {
     background: none;
     border: none;
-    color: #333; /* Default text color */
+    color: #333; 
     font-size: 1rem;
     cursor: pointer;
     padding: 0.5rem 1rem;
-    transition: color 0.3s, font-weight 0.3s; /* Adds transition for font-weight */
-    font-weight: normal; /* Default font weight */
+    transition: color 0.3s, font-weight 0.3s;
+    font-weight: normal;
 }
 
 .mini-navbar button:hover {
-    color: #555; /* Darken text slightly on hover */
-    font-weight: bold; /* Make text bold on hover */
+    color: #555;
+    font-weight: bold;
 }
 
 .mini-navbar button.active {
-    color: red; /* Active button text color */
-    font-weight: bold; /* Makes active text bold */
+    color: red; 
+    font-weight: bold; 
+}
+@media (max-width: 768px) {
+  .PostSide {
+    flex-direction: column;
+  }
+
+  .mini-navbar {
+    flex-direction: column;
+    align-items: center;
+  }
 }
