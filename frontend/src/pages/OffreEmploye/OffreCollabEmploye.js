@@ -7,24 +7,29 @@ import StarRating from './StarRating'; // Make sure this is imported correctly
 import ReactPaginate from 'react-paginate';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleChevronLeft, faCircleChevronRight } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCircleChevronLeft,
+  faCircleChevronRight,
+} from '@fortawesome/free-solid-svg-icons';
 
-function OffreCollabEmploye({ collaborateurId}) {
+function OffreCollabEmploye({ collaborateurId }) {
   const [offres, setOffres] = useState([]);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('tous'); // Added filter state
   const token = localStorage.getItem('login');
   const navigate = useNavigate();
- const [currentPage, setCurrentPage] = useState(0);
- const [offresPerPage] = useState(6); 
-   const { t } = useTranslation();
+  const [currentPage, setCurrentPage] = useState(0);
+  const [offresPerPage] = useState(6);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (collaborateurId) {
       const fetchOffres = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:5000/allOffersCollab/${collaborateurId}${filter !== 'tous' ? `?type=${filter}` : ''}`,
+            `http://54.87.28.4/allOffersCollab/${collaborateurId}${
+              filter !== 'tous' ? `?type=${filter}` : ''
+            }`,
             {
               headers: {
                 Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -38,7 +43,11 @@ function OffreCollabEmploye({ collaborateurId}) {
           setOffres(updatedOffres);
           setError(null);
         } catch (error) {
-          setError(t("Il n'y a pas d'offres disponibles pour ce collaborateur à ce moment."));
+          setError(
+            t(
+              "Il n'y a pas d'offres disponibles pour ce collaborateur à ce moment."
+            )
+          );
           console.error('Error fetching offres:', error);
         }
       };
@@ -80,7 +89,7 @@ function OffreCollabEmploye({ collaborateurId}) {
     const timeDiff = endDate.getTime() - now.getTime();
     const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
     if (daysDiff > 0) {
-return `${t('Remise expire dans ')} ${daysDiff} ${t('jours')}`;
+      return `${t('Remise expire dans ')} ${daysDiff} ${t('jours')}`;
     } else if (daysDiff === 0) {
       return t("Remise expire aujourd'hui");
     } else {
@@ -113,7 +122,7 @@ return `${t('Remise expire dans ')} ${daysDiff} ${t('jours')}`;
               currentOffres.map((offre, index) => (
                 <div key={index} className="offre-employee-card">
                   <img
-                    src={`http://localhost:5000/${
+                    src={`http://54.87.28.4/${
                       offre.lesImages[offre.currentImageIndex]?.image
                     }`}
                     alt={`Image ${offre.currentImageIndex + 1} of ${

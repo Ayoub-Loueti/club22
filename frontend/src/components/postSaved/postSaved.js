@@ -17,7 +17,7 @@ const PostSaved = () => {
     const fetchSavedPosts = async () => {
       try {
         // Assuming the endpoint '/user/enregistrements' returns the list of saved posts for the logged-in user
-        const response = await axios.get('http://localhost:5000/enregistrements', {
+        const response = await axios.get('http://54.87.28.4/enregistrements', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -38,12 +38,11 @@ const PostSaved = () => {
 
   return (
     <div className="PostSaved custom-scroll">
-      
       {savedPosts.length > 0 ? (
         <Posts posts={savedPosts} openModalForPost={openModalForPost} />
       ) : (
         <p className="no-posts-msg">
-         { t('Vous n avez enregistré aucune publication.')}
+          {t('Vous n avez enregistré aucune publication.')}
         </p>
       )}
       <PostModal

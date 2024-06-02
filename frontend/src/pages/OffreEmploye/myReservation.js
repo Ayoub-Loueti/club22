@@ -21,7 +21,7 @@ import jsPDF from 'jspdf';
 import QRCode from 'qrcode';
 
 const MyReservations = () => {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
   const [reservations, setReservations] = useState([]);
   const [boxDReservations, setBoxDReservations] = useState([]);
@@ -41,16 +41,17 @@ const MyReservations = () => {
 
     const fetchReservations = async () => {
       try {
-        const response = await axios.get(
-          'http://localhost:5000/myReservations',
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        
+        const response = await axios.get('http://54.87.28.4/myReservations', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
         setReservations(response.data);
       } catch (err) {
-        setError(t("Une erreur s'est produite lors de la récupération des réservations."));
+        setError(
+          t(
+            "Une erreur s'est produite lors de la récupération des réservations."
+          )
+        );
         console.error('Error fetching reservations:', err);
       }
     };
@@ -58,7 +59,7 @@ const MyReservations = () => {
     const fetchBoxDReservations = async () => {
       try {
         const response = await axios.get(
-          'http://localhost:5000/myReservationsBoxD',
+          'http://54.87.28.4/myReservationsBoxD',
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -72,7 +73,7 @@ const MyReservations = () => {
     const fetchBoxTReservations = async () => {
       try {
         const response = await axios.get(
-          'http://localhost:5000/myReservationsBoxT',
+          'http://54.87.28.4/myReservationsBoxT',
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -92,12 +93,14 @@ const MyReservations = () => {
   }, []);
   const fetchReservations = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/myReservations', {
+      const response = await axios.get('http://54.87.28.4/myReservations', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setReservations(response.data);
     } catch (err) {
-      setError(t("Une erreur s'est produite lors de la récupération des réservations."));
+      setError(
+        t("Une erreur s'est produite lors de la récupération des réservations.")
+      );
       console.error('Error fetching reservations:', err);
     }
   };
@@ -116,13 +119,17 @@ const MyReservations = () => {
       });
       if (result.isConfirmed) {
         await axios.put(
-          `http://localhost:5000/reservation/${id}/confirmer`,
+          `http://54.87.28.4/reservation/${id}/confirmer`,
           {},
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        Swal.fire(t('Confirmé !'), t('La réservation a été confirmée.'), 'success');
+        Swal.fire(
+          t('Confirmé !'),
+          t('La réservation a été confirmée.'),
+          'success'
+        );
         setReservations(reservations.filter((r) => r.id_reservation !== id));
         const confirmedReservation = reservations.find(
           (r) => r.id_reservation === id
@@ -135,7 +142,9 @@ const MyReservations = () => {
     } catch (err) {
       Swal.fire(
         t('Échec !'),
-        t("Une erreur s'est produite lors de la confirmation de la réservation."),
+        t(
+          "Une erreur s'est produite lors de la confirmation de la réservation."
+        ),
         'error'
       );
     }
@@ -148,7 +157,7 @@ const MyReservations = () => {
           : reservation
       )
     );
-    setModifyDialogOpen(false); 
+    setModifyDialogOpen(false);
   };
 
   const cancelReservation = async (event, id) => {
@@ -166,7 +175,7 @@ const MyReservations = () => {
       });
       if (result.isConfirmed) {
         await axios.put(
-          `http://localhost:5000/reservation/${id}/annuler`,
+          `http://54.87.28.4/reservation/${id}/annuler`,
           {},
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -226,7 +235,7 @@ const MyReservations = () => {
   const fetchRating = async (token, offreId) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/evaluation/vote/${offreId}`,
+        `http://54.87.28.4/evaluation/vote/${offreId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -273,7 +282,7 @@ const MyReservations = () => {
     const token = JSON.parse(localStorage.getItem('login'))?.token;
     try {
       const response = await axios.post(
-        'http://localhost:5000/evaluation',
+        'http://54.87.28.4/evaluation',
         {
           id_offre,
           vote,
@@ -556,7 +565,7 @@ Téléphone du collaborateur: ${reservation.offre.collaborateur.tel}`;
   const fetchDeductionDetails = async () => {
     try {
       const response = await axios.get(
-        'http://localhost:5000/myReservationsDeduction',
+        'http://54.87.28.4/myReservationsDeduction',
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -572,22 +581,24 @@ Téléphone du collaborateur: ${reservation.offre.collaborateur.tel}`;
     setShowModal(false);
   };
 
-const handlePayment = (event,reservation) => {
-  event.stopPropagation();
-  localStorage.setItem('reservationId', reservation.id_reservation);
-  const reservationDetails = {
-    offreId: reservation.id_offre,
-    prix: reservation.prix_totale,
+  const handlePayment = (event, reservation) => {
+    event.stopPropagation();
+    localStorage.setItem('reservationId', reservation.id_reservation);
+    const reservationDetails = {
+      offreId: reservation.id_offre,
+      prix: reservation.prix_totale,
+    };
+    const encodedDetails = encodeURIComponent(
+      JSON.stringify(reservationDetails)
+    );
+    window.location.href = `/payment?details=${encodedDetails}`;
+    const updatedReservations = reservations.map((r) =>
+      r.id_reservation === reservation.id_reservation
+        ? { ...r, isPaid: true }
+        : r
+    );
+    setReservations(updatedReservations);
   };
-  const encodedDetails = encodeURIComponent(JSON.stringify(reservationDetails));
-  window.location.href = `/payment?details=${encodedDetails}`;
-      const updatedReservations = reservations.map((r) =>
-        r.id_reservation === reservation.id_reservation
-          ? { ...r, isPaid: true }
-          : r
-      );
-      setReservations(updatedReservations);
-};
   return (
     <>
       <Navbar />
@@ -658,7 +669,9 @@ const handlePayment = (event,reservation) => {
                 marginTop: '150px',
               }}
             >
-              <Typography>{t('Aucun détail de déduction à afficher.')}</Typography>
+              <Typography>
+                {t('Aucun détail de déduction à afficher.')}
+              </Typography>
             </div>
           )}
         </Fade>
@@ -702,7 +715,7 @@ const handlePayment = (event,reservation) => {
                             maxHeight: 150,
                             objectFit: 'cover',
                           }}
-                          src={`http://localhost:5000/${reservation.offre.images[0]}`}
+                          src={`http://54.87.28.4/${reservation.offre.images[0]}`}
                           alt="Offre"
                         />
                         <Box
@@ -803,7 +816,7 @@ const handlePayment = (event,reservation) => {
                     textTransform: 'uppercase',
                   }}
                 >
-                  {('Vos réservations confirmées')}
+                  {'Vos réservations confirmées'}
                 </Typography>
                 <Card raised sx={{ height: 290, overflowY: 'auto' }}>
                   <CardContent>
@@ -830,7 +843,7 @@ const handlePayment = (event,reservation) => {
                             maxHeight: 150,
                             objectFit: 'cover',
                           }}
-                          src={`http://localhost:5000/${reservation.offre.images[0]}`}
+                          src={`http://54.87.28.4/${reservation.offre.images[0]}`}
                           alt="Offre"
                         />
                         <Box
@@ -907,7 +920,7 @@ const handlePayment = (event,reservation) => {
                         maxHeight: 150,
                         objectFit: 'cover',
                       }}
-                      src={`http://localhost:5000/${reservation.offre.images[0]}`}
+                      src={`http://54.87.28.4/${reservation.offre.images[0]}`}
                       alt="Offre"
                     />
                     <Box
@@ -948,10 +961,10 @@ const handlePayment = (event,reservation) => {
                               },
                               padding: '6px 16px',
                               width: '40%',
-                              display: 'block', 
-                              marginLeft: 'auto', 
+                              display: 'block',
+                              marginLeft: 'auto',
                               marginRight: 'auto',
-                              width: 'fit-content', 
+                              width: 'fit-content',
                               marginBottom: '10px',
                             }}
                           >
@@ -960,7 +973,7 @@ const handlePayment = (event,reservation) => {
                               fill="none"
                               viewBox="0 0 24 24"
                               stroke="currentColor"
-                              style={{ marginRight: 8, width: 14, height: 14 }} 
+                              style={{ marginRight: 8, width: 14, height: 14 }}
                             >
                               <path
                                 strokeLinecap="round"

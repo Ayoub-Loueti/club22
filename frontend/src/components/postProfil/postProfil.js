@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Posts from '../posts/posts'; 
-import PostShare from '../postShare/postShare'; 
+import Posts from '../posts/posts';
+import PostShare from '../postShare/postShare';
 import { useParams } from 'react-router-dom';
 import './postProfil.css';
 import PostModal from '../postModal/postModal';
@@ -9,10 +9,9 @@ import { useTranslation } from 'react-i18next';
 
 import soc3 from '../../assets/soc3.gif';
 
-
 const PostProfile = () => {
   const [posts, setPosts] = useState([]);
-  const { id } = useParams(); 
+  const { id } = useParams();
   const token = JSON.parse(localStorage.getItem('login'))?.token;
   const loggedInUserId = JSON.parse(localStorage.getItem('userId'));
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,11 +21,14 @@ const PostProfile = () => {
   useEffect(() => {
     const fetchUserPosts = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/getAllPostsByUser/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          `http://54.87.28.4/getAllPostsByUser/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         setPosts(response.data);
       } catch (error) {
         console.error('Error fetching user posts:', error);

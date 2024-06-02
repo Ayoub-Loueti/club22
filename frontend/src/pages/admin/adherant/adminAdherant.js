@@ -19,7 +19,7 @@ const AdminPanel = () => {
 
   const fetchDemandes = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/demandes', {
+      const response = await axios.get('http://54.87.28.4/demandes', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setDemandes(response.data);
@@ -50,7 +50,7 @@ const AdminPanel = () => {
           : `/employes/${employeId}/adherant`;
         axios
           .put(
-            `http://localhost:5000${endpoint}`,
+            `http://54.87.28.4${endpoint}`,
             {},
             { headers: { Authorization: `Bearer ${token}` } }
           )
@@ -76,79 +76,78 @@ const AdminPanel = () => {
     });
   };
 
- const downloadPdf = async (dem) => {
-   if (demandesRef.current) {
-     const input = demandesRef.current.querySelector(
-       `#demande-${dem.id_demande}`
-     );
-     if (!input) {
-       console.error('No element with id:', `demande-${dem.id_demande}`);
-       return;
-     }
-     const buttons = input.querySelectorAll('.ButtonAdh');
-     buttons.forEach((btn) => btn.classList.add('hidden-for-pdf'));
-     try {
-       const canvas = await html2canvas(input, {
-         scale: window.devicePixelRatio,
-         useCORS: true,
-       });
-       const imgData = canvas.toDataURL('image/png');
-       const pdf = new jsPDF({
-         orientation: 'landscape',
-         unit: 'pt',
-         format: [612, 216],
-       });
+  const downloadPdf = async (dem) => {
+    if (demandesRef.current) {
+      const input = demandesRef.current.querySelector(
+        `#demande-${dem.id_demande}`
+      );
+      if (!input) {
+        console.error('No element with id:', `demande-${dem.id_demande}`);
+        return;
+      }
+      const buttons = input.querySelectorAll('.ButtonAdh');
+      buttons.forEach((btn) => btn.classList.add('hidden-for-pdf'));
+      try {
+        const canvas = await html2canvas(input, {
+          scale: window.devicePixelRatio,
+          useCORS: true,
+        });
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF({
+          orientation: 'landscape',
+          unit: 'pt',
+          format: [612, 216],
+        });
 
-       // Set title properties
-       pdf.setTextColor('#191F43');
-       pdf.setFont('helvetica', 'bold');
-       pdf.setFontSize(18);
+        // Set title properties
+        pdf.setTextColor('#191F43');
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(18);
 
-       // Draw the title
-       const title = "Demande d'Adhésion au Programme Membre Adhérent";
-       const textWidth =
-         (pdf.getStringUnitWidth(title) * pdf.getFontSize()) /
-         pdf.internal.scaleFactor;
-       const textOffset = (pdf.internal.pageSize.getWidth() - textWidth) / 2;
-       pdf.text(title, textOffset, 30);
+        // Draw the title
+        const title = "Demande d'Adhésion au Programme Membre Adhérent";
+        const textWidth =
+          (pdf.getStringUnitWidth(title) * pdf.getFontSize()) /
+          pdf.internal.scaleFactor;
+        const textOffset = (pdf.internal.pageSize.getWidth() - textWidth) / 2;
+        pdf.text(title, textOffset, 30);
 
-       // Draw the Ooredoo logo
-       pdf.addImage(ooredooLogo, 'PNG', 10, 5, 35, 35); // Position (x=10, y=10), Size (width=50, height=50)
+        // Draw the Ooredoo logo
+        pdf.addImage(ooredooLogo, 'PNG', 10, 5, 35, 35); // Position (x=10, y=10), Size (width=50, height=50)
 
-       // Add the form screenshot to the PDF
-       const imgProps = pdf.getImageProperties(imgData);
-       const pdfWidth = pdf.internal.pageSize.getWidth();
-       const pdfHeight = pdf.internal.pageSize.getHeight() - 40;
-       const imgWidth = imgProps.width;
-       const imgHeight = imgProps.height;
-       const scaleAdjustmentFactor = 0.95;
-       const widthRatio = (pdfWidth / imgWidth) * scaleAdjustmentFactor;
-       const heightRatio = (pdfHeight / imgHeight) * scaleAdjustmentFactor;
-       const ratio = Math.min(widthRatio, heightRatio);
-       const canvasWidth = imgWidth * ratio;
-       const canvasHeight = imgHeight * ratio;
-       const xOffset = (pdfWidth - canvasWidth) / 2;
-       const yOffset = 40 + canvasHeight / 2;
-       pdf.addImage(
-         imgData,
-         'PNG',
-         xOffset,
-         yOffset - canvasHeight / 2,
-         canvasWidth,
-         canvasHeight
-       );
-       
-       pdf.save(`demande-${dem.id_demande}.pdf`);
-     } catch (error) {
-       console.error('Failed to generate PDF:', error);
-     } finally {
-       buttons.forEach((btn) => btn.classList.remove('hidden-for-pdf'));
-     }
-   } else {
-     console.error('Demandes container not found');
-   }
- };
+        // Add the form screenshot to the PDF
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight() - 40;
+        const imgWidth = imgProps.width;
+        const imgHeight = imgProps.height;
+        const scaleAdjustmentFactor = 0.95;
+        const widthRatio = (pdfWidth / imgWidth) * scaleAdjustmentFactor;
+        const heightRatio = (pdfHeight / imgHeight) * scaleAdjustmentFactor;
+        const ratio = Math.min(widthRatio, heightRatio);
+        const canvasWidth = imgWidth * ratio;
+        const canvasHeight = imgHeight * ratio;
+        const xOffset = (pdfWidth - canvasWidth) / 2;
+        const yOffset = 40 + canvasHeight / 2;
+        pdf.addImage(
+          imgData,
+          'PNG',
+          xOffset,
+          yOffset - canvasHeight / 2,
+          canvasWidth,
+          canvasHeight
+        );
 
+        pdf.save(`demande-${dem.id_demande}.pdf`);
+      } catch (error) {
+        console.error('Failed to generate PDF:', error);
+      } finally {
+        buttons.forEach((btn) => btn.classList.remove('hidden-for-pdf'));
+      }
+    } else {
+      console.error('Demandes container not found');
+    }
+  };
 
   return (
     <>
@@ -175,7 +174,7 @@ const AdminPanel = () => {
                 <img
                   src={
                     dem.employe.utilisateur.photo
-                      ? `http://localhost:5000/${dem.employe.utilisateur.photo}`
+                      ? `http://54.87.28.4/${dem.employe.utilisateur.photo}`
                       : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
                   }
                   alt="Profil"

@@ -15,7 +15,9 @@ const PostLink = () => {
     const fetchPostDetails = async () => {
       if (postId) {
         try {
-          const response = await axios.get(`http://localhost:5000/getPostById/${postId}`);
+          const response = await axios.get(
+            `http://54.87.28.4/getPostById/${postId}`
+          );
           setPostDetails(response.data);
         } catch (error) {
           console.error("Couldn't fetch post details", error);

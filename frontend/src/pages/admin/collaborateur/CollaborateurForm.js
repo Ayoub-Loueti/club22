@@ -24,7 +24,7 @@ function CollaborateurForm({
     const fetchCollaborateur = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/collaborator/${collaborateurId}`,
+          `http://54.87.28.4/collaborator/${collaborateurId}`,
           {
             headers: {
               Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -55,7 +55,7 @@ function CollaborateurForm({
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/upload-image', // Update URL as per your backend
+        'http://54.87.28.4/upload-image', // Update URL as per your backend
         data
       );
       const imageUrl = response.data.imageUrl;
@@ -70,20 +70,20 @@ function CollaborateurForm({
     e.preventDefault();
 
     const collaborateurData = { nom, type, adresse, tel, email, siteWeb, logo };
-  if (!/^\d+$/.test(tel)) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Erreur',
-      text: 'Le numéro de téléphone doit être numérique.',
-    });
-    return; // Ne pas soumettre le formulaire si la validation échoue
-  }
+    if (!/^\d+$/.test(tel)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: 'Le numéro de téléphone doit être numérique.',
+      });
+      return; // Ne pas soumettre le formulaire si la validation échoue
+    }
     try {
       let response;
       if (isUpdate) {
         // Handle update logic using collaborateurId prop
         response = await axios.put(
-          `http://localhost:5000/collaborator/${collaborateurId}`,
+          `http://54.87.28.4/collaborator/${collaborateurId}`,
           collaborateurData,
           {
             headers: {
@@ -94,7 +94,7 @@ function CollaborateurForm({
       } else {
         // Handle add logic
         response = await axios.post(
-          'http://localhost:5000/collaborator',
+          'http://54.87.28.4/collaborator',
           collaborateurData,
           {
             headers: {

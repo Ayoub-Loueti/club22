@@ -14,7 +14,7 @@ function CollaborateurPage() {
   const [selectedCollaborateurId, setSelectedCollaborateurId] = useState(null);
   const [startIndex, setStartIndex] = useState(0);
   const [showOffreCollab, setShowOffreCollab] = useState(false);
-   const { t } = useTranslation();
+  const { t } = useTranslation();
 
   const [filteredOffers, setFilteredOffers] = useState([]);
 
@@ -24,7 +24,7 @@ function CollaborateurPage() {
       const fetchCollaborateurs = async () => {
         try {
           const response = await axios.get(
-            'http://localhost:5000/allCollaborateursEmploye',
+            'http://54.87.28.4/allCollaborateursEmploye',
             { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } }
           );
           setCollaborateurs(response.data);
@@ -57,27 +57,27 @@ function CollaborateurPage() {
     setShowOffreCollab(false);
     setSelectedCollaborateurId(null);
   };
- useEffect(() => {
-   const sr = scrollreveal({
-     origin: 'top',
-     distance: '80px',
-     duration: 2000,
-     reset: true,
-   });
-   sr.reveal(
-     `
+  useEffect(() => {
+    const sr = scrollreveal({
+      origin: 'top',
+      distance: '80px',
+      duration: 2000,
+      reset: true,
+    });
+    sr.reveal(
+      `
         #hero,
         #services,
         #recommend,
         #testimonials,
         footer
         `,
-     {
-       opacity: 0,
-       interval: 300,
-     }
-   );
- }, []);
+      {
+        opacity: 0,
+        interval: 300,
+      }
+    );
+  }, []);
 
   return (
     <>
@@ -107,7 +107,7 @@ function CollaborateurPage() {
                   }
                 >
                   <img
-                    src={`http://localhost:5000/${collaborateur.logo}`}
+                    src={`http://54.87.28.4/${collaborateur.logo}`}
                     alt={collaborateur.nom}
                   />
                   <div className="collab-card-title">{collaborateur.nom}</div>

@@ -14,11 +14,11 @@ import {
   TextField,
   styled,
   Button,
-  Typography
+  Typography,
 } from '@mui/material';
 import Swal from 'sweetalert2';
 import NavAdmin from '../NavAdmin/navAdmin';
-import '../collaborateur/listCollaborateur.css'; 
+import '../collaborateur/listCollaborateur.css';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
@@ -37,37 +37,37 @@ function ReclamationsAdmin() {
   const navigate = useNavigate();
   const [adminMessages, setAdminMessages] = useState({});
   const token = JSON.parse(localStorage.getItem('login'))?.token;
-  const [expandedIds, setExpandedIds] = useState({}); 
+  const [expandedIds, setExpandedIds] = useState({});
 
   useEffect(() => {
     fetchReclamations();
   }, [token]);
 
-const fetchReclamations = async () => {
-  try {
-    const response = await axios.get('http://localhost:5000/reclamations', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const sortedReclamations = response.data.sort(
-      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-    );
-    setReclamations(sortedReclamations);
-    const messages = {};
-    sortedReclamations.forEach((reclamation) => {
-      messages[reclamation.id_reclamation] = reclamation.message_admin || '';
-    });
-    setAdminMessages(messages);
-  } catch (error) {
-    console.error('Error fetching reclamations:', error);
-    Swal.fire({
-      title: 'Erreur!',
-      text: 'Erreur lors de la récupération des réclamations',
-      icon: 'error',
-      timer: 1500,
-      showConfirmButton: false,
-    });
-  }
-};
+  const fetchReclamations = async () => {
+    try {
+      const response = await axios.get('http://54.87.28.4/reclamations', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const sortedReclamations = response.data.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+      setReclamations(sortedReclamations);
+      const messages = {};
+      sortedReclamations.forEach((reclamation) => {
+        messages[reclamation.id_reclamation] = reclamation.message_admin || '';
+      });
+      setAdminMessages(messages);
+    } catch (error) {
+      console.error('Error fetching reclamations:', error);
+      Swal.fire({
+        title: 'Erreur!',
+        text: 'Erreur lors de la récupération des réclamations',
+        icon: 'error',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    }
+  };
 
   const sendMessage = async (id, message) => {
     if (!message.trim()) {
@@ -84,7 +84,7 @@ const fetchReclamations = async () => {
 
     try {
       await axios.post(
-        `http://localhost:5000/reclamations/${id}/message`,
+        `http://54.87.28.4/reclamations/${id}/message`,
         { message_admin: message },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -112,7 +112,7 @@ const fetchReclamations = async () => {
   const updateStatus = async (id, newStatus) => {
     try {
       await axios.post(
-        `http://localhost:5000/reclamations/${id}/status`,
+        `http://54.87.28.4/reclamations/${id}/status`,
         { newStatus },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -143,12 +143,12 @@ const fetchReclamations = async () => {
       [id]: message,
     }));
   };
- const toggleExpand = (id) => {
-   setExpandedIds((prev) => ({
-     ...prev,
-     [id]: !prev[id],
-   }));
- };
+  const toggleExpand = (id) => {
+    setExpandedIds((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
   return (
     <>

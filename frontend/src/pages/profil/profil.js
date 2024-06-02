@@ -12,13 +12,13 @@ import PostSavedModal from '../../components/PostSavedModal/PostSavedModal';
 import ScrollToTop from '../../components/designs/ScrollToTop';
 
 function Profil() {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const navigate = useNavigate();
   const storedData = JSON.parse(localStorage.getItem('login'));
-  const token = storedData?.token; 
-  const userId = JSON.parse(localStorage.getItem('userId')); 
-  const isOwnProfile = userId?.toString() === id; 
-  const [modalOpened, setModalOpened] = useState(false); 
+  const token = storedData?.token;
+  const userId = JSON.parse(localStorage.getItem('userId'));
+  const isOwnProfile = userId?.toString() === id;
+  const [modalOpened, setModalOpened] = useState(false);
   const [utilisateur, setUtilisateur] = useState({});
   const { t } = useTranslation();
 
@@ -43,14 +43,11 @@ function Profil() {
     const fetchUserData = async () => {
       if (token && id) {
         try {
-          const response = await axios.get(
-            `http://localhost:5000/profil/${id}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`, 
-              },
-            }
-          );
+          const response = await axios.get(`http://54.87.28.4/profil/${id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
           setUtilisateur(response.data.user);
           setEditValues({
             nom: response.data.user.nom,
@@ -72,7 +69,7 @@ function Profil() {
       }
     };
     fetchUserData();
-  }, [token, id]); 
+  }, [token, id]);
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
@@ -103,9 +100,9 @@ function Profil() {
     }
     try {
       await axios.put(
-        'http://localhost:5000/updateCompte',
+        'http://54.87.28.4/updateCompte',
         { [field]: editValues[field] },
-        { headers: { Authorization: `Bearer ${token}` } } 
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setUtilisateur({ ...utilisateur, [field]: editValues[field] });
       toggleEdit(field);
@@ -120,17 +117,17 @@ function Profil() {
     formData.append('photo', file);
     try {
       const response = await axios.post(
-        'http://localhost:5000/updateProfilePicture',
+        'http://54.87.28.4/updateProfilePicture',
         formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`, 
+            Authorization: `Bearer ${token}`,
           },
         }
       );
       if (response.status === 200) {
-        window.location.reload(); 
+        window.location.reload();
       } else {
         console.error('Failed to upload the image');
       }
@@ -150,19 +147,16 @@ function Profil() {
       cancelButtonText: t('Annuler'),
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteProfilePicture(); 
+        deleteProfilePicture();
       }
     });
   };
 
   const deleteProfilePicture = async () => {
     try {
-      const response = await axios.delete(
-        'http://localhost:5000/profile-picture',
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const response = await axios.delete('http://54.87.28.4/profile-picture', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (response.status === 200) {
         Swal.fire({
           title: t('Supprimée !'),
@@ -210,13 +204,13 @@ function Profil() {
     if (showDropdown) setShowDropdown(false);
   });
 
-  const [showPasswordChange, setShowPasswordChange] = useState(false); 
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [passwordValues, setPasswordValues] = useState({
     currentPassword: '',
     newPassword: '',
     confirmNewPassword: '',
   });
-  
+
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
     setPasswordValues({ ...passwordValues, [name]: value });
@@ -227,13 +221,13 @@ function Profil() {
       Swal.fire({
         title: t('Erreur'),
         text: t('Les nouveaux mots de passe ne correspondent pas'),
-        icon: 'error'
+        icon: 'error',
       });
       return;
     }
     try {
       const response = await axios.post(
-        'http://localhost:5000/changer-mdp',
+        'http://54.87.28.4/changer-mdp',
         {
           motDePasse: passwordValues.currentPassword,
           newMDP: passwordValues.newPassword,
@@ -251,30 +245,36 @@ function Profil() {
         Swal.fire({
           title: t('Succès'),
           text: t('Your password has been successfully changed.'),
-          icon: 'success'
+          icon: 'success',
         });
       }
     } catch (error) {
       if (error.response) {
-        console.error('Erreur lors du changement de mot de passe', error.response.data);
+        console.error(
+          'Erreur lors du changement de mot de passe',
+          error.response.data
+        );
         Swal.fire({
           title: t('Erreur'),
-          text: t("Mot de passe actuel incorrect."),
-          icon: 'error'
+          text: t('Mot de passe actuel incorrect.'),
+          icon: 'error',
         });
       } else if (error.request) {
-        console.error('Erreur lors du changement de mot de passe', error.request);
+        console.error(
+          'Erreur lors du changement de mot de passe',
+          error.request
+        );
         Swal.fire({
           title: t('Erreur'),
           text: t('Aucune réponse du serveur'),
-          icon: 'error'
+          icon: 'error',
         });
       } else {
         console.error('Erreur', error.message);
         Swal.fire({
           title: t('Erreur'),
           text: t('Erreur lors de la requête'),
-          icon: 'error'
+          icon: 'error',
         });
       }
     }
@@ -296,7 +296,7 @@ function Profil() {
             <img
               src={
                 utilisateur.photo
-                  ? `http://localhost:5000/${utilisateur.photo}`
+                  ? `http://54.87.28.4/${utilisateur.photo}`
                   : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
               }
               alt="Profil"
@@ -364,8 +364,7 @@ function Profil() {
           ) : (
             <p onClick={() => isOwnProfile && toggleEdit('description')}>
               {utilisateur.description ||
-                t('Profil en cours de personnalisation!')
-                }
+                t('Profil en cours de personnalisation!')}
             </p>
           )}
           {isOwnProfile && (
@@ -378,152 +377,172 @@ function Profil() {
           )}
         </div>
         <div className="profile-info">
-        {showPasswordChange ? (
+          {showPasswordChange ? (
             <div className="password-change-form">
-            <div className="info-item">
-              <span className="info-label">{t('Mot de passe actuel')}:</span>
-              <input
-                type="password"
-                name="currentPassword"
-                value={passwordValues.currentPassword}
-                onChange={handlePasswordChange}
-                className="edit-input"
-              />
+              <div className="info-item">
+                <span className="info-label">{t('Mot de passe actuel')}:</span>
+                <input
+                  type="password"
+                  name="currentPassword"
+                  value={passwordValues.currentPassword}
+                  onChange={handlePasswordChange}
+                  className="edit-input"
+                />
+              </div>
+              <div className="info-item">
+                <span className="info-label">{t('Nouveau mot de passe')}:</span>
+                <input
+                  type="password"
+                  name="newPassword"
+                  value={passwordValues.newPassword}
+                  onChange={handlePasswordChange}
+                  className="edit-input"
+                />
+              </div>
+              <div className="info-item">
+                <span className="info-label">
+                  {t('Confirmer nouveau mot de passe')}:
+                </span>
+                <input
+                  type="password"
+                  name="confirmNewPassword"
+                  value={passwordValues.confirmNewPassword}
+                  onChange={handlePasswordChange}
+                  className="edit-input"
+                />
+              </div>
+              <div className="button-groupee">
+                <button
+                  onClick={handlePasswordUpdate}
+                  className="confirm-buttonee"
+                >
+                  {t('Confirmer')}
+                </button>
+                <button
+                  onClick={() => setShowPasswordChange(false)}
+                  className="cancel-buttonee"
+                >
+                  {t('Annuler')}
+                </button>
+              </div>
             </div>
-            <div className="info-item">
-              <span className="info-label">{t('Nouveau mot de passe')}:</span>
-              <input
-                type="password"
-                name="newPassword"
-                value={passwordValues.newPassword}
-                onChange={handlePasswordChange}
-                className="edit-input"
-              />
-            </div>
-            <div className="info-item">
-              <span className="info-label">{t('Confirmer nouveau mot de passe')}:</span>
-              <input
-                type="password"
-                name="confirmNewPassword"
-                value={passwordValues.confirmNewPassword}
-                onChange={handlePasswordChange}
-                className="edit-input"
-              />
-            </div>
-            <div className="button-groupee">
-              <button onClick={handlePasswordUpdate} className="confirm-buttonee">
-                {t('Confirmer')}
-              </button>
-              <button onClick={() => setShowPasswordChange(false)} className="cancel-buttonee">
-                {t('Annuler')}
-              </button>
-            </div>
-          </div>
           ) : (
             <>
-          <div className="info-item">
-            <span className="info-label">Email:</span>
-            <span className="info-value">{utilisateur.email}</span>
-          </div>
-          <div className="capital">
-            <div className="info-item">
-              <span className="info-label">{t('Nom')}:</span>
-              {editing.nom ? (
-                <input
-                  type="text"
-                  name="nom"
-                  value={editValues.nom}
-                  onChange={handleEditChange}
-                  onBlur={() => handleUpdate('nom')}
-                  className="edit-input"
-                />
-              ) : (
-                <span className="info-value">{utilisateur.nom}</span>
-              )}
-              {isOwnProfile && (
-                <span onClick={() => toggleEdit('nom')} className="edit-icon">
-                  🖊️
-                </span>
-              )}
-            </div>
-            <div className="info-item">
-              <span className="info-label">{t('Prénom')}:</span>
-              {editing.prenom ? (
-                <input
-                  type="text"
-                  name="prenom"
-                  value={editValues.prenom}
-                  onChange={handleEditChange}
-                  onBlur={() => handleUpdate('prenom')}
-                  className="edit-input"
-                />
-              ) : (
-                <span className="info-value">{utilisateur.prenom}</span>
-              )}
-              {isOwnProfile && (
-                <span
-                  onClick={() => toggleEdit('prenom')}
-                  className="edit-icon"
-                >
-                  🖊️
-                </span>
-              )}
-            </div>
-            <div className="info-item">
-              <span className="info-label">{t('Genre')}:</span>
-              {editing.genre ? (
-                <select
-                  name="genre"
-                  value={editValues.genre}
-                  onChange={handleEditChange}
-                  onBlur={() => handleUpdate('genre')}
-                  className="edit-input"
-                >
-                  <option value="homme">{t('Homme')}</option>
-                  <option value="femme">{t('Femme')}</option>
-                </select>
-              ) : (
-                <span className="info-value">{utilisateur.genre}</span>
-              )}
-              {isOwnProfile && (
-                <span onClick={() => toggleEdit('genre')} className="edit-icon">
-                  🖊️
-                </span>
-              )}
-            </div>
-            <div className="info-item">
-              <span className="info-label">{t('Téléphone')}:</span>
-              {editing.tel ? (
-                <input
-                  type="text"
-                  name="tel"
-                  value={editValues.tel}
-                  onChange={handleEditChange}
-                  onBlur={() => handleUpdate('tel')}
-                  className="edit-input"
-                />
-              ) : (
-                <span className="info-value">{utilisateur.tel}</span>
-              )}
-              {isOwnProfile && (
-                <span onClick={() => toggleEdit('tel')} className="edit-icon">
-                  🖊️
-                </span>
-              )}
-            </div>
-            <div className="info-item">
-              <span className="info-label">{t('Rôle')}:</span>
-              <span className="info-value">{utilisateur.type}</span>
-            </div>
-            <div className="info-item">
-           <span className="info-label">{t('Mot de passe')}</span>
-          <span onClick={() => setShowPasswordChange(true)} className="edit-icon">
-          🖊️
-          </span>
-          </div>
-          </div>
-        </>
-        )}
+              <div className="info-item">
+                <span className="info-label">Email:</span>
+                <span className="info-value">{utilisateur.email}</span>
+              </div>
+              <div className="capital">
+                <div className="info-item">
+                  <span className="info-label">{t('Nom')}:</span>
+                  {editing.nom ? (
+                    <input
+                      type="text"
+                      name="nom"
+                      value={editValues.nom}
+                      onChange={handleEditChange}
+                      onBlur={() => handleUpdate('nom')}
+                      className="edit-input"
+                    />
+                  ) : (
+                    <span className="info-value">{utilisateur.nom}</span>
+                  )}
+                  {isOwnProfile && (
+                    <span
+                      onClick={() => toggleEdit('nom')}
+                      className="edit-icon"
+                    >
+                      🖊️
+                    </span>
+                  )}
+                </div>
+                <div className="info-item">
+                  <span className="info-label">{t('Prénom')}:</span>
+                  {editing.prenom ? (
+                    <input
+                      type="text"
+                      name="prenom"
+                      value={editValues.prenom}
+                      onChange={handleEditChange}
+                      onBlur={() => handleUpdate('prenom')}
+                      className="edit-input"
+                    />
+                  ) : (
+                    <span className="info-value">{utilisateur.prenom}</span>
+                  )}
+                  {isOwnProfile && (
+                    <span
+                      onClick={() => toggleEdit('prenom')}
+                      className="edit-icon"
+                    >
+                      🖊️
+                    </span>
+                  )}
+                </div>
+                <div className="info-item">
+                  <span className="info-label">{t('Genre')}:</span>
+                  {editing.genre ? (
+                    <select
+                      name="genre"
+                      value={editValues.genre}
+                      onChange={handleEditChange}
+                      onBlur={() => handleUpdate('genre')}
+                      className="edit-input"
+                    >
+                      <option value="homme">{t('Homme')}</option>
+                      <option value="femme">{t('Femme')}</option>
+                    </select>
+                  ) : (
+                    <span className="info-value">{utilisateur.genre}</span>
+                  )}
+                  {isOwnProfile && (
+                    <span
+                      onClick={() => toggleEdit('genre')}
+                      className="edit-icon"
+                    >
+                      🖊️
+                    </span>
+                  )}
+                </div>
+                <div className="info-item">
+                  <span className="info-label">{t('Téléphone')}:</span>
+                  {editing.tel ? (
+                    <input
+                      type="text"
+                      name="tel"
+                      value={editValues.tel}
+                      onChange={handleEditChange}
+                      onBlur={() => handleUpdate('tel')}
+                      className="edit-input"
+                    />
+                  ) : (
+                    <span className="info-value">{utilisateur.tel}</span>
+                  )}
+                  {isOwnProfile && (
+                    <span
+                      onClick={() => toggleEdit('tel')}
+                      className="edit-icon"
+                    >
+                      🖊️
+                    </span>
+                  )}
+                </div>
+                <div className="info-item">
+                  <span className="info-label">{t('Rôle')}:</span>
+                  <span className="info-value">{utilisateur.type}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">{t('Mot de passe')}</span>
+                  <span
+                    onClick={() => setShowPasswordChange(true)}
+                    className="edit-icon"
+                  >
+                    🖊️
+                  </span>
+                </div>
+              </div>
+            </>
+          )}
         </div>
         <div className="separator"></div>
       </div>
@@ -533,4 +552,3 @@ function Profil() {
 }
 
 export default Profil;
-

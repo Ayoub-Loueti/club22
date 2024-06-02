@@ -18,7 +18,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useTranslation } from 'react-i18next';
 
 const ShowReservationDialog = ({ reservation, open, onClose }) => {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -52,7 +52,7 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
               {reservation.offre.collaborateur.nom}
             </Typography>
             <Avatar
-              src={`http://localhost:5000/${reservation.offre.collaborateur.logo}`}
+              src={`http://54.87.28.4/${reservation.offre.collaborateur.logo}`}
               alt={reservation.offre.collaborateur.nom}
               sx={{ marginRight: 2 }}
             />
@@ -148,7 +148,7 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
               {reservation.offre.images.map((image, index) => (
                 <img
                   key={index}
-                  src={`http://localhost:5000/${image}`}
+                  src={`http://54.87.28.4/${image}`}
                   alt="Offer"
                   style={{
                     width: '100%',

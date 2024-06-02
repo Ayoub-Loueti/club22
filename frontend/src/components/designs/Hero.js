@@ -1,98 +1,96 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import homeImage from '../../assets/hero.png';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { Range } from 'react-range';
 
-
 export default function Hero({ onFiltered }) {
   const [destination, setDestination] = useState('');
   const [promotionType, setPromotionType] = useState('all'); // 'all', 'promo', 'nonpromo'
-const [minPrice, setMinPrice] = useState(0);
-const [maxPrice, setMaxPrice] = useState(1000);
-const [prices, setPrices] = useState([minPrice, maxPrice]);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(1000);
+  const [prices, setPrices] = useState([minPrice, maxPrice]);
   const token = localStorage.getItem('login');
   const { t } = useTranslation();
 
   const normalizeImagePath = (path) => {
     return path.replace(/\\/g, '/');
   };
- const fetchFilteredOffers = async (prices, destination, promotionType) => {
-   try {
-     const response = await axios.get('http://localhost:5000/employeOffers', {
-       headers: {
-         Authorization: `Bearer ${JSON.parse(token).token}`,
-       },
-     });
-     let filtered = response.data
-       .filter((offre) => {
-         const priceMatch = offre.prix >= prices[0] && offre.prix <= prices[1];
-         const destinationMatch = destination
-           ? offre.destination.toLowerCase().includes(destination.toLowerCase())
-           : true;
-         let promotionMatch = true;
-         if (promotionType === 'promo') {
-           promotionMatch = offre.remise > 0;
-         } else if (promotionType === 'nonpromo') {
-           promotionMatch = offre.remise === 0;
-         }
-         return priceMatch && destinationMatch && promotionMatch;
-       })
-       .map((offre) => ({
-         ...offre,
-         lesImages: offre.lesImages.map((img) => ({
-           ...img,
-           image: normalizeImagePath(img.image),
-         })),
-         currentImageIndex: 0,
-       }));
-     onFiltered(filtered);
-   } catch (error) {
-     console.error('Error fetching offres:', error);
-   }
- };
+  const fetchFilteredOffers = async (prices, destination, promotionType) => {
+    try {
+      const response = await axios.get('http://54.87.28.4/employeOffers', {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(token).token}`,
+        },
+      });
+      let filtered = response.data
+        .filter((offre) => {
+          const priceMatch = offre.prix >= prices[0] && offre.prix <= prices[1];
+          const destinationMatch = destination
+            ? offre.destination
+                .toLowerCase()
+                .includes(destination.toLowerCase())
+            : true;
+          let promotionMatch = true;
+          if (promotionType === 'promo') {
+            promotionMatch = offre.remise > 0;
+          } else if (promotionType === 'nonpromo') {
+            promotionMatch = offre.remise === 0;
+          }
+          return priceMatch && destinationMatch && promotionMatch;
+        })
+        .map((offre) => ({
+          ...offre,
+          lesImages: offre.lesImages.map((img) => ({
+            ...img,
+            image: normalizeImagePath(img.image),
+          })),
+          currentImageIndex: 0,
+        }));
+      onFiltered(filtered);
+    } catch (error) {
+      console.error('Error fetching offres:', error);
+    }
+  };
 
- useEffect(() => {
-   const fetchPrices = async () => {
-     try {
-       const response = await axios.get('http://localhost:5000/employeOffers', {
-         headers: {
-           Authorization: `Bearer ${JSON.parse(token).token}`,
-         },
-       });
-       const allPrices = response.data.map((offre) => offre.prix);
-       setMinPrice(Math.min(...allPrices));
-       setMaxPrice(Math.max(...allPrices));
-       setPrices([Math.min(...allPrices), Math.max(...allPrices)]);
-     } catch (error) {
-       console.error('Error fetching prices:', error);
-     }
-   };
-   fetchPrices();
- }, [token]);
+  useEffect(() => {
+    const fetchPrices = async () => {
+      try {
+        const response = await axios.get('http://54.87.28.4/employeOffers', {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(token).token}`,
+          },
+        });
+        const allPrices = response.data.map((offre) => offre.prix);
+        setMinPrice(Math.min(...allPrices));
+        setMaxPrice(Math.max(...allPrices));
+        setPrices([Math.min(...allPrices), Math.max(...allPrices)]);
+      } catch (error) {
+        console.error('Error fetching prices:', error);
+      }
+    };
+    fetchPrices();
+  }, [token]);
 
- const handleSearch = () => {
-   fetchFilteredOffers(prices, destination, promotionType);
- };
+  const handleSearch = () => {
+    fetchFilteredOffers(prices, destination, promotionType);
+  };
 
- const handleRangeChange = (values) => {
-   setPrices(values);
- };
+  const handleRangeChange = (values) => {
+    setPrices(values);
+  };
 
   const handleDestinationChange = (event) => {
     const value = event.target.value;
     setDestination(value);
   };
- 
 
   const handlePromotionTypeChange = (event) => {
     const value = event.target.value;
     setPromotionType(value);
   };
 
-
-  
   return (
     <Section id="hero">
       <div className="background">
@@ -102,7 +100,9 @@ const [prices, setPrices] = useState([minPrice, maxPrice]);
         <div className="title">
           <h1>{t('VOYAGEZ POUR DÉCOUVRIR')}</h1>
           <p>
-          { t("En tant qu’adhérent de Club22,vous bénéficiez d'offres exclusives pour réserver votre prochain hôtel, voyage ou activité à un prix imbattable.vous trouverez sans doute l'offre qui correspond à vos envies et à votre budget !")}{' '}
+            {t(
+              "En tant qu’adhérent de Club22,vous bénéficiez d'offres exclusives pour réserver votre prochain hôtel, voyage ou activité à un prix imbattable.vous trouverez sans doute l'offre qui correspond à vos envies et à votre budget !"
+            )}{' '}
           </p>
         </div>
         <div className="search">

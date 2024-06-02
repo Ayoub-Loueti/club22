@@ -6,7 +6,11 @@ import AddCollaborateurModal from './AddCollaborateurModal';
 import OffreCollab from '../offre/OffreCollab'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight, faCopy } from '@fortawesome/free-solid-svg-icons';
+import {
+  faArrowLeft,
+  faArrowRight,
+  faCopy,
+} from '@fortawesome/free-solid-svg-icons';
 import { FaArrowLeft } from 'react-icons/fa';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import NavAdmin from '../NavAdmin/navAdmin';
@@ -26,14 +30,11 @@ function ListCollaborateur() {
   useEffect(() => {
     const fetchCollaborateurs = async () => {
       try {
-        const response = await axios.get(
-          'http://localhost:5000/allCollaborators',
-          {
-            headers: {
-              Authorization: `Bearer ${JSON.parse(token).token}`,
-            },
-          }
-        );
+        const response = await axios.get('http://54.87.28.4/allCollaborators', {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(token).token}`,
+          },
+        });
         setCollaborateurs(response.data);
       } catch (error) {
         console.error('Error fetching collaborateurs:', error);
@@ -123,9 +124,15 @@ function ListCollaborateur() {
   const handleCopyLink = async (id_collaborateur) => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/collaborateurs/${id_collaborateur}/validation`,
+        `http://54.87.28.4/collaborateurs/${id_collaborateur}/validation`,
         {},
-        { headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('login')).token}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem('login')).token
+            }`,
+          },
+        }
       );
       showAlert("Lien d'accès envoyé au collaborateur.", 'green');
     } catch (err) {
@@ -133,7 +140,7 @@ function ListCollaborateur() {
       showAlert('Failed to update validation', 'red');
     }
   };
-  
+
   const showAlert = (message, color) => {
     const alertBox = document.createElement('div');
     alertBox.textContent = message;
@@ -152,19 +159,18 @@ function ListCollaborateur() {
       font-weight: bold;
       font-family: Arial, sans-serif;
     `;
-  
+
     document.body.appendChild(alertBox);
-  
+
     setTimeout(() => {
       alertBox.remove();
     }, 2000); // Remove the alert after 2 seconds
-  };  
+  };
 
   return (
     <>
       <NavAdmin />
       <div className="listCollaborateur-container">
-
         <h1 className="listCollaborateur-title">LISTE DES COLLABORATEURS</h1>
 
         <button onClick={handleOpenModal} className="list-coll-button">
@@ -213,7 +219,7 @@ function ListCollaborateur() {
                   <img
                     src={
                       collaborateur.logo
-                        ? `http://localhost:5000/${collaborateur.logo}`
+                        ? `http://54.87.28.4/${collaborateur.logo}`
                         : 'https://png.pngtree.com/png-vector/20220119/ourmid/pngtree-crossed-image-icon-picture-not-available-sign-photo-sign-icon-vector-png-image_44027862.jpg'
                     }
                     alt={collaborateur.nom}
@@ -222,9 +228,11 @@ function ListCollaborateur() {
                   <h3 className="collaborateur-card-title">
                     {collaborateur.nom}
                     <FontAwesomeIcon
-                    icon={faCheck}
-                    className="validation-icon"
-                    onClick={() => handleCopyLink(collaborateur.id_collaborateur)}
+                      icon={faCheck}
+                      className="validation-icon"
+                      onClick={() =>
+                        handleCopyLink(collaborateur.id_collaborateur)
+                      }
                     />
                   </h3>
                   <p className="collaborateur-card-description">

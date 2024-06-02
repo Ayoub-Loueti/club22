@@ -10,7 +10,7 @@ import {
   faCalendar,
   faUser,
   faBars,
-  faUserPlus, 
+  faUserPlus,
   faList,
   faUserCircle,
   faUserAlt,
@@ -29,7 +29,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 function NavAdmin() {
-  const [isVisible, setIsVisible] = useState(false); 
+  const [isVisible, setIsVisible] = useState(false);
   const [randomUsers, setRandomUsers] = useState([]);
   const [navbarExtensionColor, setNavbarExtensionColor] = useState('#f3f3f3');
   const navigate = useNavigate();
@@ -59,7 +59,7 @@ function NavAdmin() {
         ? { Authorization: `Bearer ${storedToken}` }
         : {};
       try {
-        const response = await axios.get('http://localhost:5000/randomUsers', {
+        const response = await axios.get('http://54.87.28.4/randomUsers', {
           headers,
         });
         setRandomUsers(response.data);
@@ -72,98 +72,107 @@ function NavAdmin() {
 
   const toggleNavbar = () => {
     setIsVisible(!isVisible);
-    
   };
 
   useEffect(() => {
     const fetchSignalsCount = async () => {
-      const storedToken = localStorage.getItem('login') ? JSON.parse(localStorage.getItem('login')).token : null;
+      const storedToken = localStorage.getItem('login')
+        ? JSON.parse(localStorage.getItem('login')).token
+        : null;
       if (storedToken) {
         const headers = { Authorization: `Bearer ${storedToken}` };
         try {
-          const response = await axios.get('http://localhost:5000/signalsCount', { headers });
+          const response = await axios.get('http://54.87.28.4/signalsCount', {
+            headers,
+          });
           setSignalsCount(response.data.count);
         } catch (error) {
           console.error('Error fetching signals count:', error);
         }
       }
     };
-  
+
     fetchSignalsCount();
-  }, []); 
-  
+  }, []);
+
   const updateAllSignalsToOpen = async () => {
-  const storedToken = localStorage.getItem('login') ? JSON.parse(localStorage.getItem('login')).token : null;
-  if (!storedToken) {
-    console.error('No token found, user might not be authenticated');
-    return;
-  }
-  const headers = { Authorization: `Bearer ${storedToken}` };
-
-  try {
-    const response = await axios.patch('http://localhost:5000/updateAllSignalerOpen', {}, { headers });
-    if (response.status === 200) {
-      console.log('All signals have been updated to open');
-      // Optionally perform any state updates or call other functions to reflect changes
+    const storedToken = localStorage.getItem('login')
+      ? JSON.parse(localStorage.getItem('login')).token
+      : null;
+    if (!storedToken) {
+      console.error('No token found, user might not be authenticated');
+      return;
     }
-  } catch (error) {
-    console.error('Error updating signals to open:', error);
-  }
-};
+    const headers = { Authorization: `Bearer ${storedToken}` };
 
-    const icons = [
-      { icon: faHouse, label: 'Accueil', path: '/Home' },
-      {
-        icon: faUserGroup,
-        label: 'Utilisateurs',
-        path: `/tousLesUtilisateurs`,
-      },
-      { icon: faCalendar, label: 'Offres', path: '/OffreAdmin' },
-      { icon: faUserPlus, label: 'Collaborateurs', path: '/listCollab' },
-      {
-        icon: faList,
-        label: 'Details Collaborateurs',
-        path: '/listCollaborateur',
-      },
-      {
-        icon: faUsersRectangle,
-        label: 'Demandes Adhésion',
-        path: '/adminAdherant',
-      },
-      {
-        icon: faUserShield,
-        label: signalsCount > 0 ? `Signaler (${signalsCount})` : 'Signalements',
-        path: '/adminSignal',
-      },
-      {
-        icon: faRectangleList,
-        label: 'liste réservations',
-        path: '/listReservation',
-      },
-      {
-        icon: faCalendarAlt,
-        label: 'Demandes réservations',
-        path: '/demandeReservation',
-      },
-      {
-        icon: faDashboard,
-        label: 'Dashboard',
-        path: '/dashboard',
-      },
-      {
-        icon: faFileCircleExclamation,
-        label: 'Réclamations',
-        path: '/ReclamationsAdmin',
-      },
-    ];
+    try {
+      const response = await axios.patch(
+        'http://54.87.28.4/updateAllSignalerOpen',
+        {},
+        { headers }
+      );
+      if (response.status === 200) {
+        console.log('All signals have been updated to open');
+        // Optionally perform any state updates or call other functions to reflect changes
+      }
+    } catch (error) {
+      console.error('Error updating signals to open:', error);
+    }
+  };
 
-    const handleMouseEnter = () => {
-      setExpanded(true);
-    };
+  const icons = [
+    { icon: faHouse, label: 'Accueil', path: '/Home' },
+    {
+      icon: faUserGroup,
+      label: 'Utilisateurs',
+      path: `/tousLesUtilisateurs`,
+    },
+    { icon: faCalendar, label: 'Offres', path: '/OffreAdmin' },
+    { icon: faUserPlus, label: 'Collaborateurs', path: '/listCollab' },
+    {
+      icon: faList,
+      label: 'Details Collaborateurs',
+      path: '/listCollaborateur',
+    },
+    {
+      icon: faUsersRectangle,
+      label: 'Demandes Adhésion',
+      path: '/adminAdherant',
+    },
+    {
+      icon: faUserShield,
+      label: signalsCount > 0 ? `Signaler (${signalsCount})` : 'Signalements',
+      path: '/adminSignal',
+    },
+    {
+      icon: faRectangleList,
+      label: 'liste réservations',
+      path: '/listReservation',
+    },
+    {
+      icon: faCalendarAlt,
+      label: 'Demandes réservations',
+      path: '/demandeReservation',
+    },
+    {
+      icon: faDashboard,
+      label: 'Dashboard',
+      path: '/dashboard',
+    },
+    {
+      icon: faFileCircleExclamation,
+      label: 'Réclamations',
+      path: '/ReclamationsAdmin',
+    },
+  ];
 
-    const handleMouseLeave = () => {
-      setExpanded(false);
-    };
+  const handleMouseEnter = () => {
+    setExpanded(true);
+  };
+
+  const handleMouseLeave = () => {
+    setExpanded(false);
+  };
 
   return (
     <div>
@@ -186,7 +195,7 @@ function NavAdmin() {
               className="adm-icon-wrapper"
               onClick={() => {
                 if (item.label.includes('Signaler')) {
-                  updateAllSignalsToOpen(); 
+                  updateAllSignalsToOpen();
                 }
                 navigate(item.path);
               }}
@@ -198,9 +207,6 @@ function NavAdmin() {
             </div>
           ))}
         </div>
-
-
-       
       </nav>
     </div>
   );

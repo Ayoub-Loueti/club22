@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { useNavigate, Link, useLocation  } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import nonotif from '../../assets/nonotif.png';
 import {
@@ -27,7 +27,7 @@ import france from '../../assets/france.png';
 import uk from '../../assets/uk.png';
 
 function NavbarHaut() {
-    const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [userId, setUserId] = useState(null); // Add this line
@@ -38,7 +38,7 @@ function NavbarHaut() {
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const menuRef = useRef();
-    const languageRef = useRef();
+  const languageRef = useRef();
 
   const notificationsRef = useRef();
 
@@ -51,7 +51,7 @@ function NavbarHaut() {
   const [userPoints, setUserPoints] = useState(null);
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false); // State to control the phone modal visibility
   const location = useLocation();
-    const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   // This function toggles the notification dropdown
   const handleBellClick = async () => {
@@ -78,7 +78,7 @@ function NavbarHaut() {
     const token = JSON.parse(localStorage.getItem('login')).token;
     try {
       const response = await axios.get(
-        `http://localhost:5000/search?substring=${substring}`,
+        `http://54.87.28.4/search?substring=${substring}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -102,7 +102,7 @@ function NavbarHaut() {
     const token = JSON.parse(localStorage.getItem('login')).token;
     try {
       await axios.post(
-        'http://localhost:5000/reset-notifications',
+        'http://54.87.28.4/reset-notifications',
         {},
         {
           headers: {
@@ -122,7 +122,7 @@ function NavbarHaut() {
   const fetchNotifications = async () => {
     const token = JSON.parse(localStorage.getItem('login')).token;
     try {
-      const response = await axios.get('http://localhost:5000/notifications', {
+      const response = await axios.get('http://54.87.28.4/notifications', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -133,11 +133,11 @@ function NavbarHaut() {
     }
   };
   const handleNotificationClick = (notification) => {
-    if (
-      ![ 'signal'].includes(notification.type)
-    ) {
-
-      if (notification.type === 'reservaccepte' || notification.type === 'reservrefuse') {
+    if (!['signal'].includes(notification.type)) {
+      if (
+        notification.type === 'reservaccepte' ||
+        notification.type === 'reservrefuse'
+      ) {
         navigate('/mesReservations');
       } else {
         // Existing logic for other types of notifications
@@ -162,7 +162,7 @@ function NavbarHaut() {
             onClick={() => handleNotificationClick(notification)}
           >
             <img
-              src={`http://localhost:5000/${notification.utilisateur.photo}`}
+              src={`http://54.87.28.4/${notification.utilisateur.photo}`}
               alt="User"
               className="notification-user-photo"
             />
@@ -247,7 +247,7 @@ function NavbarHaut() {
     const token = JSON.parse(localStorage.getItem('login')).token;
     try {
       await axios.patch(
-        `http://localhost:5000/notifications/${notificationId}`,
+        `http://54.87.28.4/notifications/${notificationId}`,
         { isRead: true },
         {
           headers: {
@@ -272,14 +272,11 @@ function NavbarHaut() {
   const fetchNotificationsCount = async () => {
     const token = JSON.parse(localStorage.getItem('login')).token;
     try {
-      const response = await axios.get(
-        'http://localhost:5000/user-notifications',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get('http://54.87.28.4/user-notifications', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setNotificationsCount(response.data.nbr_notifs);
     } catch (error) {
       console.error(
@@ -302,7 +299,7 @@ function NavbarHaut() {
       const fetchUserData = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:5000/profil/${storedUserId}`,
+            `http://54.87.28.4/profil/${storedUserId}`,
             {
               headers: {
                 Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -323,7 +320,7 @@ function NavbarHaut() {
 
   const handleLogout = async () => {
     try {
-      await axios.get('http://localhost:5000/auth/logout', {
+      await axios.get('http://54.87.28.4/auth/logout', {
         withCredentials: true,
       });
       localStorage.removeItem('login');
@@ -334,36 +331,33 @@ function NavbarHaut() {
       console.error('Logout failed:', error);
     }
   };
-useEffect(() => {
-  function handleClickOutside(event) {
-    // Fermeture du menu utilisateur
-    if (menuRef.current && !menuRef.current.contains(event.target)) {
-      setShowUserDropdown(false);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      // Fermeture du menu utilisateur
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowUserDropdown(false);
+      }
+
+      // Fermeture du menu des notifications
+      if (
+        notificationsRef.current &&
+        !notificationsRef.current.contains(event.target)
+      ) {
+        setShowNotifications(false);
+      }
+      if (languageRef.current && !languageRef.current.contains(event.target)) {
+        setShowLanguageDropdown(false);
+      }
     }
 
-    // Fermeture du menu des notifications
-    if (
-      notificationsRef.current &&
-      !notificationsRef.current.contains(event.target)
-    ) {
-      setShowNotifications(false);
-    }
-    if (languageRef.current && !languageRef.current.contains(event.target)) {
-      setShowLanguageDropdown(false);
-    }
+    // Ajoute l'écouteur lors du montage
+    document.addEventListener('mousedown', handleClickOutside);
 
-    
-  
-  }
-
-  // Ajoute l'écouteur lors du montage
-  document.addEventListener('mousedown', handleClickOutside);
-
-  // Retire l'écouteur lors du démontage
-  return () => {
-    document.removeEventListener('mousedown', handleClickOutside);
-  };
-}, [menuRef, notificationsRef, languageRef]);
+    // Retire l'écouteur lors du démontage
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [menuRef, notificationsRef, languageRef]);
   const toggleUserDropdown = () => {
     setShowUserDropdown(!showUserDropdown);
   };
@@ -401,7 +395,7 @@ useEffect(() => {
         ['reservaccepte', 'signal', 'reservrefuse'].includes(notification.type)
       ) {
         await axios.delete(
-          `http://localhost:5000/notificationsTroix/${notificationId}`,
+          `http://54.87.28.4/notificationsTroix/${notificationId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -410,7 +404,7 @@ useEffect(() => {
         );
       } else {
         await axios.delete(
-          `http://localhost:5000/notifications/${notificationId}`,
+          `http://54.87.28.4/notifications/${notificationId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -432,7 +426,7 @@ useEffect(() => {
     const fetchUserPoints = async () => {
       const token = JSON.parse(localStorage.getItem('login')).token;
       try {
-        const response = await axios.get('http://localhost:5000/points', {
+        const response = await axios.get('http://54.87.28.4/points', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -457,12 +451,12 @@ useEffect(() => {
   const isProfilePage = location.pathname.includes('/profil/');
   const isHomePage = location.pathname.includes('/Home');
 
-   const changeLanguage = (language) => {
-     i18n.changeLanguage(language);
-   };
-    const toggleLanguageDropdown = () => {
-      setShowLanguageDropdown(!showLanguageDropdown);
-    };
+  const changeLanguage = (language) => {
+    i18n.changeLanguage(language);
+  };
+  const toggleLanguageDropdown = () => {
+    setShowLanguageDropdown(!showLanguageDropdown);
+  };
   return (
     <div
       className={`navbar-horizontal ${
@@ -506,7 +500,7 @@ useEffect(() => {
                   <img
                     src={
                       user.photo
-                        ? `http://localhost:5000/${user.photo}`
+                        ? `http://54.87.28.4/${user.photo}`
                         : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
                     }
                     alt={user.nom}
@@ -534,7 +528,7 @@ useEffect(() => {
                     }
                   >
                     <img
-                      src={`http://localhost:5000/${offer.images[0]}`}
+                      src={`http://54.87.28.4/${offer.images[0]}`}
                       alt="Offer"
                       className="user-photooo"
                     />
@@ -547,7 +541,9 @@ useEffect(() => {
             userInfo.type === 'employe' &&
             searchResults.collaborators.length > 0 && (
               <>
-                <div className="search-results-title">{t('collaborateurs')} :</div>
+                <div className="search-results-title">
+                  {t('collaborateurs')} :
+                </div>
                 {searchResults.collaborators.map((collab) => (
                   <div
                     key={collab.id_collaborateur}
@@ -559,7 +555,7 @@ useEffect(() => {
                     <img
                       src={
                         collab.logo
-                          ? `http://localhost:5000/${collab.logo}`
+                          ? `http://54.87.28.4/${collab.logo}`
                           : 'default-image-path.jpg'
                       }
                       alt="Collab Logo"
@@ -574,7 +570,7 @@ useEffect(() => {
       ) : (
         searchInput && (
           <div className="search-results search-no-results-message">
-           {t ('Aucun résultat trouvé pour votre recherche.')}{' '}
+            {t('Aucun résultat trouvé pour votre recherche.')}{' '}
           </div>
         )
       )}
@@ -624,7 +620,7 @@ useEffect(() => {
             <img
               src={
                 userInfo.photo
-                  ? `http://localhost:5000/${userInfo.photo}`
+                  ? `http://54.87.28.4/${userInfo.photo}`
                   : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
               }
               alt="Profil"

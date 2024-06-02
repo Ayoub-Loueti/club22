@@ -24,7 +24,7 @@ function ListCollaborateur() {
     const fetchCollaborateurs = async () => {
       try {
         const response = await axios.get(
-          'http://localhost:5000/allCollaborateursAD',
+          'http://54.87.28.4/allCollaborateursAD',
           {
             headers: {
               Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -84,7 +84,7 @@ function ListCollaborateur() {
   const handleArchive = async (collabId) => {
     try {
       await axios.put(
-        `http://localhost:5000/collaborateur/${collabId}/archiver`,
+        `http://54.87.28.4/collaborateur/${collabId}/archiver`,
         null, // Empty data since it's a PUT request
         {
           headers: {
@@ -96,14 +96,14 @@ function ListCollaborateur() {
       Swal.fire('Success', 'Collaborateur archivé avec succès', 'success');
     } catch (error) {
       console.error('Error archiving collaborator:', error);
-      Swal.fire('Error', 'Failed to archive collaborateur', 'error');
+      Swal.fire('Erreur', "Échec de l'archivage du collaborateur", 'error');
     }
   };
 
   const handleUnarchive = async (collabId) => {
     try {
       await axios.put(
-        `http://localhost:5000/collaborateur/${collabId}/desarchiver`,
+        `http://54.87.28.4/collaborateur/${collabId}/desarchiver`,
         null, // Empty data since it's a PUT request
         {
           headers: {
@@ -115,7 +115,7 @@ function ListCollaborateur() {
       Swal.fire('Success', 'Collaborateur désarchivé avec succès', 'success');
     } catch (error) {
       console.error('Error unarchiving collaborator:', error);
-      Swal.fire('Error', 'Failed to unarchive collaborateur', 'error');
+      Swal.fire('Erreur', 'Échec de la désarchivage du collaborateur', 'error');
     }
   };
 
@@ -123,7 +123,6 @@ function ListCollaborateur() {
     <>
       <NavAdmin />
       <div className="listCollaborateur-container">
-      
         <button onClick={handleOpenModal} className="collabo-butt">
           Ajouter Collaborateur
         </button>
@@ -132,7 +131,6 @@ function ListCollaborateur() {
           onRequestClose={handleCloseModal}
           onSuccess={handleAddOrUpdateSuccess}
         />
-        
 
         <table className="listCollaborateur-table">
           <thead>
@@ -162,7 +160,7 @@ function ListCollaborateur() {
                   <img
                     src={
                       collaborateur.logo
-                        ? `http://localhost:5000/${collaborateur.logo}`
+                        ? `http://54.87.28.4/${collaborateur.logo}`
                         : 'https://png.pngtree.com/png-vector/20220119/ourmid/pngtree-crossed-image-icon-picture-not-available-sign-photo-sign-icon-vector-png-image_44027862.jpg'
                     }
                     alt={collaborateur.nom}

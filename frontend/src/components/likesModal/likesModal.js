@@ -5,13 +5,13 @@ import { NavLink } from 'react-router-dom'; // Assurez-vous d'importer NavLink d
 import { useTranslation } from 'react-i18next';
 
 const LikesModal = ({ isOpen, onRequestClose, likes }) => {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
-      const defaultPhotoUrl =
-        'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg';
-const capitalizeFirstLetter = (str) => {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-};
+  const defaultPhotoUrl =
+    'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg';
+  const capitalizeFirstLetter = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
   return (
     <Modal
       isOpen={isOpen}
@@ -29,7 +29,7 @@ const capitalizeFirstLetter = (str) => {
             <img
               src={
                 like.utilisateur.photo
-                  ? `http://localhost:5000/${like.utilisateur.photo}`
+                  ? `http://54.87.28.4/${like.utilisateur.photo}`
                   : defaultPhotoUrl
               }
               alt={`${like.utilisateur.nom} ${like.utilisateur.prenom}`}

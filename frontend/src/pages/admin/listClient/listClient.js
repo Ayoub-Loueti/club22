@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { MaterialReactTable, createMRTColumnHelper } from 'material-react-table';
+import {
+  MaterialReactTable,
+  createMRTColumnHelper,
+} from 'material-react-table';
 import { Box, Button } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import NavAdmin from '../NavAdmin/navAdmin';
@@ -21,7 +24,7 @@ function ListClient() {
 
   const fetchClients = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/listCli', {
+      const response = await axios.get('http://54.87.28.4/listCli', {
         headers: {
           Authorization: `Bearer ${JSON.parse(token).token}`,
         },
@@ -37,7 +40,7 @@ function ListClient() {
       etat.toLowerCase() === 'autorise' ? '/block/' : '/unblock/';
     try {
       await axios.put(
-        `http://localhost:5000${endpoint}${id}`,
+        `http://54.87.28.4${endpoint}${id}`,
         {},
         {
           headers: {
@@ -58,19 +61,24 @@ function ListClient() {
         <img
           src={
             cell.getValue()
-              ? `http://localhost:5000/${cell.getValue()}`
+              ? `http://54.87.28.4/${cell.getValue()}`
               : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
           }
           alt="Client"
           style={{ width: 50, height: 50, borderRadius: '50%' }}
-          onClick={() => navigate(`/profil/${cell.row.original.id_utilisateur}`)}
+          onClick={() =>
+            navigate(`/profil/${cell.row.original.id_utilisateur}`)
+          }
         />
       ),
     }),
     columnHelper.accessor('nom', {
       header: 'Nom',
       Cell: ({ row }) => (
-        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+        <span
+          onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
+          style={{ cursor: 'pointer' }}
+        >
           {row.original.nom}
         </span>
       ),
@@ -78,7 +86,10 @@ function ListClient() {
     columnHelper.accessor('prenom', {
       header: 'Prénom',
       Cell: ({ row }) => (
-        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+        <span
+          onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
+          style={{ cursor: 'pointer' }}
+        >
           {row.original.prenom}
         </span>
       ),
@@ -86,7 +97,10 @@ function ListClient() {
     columnHelper.accessor('email', {
       header: 'Email',
       Cell: ({ row }) => (
-        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+        <span
+          onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
+          style={{ cursor: 'pointer' }}
+        >
           {row.original.email}
         </span>
       ),
@@ -94,8 +108,12 @@ function ListClient() {
     columnHelper.accessor('genre', {
       header: 'Genre',
       Cell: ({ row }) => (
-        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
-          {row.original.genre.charAt(0).toUpperCase() + row.original.genre.slice(1)}
+        <span
+          onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
+          style={{ cursor: 'pointer' }}
+        >
+          {row.original.genre.charAt(0).toUpperCase() +
+            row.original.genre.slice(1)}
         </span>
       ),
     }),
@@ -117,7 +135,8 @@ function ListClient() {
           }}
           onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
         >
-          {row.original.etat.charAt(0).toUpperCase() + row.original.etat.slice(1)}
+          {row.original.etat.charAt(0).toUpperCase() +
+            row.original.etat.slice(1)}
         </div>
       ),
     }),

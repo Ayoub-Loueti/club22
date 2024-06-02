@@ -21,7 +21,7 @@ const CommentForm = ({ postId, onCommentSubmitted }) => {
     try {
       const token = JSON.parse(localStorage.getItem('login'))?.token;
       await axios.post(
-        `http://localhost:5000/post/${postId}/comment`,
+        `http://54.87.28.4/post/${postId}/comment`,
         { cmntr: commentText.trim() },
         {
           headers: {
@@ -31,9 +31,9 @@ const CommentForm = ({ postId, onCommentSubmitted }) => {
       );
       setCommentText(''); // Réinitialise le champ de texte après la soumission réussie
       setShowError(false); // Cache le message d'erreur
-       if (onCommentSubmitted) {
-         onCommentSubmitted(); // Appel de la fonction de rappel
-       }
+      if (onCommentSubmitted) {
+        onCommentSubmitted(); // Appel de la fonction de rappel
+      }
     } catch (error) {
       console.error('Error submitting comment:', error);
       setShowError(true); // Affiche le message d'erreur en cas d'erreur de soumission
@@ -58,8 +58,8 @@ const CommentForm = ({ postId, onCommentSubmitted }) => {
           style={{ width: '60%', minHeight: '30px', marginRight: '10px' }}
         />
         <button type="submit" className="postShare-button">
-{          t('Commenter')
-}        </button>
+          {t('Commenter')}{' '}
+        </button>
       </div>
       {showError && (
         <div style={{ marginTop: '5px' }}>
@@ -75,7 +75,8 @@ const CommentForm = ({ postId, onCommentSubmitted }) => {
               icon={faExclamationTriangle}
               style={{ marginRight: '5px' }}
             />
-{t('Veuillez saisir un commentaire avant de soumettre.')   }       </Card>
+            {t('Veuillez saisir un commentaire avant de soumettre.')}{' '}
+          </Card>
         </div>
       )}
     </form>

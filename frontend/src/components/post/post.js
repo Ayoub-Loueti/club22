@@ -18,8 +18,8 @@ import {
   faMapMarkerAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from 'react-i18next';
-import { format } from 'date-fns'; 
-import { fr, enUS } from 'date-fns/locale'; 
+import { format } from 'date-fns';
+import { fr, enUS } from 'date-fns/locale';
 import { faBookmark as farBookmark } from '@fortawesome/free-regular-svg-icons'; // Importing the regular (outline) bookmark icon
 
 import Swal from 'sweetalert2';
@@ -77,7 +77,7 @@ const Post = (props) => {
       const fetchUserData = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:5000/profil/${storedUserId}`,
+            `http://54.87.28.4/profil/${storedUserId}`,
             {
               headers: {
                 Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -100,7 +100,7 @@ const Post = (props) => {
     const fetchLikesCount = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/post/${data.id_post}/likesCount`,
+          `http://54.87.28.4/post/${data.id_post}/likesCount`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setLikes(response.data.likesCount);
@@ -116,7 +116,7 @@ const Post = (props) => {
     const fetchComments = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/post/${data.id_post}/comment`,
+          `http://54.87.28.4/post/${data.id_post}/comment`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setComments(response.data.comments);
@@ -133,7 +133,7 @@ const Post = (props) => {
     const checkIfPostIsSaved = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/posts/${data.id_post}/is-saved`,
+          `http://54.87.28.4/posts/${data.id_post}/is-saved`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -150,7 +150,7 @@ const Post = (props) => {
     const newLikedStatus = !liked;
     try {
       await axios.post(
-        `http://localhost:5000/post/${data.id_post}/toggle-like`,
+        `http://54.87.28.4/post/${data.id_post}/toggle-like`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -209,7 +209,7 @@ const Post = (props) => {
   // Dans Post.js, remplacez window.location.reload(); par une fonction de rappel
   const deletePost = async () => {
     try {
-      await axios.delete(`http://localhost:5000/posts/${data.id_post}`, {
+      await axios.delete(`http://54.87.28.4/posts/${data.id_post}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       Swal.fire(t('Supprimé!'), t('Votre post a été supprimé.'), 'success');
@@ -231,7 +231,7 @@ const Post = (props) => {
     if (editContent !== data.contenu || editLieu !== data.lieu) {
       try {
         const response = await axios.put(
-          `http://localhost:5000/posts/${data.id_post}`,
+          `http://54.87.28.4/posts/${data.id_post}`,
           { contenu: editContent, lieu: editLieu },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -271,7 +271,7 @@ const Post = (props) => {
   // Extraire la logique de suppression dans une fonction séparée
   const performCommentDeletion = async (commentId) => {
     try {
-      await axios.delete(`http://localhost:5000/deleteComment/${commentId}`, {
+      await axios.delete(`http://54.87.28.4/deleteComment/${commentId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       // Notifier l'utilisateur de la suppression réussie
@@ -304,7 +304,7 @@ const Post = (props) => {
     if (editCommentContent && editingCommentId) {
       try {
         await axios.put(
-          `http://localhost:5000/modifyComment/${editingCommentId}`,
+          `http://54.87.28.4/modifyComment/${editingCommentId}`,
           { newContent: editCommentContent },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -340,7 +340,7 @@ const Post = (props) => {
   const reloadComments = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/post/${data.id_post}/comment`,
+        `http://54.87.28.4/post/${data.id_post}/comment`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -361,7 +361,7 @@ const Post = (props) => {
       if (isPostSaved) {
         // Unsave post
         await axios.delete(
-          `http://localhost:5000/posts/${data.id_post}/enregistrement`,
+          `http://54.87.28.4/posts/${data.id_post}/enregistrement`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setIsPostSaved(false);
@@ -373,7 +373,7 @@ const Post = (props) => {
       } else {
         // Save post
         await axios.post(
-          `http://localhost:5000/posts/${data.id_post}/enregistrement`,
+          `http://54.87.28.4/posts/${data.id_post}/enregistrement`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -418,7 +418,7 @@ const Post = (props) => {
   const toggleLikeComment = async (commentId) => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/comment/${commentId}/toggle-like`,
+        `http://54.87.28.4/comment/${commentId}/toggle-like`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -432,14 +432,14 @@ const Post = (props) => {
     try {
       // Toggle the like status in the backend
       await axios.post(
-        `http://localhost:5000/reponse/${responseId}/toggle-like`,
+        `http://54.87.28.4/reponse/${responseId}/toggle-like`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       // Fetch the updated likes count for the response
       const likesCountResponse = await axios.get(
-        `http://localhost:5000/reponse/${responseId}/likesCount`,
+        `http://54.87.28.4/reponse/${responseId}/likesCount`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -492,7 +492,7 @@ const Post = (props) => {
 
       // Make the PUT request to the server with the edited content
       const response = await axios.put(
-        `http://localhost:5000/replies/${responseId}`, // Ensure this is the correct endpoint for updating a response
+        `http://54.87.28.4/replies/${responseId}`, // Ensure this is the correct endpoint for updating a response
         { contenu: editedContent }, // Make sure to send the updated content in the format expected by the server
         { headers: { Authorization: `Bearer ${token}` } } // Include the Authorization header with the token
       );
@@ -523,7 +523,7 @@ const Post = (props) => {
     e.preventDefault(); // Prevent the default form submission behavior
     try {
       const response = await axios.post(
-        `http://localhost:5000/comments/${commentId}/responses`,
+        `http://54.87.28.4/comments/${commentId}/responses`,
         { contenu: responseContent },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -550,7 +550,7 @@ const Post = (props) => {
       if (result.isConfirmed) {
         try {
           const token = JSON.parse(localStorage.getItem('login'))?.token;
-          await axios.delete(`http://localhost:5000/replies/${responseId}`, {
+          await axios.delete(`http://54.87.28.4/replies/${responseId}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
 
@@ -606,7 +606,7 @@ const Post = (props) => {
         : `/reponse/${id}/afficherLikes`;
 
     try {
-      const response = await axios.get(`http://localhost:5000${endpoint}`, {
+      const response = await axios.get(`http://54.87.28.4${endpoint}`, {
         headers: { Authorization: `Bearer ${token}` }, // Assuming 'token' is defined in your component's scope
       });
       setLikesData(response.data.likes); // Update the state with the fetched likes
@@ -618,232 +618,232 @@ const Post = (props) => {
 
   const commentsToShow = isModalView ? comments : comments.slice(0, 2);
 
-const handleReportPost = async () => {
-  const userStatus = await axios.get(
-    `http://localhost:5000/user-block-status/${userId}`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
+  const handleReportPost = async () => {
+    const userStatus = await axios.get(
+      `http://54.87.28.4/user-block-status/${userId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
- if (
-   userStatus.data.blockSignalUntil &&
-   new Date(userStatus.data.blockSignalUntil) > new Date()
- ) {
-   Swal.fire(
-     t('Bloqué!'),
-     t('Vous êtes temporairement bloqué de faire des signalements.'),
-     'error'
-   );
-   return;
- }
-  const { value: cause, inputValue: customCause } = await Swal.fire({
-    title: t('Raison du signalement'),
-    input: 'radio',
-    inputOptions: {
-      'Contenu inapproprié': t('Contenu inapproprié'),
-      'Spam ou publicité': t('Spam ou publicité'),
-      'Harcèlement ou intimidation': t('Harcèlement ou intimidation'),
-      'Contenu erroné': t('Contenu erroné'),
-      "Droits d'auteur": t("Droits d'auteur"),
-      'Incitation à la haine': t('Incitation à la haine'),
-      'Contenu sensible': t('Contenu sensible'),
-      Autre: t('Autre'),
-    },
-    inputValidator: (value) => {
-      return !value ? t('Vous devez choisir une raison!') : undefined;
-    },
-    preConfirm: (cause) => {
-      if (cause === 'Autre') {
-        return Swal.fire({
-          title: t('Veuillez fournir plus de détails'),
-          input: 'textarea',
-          inputValidator: (value) => {
-            return !value ? t('Vous devez fournir des détails!') : undefined;
+    if (
+      userStatus.data.blockSignalUntil &&
+      new Date(userStatus.data.blockSignalUntil) > new Date()
+    ) {
+      Swal.fire(
+        t('Bloqué!'),
+        t('Vous êtes temporairement bloqué de faire des signalements.'),
+        'error'
+      );
+      return;
+    }
+    const { value: cause, inputValue: customCause } = await Swal.fire({
+      title: t('Raison du signalement'),
+      input: 'radio',
+      inputOptions: {
+        'Contenu inapproprié': t('Contenu inapproprié'),
+        'Spam ou publicité': t('Spam ou publicité'),
+        'Harcèlement ou intimidation': t('Harcèlement ou intimidation'),
+        'Contenu erroné': t('Contenu erroné'),
+        "Droits d'auteur": t("Droits d'auteur"),
+        'Incitation à la haine': t('Incitation à la haine'),
+        'Contenu sensible': t('Contenu sensible'),
+        Autre: t('Autre'),
+      },
+      inputValidator: (value) => {
+        return !value ? t('Vous devez choisir une raison!') : undefined;
+      },
+      preConfirm: (cause) => {
+        if (cause === 'Autre') {
+          return Swal.fire({
+            title: t('Veuillez fournir plus de détails'),
+            input: 'textarea',
+            inputValidator: (value) => {
+              return !value ? t('Vous devez fournir des détails!') : undefined;
+            },
+          }).then((result) => {
+            return result.value || ''; // Assurez-vous que c'est une chaîne vide si rien n'est entré
+          });
+        }
+        return cause;
+      },
+      confirmButtonText: t('Signaler'),
+      showCancelButton: true,
+      cancelButtonText: t('Annuler'),
+      didOpen: () => {
+        // Appliquer le style directement après l'ouverture de la boîte de dialogue
+        const radios = document.querySelector('.swal2-radio');
+        if (radios) {
+          radios.style.display = 'flex';
+          radios.style.flexDirection = 'column';
+          radios.style.alignItems = 'flex-start';
+        }
+      },
+    });
+
+    if (cause) {
+      try {
+        await axios.post(
+          `http://54.87.28.4/signals`,
+          {
+            id_post: data.id_post,
+            id_cmntr: 0,
+            id_reponse: 0,
+            cause: cause === 'Autre' ? customCause : cause,
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` },
           }
-        }).then((result) => {
-          return result.value || ''; // Assurez-vous que c'est une chaîne vide si rien n'est entré
-        });
-      }
-      return cause;
-    },
-    confirmButtonText: t('Signaler'),
-    showCancelButton: true,
-    cancelButtonText: t('Annuler'),
-    didOpen: () => {
-      // Appliquer le style directement après l'ouverture de la boîte de dialogue
-      const radios = document.querySelector('.swal2-radio');
-      if (radios) {
-         radios.style.display = 'flex';
-         radios.style.flexDirection = 'column';
-         radios.style.alignItems = 'flex-start';
-      }
-    },
-  });
+        );
 
-  if (cause) {
-    try {
-      await axios.post(
-        `http://localhost:5000/signals`,
-        {
-          id_post: data.id_post,
-          id_cmntr: 0,
-          id_reponse: 0,
-          cause: cause === 'Autre' ? customCause : cause,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      Swal.fire(
-        t('Signalé!'),
-        t('Le post a été signalé avec succès.'),
-        'success'
-      );
-    } catch (error) {
-      console.error('Error reporting the post:', error);
-      Swal.fire(
-        t('Échec!'),
-        t('Problème lors du signalement du post.'),
-        'error'
-      );
+        Swal.fire(
+          t('Signalé!'),
+          t('Le post a été signalé avec succès.'),
+          'success'
+        );
+      } catch (error) {
+        console.error('Error reporting the post:', error);
+        Swal.fire(
+          t('Échec!'),
+          t('Problème lors du signalement du post.'),
+          'error'
+        );
+      }
     }
-  }
-};
-const handleReportComment = async (commentId) => {
-  const { value: cause, inputValue: customCause } = await Swal.fire({
-    title: t('Raison du signalement'),
-    input: 'radio',
-    inputOptions: {
-      'Contenu inapproprié': t('Contenu inapproprié'),
-      'Spam ou publicité': t('Spam ou publicité'),
-      'Harcèlement ou intimidation': t('Harcèlement ou intimidation'),
-      'Contenu erroné': t('Contenu erroné'),
-      "Droits d'auteur": t("Droits d'auteur"),
-      'Incitation à la haine': t('Incitation à la haine'),
-      'Contenu sensible': t('Contenu sensible'),
-      Autre: t('Autre'),
-    },
-    inputValidator: (value) => {
-      return !value ? t('Vous devez choisir une raison!') : undefined;
-    },
-    preConfirm: (cause) => {
-      if (cause === 'Autre') {
-        return Swal.fire({
-          title: t('Veuillez fournir plus de détails'),
-          input: 'textarea',
-          inputValidator: (value) => {
-            return !value ? t('Vous devez fournir des détails!') : undefined;
+  };
+  const handleReportComment = async (commentId) => {
+    const { value: cause, inputValue: customCause } = await Swal.fire({
+      title: t('Raison du signalement'),
+      input: 'radio',
+      inputOptions: {
+        'Contenu inapproprié': t('Contenu inapproprié'),
+        'Spam ou publicité': t('Spam ou publicité'),
+        'Harcèlement ou intimidation': t('Harcèlement ou intimidation'),
+        'Contenu erroné': t('Contenu erroné'),
+        "Droits d'auteur": t("Droits d'auteur"),
+        'Incitation à la haine': t('Incitation à la haine'),
+        'Contenu sensible': t('Contenu sensible'),
+        Autre: t('Autre'),
+      },
+      inputValidator: (value) => {
+        return !value ? t('Vous devez choisir une raison!') : undefined;
+      },
+      preConfirm: (cause) => {
+        if (cause === 'Autre') {
+          return Swal.fire({
+            title: t('Veuillez fournir plus de détails'),
+            input: 'textarea',
+            inputValidator: (value) => {
+              return !value ? t('Vous devez fournir des détails!') : undefined;
+            },
+          }).then((result) => {
+            return result.value || ''; // Assurez-vous que c'est une chaîne vide si rien n'est entré
+          });
+        }
+        return cause;
+      },
+      confirmButtonText: t('Signaler'),
+      showCancelButton: true,
+      cancelButtonText: t('Annuler'),
+    });
+
+    if (cause) {
+      try {
+        await axios.post(
+          `http://54.87.28.4/signals`,
+          {
+            id_post: data.id_post,
+            id_cmntr: commentId,
+            id_reponse: 0,
+            cause: cause === 'Autre' ? customCause : cause,
           },
-        }).then((result) => {
-          return result.value || ''; // Assurez-vous que c'est une chaîne vide si rien n'est entré
-        });
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        Swal.fire(
+          t('Signalé!'),
+          t('Le commentaire a été signalé avec succès.'),
+          'success'
+        );
+      } catch (error) {
+        console.error('Error reporting the comment:', error);
+        Swal.fire(
+          t('Échec!'),
+          t('Problème lors du signalement du commentaire.'),
+          'error'
+        );
       }
-      return cause;
-    },
-    confirmButtonText: t('Signaler'),
-    showCancelButton: true,
-    cancelButtonText: t('Annuler'),
-  });
-
-  if (cause) {
-    try {
-      await axios.post(
-        `http://localhost:5000/signals`,
-        {
-          id_post: data.id_post,
-          id_cmntr: commentId,
-          id_reponse: 0,
-          cause: cause === 'Autre' ? customCause : cause,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      Swal.fire(
-        t('Signalé!'),
-        t('Le commentaire a été signalé avec succès.'),
-        'success'
-      );
-    } catch (error) {
-      console.error('Error reporting the comment:', error);
-      Swal.fire(
-        t('Échec!'),
-        t('Problème lors du signalement du commentaire.'),
-        'error'
-      );
     }
-  }
-};
+  };
 
-const handleReportResponse = async (commentId, responseId) => {
-  const { value: cause, inputValue: customCause } = await Swal.fire({
-    title: t('Raison du signalement'),
-    input: 'radio',
-    inputOptions: {
-      'Contenu inapproprié': t('Contenu inapproprié'),
-      'Spam ou publicité': t('Spam ou publicité'),
-      'Harcèlement ou intimidation': t('Harcèlement ou intimidation'),
-      'Contenu erroné': t('Contenu erroné'),
-      "Droits d'auteur": t("Droits d'auteur"),
-      'Incitation à la haine': t('Incitation à la haine'),
-      'Contenu sensible': t('Contenu sensible'),
-      Autre: t('Autre'),
-    },
-    inputValidator: (value) => {
-      return !value ? t('Vous devez choisir une raison!') : undefined;
-    },
-    preConfirm: (cause) => {
-      if (cause === 'Autre') {
-        return Swal.fire({
-          title: t('Veuillez fournir plus de détails'),
-          input: 'textarea',
-          inputValidator: (value) => {
-            return !value ? t('Vous devez fournir des détails!') : undefined;
+  const handleReportResponse = async (commentId, responseId) => {
+    const { value: cause, inputValue: customCause } = await Swal.fire({
+      title: t('Raison du signalement'),
+      input: 'radio',
+      inputOptions: {
+        'Contenu inapproprié': t('Contenu inapproprié'),
+        'Spam ou publicité': t('Spam ou publicité'),
+        'Harcèlement ou intimidation': t('Harcèlement ou intimidation'),
+        'Contenu erroné': t('Contenu erroné'),
+        "Droits d'auteur": t("Droits d'auteur"),
+        'Incitation à la haine': t('Incitation à la haine'),
+        'Contenu sensible': t('Contenu sensible'),
+        Autre: t('Autre'),
+      },
+      inputValidator: (value) => {
+        return !value ? t('Vous devez choisir une raison!') : undefined;
+      },
+      preConfirm: (cause) => {
+        if (cause === 'Autre') {
+          return Swal.fire({
+            title: t('Veuillez fournir plus de détails'),
+            input: 'textarea',
+            inputValidator: (value) => {
+              return !value ? t('Vous devez fournir des détails!') : undefined;
+            },
+          }).then((result) => {
+            return result.value || ''; // Assurez-vous que c'est une chaîne vide si rien n'est entré
+          });
+        }
+        return cause;
+      },
+      confirmButtonText: t('Signaler'),
+      showCancelButton: true,
+      cancelButtonText: t('Annuler'),
+    });
+
+    if (cause) {
+      try {
+        await axios.post(
+          `http://54.87.28.4/signals`,
+          {
+            id_post: data.id_post,
+            id_cmntr: commentId,
+            id_reponse: responseId,
+            cause: cause === 'Autre' ? customCause : cause,
           },
-        }).then((result) => {
-          return result.value || ''; // Assurez-vous que c'est une chaîne vide si rien n'est entré
-        });
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        Swal.fire(
+          t('Signalé!'),
+          t('La réponse a été signalée avec succès.'),
+          'success'
+        );
+      } catch (error) {
+        console.error('Error reporting the response:', error);
+        Swal.fire(
+          t('Échec!'),
+          t('Problème lors du signalement de la réponse.'),
+          'error'
+        );
       }
-      return cause;
-    },
-    confirmButtonText: t('Signaler'),
-    showCancelButton: true,
-    cancelButtonText: t('Annuler'),
-  });
-
-  if (cause) {
-    try {
-      await axios.post(
-        `http://localhost:5000/signals`,
-        {
-          id_post: data.id_post,
-          id_cmntr: commentId,
-          id_reponse: responseId,
-          cause: cause === 'Autre' ? customCause : cause,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      Swal.fire(
-        t('Signalé!'),
-        t('La réponse a été signalée avec succès.'),
-        'success'
-      );
-    } catch (error) {
-      console.error('Error reporting the response:', error);
-      Swal.fire(
-        t('Échec!'),
-        t('Problème lors du signalement de la réponse.'),
-        'error'
-      );
     }
-  }
-};
+  };
 
   const handleShare = async () => {
     const postUrl = `http://localhost:3000/post/${data.id_post}`;
@@ -869,7 +869,7 @@ const handleReportResponse = async (commentId, responseId) => {
           <img
             src={
               data.utilisateur.photo
-                ? `http://localhost:5000/${data.utilisateur.photo}`
+                ? `http://54.87.28.4/${data.utilisateur.photo}`
                 : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
             }
             alt="Profil"
@@ -884,12 +884,12 @@ const handleReportResponse = async (commentId, responseId) => {
                 data.utilisateur.prenom
               )} ${capitalizeFirstLetter(data.utilisateur.nom)}`}
               {data.react && (
-              <img
-                src={require(`../../assets/${data.react}gif.gif`)} // Ensure you have corresponding icons in your assets folder
-                alt={data.react}
-                className="reactIcon"
-              />
-            )}
+                <img
+                  src={require(`../../assets/${data.react}gif.gif`)} // Ensure you have corresponding icons in your assets folder
+                  alt={data.react}
+                  className="reactIcon"
+                />
+              )}
             </NavLink>
           </span>{' '}
         </div>
@@ -969,21 +969,23 @@ const handleReportResponse = async (commentId, responseId) => {
           data.lesCollab.length > 0 && (
             <div className="lesCollab">
               {data.lesCollab && data.lesCollab.length > 0 && (
-        <div className="lesCollab">
-          <h3>{t('Collaborateurs')}</h3>
-          {data.lesCollab.map((mention, index) => (
-            <div key={index} className="postCollaborator">
-              <hr />
-              <strong>{t('Collaborateur')}:</strong>
-              <NavLink to={`/collabPage/${mention.collaborateur.id_collaborateur}`}>
-                {mention.collaborateur.nom}
-              </NavLink>
-              <p>{mention.collaborateur.type}</p>
-              <p>{mention.collaborateur.adresse}</p>
-            </div>
-          ))}
-        </div>
-      )}
+                <div className="lesCollab">
+                  <h3>{t('Collaborateurs')}</h3>
+                  {data.lesCollab.map((mention, index) => (
+                    <div key={index} className="postCollaborator">
+                      <hr />
+                      <strong>{t('Collaborateur')}:</strong>
+                      <NavLink
+                        to={`/collabPage/${mention.collaborateur.id_collaborateur}`}
+                      >
+                        {mention.collaborateur.nom}
+                      </NavLink>
+                      <p>{mention.collaborateur.type}</p>
+                      <p>{mention.collaborateur.adresse}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
       </div>
@@ -998,14 +1000,14 @@ const handleReportResponse = async (commentId, responseId) => {
             {data.lesImages[currentImageIndex].pathImage.endsWith('.mp4') ? (
               <video controls className="postImage">
                 <source
-                  src={`http://localhost:5000/${data.lesImages[currentImageIndex].pathImage}`}
+                  src={`http://54.87.28.4/${data.lesImages[currentImageIndex].pathImage}`}
                   type="video/mp4"
                 />
                 Your browser does not support the video tag.
               </video>
             ) : (
               <img
-                src={`http://localhost:5000/${data.lesImages[currentImageIndex].pathImage}`}
+                src={`http://54.87.28.4/${data.lesImages[currentImageIndex].pathImage}`}
                 alt="Post"
                 className="postImage"
               />
@@ -1065,7 +1067,7 @@ const handleReportResponse = async (commentId, responseId) => {
             <img
               src={
                 comment.utilisateur.photo
-                  ? `http://localhost:5000/${comment.utilisateur.photo}`
+                  ? `http://54.87.28.4/${comment.utilisateur.photo}`
                   : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
               }
               alt="Profile"
@@ -1247,7 +1249,7 @@ const handleReportResponse = async (commentId, responseId) => {
                       <img
                         src={
                           reponse.utilisateur.photo
-                            ? `http://localhost:5000/${reponse.utilisateur.photo}`
+                            ? `http://54.87.28.4/${reponse.utilisateur.photo}`
                             : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
                         }
                         alt="Profile"

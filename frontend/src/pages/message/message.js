@@ -26,7 +26,7 @@ import Lottie from 'react-lottie';
 import typingAnimation from '../../animations/typing.json'; // Adjust the path as necessary
 import './message.css';
 import Navbar from '../../components/navbar/navbar';
-const ENDPOINT = 'http://localhost:5000';
+const ENDPOINT = 'http://54.87.28.4';
 var socket, selectedChatCompare;
 
 function MessagePage() {
@@ -121,12 +121,12 @@ function MessagePage() {
   const handleCreateDiscussion = () => {
     axios
       .post(
-        'http://localhost:5000/discussions',
+        'http://54.87.28.4/discussions',
         {
           nomDisc: discussionName,
           nbr_jours_disc: validityDays,
-          ispublic: isPublic, 
-          namedUsers: selectedUsers, 
+          ispublic: isPublic,
+          namedUsers: selectedUsers,
         },
         { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } }
       )
@@ -144,7 +144,7 @@ function MessagePage() {
   const fetchEmployesAndAdmins = async () => {
     try {
       const response = await axios.get(
-        'http://localhost:5000/users/employes-admins',
+        'http://54.87.28.4/users/employes-admins',
         {
           headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
         }
@@ -165,9 +165,12 @@ function MessagePage() {
 
   const fetchPrivacyStatus = async (id_disc) => {
     try {
-      const response = await axios.get(`http://localhost:5000/discussion/${id_disc}/is-private`, {
-        headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
-      });
+      const response = await axios.get(
+        `http://54.87.28.4/discussion/${id_disc}/is-private`,
+        {
+          headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
+        }
+      );
       setIsPrivate(response.data.isPrivate);
     } catch (error) {
       console.error('Error fetching privacy status:', error);
@@ -176,9 +179,12 @@ function MessagePage() {
 
   const fetchMembers = async (id_disc) => {
     try {
-      const response = await axios.get(`http://localhost:5000/discussion/${id_disc}/members`, {
-        headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
-      });
+      const response = await axios.get(
+        `http://54.87.28.4/discussion/${id_disc}/members`,
+        {
+          headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
+        }
+      );
       console.log(response.data);
       setMembers(response.data);
     } catch (error) {
@@ -195,15 +201,18 @@ function MessagePage() {
 
   const checkAdminStatus = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/discussion/${selectedDiscussion.id_disc}/is-admin`, {
-        headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
-      });
-      setIsAdmin(response.data.isAdmin);  
+      const response = await axios.get(
+        `http://54.87.28.4/discussion/${selectedDiscussion.id_disc}/is-admin`,
+        {
+          headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
+        }
+      );
+      setIsAdmin(response.data.isAdmin);
     } catch (error) {
       console.error('Error checking admin status:', error);
     }
   };
-  
+
   useEffect(() => {
     if (selectedDiscussion) {
       checkAdminStatus();
@@ -212,9 +221,12 @@ function MessagePage() {
 
   const handleKickMember = async (memberId) => {
     try {
-      await axios.delete(`http://localhost:5000/discussion/${selectedDiscussion.id_disc}/member/${memberId}`, {
-        headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
-      });
+      await axios.delete(
+        `http://54.87.28.4/discussion/${selectedDiscussion.id_disc}/member/${memberId}`,
+        {
+          headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
+        }
+      );
       fetchMembers(selectedDiscussion.id_disc);
     } catch (error) {
       console.error('Error kicking member:', error);
@@ -238,7 +250,7 @@ function MessagePage() {
         bgcolor: 'background.paper',
         boxShadow: 24,
         p: 4,
-        borderRadius:'20px',
+        borderRadius: '20px',
       }}
     >
       <Typography variant="h6" component="h2">
@@ -246,7 +258,7 @@ function MessagePage() {
       </Typography>
       <TextField
         fullWidth
-        label={t("Nom de la conversation")}
+        label={t('Nom de la conversation')}
         value={discussionName}
         onChange={(e) => setDiscussionName(e.target.value)}
         sx={{ mt: 2 }}
@@ -295,14 +307,14 @@ function MessagePage() {
           (!isPublic && selectedUsers.length === 0)
         }
       >
-       { t('Ajouter')}
+        {t('Ajouter')}
       </Button>
     </Box>
   );
 
   useEffect(() => {
     axios
-      .get('http://localhost:5000/discussions', {
+      .get('http://54.87.28.4/discussions', {
         headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
       })
       .then((response) => {
@@ -312,10 +324,10 @@ function MessagePage() {
   }, [token]);
 
   useEffect(() => {
-    console.log(selectedDiscussion); 
+    console.log(selectedDiscussion);
     if (selectedDiscussion && selectedDiscussion.id_disc) {
       axios
-        .get(`http://localhost:5000/messages/${selectedDiscussion.id_disc}`, {
+        .get(`http://54.87.28.4/messages/${selectedDiscussion.id_disc}`, {
           headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
         })
         .then((response) => {
@@ -332,7 +344,7 @@ function MessagePage() {
   const fetchMessages = () => {
     if (selectedDiscussion && selectedDiscussion.id_disc) {
       axios
-        .get(`http://localhost:5000/messages/${selectedDiscussion.id_disc}`, {
+        .get(`http://54.87.28.4/messages/${selectedDiscussion.id_disc}`, {
           headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
         })
         .then((response) => {
@@ -343,7 +355,9 @@ function MessagePage() {
         .catch((error) => {
           if (error.response && error.response.status === 404) {
             setNoMessagesError(
-              t("Il n'y a pas de messages pour cette discussion. Soyez le premier à envoyer un message.")
+              t(
+                "Il n'y a pas de messages pour cette discussion. Soyez le premier à envoyer un message."
+              )
             );
           } else {
             console.error('Error fetching messages:', error);
@@ -362,7 +376,7 @@ function MessagePage() {
     if (selectedDiscussion && newMessage.trim()) {
       axios
         .post(
-          `http://localhost:5000/message/${selectedDiscussion.id_disc}`,
+          `http://54.87.28.4/message/${selectedDiscussion.id_disc}`,
           { contenu: newMessage },
           { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } }
         )
@@ -396,10 +410,9 @@ function MessagePage() {
 
   const fetchUserDetails = async (userId) => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/profil/${userId}`,
-        { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } }
-      );
+      const response = await axios.get(`http://54.87.28.4/profil/${userId}`, {
+        headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
+      });
       return {
         id: userId,
         nom: response.data.user.nom,
@@ -548,7 +561,7 @@ function MessagePage() {
                           <Avatar
                             src={
                               member.utilisateur.photo
-                                ? `http://localhost:5000/${member.utilisateur.photo}`
+                                ? `http://54.87.28.4/${member.utilisateur.photo}`
                                 : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
                             }
                             alt={`${member.utilisateur.prenom} ${member.utilisateur.nom}`}
@@ -581,7 +594,7 @@ function MessagePage() {
                         <Avatar
                           src={
                             message.utilisateur && message.utilisateur.photo
-                              ? `http://localhost:5000/${message.utilisateur.photo}`
+                              ? `http://54.87.28.4/${message.utilisateur.photo}`
                               : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
                           }
                           alt={
@@ -658,7 +671,7 @@ function MessagePage() {
                 {connectedUsers.map((user, index) => (
                   <ListItem key={index} className="contactsMsgs li">
                     <Avatar
-                      src={`http://localhost:5000/${user.photo}`}
+                      src={`http://54.87.28.4/${user.photo}`}
                       alt={`${user.prenom} ${user.nom}`}
                       sx={{ width: 56, height: 56, marginRight: 2 }}
                       className="user_imgMsgs"

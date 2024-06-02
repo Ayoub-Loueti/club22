@@ -1,4 +1,4 @@
-// OffreEmploye.js
+import Swal from 'sweetalert2';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './OffreEmploye.css';
@@ -6,10 +6,13 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/navbar/navbar';
 import StarRating from './StarRating'; // Make sure this is imported correctly
 import ScrollToTop from '../../components/designs/ScrollToTop';
-import ReactPaginate from 'react-paginate'; 
+import ReactPaginate from 'react-paginate';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleChevronLeft, faCircleChevronRight } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCircleChevronLeft,
+  faCircleChevronRight,
+} from '@fortawesome/free-solid-svg-icons';
 
 function OffreEmploye({ offers }) {
   const [offres, setOffres] = useState([]);
@@ -17,26 +20,28 @@ function OffreEmploye({ offers }) {
   const token = localStorage.getItem('login');
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
-  const [offresPerPage] = useState(6); 
+  const [offresPerPage] = useState(6);
   const { t } = useTranslation();
 
   useEffect(() => {
     if (!offers || offers.length === 0) {
       const fetchOffres = async () => {
         try {
-          const response = await axios.get(
-            'http://localhost:5000/employeOffers',
-            {
-              headers: {
-                Authorization: `Bearer ${JSON.parse(token).token}`,
-              },
-            }
-          );
+          const response = await axios.get('http://54.87.28.4/employeOffers', {
+            headers: {
+              Authorization: `Bearer ${JSON.parse(token).token}`,
+            },
+          });
           setOffres(
             response.data.map((offre) => ({ ...offre, currentImageIndex: 0 }))
           );
         } catch (error) {
           console.error('Error fetching offres:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Erreur de récupération des offres',
+          });
         }
       };
       fetchOffres();
@@ -67,24 +72,24 @@ function OffreEmploye({ offers }) {
     (offre) => filter === 'tous' || offre.type === filter
   );
 
-const pageCount = Math.ceil(filteredOffres.length / offresPerPage);
-const currentOffres = filteredOffres.slice(
-  currentPage * offresPerPage,
-  (currentPage + 1) * offresPerPage
-);
-const calculateDaysUntil = (date) => {
-  const now = new Date();
-  const endDate = new Date(date);
-  const timeDiff = endDate.getTime() - now.getTime();
-  const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
-  if (daysDiff > 0) {
-return `${t('Remise expire dans ')} ${daysDiff} ${t('jours')}`;
-  } else if (daysDiff === 0) {
+  const pageCount = Math.ceil(filteredOffres.length / offresPerPage);
+  const currentOffres = filteredOffres.slice(
+    currentPage * offresPerPage,
+    (currentPage + 1) * offresPerPage
+  );
+  const calculateDaysUntil = (date) => {
+    const now = new Date();
+    const endDate = new Date(date);
+    const timeDiff = endDate.getTime() - now.getTime();
+    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    if (daysDiff > 0) {
+      return `${t('Remise expire dans ')} ${daysDiff} ${t('jours')}`;
+    } else if (daysDiff === 0) {
       return t("Remise expire aujourd'hui");
-  } else {
-    return null; 
-  }
-};
+    } else {
+      return null;
+    }
+  };
   return (
     <>
       <Navbar />
@@ -106,7 +111,7 @@ return `${t('Remise expire dans ')} ${daysDiff} ${t('jours')}`;
           {currentOffres.map((offre, index) => (
             <div key={index} className="offre-employee-card">
               <img
-                src={`http://localhost:5000/${
+                src={`http://54.87.28.4/${
                   offre.lesImages[offre.currentImageIndex]?.image
                 }`}
                 alt={`Image ${offre.currentImageIndex}`}

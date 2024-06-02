@@ -17,7 +17,7 @@ function CollaborateurPage() {
   const [showOffreCollab, setShowOffreCollab] = useState(false);
   const { t } = useTranslation();
 
-  const { collabId } = useParams(); 
+  const { collabId } = useParams();
 
   useEffect(() => {
     const token = localStorage.getItem('login');
@@ -25,7 +25,7 @@ function CollaborateurPage() {
       const fetchCollaborateurs = async () => {
         try {
           const response = await axios.get(
-            'http://localhost:5000/allCollaborateursEmploye',
+            'http://54.87.28.4/allCollaborateursEmploye',
             {
               headers: {
                 Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -33,7 +33,12 @@ function CollaborateurPage() {
             }
           );
           setCollaborateurs(response.data);
-          if (collabId && response.data.some(collab => collab.id_collaborateur.toString() === collabId)) {
+          if (
+            collabId &&
+            response.data.some(
+              (collab) => collab.id_collaborateur.toString() === collabId
+            )
+          ) {
             setSelectedCollaborateurId(collabId);
             setShowOffreCollab(true);
           }
@@ -48,7 +53,7 @@ function CollaborateurPage() {
   const handleCollaboratorClick = (collaborateurId) => {
     setSelectedCollaborateurId(collaborateurId);
     setShowOffreCollab(true);
-    window.history.pushState({}, '', `/collabPage/${collaborateurId}`); 
+    window.history.pushState({}, '', `/collabPage/${collaborateurId}`);
   };
 
   const handlePrevious = () => {
@@ -66,7 +71,7 @@ function CollaborateurPage() {
   const handleViewAllOffers = () => {
     setShowOffreCollab(false);
     setSelectedCollaborateurId(null);
-    window.history.pushState({}, '', '/collabPage'); 
+    window.history.pushState({}, '', '/collabPage');
   };
   const [filteredOffers, setFilteredOffers] = useState([]);
 
@@ -80,7 +85,7 @@ function CollaborateurPage() {
       <div>
         {showOffreCollab && (
           <button className="voir-tous-btn" onClick={handleViewAllOffers}>
-           { t('Tous les offres')}
+            {t('Tous les offres')}
           </button>
         )}
         <div className="PageCollaborateur-container">
@@ -103,7 +108,7 @@ function CollaborateurPage() {
                   }
                 >
                   <img
-                    src={`http://localhost:5000/${collaborateur.logo}`}
+                    src={`http://54.87.28.4/${collaborateur.logo}`}
                     alt={collaborateur.nom}
                   />
                   <div className="collab-card-title">{collaborateur.nom}</div>

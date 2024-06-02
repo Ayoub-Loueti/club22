@@ -12,14 +12,14 @@ const PostSide = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [postType, setPostType] = useState('tous');
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
   const token = JSON.parse(localStorage.getItem('login'))?.token;
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        let url = 'http://localhost:5000/posts';
+        let url = 'http://54.87.28.4/posts';
         if (postType !== 'tous') {
           url += `/${postType}`; // Append the selected post type to the URL
         }

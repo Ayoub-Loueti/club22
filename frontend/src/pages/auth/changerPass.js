@@ -8,60 +8,57 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 function ChangerPass() {
   const { token } = useParams();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const MySwal = withReactContent(Swal);
 
- const handleResetPasswordSubmit = async (e) => {
-   e.preventDefault();
-   if (newPassword !== confirmPassword) {
-     MySwal.fire('Erreur', 'Les mots de passe ne correspondent pas', 'error');
-     return;
-   }
-   setLoading(true);
+  const handleResetPasswordSubmit = async (e) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      MySwal.fire('Erreur', 'Les mots de passe ne correspondent pas', 'error');
+      return;
+    }
+    setLoading(true);
 
-   try {
-     await axios.post(`http://localhost:5000/reset-password/${token}`, {
-       newPassword: newPassword,
-     });
+    try {
+      await axios.post(`http://54.87.28.4/reset-password/${token}`, {
+        newPassword: newPassword,
+      });
 
-     MySwal.fire(
-       'Succès',
-       'Votre mot de passe a été changé avec succès',
-       'success'
-     ).then(() => navigate('/'));
-   } catch (error) {
-     console.error('Error:', error);
-     MySwal.fire(
-       'Erreur',
-       'Une erreur est survenue. Veuillez réessayer plus tard.',
-       'error'
-     );
-   } finally {
-     setLoading(false);
-   }
- };
+      MySwal.fire(
+        'Succès',
+        'Votre mot de passe a été changé avec succès',
+        'success'
+      ).then(() => navigate('/'));
+    } catch (error) {
+      console.error('Error:', error);
+      MySwal.fire(
+        'Erreur',
+        'Une erreur est survenue. Veuillez réessayer plus tard.',
+        'error'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="changerPass-page">
       <div className="whitee-square">
-        <div
-        style={{ cursor: 'pointer' }}
-        onClick={() => navigate('/')}
-        >
-        <img
-        src={ooredoo1Image}
-        alt="logo ooredoo"
-        style={{
-        width: '160px',
-        top: '10px',
-        left: '-160px',
-        position: 'relative',
-        }}
-        />
+        <div style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
+          <img
+            src={ooredoo1Image}
+            alt="logo ooredoo"
+            style={{
+              width: '160px',
+              top: '10px',
+              left: '-160px',
+              position: 'relative',
+            }}
+          />
         </div>
         <div className="grayy-rectangle">
           <div className="form-column">
@@ -74,9 +71,11 @@ function ChangerPass() {
                 fontFamily: 'inherit',
                 fontWeight: '800',
                 fontSize: '25px',
-                
               }}
-            > CHANGER VOTRE MOT DE PASSE            </h2>
+            >
+              {' '}
+              CHANGER VOTRE MOT DE PASSE{' '}
+            </h2>
             <form onSubmit={handleResetPasswordSubmit}>
               <div className="form-group">
                 <input

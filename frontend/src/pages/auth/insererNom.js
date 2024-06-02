@@ -9,7 +9,7 @@ function InsererNom() {
   const [nom, setNom] = useState('');
   const [prenom, setPrenom] = useState('');
   const [genre, setGenre] = useState('');
-    const [tel, setTel] = useState('');
+  const [tel, setTel] = useState('');
 
   const navigate = useNavigate();
 
@@ -19,8 +19,8 @@ function InsererNom() {
 
     try {
       const response = await axios.patch(
-        'http://localhost:5000/updateNameSurnameGenre', // Assurez-vous que cette URL correspond à votre configuration de route
-        { nom, prenom, genre,tel },
+        'http://54.87.28.4/updateNameSurnameGenre', // Assurez-vous que cette URL correspond à votre configuration de route
+        { nom, prenom, genre, tel },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -38,7 +38,10 @@ function InsererNom() {
       }
     } catch (error) {
       // Gérez les différents messages d'erreur retournés par votre API
-      const errorMessage = error.response && error.response.data.message ? error.response.data.message : 'Failed to update profile. Please try again.';
+      const errorMessage =
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : 'Failed to update profile. Please try again.';
       Swal.fire({
         icon: 'error',
         title: 'Oops...',

@@ -11,7 +11,9 @@ function VerificationSignup() {
   useEffect(() => {
     async function verifyAccount() {
       try {
-        const response = await axios.get(`http://localhost:5000/activateAccount/${userId}/${token}`);
+        const response = await axios.get(
+          `http://54.87.28.4/activateAccount/${userId}/${token}`
+        );
         const { message } = response.data;
         setVerificationStatus(message);
       } catch (error) {
@@ -30,7 +32,7 @@ function VerificationSignup() {
 
   const handleLoginClick = () => {
     if (verificationStatus === 'Compte activé avec succès.') {
-      navigate('/'); 
+      navigate('/');
     }
   };
 
@@ -71,7 +73,11 @@ function VerificationSignup() {
   return (
     <div style={pageStyles}>
       <div style={statusMessageStyles}>
-        <h1>{verificationStatus === 'Compte activé avec succès.' ? 'Votre compte est maintenant actif !' : 'Verification Status'}</h1>
+        <h1>
+          {verificationStatus === 'Compte activé avec succès.'
+            ? 'Votre compte est maintenant actif !'
+            : 'Verification Status'}
+        </h1>
         <p>{verificationStatus}</p>
         {verificationStatus === 'Compte activé avec succès.' && (
           <button style={buttonStyles} onClick={handleLoginClick}>

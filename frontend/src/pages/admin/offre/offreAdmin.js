@@ -18,15 +18,15 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [offreAddedOrUpdated, setOffreAddedOrUpdated] = useState(false);
   const token = localStorage.getItem('login');
-const [categoryFilter, setCategoryFilter] = useState('tous');
- const [currentPage, setCurrentPage] = useState(0);
- const itemsPerPage = 6;
+  const [categoryFilter, setCategoryFilter] = useState('tous');
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 6;
 
   useEffect(() => {
     const fetchOffres = async () => {
       const url = isCollabMode
-        ? `http://localhost:5000/allOffersCollab/${collaborateurId}`
-        : 'http://localhost:5000/allOffers';
+        ? `http://54.87.28.4/allOffersCollab/${collaborateurId}`
+        : 'http://54.87.28.4/allOffers';
 
       try {
         const response = await axios.get(url, {
@@ -92,7 +92,7 @@ const [categoryFilter, setCategoryFilter] = useState('tous');
 
     if (confirmation.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:5000/offer/${offreId}`, {
+        await axios.delete(`http://54.87.28.4/offer/${offreId}`, {
           headers: {
             Authorization: `Bearer ${JSON.parse(token).token}`,
           },
@@ -111,16 +111,16 @@ const [categoryFilter, setCategoryFilter] = useState('tous');
       offre.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       offre.prix.toString().toLowerCase().includes(searchTerm.toLowerCase())
   );
-    const offset = currentPage * itemsPerPage;
- const currentOffres = filteredOffres
-   .filter(
-     (offre) => categoryFilter === 'tous' || offre.type === categoryFilter
-   )
-   .slice(offset, offset + itemsPerPage);
+  const offset = currentPage * itemsPerPage;
+  const currentOffres = filteredOffres
+    .filter(
+      (offre) => categoryFilter === 'tous' || offre.type === categoryFilter
+    )
+    .slice(offset, offset + itemsPerPage);
   const handlePageClick = (data) => {
     setCurrentPage(data.selected);
   };
-/* function displayHotelAttributes(details) {
+  /* function displayHotelAttributes(details) {
   const attributes = [
     { key: 'climatisation', label: 'Climatisation' },
     { key: 'wifi', label: 'Wi-Fi' },
@@ -198,7 +198,7 @@ const [categoryFilter, setCategoryFilter] = useState('tous');
                 >
                   <h2>{offre.titre}</h2>
                   <img
-                    src={`http://localhost:5000/${
+                    src={`http://54.87.28.4/${
                       offre.lesImages[offre.currentImageIndex]?.image
                     }`}
                     alt={`Image ${offre.currentImageIndex}`}

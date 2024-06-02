@@ -18,16 +18,16 @@ import {
   faCommentSlash,
   faComment,
 } from '@fortawesome/free-solid-svg-icons';
-import AdherantModal from "../AdherantModal/AdherantModal" ;
+import AdherantModal from '../AdherantModal/AdherantModal';
 
 function Navbar() {
   const [isVisible, setIsVisible] = useState(true);
   const [randomUsers, setRandomUsers] = useState([]);
   const [navbarExtensionColor, setNavbarExtensionColor] = useState('#f3f3f3'); // Default color
   const [userInfo, setUserInfo] = useState(null);
-  const [userId, setUserId] = useState(null); 
-  const [isAdherent, setIsAdherent] = useState(false); 
-  const [isAdherantModalOpen, setIsAdherantModalOpen] = useState(false); 
+  const [userId, setUserId] = useState(null);
+  const [isAdherent, setIsAdherent] = useState(false);
+  const [isAdherantModalOpen, setIsAdherantModalOpen] = useState(false);
 
   const navigate = useNavigate();
   // Current user's ID for navigation to the profile page
@@ -61,7 +61,7 @@ function Navbar() {
         const headers = storedToken
           ? { Authorization: `Bearer ${storedToken}` }
           : {};
-        const response = await axios.get('http://localhost:5000/randomUsers', {
+        const response = await axios.get('http://54.87.28.4/randomUsers', {
           headers,
         });
         setRandomUsers(response.data);
@@ -81,7 +81,7 @@ function Navbar() {
       const fetchUserData = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:5000/profil/${storedUserId}`,
+            `http://54.87.28.4/profil/${storedUserId}`,
             {
               headers: {
                 Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -103,14 +103,14 @@ function Navbar() {
 
   const checkAdherentStatus = async (userId, token) => {
     try {
-      const response = await axios.get('http://localhost:5000/isAdherant', {
+      const response = await axios.get('http://54.87.28.4/isAdherant', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       console.log(response.data.adherant);
       setIsAdherent(response.data.adherant);
-      console.log(isAdherent);    
+      console.log(isAdherent);
     } catch (error) {
       console.error('Error checking adherent status:', error);
     }
@@ -157,7 +157,7 @@ function Navbar() {
             />
           )}
 
-            {userInfo && userInfo.type === 'employe' && isAdherent && (
+          {userInfo && userInfo.type === 'employe' && isAdherent && (
             <FontAwesomeIcon
               icon={faComment}
               className="navbar-iconnn"
@@ -166,17 +166,17 @@ function Navbar() {
           )}
           {userInfo && userInfo.type === 'employe' && !isAdherent && (
             <>
-          <FontAwesomeIcon
-          icon={faCommentSlash}
-          className="navbar-iconnn"
-          onClick={() => setIsAdherantModalOpen(true)} // This line changes to open the modal
-          />
-          <AdherantModal
-          isOpen={isAdherantModalOpen}
-          onRequestClose={() => setIsAdherantModalOpen(false)}
-          user={currentUserId}
-          />
-          </>
+              <FontAwesomeIcon
+                icon={faCommentSlash}
+                className="navbar-iconnn"
+                onClick={() => setIsAdherantModalOpen(true)} // This line changes to open the modal
+              />
+              <AdherantModal
+                isOpen={isAdherantModalOpen}
+                onRequestClose={() => setIsAdherantModalOpen(false)}
+                user={currentUserId}
+              />
+            </>
           )}
           {userInfo && userInfo.type === 'admin' && (
             <FontAwesomeIcon
@@ -201,7 +201,7 @@ function Navbar() {
               key={index}
               src={
                 user.photo
-                  ? `http://localhost:5000/${user.photo}`
+                  ? `http://54.87.28.4/${user.photo}`
                   : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
               }
               alt="User"

@@ -21,7 +21,7 @@ const PostShare = () => {
   const [contenu, setContenu] = useState('');
   const token = JSON.parse(localStorage.getItem('login'))?.token;
   const [userInfo, setUserInfo] = useState(null);
-  const [userId, setUserId] = useState(null); 
+  const [userId, setUserId] = useState(null);
   const [type, setType] = useState('');
   const [categorySelected, setCategorySelected] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
@@ -43,7 +43,7 @@ const PostShare = () => {
       const fetchUserData = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:5000/profil/${storedUserId}`,
+            `http://54.87.28.4/profil/${storedUserId}`,
             {
               headers: {
                 Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -73,10 +73,10 @@ const PostShare = () => {
         file: file,
       }));
 
-      setImage(files); 
+      setImage(files);
     }
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     let errorMessages = [];
@@ -112,7 +112,7 @@ const PostShare = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/createPost',
+        'http://54.87.28.4/createPost',
         formData,
         {
           headers: {
@@ -178,7 +178,7 @@ const handleSubmit = async (e) => {
   };
 
   try {
-      const response = await axios.post('http://localhost:5000/createPost', formData, config);
+      const response = await axios.post('http://54.87.28.4/createPost', formData, config);
       
       console.log(response.data.message);
       window.location.reload();
@@ -200,7 +200,7 @@ const handleSubmit = async (e) => {
     setCategorySelected(true);
   };
   const handleLocationClick = () => {
-    setShowLocationModal(true); 
+    setShowLocationModal(true);
   };
   return (
     <div className="PostShare">
@@ -208,7 +208,7 @@ const handleSubmit = async (e) => {
         <img
           src={
             userInfo.photo
-              ? `http://localhost:5000/${userInfo.photo}`
+              ? `http://54.87.28.4/${userInfo.photo}`
               : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
           }
           alt="Profil"
@@ -228,21 +228,35 @@ const handleSubmit = async (e) => {
           value={contenu}
           onChange={(e) => setContenu(e.target.value)}
         />
-       <div className="categoryContainer">
-      <span className="categoryLabel">{t('Sélectionnez une catégorie')}:</span>
-      <button className={`categoryButton ${type === 'hotel' ? 'active' : ''}`} onClick={() => handleTypeChange('hotel')}>
-        {t('Hôtel')}
-      </button>
-      <button className={`categoryButton ${type === 'voyage' ? 'active' : ''}`} onClick={() => handleTypeChange('voyage')}>
-        {t('Voyage')}
-      </button>
-      <button className={`categoryButton ${type === 'activité' ? 'active' : ''}`} onClick={() => handleTypeChange('activité')}>
-        {t('Activité')}
-      </button>
-      <button className={`categoryButton ${type === 'autre' ? 'active' : ''}`} onClick={() => handleTypeChange('autre')}>
-        {t('Autre')}
-      </button>
-    </div>
+        <div className="categoryContainer">
+          <span className="categoryLabel">
+            {t('Sélectionnez une catégorie')}:
+          </span>
+          <button
+            className={`categoryButton ${type === 'hotel' ? 'active' : ''}`}
+            onClick={() => handleTypeChange('hotel')}
+          >
+            {t('Hôtel')}
+          </button>
+          <button
+            className={`categoryButton ${type === 'voyage' ? 'active' : ''}`}
+            onClick={() => handleTypeChange('voyage')}
+          >
+            {t('Voyage')}
+          </button>
+          <button
+            className={`categoryButton ${type === 'activité' ? 'active' : ''}`}
+            onClick={() => handleTypeChange('activité')}
+          >
+            {t('Activité')}
+          </button>
+          <button
+            className={`categoryButton ${type === 'autre' ? 'active' : ''}`}
+            onClick={() => handleTypeChange('autre')}
+          >
+            {t('Autre')}
+          </button>
+        </div>
         <div className="postOptions">
           <div
             className="option"
@@ -261,19 +275,31 @@ const handleSubmit = async (e) => {
             <UilLocationPoint />
             {t('Lieu')}{' '}
           </div>
-         {react ? (
-          <div className="option" style={{ color: 'var(--react)' }} onClick={handleScheduleClick}>
-            <img src={require(`../../assets/${react}gif.gif`)} alt={react} style={{ width: '24px' }} />
-            {t(react)} 
-          </div>
-        ) : (
-          <div className="option" style={{ color: 'var(--schedule)' }} onClick={handleScheduleClick}>
-            <UilSmile />
-            {t('Réagir')}
-          </div>
-        )}
+          {react ? (
+            <div
+              className="option"
+              style={{ color: 'var(--react)' }}
+              onClick={handleScheduleClick}
+            >
+              <img
+                src={require(`../../assets/${react}gif.gif`)}
+                alt={react}
+                style={{ width: '24px' }}
+              />
+              {t(react)}
+            </div>
+          ) : (
+            <div
+              className="option"
+              style={{ color: 'var(--schedule)' }}
+              onClick={handleScheduleClick}
+            >
+              <UilSmile />
+              {t('Réagir')}
+            </div>
+          )}
           <button className="postShare-button" onClick={handleSubmit}>
-          {t ( 'Partager')}
+            {t('Partager')}
           </button>
           <div style={{ display: 'none' }}>
             <input

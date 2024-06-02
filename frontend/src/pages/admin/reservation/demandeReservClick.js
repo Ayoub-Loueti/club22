@@ -29,64 +29,64 @@ const DemandeReserClick = ({ collaborateurId }) => {
   const [reponseFilter, setReponseFilter] = useState('tous');
   const [filteredDemandeReservations, setFilteredDemandeReservations] =
     useState([]);
-     const [updatedReservations, setUpdatedReservations] =
-       useState(demandeReservations);
+  const [updatedReservations, setUpdatedReservations] =
+    useState(demandeReservations);
   const [filteredReponseReservations, setFilteredReponseReservations] =
     useState([]);
 
-    const token = JSON.parse(localStorage.getItem('login'))?.token;
-
-     const fetchDemandeReservations = async () => {
-       try {
-         console.log(
-           'Fetching demander reservations for collaborator ID:',
-           collaborateurId
-         );
-         const response = await axios.get(
-           `http://localhost:5000/getReservByCollabA/${collaborateurId}`,
-           {
-             headers: { Authorization: `Bearer ${token}` },
-           }
-         );
-         console.log('Demande Reservations:', response.data);
-         setDemandeReservations(response.data); // Setting the demander reservations
-         setFilteredDemandeReservations(response.data); // Setting the filtered demander reservations initially
-       } catch (err) {
-         console.error('Error fetching demander reservations:', err);
-       }
-     };
-const handlerepair = async (id, event) => {
-  event.stopPropagation(); // Empêcher l'ouverture du dialogue
   const token = JSON.parse(localStorage.getItem('login'))?.token;
-  try {
-    const response = await axios.put(
-      `http://localhost:5000/reservation/${id}/reparer`,
-      {},
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    if (response.status === 200) {
-      Swal.fire({
-        title: 'Validation réussie !',
-        text: 'La réservation a été validée avec succès.',
-        icon: 'success',
-        timer: 2500,
-        timerProgressBar: true,
-        showConfirmButton: false,
-      });
 
-      const reservation = demandeReservations.find(
-        (res) => res.id_reservation === id
+  const fetchDemandeReservations = async () => {
+    try {
+      console.log(
+        'Fetching demander reservations for collaborator ID:',
+        collaborateurId
       );
-      if (reservation) {
-        const details = `
+      const response = await axios.get(
+        `http://54.87.28.4/getReservByCollabA/${collaborateurId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log('Demande Reservations:', response.data);
+      setDemandeReservations(response.data); // Setting the demander reservations
+      setFilteredDemandeReservations(response.data); // Setting the filtered demander reservations initially
+    } catch (err) {
+      console.error('Error fetching demander reservations:', err);
+    }
+  };
+  const handlerepair = async (id, event) => {
+    event.stopPropagation(); // Empêcher l'ouverture du dialogue
+    const token = JSON.parse(localStorage.getItem('login'))?.token;
+    try {
+      const response = await axios.put(
+        `http://54.87.28.4/reservation/${id}/reparer`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (response.status === 200) {
+        Swal.fire({
+          title: 'Validation réussie !',
+          text: 'La réservation a été validée avec succès.',
+          icon: 'success',
+          timer: 2500,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
+
+        const reservation = demandeReservations.find(
+          (res) => res.id_reservation === id
+        );
+        if (reservation) {
+          const details = `
         Détails de réservation:
 Date: De ${reservation.date_debut} à ${reservation.date_fin}
 Titre: ${reservation.offre.titre}
 Destination: ${reservation.offre.destination}
 Type: ${reservation.typeR}
 Nom de l'employé: ${reservation.employe.utilisateur.nom} ${
-          reservation.employe.utilisateur.prenom
-        }
+            reservation.employe.utilisateur.prenom
+          }
 Email de l'employé: ${reservation.employe.utilisateur.email}
 Tél de l'employé: ${reservation.employe.utilisateur.tel}
 Prix: ${reservation.prix_totale.toFixed(2)} DT
@@ -131,56 +131,61 @@ ${
 }
         `.replace(/^\s*[\r\n]/gm, ''); // Remove empty lines
 
-        const mailtoLink = `mailto:${
-          reservation.offre.collaborateur.email
-        }?subject=Les réservations de la part du club 22 Ooredoo&body=Bonjour ${
-          reservation.offre.collaborateur.nom
-        },%0D%0A%0D%0A${encodeURIComponent(
-          details
-        )}%0D%0A%0D%0ACordialement,%0D%0AL'équipe Ooredoo.`;
-        window.open(mailtoLink, '_blank');
-      }
+          const mailtoLink = `mailto:${
+            reservation.offre.collaborateur.email
+          }?subject=Les réservations de la part du club 22 Ooredoo&body=Bonjour ${
+            reservation.offre.collaborateur.nom
+          },%0D%0A%0D%0A${encodeURIComponent(
+            details
+          )}%0D%0A%0D%0ACordialement,%0D%0AL'équipe Ooredoo.`;
+          window.open(mailtoLink, '_blank');
+        }
 
-      fetchDemandeReservations(); // Recharger ou mettre à jour l'état local ici
+        fetchDemandeReservations(); // Recharger ou mettre à jour l'état local ici
+      }
+    } catch (error) {
+      console.error('Erreur lors de la réparation de la réservation :', error);
+      Swal.fire(
+        'Erreur !',
+        'Échec de la réparation de la réservation.',
+        'error'
+      );
     }
-  } catch (error) {
-    console.error('Erreur lors de la réparation de la réservation :', error);
-    Swal.fire('Erreur !', 'Échec de la réparation de la réservation.', 'error');
-  }
-};
+  };
 
-
-
-
-const markAllAsReparation = async (date) => {
-  const token = JSON.parse(localStorage.getItem('login'))?.token;
-  const reservationIds = groupedReservations[date].map(
-    (reservation) => reservation.id_reservation
-  );
-  try {
-    const response = await axios.put(
-      'http://localhost:5000/reservations/reparer',
-      { reservationIds },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+  const markAllAsReparation = async (date) => {
+    const token = JSON.parse(localStorage.getItem('login'))?.token;
+    const reservationIds = groupedReservations[date].map(
+      (reservation) => reservation.id_reservation
     );
-    if (response.status === 200) {
-      Swal.fire({
-        title: 'Validation de toutes les réservations réussie !',
-        text: 'Toutes les réservations sélectionnées ont été validées.',
-        icon: 'success',
-        timer: 2500,
-        timerProgressBar: true,
-        showConfirmButton: false,
-      }); // Reload or update local state here
-      fetchDemandeReservations();
+    try {
+      const response = await axios.put(
+        'http://54.87.28.4/reservations/reparer',
+        { reservationIds },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (response.status === 200) {
+        Swal.fire({
+          title: 'Validation de toutes les réservations réussie !',
+          text: 'Toutes les réservations sélectionnées ont été validées.',
+          icon: 'success',
+          timer: 2500,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        }); // Reload or update local state here
+        fetchDemandeReservations();
+      }
+    } catch (error) {
+      console.error('Erreur lors de la réparation des réservations :', error);
+      Swal.fire(
+        'Erreur !',
+        'Échec de la réparation des réservations.',
+        'error'
+      );
     }
-  } catch (error) {
-    console.error('Erreur lors de la réparation des réservations :', error);
-    Swal.fire('Erreur !', 'Échec de la réparation des réservations.', 'error');
-  }
-};
+  };
   useEffect(() => {
     const token = JSON.parse(localStorage.getItem('login'))?.token;
 
@@ -191,7 +196,7 @@ const markAllAsReparation = async (date) => {
           collaborateurId
         );
         const response = await axios.get(
-          `http://localhost:5000/getReservByCollabA/${collaborateurId}`,
+          `http://54.87.28.4/getReservByCollabA/${collaborateurId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -203,7 +208,7 @@ const markAllAsReparation = async (date) => {
         console.error('Error fetching demander reservations:', err);
       }
     };
-  
+
     const fetchReponseReservations = async () => {
       try {
         console.log(
@@ -211,7 +216,7 @@ const markAllAsReparation = async (date) => {
           collaborateurId
         );
         const response = await axios.get(
-          `http://localhost:5000/getReservByCollabB/${collaborateurId}`,
+          `http://54.87.28.4/getReservByCollabB/${collaborateurId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -281,7 +286,7 @@ const markAllAsReparation = async (date) => {
     const token = JSON.parse(localStorage.getItem('login'))?.token;
     try {
       const response = await axios.put(
-        `http://localhost:5000/reservation/${id}/accepter`,
+        `http://54.87.28.4/reservation/${id}/accepter`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -317,7 +322,7 @@ const markAllAsReparation = async (date) => {
     const token = JSON.parse(localStorage.getItem('login'))?.token;
     try {
       const response = await axios.put(
-        `http://localhost:5000/reservation/${id}/refuser`,
+        `http://54.87.28.4/reservation/${id}/refuser`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -343,7 +348,7 @@ const markAllAsReparation = async (date) => {
       Swal.fire('Erreur !', 'Échec du refus de la réservation.', 'error');
     }
   };
-  
+
   const downloadPDF = async (reservationId) => {
     const reservation = demandeReservations.find(
       (res) => res.id_reservation === reservationId
@@ -449,178 +454,182 @@ const markAllAsReparation = async (date) => {
     e.stopPropagation(); // This will prevent the event from bubbling up to the parent
     downloadPDF(reservationId);
   };
-const groupReservationsByDate = (reservations) => {
-  const groupedReservations = {};
-  reservations.forEach((reservation) => {
-    const date = reservation.date_reservation.split('T')[0]; // Extract date without time
-    if (groupedReservations[date]) {
-      groupedReservations[date].push(reservation);
+  const groupReservationsByDate = (reservations) => {
+    const groupedReservations = {};
+    reservations.forEach((reservation) => {
+      const date = reservation.date_reservation.split('T')[0]; // Extract date without time
+      if (groupedReservations[date]) {
+        groupedReservations[date].push(reservation);
+      } else {
+        groupedReservations[date] = [reservation];
+      }
+    });
+
+    // Sort grouped reservations by date in descending order
+    const sortedGroupedReservations = Object.entries(groupedReservations)
+      .sort(([dateA], [dateB]) => new Date(dateB) - new Date(dateA))
+      .reduce((acc, [date, reservations]) => {
+        acc[date] = reservations;
+        return acc;
+      }, {});
+
+    return sortedGroupedReservations;
+  };
+
+  const groupedReservations = groupReservationsByDate(
+    filteredDemandeReservations
+  );
+  const downloadPDFConfirmedByDate = async (date) => {
+    const pdf = new jsPDF();
+
+    // Add Ooredoo logo and header text
+    pdf.addImage(ooredooLogo, 'PNG', 10, 5, 25, 25);
+    pdf.setFontSize(14);
+    pdf.setTextColor('#333333');
+    pdf.text(`Le(s) réservation(s) Confirmée(s) pour le ${date}`, 70, 30);
+
+    // Add confirmed reservations for the date to the PDF
+    groupedReservations[date].forEach((reservation, index) => {
+      if (reservation.etat === 'confirmer') {
+        // Add a new page for each reservation except the first one
+        if (index > 0) {
+          pdf.addPage();
+        }
+
+        // Draw a rectangle as a card for the reservation
+        pdf.setFillColor('#f2f2f2'); // Light gray background color for the card
+        const cardHeight = calculateCardHeight(reservation); // Calculate card height based on content
+        pdf.rect(10, 40, 180, cardHeight, 'F'); // Draw a filled rectangle as a card
+        pdf.setTextColor('#000000'); // Set text color to black for better readability
+
+        // Add collaborator's logo and name at the top center
+        const logoData = getCollaborateurLogoUrl(reservation);
+        pdf.addImage(logoData, 'JPEG', 70, 45, 30, 30); // Adjust the positioning as needed
+        pdf.text(
+          `Nom Collaborateur: ${reservation.offre.collaborateur.nom}`,
+          105,
+          60
+        );
+
+        // Add reservation details to the card
+        pdf.text(
+          `Date : De ${reservation.date_debut} Jusq'ua ${reservation.date_fin}`,
+          30,
+          80
+        ); // Add dates
+
+        pdf.text(`Titre: ${reservation.offre.titre}`, 30, 100);
+        pdf.text(`Destination: ${reservation.offre.destination}`, 30, 110);
+        pdf.text(`Type: ${reservation.typeR}`, 30, 120);
+        pdf.text(
+          `Nom de l'employé: ${reservation.employe.utilisateur.nom} ${reservation.employe.utilisateur.prenom}`,
+          30,
+          130
+        );
+        pdf.text(
+          `Email de l'employé: ${reservation.employe.utilisateur.email}`,
+          30,
+          140
+        );
+        pdf.text(
+          `  tél de l'employé: ${reservation.employe.utilisateur.tel}`,
+          30,
+          150
+        );
+        pdf.text(`Prix: ${reservation.prix_totale.toFixed(2)} DT`, 30, 160);
+
+        // Add specific details based on reservation type
+        let yPos = 170;
+        switch (reservation.typeR) {
+          case 'hotel':
+            pdf.text(
+              `Nom de l'hotel: ${reservation.details.nom_hotel}`,
+              30,
+              yPos
+            );
+            yPos += 20; // Increase Y position for visual separation between hotel name and room details
+
+            pdf.text('Chambres:', 30, yPos);
+            reservation.rooms.forEach(
+              (room, roomIndex) => {
+                const roomDetails = `Chambre ${roomIndex + 1}: Adultes - ${
+                  room.nbr_adults
+                }, Enfants - ${room.nbr_enfants}, Prix - ${room.prix.toFixed(
+                  2
+                )} DT`;
+                pdf.text(roomDetails, 35, yPos + 10 + roomIndex * 10);
+              },
+              30,
+              yPos
+            );
+
+            break;
+          case 'autre':
+            pdf.text(`Nombre de personnes: ${reservation.nombre}`, 30, yPos);
+            break;
+          case 'voyage':
+            pdf.text(
+              `Nombre de jours: ${reservation.details.nbr_jours}`,
+              30,
+              yPos
+            );
+            pdf.text(
+              `Nombre de personnes: ${reservation.nombre}`,
+              30,
+              yPos + 10
+            ); // Add number of persons for voyages
+            pdf.text(`Inclus: ${reservation.details.inclus}`, 30, yPos + 20);
+            // Add other specific details for voyage
+            break;
+          case 'activité':
+            pdf.text(`Durée: ${reservation.details.duree} heures`, 30, yPos);
+            pdf.text(`Inclus: ${reservation.details.inclus}`, 30, yPos + 10);
+            // Add other specific details for activite
+            break;
+          default:
+            break;
+        }
+
+        // Add image to the card
+        const imgData = reservation.offre.images[0]; // Assuming there is at least one image
+        pdf.addImage(imgData, 'JPEG', 130, 45, 60, 60);
+
+        // Move down for the next card
+        yPos += 30;
+      }
+    });
+
+    // Save and download the PDF
+    pdf.save(`reservations_confirmees_${date}.pdf`);
+  };
+  const getCollaborateurLogoUrl = (reservation) => {
+    // Vérifiez si l'URL du logo est disponible dans les données de la réservation
+    if (reservation.offre.collaborateur.logo) {
+      // Retournez l'URL complète du logo du collaborateur
+      return `http://54.87.28.4/${reservation.offre.collaborateur.logo}`;
     } else {
-      groupedReservations[date] = [reservation];
+      // Si l'URL du logo n'est pas disponible, retournez une URL par défaut ou une image générique
+      return 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.flaticon.com%2Ffr%2Ficone-gratuite%2Fpas-dappareil-photo_482432&psig=AOvVaw2oESc9luFlfvNxWovo3iww&ust=1714921741095000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCPis3Lqj9IUDFQAAAAAdAAAAABAE'; // Remplacez par votre URL par défaut
     }
-  });
-
-  // Sort grouped reservations by date in descending order
-  const sortedGroupedReservations = Object.entries(groupedReservations)
-    .sort(([dateA], [dateB]) => new Date(dateB) - new Date(dateA))
-    .reduce((acc, [date, reservations]) => {
-      acc[date] = reservations;
-      return acc;
-    }, {});
-
-  return sortedGroupedReservations;
-};
-
-const groupedReservations = groupReservationsByDate(
-  filteredDemandeReservations
-);
-const downloadPDFConfirmedByDate = async (date) => {
-  const pdf = new jsPDF();
-
-  // Add Ooredoo logo and header text
-  pdf.addImage(ooredooLogo, 'PNG', 10, 5, 25, 25);
-  pdf.setFontSize(14);
-  pdf.setTextColor('#333333');
-  pdf.text(`Le(s) réservation(s) Confirmée(s) pour le ${date}`, 70, 30);
-
-  // Add confirmed reservations for the date to the PDF
-  groupedReservations[date].forEach((reservation, index) => {
-    if (reservation.etat === 'confirmer') {
-      // Add a new page for each reservation except the first one
-      if (index > 0) {
-        pdf.addPage();
-      }
-
-      // Draw a rectangle as a card for the reservation
-      pdf.setFillColor('#f2f2f2'); // Light gray background color for the card
-      const cardHeight = calculateCardHeight(reservation); // Calculate card height based on content
-      pdf.rect(10, 40, 180, cardHeight, 'F'); // Draw a filled rectangle as a card
-      pdf.setTextColor('#000000'); // Set text color to black for better readability
-
-      // Add collaborator's logo and name at the top center
-      const logoData = getCollaborateurLogoUrl(reservation);
-      pdf.addImage(logoData, 'JPEG', 70, 45, 30, 30); // Adjust the positioning as needed
-      pdf.text(
-        `Nom Collaborateur: ${reservation.offre.collaborateur.nom}`,
-        105,
-        60
-      );
-
-      // Add reservation details to the card
-      pdf.text(
-        `Date : De ${reservation.date_debut} Jusq'ua ${reservation.date_fin}`,
-        30,
-        80
-      ); // Add dates
-
-      pdf.text(`Titre: ${reservation.offre.titre}`, 30, 100);
-      pdf.text(`Destination: ${reservation.offre.destination}`, 30, 110);
-      pdf.text(`Type: ${reservation.typeR}`, 30, 120);
-      pdf.text(
-        `Nom de l'employé: ${reservation.employe.utilisateur.nom} ${reservation.employe.utilisateur.prenom}`,
-        30,
-        130
-      );
-      pdf.text(
-        `Email de l'employé: ${reservation.employe.utilisateur.email}`,
-        30,
-        140
-      );
-      pdf.text(
-        `  tél de l'employé: ${reservation.employe.utilisateur.tel}`,
-        30,
-        150
-      );
-      pdf.text(`Prix: ${reservation.prix_totale.toFixed(2)} DT`, 30, 160);
-
-      // Add specific details based on reservation type
-      let yPos = 170;
-      switch (reservation.typeR) {
-        case 'hotel':
-          pdf.text(
-            `Nom de l'hotel: ${reservation.details.nom_hotel}`,
-            30,
-            yPos
-          );
-          yPos += 20; // Increase Y position for visual separation between hotel name and room details
-
-          pdf.text('Chambres:', 30, yPos);
-          reservation.rooms.forEach(
-            (room, roomIndex) => {
-              const roomDetails = `Chambre ${roomIndex + 1}: Adultes - ${
-                room.nbr_adults
-              }, Enfants - ${room.nbr_enfants}, Prix - ${room.prix.toFixed(
-                2
-              )} DT`;
-              pdf.text(roomDetails, 35, yPos + 10 + roomIndex * 10);
-            },
-            30,
-            yPos
-          );
-
-          break;
-        case 'autre':
-          pdf.text(`Nombre de personnes: ${reservation.nombre}`, 30, yPos);
-          break;
-        case 'voyage':
-          pdf.text(
-            `Nombre de jours: ${reservation.details.nbr_jours}`,
-            30,
-            yPos
-          );
-          pdf.text(`Nombre de personnes: ${reservation.nombre}`, 30, yPos + 10); // Add number of persons for voyages
-          pdf.text(`Inclus: ${reservation.details.inclus}`, 30, yPos + 20);
-          // Add other specific details for voyage
-          break;
-        case 'activité':
-          pdf.text(`Durée: ${reservation.details.duree} heures`, 30, yPos);
-          pdf.text(`Inclus: ${reservation.details.inclus}`, 30, yPos + 10);
-          // Add other specific details for activite
-          break;
-        default:
-          break;
-      }
-
-      // Add image to the card
-      const imgData = reservation.offre.images[0]; // Assuming there is at least one image
-      pdf.addImage(imgData, 'JPEG', 130, 45, 60, 60);
-
-      // Move down for the next card
-      yPos += 30;
+  };
+  // Function to calculate card height based on content
+  const calculateCardHeight = (reservation) => {
+    let height = 160; // Initial height for common details
+    switch (reservation.typeR) {
+      case 'hotel':
+        height += 20 + reservation.rooms.length * 10; // Add room details height
+        break;
+      case 'voyage':
+        height += 30; // Add additional details for voyage
+        break;
+      case 'activité':
+        height += 20; // Add additional details for activite
+        break;
+      default:
+        break;
     }
-  });
-
-  // Save and download the PDF
-  pdf.save(`reservations_confirmees_${date}.pdf`);
-};
-const getCollaborateurLogoUrl = (reservation) => {
-  // Vérifiez si l'URL du logo est disponible dans les données de la réservation
-  if (reservation.offre.collaborateur.logo) {
-    // Retournez l'URL complète du logo du collaborateur
-    return `http://localhost:5000/${reservation.offre.collaborateur.logo}`;
-  } else {
-    // Si l'URL du logo n'est pas disponible, retournez une URL par défaut ou une image générique
-    return 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.flaticon.com%2Ffr%2Ficone-gratuite%2Fpas-dappareil-photo_482432&psig=AOvVaw2oESc9luFlfvNxWovo3iww&ust=1714921741095000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCPis3Lqj9IUDFQAAAAAdAAAAABAE'; // Remplacez par votre URL par défaut
-  }
-};
-// Function to calculate card height based on content
-const calculateCardHeight = (reservation) => {
-  let height = 160; // Initial height for common details
-  switch (reservation.typeR) {
-    case 'hotel':
-      height += 20 + reservation.rooms.length * 10; // Add room details height
-      break;
-    case 'voyage':
-      height += 30; // Add additional details for voyage
-      break;
-    case 'activité':
-      height += 20; // Add additional details for activite
-      break;
-    default:
-      break;
-  }
-  return height;
-};
+    return height;
+  };
   return (
     <>
       <NavAdmin />
@@ -644,7 +653,7 @@ const calculateCardHeight = (reservation) => {
         </ToggleButtonGroup>
       </Grid>
 
-      <Grid container spacing={2} >
+      <Grid container spacing={2}>
         {Object.keys(groupedReservations).map((date) => (
           <Grid item xs={12} md={6} key={date}>
             <Typography variant="h6" sx={{ margin: '10px 0' }}>
@@ -660,13 +669,13 @@ const calculateCardHeight = (reservation) => {
               >
                 {date}
                 <Button
-    size="small"
-    variant="contained"
-    sx={{ backgroundColor: '#7FB2B6', color: '#fff', ml: 1 }}
-    onClick={() => markAllAsReparation(date)}
-  >
-    Valider tous
-  </Button>
+                  size="small"
+                  variant="contained"
+                  sx={{ backgroundColor: '#7FB2B6', color: '#fff', ml: 1 }}
+                  onClick={() => markAllAsReparation(date)}
+                >
+                  Valider tous
+                </Button>
                 <Button
                   size="small"
                   variant="contained"
@@ -703,7 +712,7 @@ const calculateCardHeight = (reservation) => {
                         <img
                           src={
                             reservation.employe.utilisateur.photo
-                              ? `http://localhost:5000/${reservation.employe.utilisateur.photo}`
+                              ? `http://54.87.28.4/${reservation.employe.utilisateur.photo}`
                               : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg' // URL de votre image par défaut
                           }
                           alt="Profil"
@@ -841,7 +850,7 @@ const calculateCardHeight = (reservation) => {
                           maxHeight: 150,
                           objectFit: 'cover',
                         }}
-                        src={`http://localhost:5000/${reservation.offre.images[0]}`}
+                        src={`http://54.87.28.4/${reservation.offre.images[0]}`}
                         alt="Offre"
                       />
                     </Card>

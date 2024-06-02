@@ -52,67 +52,67 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
   const [ascenseur, setAscenseur] = useState(false);
   const [salleDeSport, setSalleDeSport] = useState(false);
   const [aireDeJeuxEnfants, setAireDeJeuxEnfants] = useState(false);
-//nv pour hotel
- const [spa, setSpa] = useState(false);
- const [sauna, setSauna] = useState(false);
- const [hammam, setHammam] = useState(false);
- const [thalasso, setThalasso] = useState(false);
- const [centreEsthetique, setCentreEsthetique] = useState(false);
- const [toboggan, setToboggan] = useState(false);
- const [piedsDansLEau, setPiedsDansLEau] = useState(false);
- const [piscineEauDeMer, setPiscineEauDeMer] = useState(false);
- const [babySetting, setBabySetting] = useState(false);
- const [tennisDeTable, setTennisDeTable] = useState(false);
- const [locationDeVoiture, setLocationDeVoiture] = useState(false);
- const [changeMonetaire, setChangeMonetaire] = useState(false);
- const [interditCelibataires, setInterditCelibataires] = useState(false);
- const [interditBurkini, setInterditBurkini] = useState(false);
- const [interditAlcohol, setInterditAlcohol] = useState(false);
+  //nv pour hotel
+  const [spa, setSpa] = useState(false);
+  const [sauna, setSauna] = useState(false);
+  const [hammam, setHammam] = useState(false);
+  const [thalasso, setThalasso] = useState(false);
+  const [centreEsthetique, setCentreEsthetique] = useState(false);
+  const [toboggan, setToboggan] = useState(false);
+  const [piedsDansLEau, setPiedsDansLEau] = useState(false);
+  const [piscineEauDeMer, setPiscineEauDeMer] = useState(false);
+  const [babySetting, setBabySetting] = useState(false);
+  const [tennisDeTable, setTennisDeTable] = useState(false);
+  const [locationDeVoiture, setLocationDeVoiture] = useState(false);
+  const [changeMonetaire, setChangeMonetaire] = useState(false);
+  const [interditCelibataires, setInterditCelibataires] = useState(false);
+  const [interditBurkini, setInterditBurkini] = useState(false);
+  const [interditAlcohol, setInterditAlcohol] = useState(false);
   // States for Activité-specific fields
 
   const [duree, setDuree] = useState(0);
 
   //nv
-const [enfantsAutorises, setEnfantsAutorises] = useState(null);
-const [ageLimiteGratuite, setAgeLimiteGratuite] = useState(0);
-const [nombreEnfantsGratuits, setNombreEnfantsGratuits] = useState(0);
-const [prixEnfantsPayants, setPrixEnfantsPayants] = useState(0.0);
-const [conditions_speciales_enfants, setConditions_speciales_enfants] = useState("");
+  const [enfantsAutorises, setEnfantsAutorises] = useState(null);
+  const [ageLimiteGratuite, setAgeLimiteGratuite] = useState(0);
+  const [nombreEnfantsGratuits, setNombreEnfantsGratuits] = useState(0);
+  const [prixEnfantsPayants, setPrixEnfantsPayants] = useState(0.0);
+  const [conditions_speciales_enfants, setConditions_speciales_enfants] =
+    useState('');
 
-//bch
-const [selectedTypes, setSelectedTypes] = useState([]);
-const [defaultChambre, setDefaultChambre] = useState('');
-const [supplements, setSupplements] = useState({});
+  //bch
+  const [selectedTypes, setSelectedTypes] = useState([]);
+  const [defaultChambre, setDefaultChambre] = useState('');
+  const [supplements, setSupplements] = useState({});
 
- const typesChambresOptions = [
-   { id: 'standard', nom: 'Chambre standard' },
-   { id: 'double', nom: 'Chambre double' },
-   { id: 'familiale', nom: 'Chambre familiale' },
-   { id: 'suite', nom: 'Suite' },
- ];
-const typeChambresData = selectedTypes.map((typeId) => ({
-  nom: typesChambresOptions.find((type) => type.id === typeId).nom,
-  supplement: supplements[typeId] || 0,
-  defaultChambre: defaultChambre === typeId,
-}));
- const handleTypeChambreChange = (event) => {
-   const {
-     target: { value },
-   } = event;
-   setSelectedTypes(
-     // On autofill we get a stringified value.
-     typeof value === 'string' ? value.split(',') : value
-   );
- };
+  const typesChambresOptions = [
+    { id: 'standard', nom: 'Chambre standard' },
+    { id: 'double', nom: 'Chambre double' },
+    { id: 'familiale', nom: 'Chambre familiale' },
+    { id: 'suite', nom: 'Suite' },
+  ];
+  const typeChambresData = selectedTypes.map((typeId) => ({
+    nom: typesChambresOptions.find((type) => type.id === typeId).nom,
+    supplement: supplements[typeId] || 0,
+    defaultChambre: defaultChambre === typeId,
+  }));
+  const handleTypeChambreChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedTypes(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value
+    );
+  };
 
- const handleDefaultChambreChange = (event) => {
-   setDefaultChambre(event.target.value);
- };
+  const handleDefaultChambreChange = (event) => {
+    setDefaultChambre(event.target.value);
+  };
 
- const handleSupplementChange = (typeId, value) => {
-   setSupplements((prev) => ({ ...prev, [typeId]: value }));
- };
-
+  const handleSupplementChange = (typeId, value) => {
+    setSupplements((prev) => ({ ...prev, [typeId]: value }));
+  };
 
   const token = localStorage.getItem('login');
   useEffect(() => {
@@ -120,10 +120,10 @@ const typeChambresData = selectedTypes.map((typeId) => ({
 
     if (isUpdate) {
       axios
-        .get(`http://localhost:5000/offer/${offreId}`, { headers })
+        .get(`http://54.87.28.4/offer/${offreId}`, { headers })
         .then((response) => {
           const data = response.data;
-          console.log('Data received:', data); 
+          console.log('Data received:', data);
 
           setTitre(data.titre);
           setDescription(data.description);
@@ -136,9 +136,9 @@ const typeChambresData = selectedTypes.map((typeId) => ({
           setRemise(data.remise ? data.remise.toString().padStart(2, '0') : '');
           setEnfantsAutorises(data.enfants_autorises); // Utilisation de la clé correcte
 
-         setNombreEnfantsGratuits(data.nombre_enfants_gratuits);
-         setAgeLimiteGratuite(data.age_limite_gratuite);
-         setPrixEnfantsPayants(data.prix_enfants_payants);
+          setNombreEnfantsGratuits(data.nombre_enfants_gratuits);
+          setAgeLimiteGratuite(data.age_limite_gratuite);
+          setPrixEnfantsPayants(data.prix_enfants_payants);
           setConditions_speciales_enfants(data.conditions_speciales_enfants);
           if (data.type === 'voyage' || data.type === 'activite') {
             setProgramme(data.details?.programme || '');
@@ -161,22 +161,21 @@ const typeChambresData = selectedTypes.map((typeId) => ({
             setAscenseur(data.details.ascenseur);
             setSalleDeSport(data.details.salle_de_sport);
             setAireDeJeuxEnfants(data.details.aire_de_jeux_enfants);
-setSpa(data.details.spa);
-setSauna(data.details.sauna);
-setHammam(data.details.hammam);
-setThalasso(data.details.thalasso);
-setCentreEsthetique(data.details.centreEsthetique);
-setToboggan(data.details.toboggan);
-setPiedsDansLEau(data.details.piedsDansLEau);
-setPiscineEauDeMer(data.details.piscineEauDeMer);
-setBabySetting(data.details.babySetting);
-setTennisDeTable(data.details.tennisDeTable);
-setLocationDeVoiture(data.details.locationDeVoiture);
-setChangeMonetaire(data.details.changeMonetaire);
-      setInterditCelibataires(data.details.interdit_celibataires);
-      setInterditBurkini(data.details.interdit_burkini);
-      setInterditAlcohol(data.details.interdit_alcohol);
-
+            setSpa(data.details.spa);
+            setSauna(data.details.sauna);
+            setHammam(data.details.hammam);
+            setThalasso(data.details.thalasso);
+            setCentreEsthetique(data.details.centreEsthetique);
+            setToboggan(data.details.toboggan);
+            setPiedsDansLEau(data.details.piedsDansLEau);
+            setPiscineEauDeMer(data.details.piscineEauDeMer);
+            setBabySetting(data.details.babySetting);
+            setTennisDeTable(data.details.tennisDeTable);
+            setLocationDeVoiture(data.details.locationDeVoiture);
+            setChangeMonetaire(data.details.changeMonetaire);
+            setInterditCelibataires(data.details.interdit_celibataires);
+            setInterditBurkini(data.details.interdit_burkini);
+            setInterditAlcohol(data.details.interdit_alcohol);
           } else if (data.type === 'activite') {
             setDuree(data.details.duree);
           }
@@ -187,7 +186,7 @@ setChangeMonetaire(data.details.changeMonetaire);
     }
 
     axios
-      .get('http://localhost:5000/allCollaborators', { headers })
+      .get('http://54.87.28.4/allCollaborators', { headers })
       .then((response) => {
         setCollaborateurs(response.data);
       })
@@ -322,7 +321,7 @@ setChangeMonetaire(data.details.changeMonetaire);
         />
       </label>
       <FormControl fullWidth className="type-chambre-selection">
-        <InputLabel id="demo-multiple-checkbox-label" >
+        <InputLabel id="demo-multiple-checkbox-label">
           Type de Chambre
         </InputLabel>
         <Select
@@ -742,37 +741,38 @@ setChangeMonetaire(data.details.changeMonetaire);
 
       <div className="interdictions-section">
         <h3>Interdictions</h3>
-        <div className='offre-checkbox-groupInterdit '> 
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={interditCelibataires}
-              onChange={(e) => setInterditCelibataires(e.target.checked)}
-              name="interditCelibataires"
-            />
-          }
-          label="Célibataires"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={interditBurkini}
-              onChange={(e) => setInterditBurkini(e.target.checked)}
-              name="interditBurkini"
-            />
-          }
-          label="Burkini"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={interditAlcohol}
-              onChange={(e) => setInterditAlcohol(e.target.checked)}
-              name="interditAlcohol"
-            />
-          }
-          label="Alcool"
-        /></div>
+        <div className="offre-checkbox-groupInterdit ">
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={interditCelibataires}
+                onChange={(e) => setInterditCelibataires(e.target.checked)}
+                name="interditCelibataires"
+              />
+            }
+            label="Célibataires"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={interditBurkini}
+                onChange={(e) => setInterditBurkini(e.target.checked)}
+                name="interditBurkini"
+              />
+            }
+            label="Burkini"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={interditAlcohol}
+                onChange={(e) => setInterditAlcohol(e.target.checked)}
+                name="interditAlcohol"
+              />
+            }
+            label="Alcool"
+          />
+        </div>
       </div>
     </>
   );
@@ -804,7 +804,7 @@ setChangeMonetaire(data.details.changeMonetaire);
       );
       return;
     }
- 
+
     const formData = new FormData();
     formData.append('titre', titre);
     formData.append('description', description);
@@ -822,9 +822,8 @@ setChangeMonetaire(data.details.changeMonetaire);
       'conditions_speciales_enfants',
       conditions_speciales_enfants
     );
-    
-    formData.append('remise', remise === '' ? 0 : parseInt(remise, 10));
 
+    formData.append('remise', remise === '' ? 0 : parseInt(remise, 10));
 
     // Append additional fields based on type
     if (typeOffre === 'voyage') {
@@ -857,22 +856,25 @@ setChangeMonetaire(data.details.changeMonetaire);
       formData.append('tennis_de_table', tennisDeTable);
       formData.append('location_de_voiture', locationDeVoiture);
       formData.append('change_monetaire', changeMonetaire);
-  formData.append('interdit_celibataires', interditCelibataires);
-  formData.append('interdit_burkini', interditBurkini);
-  formData.append('interdit_alcohol', interditAlcohol);
+      formData.append('interdit_celibataires', interditCelibataires);
+      formData.append('interdit_burkini', interditBurkini);
+      formData.append('interdit_alcohol', interditAlcohol);
 
-selectedTypes.forEach((typeId, index) => {
-  const typeChambre = typesChambresOptions.find((type) => type.id === typeId);
-  formData.append(`typechambres[${index}][nom]`, typeChambre.nom);
-  formData.append(
-    `typechambres[${index}][supplement]`,
-    supplements[typeId] || 0
-  );
-  formData.append(
-    `typechambres[${index}][defaultChambre]`,
-    defaultChambre === typeId
-  );
-});    } else if (typeOffre === 'activite') {
+      selectedTypes.forEach((typeId, index) => {
+        const typeChambre = typesChambresOptions.find(
+          (type) => type.id === typeId
+        );
+        formData.append(`typechambres[${index}][nom]`, typeChambre.nom);
+        formData.append(
+          `typechambres[${index}][supplement]`,
+          supplements[typeId] || 0
+        );
+        formData.append(
+          `typechambres[${index}][defaultChambre]`,
+          defaultChambre === typeId
+        );
+      });
+    } else if (typeOffre === 'activite') {
       formData.append('programme', programme);
       formData.append('inclus', inclus);
       formData.append('duree', duree);
@@ -890,8 +892,8 @@ selectedTypes.forEach((typeId, index) => {
         },
       };
       const url = isUpdate
-        ? `http://localhost:5000/offer/${offreId}`
-        : 'http://localhost:5000/offer';
+        ? `http://54.87.28.4/offer/${offreId}`
+        : 'http://54.87.28.4/offer';
       const method = isUpdate ? 'put' : 'post';
 
       const response = await axios[method](url, formData, config);
@@ -923,7 +925,6 @@ selectedTypes.forEach((typeId, index) => {
       setRemise(value.toString().padStart(2, '0'));
     }
   };
-
 
   const handleLocationSelect = (location) => {
     setDestination(location);

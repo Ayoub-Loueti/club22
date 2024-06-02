@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { MaterialReactTable, createMRTColumnHelper } from 'material-react-table';
+import {
+  MaterialReactTable,
+  createMRTColumnHelper,
+} from 'material-react-table';
 import NavAdmin from '../NavAdmin/navAdmin';
 import './tousLesUtilisateurs.css';
 import { MRT_Localization_FR } from 'material-react-table/locales/fr';
@@ -17,7 +20,7 @@ function TousLesUtilisateurs() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/allUsers', {
+        const response = await axios.get('http://54.87.28.4/allUsers', {
           headers: {
             Authorization: `Bearer ${JSON.parse(token).token}`,
           },
@@ -43,7 +46,7 @@ function TousLesUtilisateurs() {
         <img
           src={
             row.original.photo
-              ? `http://localhost:5000/${row.original.photo}`
+              ? `http://54.87.28.4/${row.original.photo}`
               : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
           }
           alt="Profil"
@@ -55,7 +58,10 @@ function TousLesUtilisateurs() {
     columnHelper.accessor('nom', {
       header: 'Nom',
       Cell: ({ row }) => (
-        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+        <span
+          onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
+          style={{ cursor: 'pointer' }}
+        >
           {row.original.nom}
         </span>
       ),
@@ -63,7 +69,10 @@ function TousLesUtilisateurs() {
     columnHelper.accessor('prenom', {
       header: 'Prénom',
       Cell: ({ row }) => (
-        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+        <span
+          onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
+          style={{ cursor: 'pointer' }}
+        >
           {row.original.prenom}
         </span>
       ),
@@ -71,7 +80,10 @@ function TousLesUtilisateurs() {
     columnHelper.accessor('email', {
       header: 'Email',
       Cell: ({ row }) => (
-        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+        <span
+          onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
+          style={{ cursor: 'pointer' }}
+        >
           {row.original.email}
         </span>
       ),
@@ -79,7 +91,10 @@ function TousLesUtilisateurs() {
     columnHelper.accessor('type', {
       header: 'Type',
       Cell: ({ row }) => (
-        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+        <span
+          onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
+          style={{ cursor: 'pointer' }}
+        >
           {row.original.type}
         </span>
       ),
@@ -147,26 +162,30 @@ function TousLesUtilisateurs() {
           columns={columns}
           data={utilisateurs.filter(
             (utilisateur) =>
-              utilisateur.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              utilisateur.prenom.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              utilisateur.nom
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
+              utilisateur.prenom
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
               utilisateur.email.toLowerCase().includes(searchTerm.toLowerCase())
-              )}
-              getRowId={(row) => row.id_utilisateur}
-              localization={MRT_Localization_FR}
-              muiSearchTextFieldProps={{
-                variant: 'outlined',
-                label: 'Rechercher des utilisateurs',
-              }}
-              muiTableHeadCellProps={{
-                sx: {
-                  backgroundColor: '#A2C8CC', // Couleur de fond des cellules d'en-tête
-                  '&:hover': {},
-                },
-              }}
-            />
-          </div>
-        </>
-      );
-    }
-    
-    export default TousLesUtilisateurs;
+          )}
+          getRowId={(row) => row.id_utilisateur}
+          localization={MRT_Localization_FR}
+          muiSearchTextFieldProps={{
+            variant: 'outlined',
+            label: 'Rechercher des utilisateurs',
+          }}
+          muiTableHeadCellProps={{
+            sx: {
+              backgroundColor: '#A2C8CC', // Couleur de fond des cellules d'en-tête
+              '&:hover': {},
+            },
+          }}
+        />
+      </div>
+    </>
+  );
+}
+
+export default TousLesUtilisateurs;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './OffreEmployeDetails.css'; 
+import './OffreEmployeDetails.css';
 import { useParams } from 'react-router-dom';
 import ReservationModal from '../../components/ReservationModel/ReservationModal';
 import AdherantModal from '../../components/AdherantModal/AdherantModal';
@@ -40,10 +40,10 @@ import {
 import ProgramModal from './ProgramModal';
 import parse from 'html-react-parser';
 import ScrollToTop from '../../components/designs/ScrollToTop';
-import StarRating from './StarRating'; 
+import StarRating from './StarRating';
 
 function OffreEmployeDetails() {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
   const [offre, setOffre] = useState(null);
   const token = localStorage.getItem('login');
   const { offreId } = useParams();
@@ -58,15 +58,15 @@ function OffreEmployeDetails() {
     const fetchOffreDetails = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/employeOffer/${offreId}`, 
+          `http://54.87.28.4/employeOffer/${offreId}`,
           {
             headers: {
               Authorization: `Bearer ${JSON.parse(token).token}`,
             },
           }
         );
-        setOffre(response.data); 
-        console.log('API Response:', response.data); 
+        setOffre(response.data);
+        console.log('API Response:', response.data);
       } catch (error) {
         console.error('Error fetching offre details:', error);
       }
@@ -74,13 +74,13 @@ function OffreEmployeDetails() {
 
     const checkAdherantStatus = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/isAdherant', {
+        const response = await axios.get('http://54.87.28.4/isAdherant', {
           headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
         });
         setIsAdherant(response.data.adherant);
       } catch (error) {
         console.error('Error checking adherant status:', error);
-        setIsAdherant(false); 
+        setIsAdherant(false);
       }
     };
 
@@ -124,42 +124,42 @@ function OffreEmployeDetails() {
   };
   const openProgramModal = () => setIsProgramModalOpen(true);
 
-const closeProgramModal = () => {
-  console.log('Fermeture du modal');
-  setIsProgramModalOpen(false);
-};
-const handlePaymentMethod = (method) => {
-  setOffre((currentOffre) => ({ ...currentOffre, mode_paiement: method }));
-};
+  const closeProgramModal = () => {
+    console.log('Fermeture du modal');
+    setIsProgramModalOpen(false);
+  };
+  const handlePaymentMethod = (method) => {
+    setOffre((currentOffre) => ({ ...currentOffre, mode_paiement: method }));
+  };
 
-const handleAuthorizationChange = () => {
-  setOffre((currentOffre) => ({
-    ...currentOffre,
-    autorisation_deduction_salaire:
-      !currentOffre.autorisation_deduction_salaire,
-  }));
-};
- const renderInterdictions = () => {
-   const interdictions = [
-     { label: t('Célibataires'), value: offre.details.interdit_celibataires },
-     { label: 'Burkinis', value: offre.details.interdit_burkini },
-     { label: t('Alcool'), value: offre.details.interdit_alcohol },
-   ];
+  const handleAuthorizationChange = () => {
+    setOffre((currentOffre) => ({
+      ...currentOffre,
+      autorisation_deduction_salaire:
+        !currentOffre.autorisation_deduction_salaire,
+    }));
+  };
+  const renderInterdictions = () => {
+    const interdictions = [
+      { label: t('Célibataires'), value: offre.details.interdit_celibataires },
+      { label: 'Burkinis', value: offre.details.interdit_burkini },
+      { label: t('Alcool'), value: offre.details.interdit_alcohol },
+    ];
 
-  const interdictionsActives = interdictions.filter((inter) => inter.value);
+    const interdictionsActives = interdictions.filter((inter) => inter.value);
 
-   return (
-     <span className="interdictionsEmp">
-       {interdictionsActives.map((interdiction, index) => (
-         <span key={index} className="interdiction-itemEmp">
-           <FontAwesomeIcon icon={faBan} className="interdiction-iconEmp" />
-          {""} {interdiction.label}
-           {index < interdictionsActives.length - 1 ? ' | ' : ''}
-         </span>
-       ))}
-     </span>
-   );
- };
+    return (
+      <span className="interdictionsEmp">
+        {interdictionsActives.map((interdiction, index) => (
+          <span key={index} className="interdiction-itemEmp">
+            <FontAwesomeIcon icon={faBan} className="interdiction-iconEmp" />
+            {''} {interdiction.label}
+            {index < interdictionsActives.length - 1 ? ' | ' : ''}
+          </span>
+        ))}
+      </span>
+    );
+  };
   return (
     <>
       <Navbar />
@@ -169,7 +169,7 @@ const handleAuthorizationChange = () => {
       <div>
         <button className="retour-btn" onClick={() => window.history.back()}>
           <FaArrowLeft />
-         {''} {t('Retour')}
+          {''} {t('Retour')}
         </button>
         <button
           className="details-link"
@@ -182,7 +182,7 @@ const handleAuthorizationChange = () => {
         <div className="offre-cardDetails">
           {offre.lesImages.length > 0 && (
             <img
-              src={`http://localhost:5000/${offre.lesImages[0].image}`}
+              src={`http://54.87.28.4/${offre.lesImages[0].image}`}
               alt="Image principale"
               className="offre-main-image"
             />
@@ -258,7 +258,7 @@ const handleAuthorizationChange = () => {
           {offre.lesImages.slice(1).map((image, index) => (
             <img
               key={index}
-              src={`http://localhost:5000/${image.image}`}
+              src={`http://54.87.28.4/${image.image}`}
               alt={`Image supplémentaire ${index + 1}`}
               className="offre-additional-image"
               onClick={() => handleImageClick(index + 1)}
