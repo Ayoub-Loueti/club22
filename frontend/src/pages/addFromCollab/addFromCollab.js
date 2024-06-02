@@ -238,7 +238,7 @@ function AddFromCollaborateur() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://54.87.28.4/checkValidation/${id_collaborateur}`
+          `http://3.88.157.0/checkValidation/${id_collaborateur}`
         );
         if (response.data.result === 0) {
           setAccessGranted(false);
@@ -306,7 +306,7 @@ function AddFromCollaborateur() {
     );
     try {
       const response = await axios.post(
-        `http://54.87.28.4/offerFromCollab/${id_collaborateur}`,
+        `http://3.88.157.0/offerFromCollab/${id_collaborateur}`,
         formData
       );
       Swal.fire('Succès', "L'offre a été ajoutée avec succès.", 'success');

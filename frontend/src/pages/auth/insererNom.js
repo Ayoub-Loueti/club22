@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import backgroundImage from '../../assets/ooredoo3.png';
 import '../../assets/insererNom.css';
 
 function InsererNom() {
@@ -19,7 +18,7 @@ function InsererNom() {
 
     try {
       const response = await axios.patch(
-        'http://54.87.28.4/updateNameSurnameGenre', // Assurez-vous que cette URL correspond à votre configuration de route
+        'http://3.88.157.0/updateNameSurnameGenre', // Assurez-vous que cette URL correspond à votre configuration de route
         { nom, prenom, genre, tel },
         { headers: { Authorization: `Bearer ${token}` } }
       );

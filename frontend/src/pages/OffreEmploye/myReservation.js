@@ -41,7 +41,7 @@ const MyReservations = () => {
 
     const fetchReservations = async () => {
       try {
-        const response = await axios.get('http://54.87.28.4/myReservations', {
+        const response = await axios.get('http://3.88.157.0/myReservations', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -59,7 +59,7 @@ const MyReservations = () => {
     const fetchBoxDReservations = async () => {
       try {
         const response = await axios.get(
-          'http://54.87.28.4/myReservationsBoxD',
+          'http://3.88.157.0/myReservationsBoxD',
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -73,7 +73,7 @@ const MyReservations = () => {
     const fetchBoxTReservations = async () => {
       try {
         const response = await axios.get(
-          'http://54.87.28.4/myReservationsBoxT',
+          'http://3.88.157.0/myReservationsBoxT',
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -93,7 +93,7 @@ const MyReservations = () => {
   }, []);
   const fetchReservations = async () => {
     try {
-      const response = await axios.get('http://54.87.28.4/myReservations', {
+      const response = await axios.get('http://3.88.157.0/myReservations', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setReservations(response.data);
@@ -119,7 +119,7 @@ const MyReservations = () => {
       });
       if (result.isConfirmed) {
         await axios.put(
-          `http://54.87.28.4/reservation/${id}/confirmer`,
+          `http://3.88.157.0/reservation/${id}/confirmer`,
           {},
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -175,7 +175,7 @@ const MyReservations = () => {
       });
       if (result.isConfirmed) {
         await axios.put(
-          `http://54.87.28.4/reservation/${id}/annuler`,
+          `http://3.88.157.0/reservation/${id}/annuler`,
           {},
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -235,7 +235,7 @@ const MyReservations = () => {
   const fetchRating = async (token, offreId) => {
     try {
       const response = await axios.get(
-        `http://54.87.28.4/evaluation/vote/${offreId}`,
+        `http://3.88.157.0/evaluation/vote/${offreId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -282,7 +282,7 @@ const MyReservations = () => {
     const token = JSON.parse(localStorage.getItem('login'))?.token;
     try {
       const response = await axios.post(
-        'http://54.87.28.4/evaluation',
+        'http://3.88.157.0/evaluation',
         {
           id_offre,
           vote,
@@ -565,7 +565,7 @@ Téléphone du collaborateur: ${reservation.offre.collaborateur.tel}`;
   const fetchDeductionDetails = async () => {
     try {
       const response = await axios.get(
-        'http://54.87.28.4/myReservationsDeduction',
+        'http://3.88.157.0/myReservationsDeduction',
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -715,7 +715,7 @@ Téléphone du collaborateur: ${reservation.offre.collaborateur.tel}`;
                             maxHeight: 150,
                             objectFit: 'cover',
                           }}
-                          src={`http://54.87.28.4/${reservation.offre.images[0]}`}
+                          src={`http://3.88.157.0/${reservation.offre.images[0]}`}
                           alt="Offre"
                         />
                         <Box
@@ -843,7 +843,7 @@ Téléphone du collaborateur: ${reservation.offre.collaborateur.tel}`;
                             maxHeight: 150,
                             objectFit: 'cover',
                           }}
-                          src={`http://54.87.28.4/${reservation.offre.images[0]}`}
+                          src={`http://3.88.157.0/${reservation.offre.images[0]}`}
                           alt="Offre"
                         />
                         <Box
@@ -920,7 +920,7 @@ Téléphone du collaborateur: ${reservation.offre.collaborateur.tel}`;
                         maxHeight: 150,
                         objectFit: 'cover',
                       }}
-                      src={`http://54.87.28.4/${reservation.offre.images[0]}`}
+                      src={`http://3.88.157.0/${reservation.offre.images[0]}`}
                       alt="Offre"
                     />
                     <Box

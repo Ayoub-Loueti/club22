@@ -16,7 +16,6 @@ import ShowReservationDialog from '../../OffreEmploye/ShowReservationDialog';
 import NavAdmin from '../NavAdmin/navAdmin';
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
 import ooredooLogo from './../../../assets/ooredoo2.png';
 
 const DemandeReserClick = ({ collaborateurId }) => {
@@ -43,7 +42,7 @@ const DemandeReserClick = ({ collaborateurId }) => {
         collaborateurId
       );
       const response = await axios.get(
-        `http://54.87.28.4/getReservByCollabA/${collaborateurId}`,
+        `http://3.88.157.0/getReservByCollabA/${collaborateurId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -60,7 +59,7 @@ const DemandeReserClick = ({ collaborateurId }) => {
     const token = JSON.parse(localStorage.getItem('login'))?.token;
     try {
       const response = await axios.put(
-        `http://54.87.28.4/reservation/${id}/reparer`,
+        `http://3.88.157.0/reservation/${id}/reparer`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -160,7 +159,7 @@ ${
     );
     try {
       const response = await axios.put(
-        'http://54.87.28.4/reservations/reparer',
+        'http://3.88.157.0/reservations/reparer',
         { reservationIds },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -196,7 +195,7 @@ ${
           collaborateurId
         );
         const response = await axios.get(
-          `http://54.87.28.4/getReservByCollabA/${collaborateurId}`,
+          `http://3.88.157.0/getReservByCollabA/${collaborateurId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -216,7 +215,7 @@ ${
           collaborateurId
         );
         const response = await axios.get(
-          `http://54.87.28.4/getReservByCollabB/${collaborateurId}`,
+          `http://3.88.157.0/getReservByCollabB/${collaborateurId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -286,7 +285,7 @@ ${
     const token = JSON.parse(localStorage.getItem('login'))?.token;
     try {
       const response = await axios.put(
-        `http://54.87.28.4/reservation/${id}/accepter`,
+        `http://3.88.157.0/reservation/${id}/accepter`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -322,7 +321,7 @@ ${
     const token = JSON.parse(localStorage.getItem('login'))?.token;
     try {
       const response = await axios.put(
-        `http://54.87.28.4/reservation/${id}/refuser`,
+        `http://3.88.157.0/reservation/${id}/refuser`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -606,7 +605,7 @@ ${
     // Vérifiez si l'URL du logo est disponible dans les données de la réservation
     if (reservation.offre.collaborateur.logo) {
       // Retournez l'URL complète du logo du collaborateur
-      return `http://54.87.28.4/${reservation.offre.collaborateur.logo}`;
+      return `http://3.88.157.0/${reservation.offre.collaborateur.logo}`;
     } else {
       // Si l'URL du logo n'est pas disponible, retournez une URL par défaut ou une image générique
       return 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.flaticon.com%2Ffr%2Ficone-gratuite%2Fpas-dappareil-photo_482432&psig=AOvVaw2oESc9luFlfvNxWovo3iww&ust=1714921741095000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCPis3Lqj9IUDFQAAAAAdAAAAABAE'; // Remplacez par votre URL par défaut
@@ -712,7 +711,7 @@ ${
                         <img
                           src={
                             reservation.employe.utilisateur.photo
-                              ? `http://54.87.28.4/${reservation.employe.utilisateur.photo}`
+                              ? `http://3.88.157.0/${reservation.employe.utilisateur.photo}`
                               : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg' // URL de votre image par défaut
                           }
                           alt="Profil"
@@ -850,7 +849,7 @@ ${
                           maxHeight: 150,
                           objectFit: 'cover',
                         }}
-                        src={`http://54.87.28.4/${reservation.offre.images[0]}`}
+                        src={`http://3.88.157.0/${reservation.offre.images[0]}`}
                         alt="Offre"
                       />
                     </Card>

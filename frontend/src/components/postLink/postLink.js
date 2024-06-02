@@ -16,7 +16,7 @@ const PostLink = () => {
       if (postId) {
         try {
           const response = await axios.get(
-            `http://54.87.28.4/getPostById/${postId}`
+            `http://3.88.157.0/getPostById/${postId}`
           );
           setPostDetails(response.data);
         } catch (error) {

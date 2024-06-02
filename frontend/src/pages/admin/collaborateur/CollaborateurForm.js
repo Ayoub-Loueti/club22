@@ -24,7 +24,7 @@ function CollaborateurForm({
     const fetchCollaborateur = async () => {
       try {
         const response = await axios.get(
-          `http://54.87.28.4/collaborator/${collaborateurId}`,
+          `http://3.88.157.0/collaborator/${collaborateurId}`,
           {
             headers: {
               Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -55,7 +55,7 @@ function CollaborateurForm({
 
     try {
       const response = await axios.post(
-        'http://54.87.28.4/upload-image', // Update URL as per your backend
+        'http://3.88.157.0/upload-image', // Update URL as per your backend
         data
       );
       const imageUrl = response.data.imageUrl;
@@ -83,7 +83,7 @@ function CollaborateurForm({
       if (isUpdate) {
         // Handle update logic using collaborateurId prop
         response = await axios.put(
-          `http://54.87.28.4/collaborator/${collaborateurId}`,
+          `http://3.88.157.0/collaborator/${collaborateurId}`,
           collaborateurData,
           {
             headers: {
@@ -94,7 +94,7 @@ function CollaborateurForm({
       } else {
         // Handle add logic
         response = await axios.post(
-          'http://54.87.28.4/collaborator',
+          'http://3.88.157.0/collaborator',
           collaborateurData,
           {
             headers: {

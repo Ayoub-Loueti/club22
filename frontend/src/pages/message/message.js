@@ -19,14 +19,13 @@ import {
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { IconButton } from '@mui/material';
 import { Visibility } from '@mui/icons-material';
-import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 import io from 'socket.io-client';
 import Lottie from 'react-lottie';
 import typingAnimation from '../../animations/typing.json'; // Adjust the path as necessary
 import './message.css';
 import Navbar from '../../components/navbar/navbar';
-const ENDPOINT = 'http://54.87.28.4';
+const ENDPOINT = 'http://3.88.157.0';
 var socket, selectedChatCompare;
 
 function MessagePage() {
@@ -121,7 +120,7 @@ function MessagePage() {
   const handleCreateDiscussion = () => {
     axios
       .post(
-        'http://54.87.28.4/discussions',
+        'http://3.88.157.0/discussions',
         {
           nomDisc: discussionName,
           nbr_jours_disc: validityDays,
@@ -144,7 +143,7 @@ function MessagePage() {
   const fetchEmployesAndAdmins = async () => {
     try {
       const response = await axios.get(
-        'http://54.87.28.4/users/employes-admins',
+        'http://3.88.157.0/users/employes-admins',
         {
           headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
         }
@@ -166,7 +165,7 @@ function MessagePage() {
   const fetchPrivacyStatus = async (id_disc) => {
     try {
       const response = await axios.get(
-        `http://54.87.28.4/discussion/${id_disc}/is-private`,
+        `http://3.88.157.0/discussion/${id_disc}/is-private`,
         {
           headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
         }
@@ -180,7 +179,7 @@ function MessagePage() {
   const fetchMembers = async (id_disc) => {
     try {
       const response = await axios.get(
-        `http://54.87.28.4/discussion/${id_disc}/members`,
+        `http://3.88.157.0/discussion/${id_disc}/members`,
         {
           headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
         }
@@ -202,7 +201,7 @@ function MessagePage() {
   const checkAdminStatus = async () => {
     try {
       const response = await axios.get(
-        `http://54.87.28.4/discussion/${selectedDiscussion.id_disc}/is-admin`,
+        `http://3.88.157.0/discussion/${selectedDiscussion.id_disc}/is-admin`,
         {
           headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
         }
@@ -222,7 +221,7 @@ function MessagePage() {
   const handleKickMember = async (memberId) => {
     try {
       await axios.delete(
-        `http://54.87.28.4/discussion/${selectedDiscussion.id_disc}/member/${memberId}`,
+        `http://3.88.157.0/discussion/${selectedDiscussion.id_disc}/member/${memberId}`,
         {
           headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
         }
@@ -314,7 +313,7 @@ function MessagePage() {
 
   useEffect(() => {
     axios
-      .get('http://54.87.28.4/discussions', {
+      .get('http://3.88.157.0/discussions', {
         headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
       })
       .then((response) => {
@@ -327,7 +326,7 @@ function MessagePage() {
     console.log(selectedDiscussion);
     if (selectedDiscussion && selectedDiscussion.id_disc) {
       axios
-        .get(`http://54.87.28.4/messages/${selectedDiscussion.id_disc}`, {
+        .get(`http://3.88.157.0/messages/${selectedDiscussion.id_disc}`, {
           headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
         })
         .then((response) => {
@@ -344,7 +343,7 @@ function MessagePage() {
   const fetchMessages = () => {
     if (selectedDiscussion && selectedDiscussion.id_disc) {
       axios
-        .get(`http://54.87.28.4/messages/${selectedDiscussion.id_disc}`, {
+        .get(`http://3.88.157.0/messages/${selectedDiscussion.id_disc}`, {
           headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
         })
         .then((response) => {
@@ -376,7 +375,7 @@ function MessagePage() {
     if (selectedDiscussion && newMessage.trim()) {
       axios
         .post(
-          `http://54.87.28.4/message/${selectedDiscussion.id_disc}`,
+          `http://3.88.157.0/message/${selectedDiscussion.id_disc}`,
           { contenu: newMessage },
           { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } }
         )
@@ -410,7 +409,7 @@ function MessagePage() {
 
   const fetchUserDetails = async (userId) => {
     try {
-      const response = await axios.get(`http://54.87.28.4/profil/${userId}`, {
+      const response = await axios.get(`http://3.88.157.0/profil/${userId}`, {
         headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
       });
       return {
@@ -561,7 +560,7 @@ function MessagePage() {
                           <Avatar
                             src={
                               member.utilisateur.photo
-                                ? `http://54.87.28.4/${member.utilisateur.photo}`
+                                ? `http://3.88.157.0/${member.utilisateur.photo}`
                                 : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
                             }
                             alt={`${member.utilisateur.prenom} ${member.utilisateur.nom}`}
@@ -594,7 +593,7 @@ function MessagePage() {
                         <Avatar
                           src={
                             message.utilisateur && message.utilisateur.photo
-                              ? `http://54.87.28.4/${message.utilisateur.photo}`
+                              ? `http://3.88.157.0/${message.utilisateur.photo}`
                               : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
                           }
                           alt={
@@ -671,7 +670,7 @@ function MessagePage() {
                 {connectedUsers.map((user, index) => (
                   <ListItem key={index} className="contactsMsgs li">
                     <Avatar
-                      src={`http://54.87.28.4/${user.photo}`}
+                      src={`http://3.88.157.0/${user.photo}`}
                       alt={`${user.prenom} ${user.nom}`}
                       sx={{ width: 56, height: 56, marginRight: 2 }}
                       className="user_imgMsgs"

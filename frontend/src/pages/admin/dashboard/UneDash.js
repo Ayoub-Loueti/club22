@@ -10,7 +10,7 @@ const UneDash = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://54.87.28.4/adherentstats', {
+        const response = await axios.get('http://3.88.157.0/adherentstats', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const { adherentPercentage, nonAdherentPercentage } = response.data;

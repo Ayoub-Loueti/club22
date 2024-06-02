@@ -24,7 +24,7 @@ function ChangerPass() {
     setLoading(true);
 
     try {
-      await axios.post(`http://54.87.28.4/reset-password/${token}`, {
+      await axios.post(`http://3.88.157.0/reset-password/${token}`, {
         newPassword: newPassword,
       });
 

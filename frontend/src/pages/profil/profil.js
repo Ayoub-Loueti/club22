@@ -43,7 +43,7 @@ function Profil() {
     const fetchUserData = async () => {
       if (token && id) {
         try {
-          const response = await axios.get(`http://54.87.28.4/profil/${id}`, {
+          const response = await axios.get(`http://3.88.157.0/profil/${id}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -100,7 +100,7 @@ function Profil() {
     }
     try {
       await axios.put(
-        'http://54.87.28.4/updateCompte',
+        'http://3.88.157.0/updateCompte',
         { [field]: editValues[field] },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -117,7 +117,7 @@ function Profil() {
     formData.append('photo', file);
     try {
       const response = await axios.post(
-        'http://54.87.28.4/updateProfilePicture',
+        'http://3.88.157.0/updateProfilePicture',
         formData,
         {
           headers: {
@@ -154,7 +154,7 @@ function Profil() {
 
   const deleteProfilePicture = async () => {
     try {
-      const response = await axios.delete('http://54.87.28.4/profile-picture', {
+      const response = await axios.delete('http://3.88.157.0/profile-picture', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.status === 200) {
@@ -227,7 +227,7 @@ function Profil() {
     }
     try {
       const response = await axios.post(
-        'http://54.87.28.4/changer-mdp',
+        'http://3.88.157.0/changer-mdp',
         {
           motDePasse: passwordValues.currentPassword,
           newMDP: passwordValues.newPassword,
@@ -296,7 +296,7 @@ function Profil() {
             <img
               src={
                 utilisateur.photo
-                  ? `http://54.87.28.4/${utilisateur.photo}`
+                  ? `http://3.88.157.0/${utilisateur.photo}`
                   : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
               }
               alt="Profil"

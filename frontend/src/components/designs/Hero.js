@@ -19,7 +19,7 @@ export default function Hero({ onFiltered }) {
   };
   const fetchFilteredOffers = async (prices, destination, promotionType) => {
     try {
-      const response = await axios.get('http://54.87.28.4/employeOffers', {
+      const response = await axios.get('http://3.88.157.0/employeOffers', {
         headers: {
           Authorization: `Bearer ${JSON.parse(token).token}`,
         },
@@ -57,7 +57,7 @@ export default function Hero({ onFiltered }) {
   useEffect(() => {
     const fetchPrices = async () => {
       try {
-        const response = await axios.get('http://54.87.28.4/employeOffers', {
+        const response = await axios.get('http://3.88.157.0/employeOffers', {
           headers: {
             Authorization: `Bearer ${JSON.parse(token).token}`,
           },

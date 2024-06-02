@@ -22,7 +22,7 @@ const PostProfile = () => {
     const fetchUserPosts = async () => {
       try {
         const response = await axios.get(
-          `http://54.87.28.4/getAllPostsByUser/${id}`,
+          `http://3.88.157.0/getAllPostsByUser/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

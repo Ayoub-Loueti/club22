@@ -5,7 +5,6 @@ import Swal from 'sweetalert2';
 import './listCollaborateur.css';
 import UpdateCollaborateurModal from './UpdateCollaborateurModal';
 import AddCollaborateurModal from './AddCollaborateurModal';
-import { FaArrowLeft } from 'react-icons/fa';
 import NavAdmin from '../NavAdmin/navAdmin';
 function ListCollaborateur() {
   const [collaborateurs, setCollaborateurs] = useState([]);
@@ -24,7 +23,7 @@ function ListCollaborateur() {
     const fetchCollaborateurs = async () => {
       try {
         const response = await axios.get(
-          'http://54.87.28.4/allCollaborateursAD',
+          'http://3.88.157.0/allCollaborateursAD',
           {
             headers: {
               Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -84,7 +83,7 @@ function ListCollaborateur() {
   const handleArchive = async (collabId) => {
     try {
       await axios.put(
-        `http://54.87.28.4/collaborateur/${collabId}/archiver`,
+        `http://3.88.157.0/collaborateur/${collabId}/archiver`,
         null, // Empty data since it's a PUT request
         {
           headers: {
@@ -103,7 +102,7 @@ function ListCollaborateur() {
   const handleUnarchive = async (collabId) => {
     try {
       await axios.put(
-        `http://54.87.28.4/collaborateur/${collabId}/desarchiver`,
+        `http://3.88.157.0/collaborateur/${collabId}/desarchiver`,
         null, // Empty data since it's a PUT request
         {
           headers: {
@@ -160,7 +159,7 @@ function ListCollaborateur() {
                   <img
                     src={
                       collaborateur.logo
-                        ? `http://54.87.28.4/${collaborateur.logo}`
+                        ? `http://3.88.157.0/${collaborateur.logo}`
                         : 'https://png.pngtree.com/png-vector/20220119/ourmid/pngtree-crossed-image-icon-picture-not-available-sign-photo-sign-icon-vector-png-image_44027862.jpg'
                     }
                     alt={collaborateur.nom}

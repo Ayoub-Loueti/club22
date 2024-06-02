@@ -29,7 +29,7 @@ const LikesModal = ({ isOpen, onRequestClose, likes }) => {
             <img
               src={
                 like.utilisateur.photo
-                  ? `http://54.87.28.4/${like.utilisateur.photo}`
+                  ? `http://3.88.157.0/${like.utilisateur.photo}`
                   : defaultPhotoUrl
               }
               alt={`${like.utilisateur.nom} ${like.utilisateur.prenom}`}

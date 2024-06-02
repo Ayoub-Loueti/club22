@@ -21,7 +21,7 @@ function OffreAdminDetails() {
   useEffect(() => {
     const fetchOffreDetails = async () => {
       try {
-        const response = await axios.get(`http://54.87.28.4/offer/${offreId}`, {
+        const response = await axios.get(`http://3.88.157.0/offer/${offreId}`, {
           headers: {
             Authorization: `Bearer ${JSON.parse(token).token}`,
           },
@@ -54,7 +54,7 @@ function OffreAdminDetails() {
 
     if (confirmation.isConfirmed) {
       try {
-        await axios.delete(`http://54.87.28.4/offer/${offreId}`, {
+        await axios.delete(`http://3.88.157.0/offer/${offreId}`, {
           headers: {
             Authorization: `Bearer ${JSON.parse(token).token}`,
           },
@@ -127,7 +127,7 @@ function OffreAdminDetails() {
               {offre.lesImages.map((img, index) => (
                 <img
                   key={index}
-                  src={`http://54.87.28.4/${img.image}`}
+                  src={`http://3.88.157.0/${img.image}`}
                   alt={`Image ${index}`}
                 />
               ))}

@@ -58,7 +58,7 @@ function OffreEmployeDetails() {
     const fetchOffreDetails = async () => {
       try {
         const response = await axios.get(
-          `http://54.87.28.4/employeOffer/${offreId}`,
+          `http://3.88.157.0/employeOffer/${offreId}`,
           {
             headers: {
               Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -74,7 +74,7 @@ function OffreEmployeDetails() {
 
     const checkAdherantStatus = async () => {
       try {
-        const response = await axios.get('http://54.87.28.4/isAdherant', {
+        const response = await axios.get('http://3.88.157.0/isAdherant', {
           headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
         });
         setIsAdherant(response.data.adherant);
@@ -182,7 +182,7 @@ function OffreEmployeDetails() {
         <div className="offre-cardDetails">
           {offre.lesImages.length > 0 && (
             <img
-              src={`http://54.87.28.4/${offre.lesImages[0].image}`}
+              src={`http://3.88.157.0/${offre.lesImages[0].image}`}
               alt="Image principale"
               className="offre-main-image"
             />
@@ -258,7 +258,7 @@ function OffreEmployeDetails() {
           {offre.lesImages.slice(1).map((image, index) => (
             <img
               key={index}
-              src={`http://54.87.28.4/${image.image}`}
+              src={`http://3.88.157.0/${image.image}`}
               alt={`Image supplémentaire ${index + 1}`}
               className="offre-additional-image"
               onClick={() => handleImageClick(index + 1)}

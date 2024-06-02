@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './leftSide.css';
 import oorepub2 from '../../assets/oorepub2.jpg';
-import oorepub3 from '../../assets/oorepub3.jpg';
 import { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
 
@@ -20,7 +19,7 @@ const UserCard = ({ user, title }) => {
       <div className="user-card-title">{title}</div>
       <div className="user-container">
         <img
-          src={`http://54.87.28.4/${user.photo}`}
+          src={`http://3.88.157.0/${user.photo}`}
           alt="Utilisateur"
           className="user-avatar"
         />
@@ -44,7 +43,7 @@ const LeftSide = () => {
   useEffect(() => {
     const fetchBestPosteur = async () => {
       try {
-        const response = await axios.get('http://54.87.28.4/semainelike', {
+        const response = await axios.get('http://3.88.157.0/semainelike', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -60,7 +59,7 @@ const LeftSide = () => {
 
     const fetchBestPostData = async () => {
       try {
-        const response = await axios.get('http://54.87.28.4/bestPost', {
+        const response = await axios.get('http://3.88.157.0/bestPost', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -76,7 +75,7 @@ const LeftSide = () => {
 
     const fetchBestCmntrData = async () => {
       try {
-        const response = await axios.get('http://54.87.28.4/bestCmntr', {
+        const response = await axios.get('http://3.88.157.0/bestCmntr', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

@@ -8,23 +8,14 @@ import {
   faHouse,
   faUserGroup,
   faCalendar,
-  faUser,
   faBars,
   faUserPlus,
   faList,
-  faUserCircle,
-  faUserAlt,
-  faUserAltSlash,
-  faUserAstronaut,
-  faUserFriends,
-  faUsersViewfinder,
-  faUserCog,
   faUserShield,
   faUsersRectangle,
   faCalendarAlt,
   faRectangleList,
   faDashboard,
-  faRoadCircleExclamation,
   faFileCircleExclamation,
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -59,7 +50,7 @@ function NavAdmin() {
         ? { Authorization: `Bearer ${storedToken}` }
         : {};
       try {
-        const response = await axios.get('http://54.87.28.4/randomUsers', {
+        const response = await axios.get('http://3.88.157.0/randomUsers', {
           headers,
         });
         setRandomUsers(response.data);
@@ -82,7 +73,7 @@ function NavAdmin() {
       if (storedToken) {
         const headers = { Authorization: `Bearer ${storedToken}` };
         try {
-          const response = await axios.get('http://54.87.28.4/signalsCount', {
+          const response = await axios.get('http://3.88.157.0/signalsCount', {
             headers,
           });
           setSignalsCount(response.data.count);
@@ -107,7 +98,7 @@ function NavAdmin() {
 
     try {
       const response = await axios.patch(
-        'http://54.87.28.4/updateAllSignalerOpen',
+        'http://3.88.157.0/updateAllSignalerOpen',
         {},
         { headers }
       );

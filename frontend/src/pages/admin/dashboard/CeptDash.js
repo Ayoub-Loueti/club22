@@ -13,20 +13,20 @@ const CeptDash = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const likesResponse = await axios.get('http://54.87.28.4/totalLikes', {
+        const likesResponse = await axios.get('http://3.88.157.0/totalLikes', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setTotalLikes(likesResponse.data.totalLikes);
 
         const commentsResponse = await axios.get(
-          'http://54.87.28.4/totalComments',
+          'http://3.88.157.0/totalComments',
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
         setTotalComments(commentsResponse.data.totalComments);
 
-        const usersResponse = await axios.get('http://54.87.28.4/totalUsers', {
+        const usersResponse = await axios.get('http://3.88.157.0/totalUsers', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setTotalUsersCount(usersResponse.data.totalUsersCount);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Paper, Grid } from '@mui/material';
+import { Typography, Paper } from '@mui/material';
 import axios from 'axios';
 
 const SixDash = () => {
@@ -10,7 +10,7 @@ const SixDash = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://54.87.28.4/TotalPrixCollabs', {
+        const response = await axios.get('http://3.88.157.0/TotalPrixCollabs', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setData(response.data);

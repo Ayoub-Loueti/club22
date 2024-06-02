@@ -18,7 +18,7 @@ function Success() {
         .then((res) => {
           if (res.data.result.status === 'SUCCESS') {
             axios
-              .put(`http://54.87.28.4/reservations/${reservationId}/payereserv`)
+              .put(`http://3.88.157.0/reservations/${reservationId}/payereserv`)
               .then(() => {
                 Swal.fire({
                   title: 'Succès!',

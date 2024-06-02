@@ -2,14 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import Modal from 'react-modal';
-import {
-  Button,
-  TextField,
-  Checkbox,
-  FormControlLabel,
-  Avatar,
-  Box,
-} from '@mui/material';
+import { Button, Checkbox, FormControlLabel, Avatar, Box } from '@mui/material';
 import { Typography } from '@mui/material';
 
 import SignaturePad from '../Signature/signaturePad';
@@ -58,13 +51,13 @@ const DemandeModal = ({ isOpen, onRequestClose, userId }) => {
           };
 
           const userResponse = await axios.get(
-            `http://54.87.28.4/profil/${storedUserId}`,
+            `http://3.88.157.0/profil/${storedUserId}`,
             { headers }
           );
           setUserInfo(userResponse.data.user);
 
           const adherantResponse = await axios.get(
-            `http://54.87.28.4/isAdherant`,
+            `http://3.88.157.0/isAdherant`,
             { headers }
           );
           setIsAdherant(adherantResponse.data.adherant);
@@ -99,7 +92,7 @@ const DemandeModal = ({ isOpen, onRequestClose, userId }) => {
     const token = JSON.parse(localStorage.getItem('login'))?.token;
     try {
       await axios.post(
-        'http://54.87.28.4/demandes',
+        'http://3.88.157.0/demandes',
         { userId, signature: signatureUrl },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -152,7 +145,7 @@ const DemandeModal = ({ isOpen, onRequestClose, userId }) => {
           <Avatar
             src={
               userInfo.photo
-                ? `http://54.87.28.4/${userInfo.photo}`
+                ? `http://3.88.157.0/${userInfo.photo}`
                 : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
             }
             alt="User"

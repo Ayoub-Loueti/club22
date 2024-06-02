@@ -35,7 +35,7 @@ function VerificationToken() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://54.87.28.4/check-reset-token', {
+      const response = await axios.post('http://3.88.157.0/check-reset-token', {
         resetPasswordToken: resetToken,
       });
 
@@ -64,7 +64,7 @@ function VerificationToken() {
     setResendDisabled(true);
     try {
       await axios.post(
-        `http://54.87.28.4/resend-forgot-password-email/${email}`
+        `http://3.88.157.0/resend-forgot-password-email/${email}`
       );
       MySwal.fire(
         'Succès',

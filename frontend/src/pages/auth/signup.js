@@ -61,7 +61,7 @@ function Signup() {
     }
 
     try {
-      await axios.post('http://54.87.28.4/signup', {
+      await axios.post('http://3.88.157.0/signup', {
         email,
         motDePasse: password,
       });
@@ -299,7 +299,7 @@ function Signup() {
                 </a>
               </Typography>
               <a
-                href="http://54.87.28.4/auth/google"
+                href="http://3.88.157.0/auth/google"
                 className="google-auth-link"
                 style={{
                   display: 'block',
@@ -546,7 +546,7 @@ function Signup() {
                   OU
                 </p>
                 <a
-                  href="http://54.87.28.4/auth/google"
+                  href="http://3.88.157.0/auth/google"
                   className="google-auth-link"
                   style={{
                     position: 'absolute',

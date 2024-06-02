@@ -17,7 +17,7 @@ const PostSaved = () => {
     const fetchSavedPosts = async () => {
       try {
         // Assuming the endpoint '/user/enregistrements' returns the list of saved posts for the logged-in user
-        const response = await axios.get('http://54.87.28.4/enregistrements', {
+        const response = await axios.get('http://3.88.157.0/enregistrements', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

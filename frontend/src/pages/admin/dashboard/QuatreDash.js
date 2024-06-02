@@ -11,7 +11,7 @@ const QuatreDash = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          'http://54.87.28.4/reservationsCollabs',
+          'http://3.88.157.0/reservationsCollabs',
           {
             headers: { Authorization: `Bearer ${token}` },
           }

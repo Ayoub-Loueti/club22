@@ -6,15 +6,9 @@ import AddCollaborateurModal from './AddCollaborateurModal';
 import OffreCollab from '../offre/OffreCollab'; // Ensure this path is correct
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faArrowLeft,
-  faArrowRight,
-  faCopy,
-} from '@fortawesome/free-solid-svg-icons';
-import { FaArrowLeft } from 'react-icons/fa';
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import NavAdmin from '../NavAdmin/navAdmin';
-import { SHA256 } from 'crypto-js';
 function ListCollaborateur() {
   const [collaborateurs, setCollaborateurs] = useState([]);
   const [selectedCollaborateurId, setSelectedCollaborateurId] = useState(null);
@@ -30,7 +24,7 @@ function ListCollaborateur() {
   useEffect(() => {
     const fetchCollaborateurs = async () => {
       try {
-        const response = await axios.get('http://54.87.28.4/allCollaborators', {
+        const response = await axios.get('http://3.88.157.0/allCollaborators', {
           headers: {
             Authorization: `Bearer ${JSON.parse(token).token}`,
           },
@@ -124,7 +118,7 @@ function ListCollaborateur() {
   const handleCopyLink = async (id_collaborateur) => {
     try {
       const response = await axios.put(
-        `http://54.87.28.4/collaborateurs/${id_collaborateur}/validation`,
+        `http://3.88.157.0/collaborateurs/${id_collaborateur}/validation`,
         {},
         {
           headers: {
@@ -219,7 +213,7 @@ function ListCollaborateur() {
                   <img
                     src={
                       collaborateur.logo
-                        ? `http://54.87.28.4/${collaborateur.logo}`
+                        ? `http://3.88.157.0/${collaborateur.logo}`
                         : 'https://png.pngtree.com/png-vector/20220119/ourmid/pngtree-crossed-image-icon-picture-not-available-sign-photo-sign-icon-vector-png-image_44027862.jpg'
                     }
                     alt={collaborateur.nom}

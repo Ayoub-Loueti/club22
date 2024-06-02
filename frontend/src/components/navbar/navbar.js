@@ -11,10 +11,8 @@ import {
   faUser,
   faBars,
   faClipboardList,
-  faHouseChimneyUser,
   faHouseUser,
   faFileCircleExclamation,
-  faMessage,
   faCommentSlash,
   faComment,
 } from '@fortawesome/free-solid-svg-icons';
@@ -61,7 +59,7 @@ function Navbar() {
         const headers = storedToken
           ? { Authorization: `Bearer ${storedToken}` }
           : {};
-        const response = await axios.get('http://54.87.28.4/randomUsers', {
+        const response = await axios.get('http://3.88.157.0/randomUsers', {
           headers,
         });
         setRandomUsers(response.data);
@@ -81,7 +79,7 @@ function Navbar() {
       const fetchUserData = async () => {
         try {
           const response = await axios.get(
-            `http://54.87.28.4/profil/${storedUserId}`,
+            `http://3.88.157.0/profil/${storedUserId}`,
             {
               headers: {
                 Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -103,7 +101,7 @@ function Navbar() {
 
   const checkAdherentStatus = async (userId, token) => {
     try {
-      const response = await axios.get('http://54.87.28.4/isAdherant', {
+      const response = await axios.get('http://3.88.157.0/isAdherant', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -201,7 +199,7 @@ function Navbar() {
               key={index}
               src={
                 user.photo
-                  ? `http://54.87.28.4/${user.photo}`
+                  ? `http://3.88.157.0/${user.photo}`
                   : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
               }
               alt="User"

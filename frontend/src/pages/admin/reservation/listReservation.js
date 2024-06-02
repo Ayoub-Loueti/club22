@@ -6,17 +6,12 @@ import {
   Card,
   CardContent,
   Typography,
-  Button,
   Box,
   ToggleButton,
   ToggleButtonGroup,
-  IconButton,
 } from '@mui/material';
 import ShowReservationDialog from '../../OffreEmploye/ShowReservationDialog';
 import NavAdmin from '../NavAdmin/navAdmin';
-import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
-import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
 
 const MyReservations = () => {
   const [demandeReservations, setDemandeReservations] = useState([]);
@@ -36,7 +31,7 @@ const MyReservations = () => {
 
     const fetchDemandeReservations = async () => {
       try {
-        const response = await axios.get('http://54.87.28.4/reservationsDe', {
+        const response = await axios.get('http://3.88.157.0/reservationsDe', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setDemandeReservations(response.data); // Setting the demander reservations
@@ -48,7 +43,7 @@ const MyReservations = () => {
 
     const fetchReponseReservations = async () => {
       try {
-        const response = await axios.get('http://54.87.28.4/reservationsRe', {
+        const response = await axios.get('http://3.88.157.0/reservationsRe', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setReponseReservations(response.data); // Setting the reponse reservations
@@ -113,7 +108,7 @@ const MyReservations = () => {
     const token = JSON.parse(localStorage.getItem('login'))?.token;
     try {
       const response = await axios.put(
-        `http://54.87.28.4/reservation/${id}/accepter`,
+        `http://3.88.157.0/reservation/${id}/accepter`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -134,7 +129,7 @@ const MyReservations = () => {
     const token = JSON.parse(localStorage.getItem('login'))?.token;
     try {
       const response = await axios.put(
-        `http://54.87.28.4/reservation/${id}/refuser`,
+        `http://3.88.157.0/reservation/${id}/refuser`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -194,7 +189,7 @@ const MyReservations = () => {
                       <img
                         src={
                           reservation.employe.utilisateur.photo
-                            ? `http://54.87.28.4/${reservation.employe.utilisateur.photo}`
+                            ? `http://3.88.157.0/${reservation.employe.utilisateur.photo}`
                             : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg' // URL de votre image par défaut
                         }
                         alt="Profil"
@@ -281,7 +276,7 @@ const MyReservations = () => {
                         maxHeight: 150,
                         objectFit: 'cover',
                       }}
-                      src={`http://54.87.28.4/${reservation.offre.images[0]}`}
+                      src={`http://3.88.157.0/${reservation.offre.images[0]}`}
                       alt="Offre"
                     />
                   </Card>

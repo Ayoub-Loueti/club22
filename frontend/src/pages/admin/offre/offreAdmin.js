@@ -25,8 +25,8 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
   useEffect(() => {
     const fetchOffres = async () => {
       const url = isCollabMode
-        ? `http://54.87.28.4/allOffersCollab/${collaborateurId}`
-        : 'http://54.87.28.4/allOffers';
+        ? `http://3.88.157.0/allOffersCollab/${collaborateurId}`
+        : 'http://3.88.157.0/allOffers';
 
       try {
         const response = await axios.get(url, {
@@ -92,7 +92,7 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
 
     if (confirmation.isConfirmed) {
       try {
-        await axios.delete(`http://54.87.28.4/offer/${offreId}`, {
+        await axios.delete(`http://3.88.157.0/offer/${offreId}`, {
           headers: {
             Authorization: `Bearer ${JSON.parse(token).token}`,
           },
@@ -198,7 +198,7 @@ function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
                 >
                   <h2>{offre.titre}</h2>
                   <img
-                    src={`http://54.87.28.4/${
+                    src={`http://3.88.157.0/${
                       offre.lesImages[offre.currentImageIndex]?.image
                     }`}
                     alt={`Image ${offre.currentImageIndex}`}

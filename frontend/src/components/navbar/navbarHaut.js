@@ -78,7 +78,7 @@ function NavbarHaut() {
     const token = JSON.parse(localStorage.getItem('login')).token;
     try {
       const response = await axios.get(
-        `http://54.87.28.4/search?substring=${substring}`,
+        `http://3.88.157.0/search?substring=${substring}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -102,7 +102,7 @@ function NavbarHaut() {
     const token = JSON.parse(localStorage.getItem('login')).token;
     try {
       await axios.post(
-        'http://54.87.28.4/reset-notifications',
+        'http://3.88.157.0/reset-notifications',
         {},
         {
           headers: {
@@ -122,7 +122,7 @@ function NavbarHaut() {
   const fetchNotifications = async () => {
     const token = JSON.parse(localStorage.getItem('login')).token;
     try {
-      const response = await axios.get('http://54.87.28.4/notifications', {
+      const response = await axios.get('http://3.88.157.0/notifications', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -162,7 +162,7 @@ function NavbarHaut() {
             onClick={() => handleNotificationClick(notification)}
           >
             <img
-              src={`http://54.87.28.4/${notification.utilisateur.photo}`}
+              src={`http://3.88.157.0/${notification.utilisateur.photo}`}
               alt="User"
               className="notification-user-photo"
             />
@@ -247,7 +247,7 @@ function NavbarHaut() {
     const token = JSON.parse(localStorage.getItem('login')).token;
     try {
       await axios.patch(
-        `http://54.87.28.4/notifications/${notificationId}`,
+        `http://3.88.157.0/notifications/${notificationId}`,
         { isRead: true },
         {
           headers: {
@@ -272,7 +272,7 @@ function NavbarHaut() {
   const fetchNotificationsCount = async () => {
     const token = JSON.parse(localStorage.getItem('login')).token;
     try {
-      const response = await axios.get('http://54.87.28.4/user-notifications', {
+      const response = await axios.get('http://3.88.157.0/user-notifications', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -299,7 +299,7 @@ function NavbarHaut() {
       const fetchUserData = async () => {
         try {
           const response = await axios.get(
-            `http://54.87.28.4/profil/${storedUserId}`,
+            `http://3.88.157.0/profil/${storedUserId}`,
             {
               headers: {
                 Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -320,7 +320,7 @@ function NavbarHaut() {
 
   const handleLogout = async () => {
     try {
-      await axios.get('http://54.87.28.4/auth/logout', {
+      await axios.get('http://3.88.157.0/auth/logout', {
         withCredentials: true,
       });
       localStorage.removeItem('login');
@@ -395,7 +395,7 @@ function NavbarHaut() {
         ['reservaccepte', 'signal', 'reservrefuse'].includes(notification.type)
       ) {
         await axios.delete(
-          `http://54.87.28.4/notificationsTroix/${notificationId}`,
+          `http://3.88.157.0/notificationsTroix/${notificationId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -404,7 +404,7 @@ function NavbarHaut() {
         );
       } else {
         await axios.delete(
-          `http://54.87.28.4/notifications/${notificationId}`,
+          `http://3.88.157.0/notifications/${notificationId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -426,7 +426,7 @@ function NavbarHaut() {
     const fetchUserPoints = async () => {
       const token = JSON.parse(localStorage.getItem('login')).token;
       try {
-        const response = await axios.get('http://54.87.28.4/points', {
+        const response = await axios.get('http://3.88.157.0/points', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -500,7 +500,7 @@ function NavbarHaut() {
                   <img
                     src={
                       user.photo
-                        ? `http://54.87.28.4/${user.photo}`
+                        ? `http://3.88.157.0/${user.photo}`
                         : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
                     }
                     alt={user.nom}
@@ -528,7 +528,7 @@ function NavbarHaut() {
                     }
                   >
                     <img
-                      src={`http://54.87.28.4/${offer.images[0]}`}
+                      src={`http://3.88.157.0/${offer.images[0]}`}
                       alt="Offer"
                       className="user-photooo"
                     />
@@ -555,7 +555,7 @@ function NavbarHaut() {
                     <img
                       src={
                         collab.logo
-                          ? `http://54.87.28.4/${collab.logo}`
+                          ? `http://3.88.157.0/${collab.logo}`
                           : 'default-image-path.jpg'
                       }
                       alt="Collab Logo"
@@ -620,7 +620,7 @@ function NavbarHaut() {
             <img
               src={
                 userInfo.photo
-                  ? `http://54.87.28.4/${userInfo.photo}`
+                  ? `http://3.88.157.0/${userInfo.photo}`
                   : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
               }
               alt="Profil"

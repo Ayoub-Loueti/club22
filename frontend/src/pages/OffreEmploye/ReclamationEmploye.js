@@ -9,7 +9,6 @@ import {
   Button,
   TextField,
   Typography,
-  IconButton,
 } from '@mui/material';
 import Swal from 'sweetalert2';
 import Dialog from '@mui/material/Dialog';
@@ -37,7 +36,7 @@ function ReclamationEmploye() {
   useEffect(() => {
     const fetchEmployeId = async () => {
       try {
-        const response = await axios.get('http://54.87.28.4/details', {
+        const response = await axios.get('http://3.88.157.0/details', {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.data && response.data.id_employe) {
@@ -64,7 +63,7 @@ function ReclamationEmploye() {
   const fetchReclamations = async (idEmploye) => {
     try {
       const response = await axios.get(
-        `http://54.87.28.4/reclamations/${idEmploye}`,
+        `http://3.88.157.0/reclamations/${idEmploye}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setReclamations(response.data);
@@ -95,7 +94,7 @@ function ReclamationEmploye() {
     try {
       setSubmitting(true);
       await axios.post(
-        'http://54.87.28.4/reclamations',
+        'http://3.88.157.0/reclamations',
         { contenu, id_employe: idEmploye },
         { headers: { Authorization: `Bearer ${token}` } }
       );
