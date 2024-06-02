@@ -17,11 +17,14 @@ const PostSaved = () => {
     const fetchSavedPosts = async () => {
       try {
         // Assuming the endpoint '/user/enregistrements' returns the list of saved posts for the logged-in user
-        const response = await axios.get('http://3.88.157.0/enregistrements', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          'http://54.242.240.123/enregistrements',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         setSavedPosts(response.data); // Assuming the response contains an array of saved posts
       } catch (error) {
         console.error('Error fetching saved posts:', error);

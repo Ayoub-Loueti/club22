@@ -51,13 +51,13 @@ const DemandeModal = ({ isOpen, onRequestClose, userId }) => {
           };
 
           const userResponse = await axios.get(
-            `http://3.88.157.0/profil/${storedUserId}`,
+            `http://54.242.240.123/profil/${storedUserId}`,
             { headers }
           );
           setUserInfo(userResponse.data.user);
 
           const adherantResponse = await axios.get(
-            `http://3.88.157.0/isAdherant`,
+            `http://54.242.240.123/isAdherant`,
             { headers }
           );
           setIsAdherant(adherantResponse.data.adherant);
@@ -92,7 +92,7 @@ const DemandeModal = ({ isOpen, onRequestClose, userId }) => {
     const token = JSON.parse(localStorage.getItem('login'))?.token;
     try {
       await axios.post(
-        'http://3.88.157.0/demandes',
+        'http://54.242.240.123/demandes',
         { userId, signature: signatureUrl },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -145,7 +145,7 @@ const DemandeModal = ({ isOpen, onRequestClose, userId }) => {
           <Avatar
             src={
               userInfo.photo
-                ? `http://3.88.157.0/${userInfo.photo}`
+                ? `http://54.242.240.123/${userInfo.photo}`
                 : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
             }
             alt="User"

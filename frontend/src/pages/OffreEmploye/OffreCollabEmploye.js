@@ -27,7 +27,7 @@ function OffreCollabEmploye({ collaborateurId }) {
       const fetchOffres = async () => {
         try {
           const response = await axios.get(
-            `http://3.88.157.0/allOffersCollab/${collaborateurId}${
+            `http://54.242.240.123/allOffersCollab/${collaborateurId}${
               filter !== 'tous' ? `?type=${filter}` : ''
             }`,
             {
@@ -122,7 +122,7 @@ function OffreCollabEmploye({ collaborateurId }) {
               currentOffres.map((offre, index) => (
                 <div key={index} className="offre-employee-card">
                   <img
-                    src={`http://3.88.157.0/${
+                    src={`http://54.242.240.123/${
                       offre.lesImages[offre.currentImageIndex]?.image
                     }`}
                     alt={`Image ${offre.currentImageIndex + 1} of ${

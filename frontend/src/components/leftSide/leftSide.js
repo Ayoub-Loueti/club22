@@ -19,7 +19,7 @@ const UserCard = ({ user, title }) => {
       <div className="user-card-title">{title}</div>
       <div className="user-container">
         <img
-          src={`http://3.88.157.0/${user.photo}`}
+          src={`http://54.242.240.123/${user.photo}`}
           alt="Utilisateur"
           className="user-avatar"
         />
@@ -43,7 +43,7 @@ const LeftSide = () => {
   useEffect(() => {
     const fetchBestPosteur = async () => {
       try {
-        const response = await axios.get('http://3.88.157.0/semainelike', {
+        const response = await axios.get('http://54.242.240.123/semainelike', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -59,7 +59,7 @@ const LeftSide = () => {
 
     const fetchBestPostData = async () => {
       try {
-        const response = await axios.get('http://3.88.157.0/bestPost', {
+        const response = await axios.get('http://54.242.240.123/bestPost', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -75,7 +75,7 @@ const LeftSide = () => {
 
     const fetchBestCmntrData = async () => {
       try {
-        const response = await axios.get('http://3.88.157.0/bestCmntr', {
+        const response = await axios.get('http://54.242.240.123/bestCmntr', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

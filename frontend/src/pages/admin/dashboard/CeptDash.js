@@ -13,22 +13,28 @@ const CeptDash = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const likesResponse = await axios.get('http://3.88.157.0/totalLikes', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const likesResponse = await axios.get(
+          'http://54.242.240.123/totalLikes',
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setTotalLikes(likesResponse.data.totalLikes);
 
         const commentsResponse = await axios.get(
-          'http://3.88.157.0/totalComments',
+          'http://54.242.240.123/totalComments',
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
         setTotalComments(commentsResponse.data.totalComments);
 
-        const usersResponse = await axios.get('http://3.88.157.0/totalUsers', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const usersResponse = await axios.get(
+          'http://54.242.240.123/totalUsers',
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setTotalUsersCount(usersResponse.data.totalUsersCount);
       } catch (error) {
         console.error('Error fetching data:', error);

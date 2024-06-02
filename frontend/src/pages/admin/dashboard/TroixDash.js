@@ -10,7 +10,7 @@ const TroixDash = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://3.88.157.0/typestats', {
+        const response = await axios.get('http://54.242.240.123/typestats', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setData([

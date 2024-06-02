@@ -19,7 +19,7 @@ const AdminPanel = () => {
 
   const fetchDemandes = async () => {
     try {
-      const response = await axios.get('http://3.88.157.0/demandes', {
+      const response = await axios.get('http://54.242.240.123/demandes', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setDemandes(response.data);
@@ -50,7 +50,7 @@ const AdminPanel = () => {
           : `/employes/${employeId}/adherant`;
         axios
           .put(
-            `http://3.88.157.0${endpoint}`,
+            `http://54.242.240.123${endpoint}`,
             {},
             { headers: { Authorization: `Bearer ${token}` } }
           )
@@ -174,7 +174,7 @@ const AdminPanel = () => {
                 <img
                   src={
                     dem.employe.utilisateur.photo
-                      ? `http://3.88.157.0/${dem.employe.utilisateur.photo}`
+                      ? `http://54.242.240.123/${dem.employe.utilisateur.photo}`
                       : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
                   }
                   alt="Profil"

@@ -43,11 +43,14 @@ function Profil() {
     const fetchUserData = async () => {
       if (token && id) {
         try {
-          const response = await axios.get(`http://3.88.157.0/profil/${id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          const response = await axios.get(
+            `http://54.242.240.123/profil/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
           setUtilisateur(response.data.user);
           setEditValues({
             nom: response.data.user.nom,
@@ -100,7 +103,7 @@ function Profil() {
     }
     try {
       await axios.put(
-        'http://3.88.157.0/updateCompte',
+        'http://54.242.240.123/updateCompte',
         { [field]: editValues[field] },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -117,7 +120,7 @@ function Profil() {
     formData.append('photo', file);
     try {
       const response = await axios.post(
-        'http://3.88.157.0/updateProfilePicture',
+        'http://54.242.240.123/updateProfilePicture',
         formData,
         {
           headers: {
@@ -154,9 +157,12 @@ function Profil() {
 
   const deleteProfilePicture = async () => {
     try {
-      const response = await axios.delete('http://3.88.157.0/profile-picture', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.delete(
+        'http://54.242.240.123/profile-picture',
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (response.status === 200) {
         Swal.fire({
           title: t('Supprimée !'),
@@ -227,7 +233,7 @@ function Profil() {
     }
     try {
       const response = await axios.post(
-        'http://3.88.157.0/changer-mdp',
+        'http://54.242.240.123/changer-mdp',
         {
           motDePasse: passwordValues.currentPassword,
           newMDP: passwordValues.newPassword,
@@ -296,7 +302,7 @@ function Profil() {
             <img
               src={
                 utilisateur.photo
-                  ? `http://3.88.157.0/${utilisateur.photo}`
+                  ? `http://54.242.240.123/${utilisateur.photo}`
                   : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
               }
               alt="Profil"

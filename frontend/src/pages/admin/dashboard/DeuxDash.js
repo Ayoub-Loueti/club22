@@ -10,7 +10,7 @@ const DeuxDash = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://3.88.157.0/userstats', {
+        const response = await axios.get('http://54.242.240.123/userstats', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const { clientsPercentage, employesPercentage } = response.data;

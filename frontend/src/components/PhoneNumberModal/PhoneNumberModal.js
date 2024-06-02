@@ -24,7 +24,7 @@ const PhoneNumberModal = ({ isOpen, onRequestClose }) => {
     try {
       const token = JSON.parse(localStorage.getItem('login'))?.token;
       await axios.post(
-        'http://3.88.157.0/send-sms', // Adjusted to full URL for consistency with the working snippet
+        'http://54.242.240.123/send-sms', // Adjusted to full URL for consistency with the working snippet
         { phoneNumber: value },
         { headers: { Authorization: `Bearer ${token}` } }
       );

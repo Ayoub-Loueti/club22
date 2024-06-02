@@ -38,7 +38,7 @@ const MyReservations = ({ collaborateurId }) => {
           collaborateurId
         );
         const response = await axios.get(
-          `http://3.88.157.0/getReservByCollabA/${collaborateurId}`,
+          `http://54.242.240.123/getReservByCollabA/${collaborateurId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -58,7 +58,7 @@ const MyReservations = ({ collaborateurId }) => {
           collaborateurId
         );
         const response = await axios.get(
-          `http://3.88.157.0/getReservByCollabB/${collaborateurId}`,
+          `http://54.242.240.123/getReservByCollabB/${collaborateurId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -128,7 +128,7 @@ const MyReservations = ({ collaborateurId }) => {
     const token = JSON.parse(localStorage.getItem('login'))?.token;
     try {
       const response = await axios.put(
-        `http://3.88.157.0/reservation/${id}/accepter`,
+        `http://54.242.240.123/reservation/${id}/accepter`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -149,7 +149,7 @@ const MyReservations = ({ collaborateurId }) => {
     const token = JSON.parse(localStorage.getItem('login'))?.token;
     try {
       const response = await axios.put(
-        `http://3.88.157.0/reservation/${id}/refuser`,
+        `http://54.242.240.123/reservation/${id}/refuser`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -241,7 +241,7 @@ const MyReservations = ({ collaborateurId }) => {
                       <img
                         src={
                           reservation.employe.utilisateur.photo
-                            ? `http://3.88.157.0/${reservation.employe.utilisateur.photo}`
+                            ? `http://54.242.240.123/${reservation.employe.utilisateur.photo}`
                             : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg' // URL de votre image par défaut
                         }
                         alt="Profil"
@@ -328,7 +328,7 @@ const MyReservations = ({ collaborateurId }) => {
                         maxHeight: 150,
                         objectFit: 'cover',
                       }}
-                      src={`http://3.88.157.0/${
+                      src={`http://54.242.240.123/${
                         reservation.offre.images && reservation.offre.images[0]
                       }`}
                       alt="Offre"

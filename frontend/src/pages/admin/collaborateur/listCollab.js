@@ -24,11 +24,14 @@ function ListCollaborateur() {
   useEffect(() => {
     const fetchCollaborateurs = async () => {
       try {
-        const response = await axios.get('http://3.88.157.0/allCollaborators', {
-          headers: {
-            Authorization: `Bearer ${JSON.parse(token).token}`,
-          },
-        });
+        const response = await axios.get(
+          'http://54.242.240.123/allCollaborators',
+          {
+            headers: {
+              Authorization: `Bearer ${JSON.parse(token).token}`,
+            },
+          }
+        );
         setCollaborateurs(response.data);
       } catch (error) {
         console.error('Error fetching collaborateurs:', error);
@@ -118,7 +121,7 @@ function ListCollaborateur() {
   const handleCopyLink = async (id_collaborateur) => {
     try {
       const response = await axios.put(
-        `http://3.88.157.0/collaborateurs/${id_collaborateur}/validation`,
+        `http://54.242.240.123/collaborateurs/${id_collaborateur}/validation`,
         {},
         {
           headers: {
@@ -213,7 +216,7 @@ function ListCollaborateur() {
                   <img
                     src={
                       collaborateur.logo
-                        ? `http://3.88.157.0/${collaborateur.logo}`
+                        ? `http://54.242.240.123/${collaborateur.logo}`
                         : 'https://png.pngtree.com/png-vector/20220119/ourmid/pngtree-crossed-image-icon-picture-not-available-sign-photo-sign-icon-vector-png-image_44027862.jpg'
                     }
                     alt={collaborateur.nom}

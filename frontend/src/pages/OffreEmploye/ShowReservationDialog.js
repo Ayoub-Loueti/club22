@@ -52,7 +52,7 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
               {reservation.offre.collaborateur.nom}
             </Typography>
             <Avatar
-              src={`http://3.88.157.0/${reservation.offre.collaborateur.logo}`}
+              src={`http://54.242.240.123/${reservation.offre.collaborateur.logo}`}
               alt={reservation.offre.collaborateur.nom}
               sx={{ marginRight: 2 }}
             />
@@ -148,7 +148,7 @@ const ShowReservationDialog = ({ reservation, open, onClose }) => {
               {reservation.offre.images.map((image, index) => (
                 <img
                   key={index}
-                  src={`http://3.88.157.0/${image}`}
+                  src={`http://54.242.240.123/${image}`}
                   alt="Offer"
                   style={{
                     width: '100%',

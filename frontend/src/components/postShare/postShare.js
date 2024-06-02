@@ -42,7 +42,7 @@ const PostShare = () => {
       const fetchUserData = async () => {
         try {
           const response = await axios.get(
-            `http://3.88.157.0/profil/${storedUserId}`,
+            `http://54.242.240.123/profil/${storedUserId}`,
             {
               headers: {
                 Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -111,7 +111,7 @@ const PostShare = () => {
 
     try {
       const response = await axios.post(
-        'http://3.88.157.0/createPost',
+        'http://54.242.240.123/createPost',
         formData,
         {
           headers: {
@@ -177,7 +177,7 @@ const handleSubmit = async (e) => {
   };
 
   try {
-      const response = await axios.post('http://3.88.157.0/createPost', formData, config);
+      const response = await axios.post('http://54.242.240.123/createPost', formData, config);
       
       console.log(response.data.message);
       window.location.reload();
@@ -207,7 +207,7 @@ const handleSubmit = async (e) => {
         <img
           src={
             userInfo.photo
-              ? `http://3.88.157.0/${userInfo.photo}`
+              ? `http://54.242.240.123/${userInfo.photo}`
               : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
           }
           alt="Profil"

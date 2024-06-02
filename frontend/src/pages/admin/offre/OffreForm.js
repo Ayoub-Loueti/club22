@@ -119,7 +119,7 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
 
     if (isUpdate) {
       axios
-        .get(`http://3.88.157.0/offer/${offreId}`, { headers })
+        .get(`http://54.242.240.123/offer/${offreId}`, { headers })
         .then((response) => {
           const data = response.data;
           console.log('Data received:', data);
@@ -185,7 +185,7 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
     }
 
     axios
-      .get('http://3.88.157.0/allCollaborators', { headers })
+      .get('http://54.242.240.123/allCollaborators', { headers })
       .then((response) => {
         setCollaborateurs(response.data);
       })
@@ -891,8 +891,8 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
         },
       };
       const url = isUpdate
-        ? `http://3.88.157.0/offer/${offreId}`
-        : 'http://3.88.157.0/offer';
+        ? `http://54.242.240.123/offer/${offreId}`
+        : 'http://54.242.240.123/offer';
       const method = isUpdate ? 'put' : 'post';
 
       const response = await axios[method](url, formData, config);

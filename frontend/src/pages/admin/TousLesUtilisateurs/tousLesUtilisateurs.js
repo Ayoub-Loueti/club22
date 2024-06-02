@@ -20,7 +20,7 @@ function TousLesUtilisateurs() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://3.88.157.0/allUsers', {
+        const response = await axios.get('http://54.242.240.123/allUsers', {
           headers: {
             Authorization: `Bearer ${JSON.parse(token).token}`,
           },
@@ -46,7 +46,7 @@ function TousLesUtilisateurs() {
         <img
           src={
             row.original.photo
-              ? `http://3.88.157.0/${row.original.photo}`
+              ? `http://54.242.240.123/${row.original.photo}`
               : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
           }
           alt="Profil"

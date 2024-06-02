@@ -23,7 +23,7 @@ function ListCollaborateur() {
     const fetchCollaborateurs = async () => {
       try {
         const response = await axios.get(
-          'http://3.88.157.0/allCollaborateursAD',
+          'http://54.242.240.123/allCollaborateursAD',
           {
             headers: {
               Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -83,7 +83,7 @@ function ListCollaborateur() {
   const handleArchive = async (collabId) => {
     try {
       await axios.put(
-        `http://3.88.157.0/collaborateur/${collabId}/archiver`,
+        `http://54.242.240.123/collaborateur/${collabId}/archiver`,
         null, // Empty data since it's a PUT request
         {
           headers: {
@@ -102,7 +102,7 @@ function ListCollaborateur() {
   const handleUnarchive = async (collabId) => {
     try {
       await axios.put(
-        `http://3.88.157.0/collaborateur/${collabId}/desarchiver`,
+        `http://54.242.240.123/collaborateur/${collabId}/desarchiver`,
         null, // Empty data since it's a PUT request
         {
           headers: {
@@ -159,7 +159,7 @@ function ListCollaborateur() {
                   <img
                     src={
                       collaborateur.logo
-                        ? `http://3.88.157.0/${collaborateur.logo}`
+                        ? `http://54.242.240.123/${collaborateur.logo}`
                         : 'https://png.pngtree.com/png-vector/20220119/ourmid/pngtree-crossed-image-icon-picture-not-available-sign-photo-sign-icon-vector-png-image_44027862.jpg'
                     }
                     alt={collaborateur.nom}

@@ -21,7 +21,7 @@ const CommentForm = ({ postId, onCommentSubmitted }) => {
     try {
       const token = JSON.parse(localStorage.getItem('login'))?.token;
       await axios.post(
-        `http://3.88.157.0/post/${postId}/comment`,
+        `http://54.242.240.123/post/${postId}/comment`,
         { cmntr: commentText.trim() },
         {
           headers: {

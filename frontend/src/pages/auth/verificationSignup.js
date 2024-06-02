@@ -12,7 +12,7 @@ function VerificationSignup() {
     async function verifyAccount() {
       try {
         const response = await axios.get(
-          `http://3.88.157.0/activateAccount/${userId}/${token}`
+          `http://54.242.240.123/activateAccount/${userId}/${token}`
         );
         const { message } = response.data;
         setVerificationStatus(message);

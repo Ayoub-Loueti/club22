@@ -36,7 +36,7 @@ function ReclamationEmploye() {
   useEffect(() => {
     const fetchEmployeId = async () => {
       try {
-        const response = await axios.get('http://3.88.157.0/details', {
+        const response = await axios.get('http://54.242.240.123/details', {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.data && response.data.id_employe) {
@@ -63,7 +63,7 @@ function ReclamationEmploye() {
   const fetchReclamations = async (idEmploye) => {
     try {
       const response = await axios.get(
-        `http://3.88.157.0/reclamations/${idEmploye}`,
+        `http://54.242.240.123/reclamations/${idEmploye}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setReclamations(response.data);
@@ -94,7 +94,7 @@ function ReclamationEmploye() {
     try {
       setSubmitting(true);
       await axios.post(
-        'http://3.88.157.0/reclamations',
+        'http://54.242.240.123/reclamations',
         { contenu, id_employe: idEmploye },
         { headers: { Authorization: `Bearer ${token}` } }
       );

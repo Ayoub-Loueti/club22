@@ -18,7 +18,7 @@ function InsererNom() {
 
     try {
       const response = await axios.patch(
-        'http://3.88.157.0/updateNameSurnameGenre', // Assurez-vous que cette URL correspond à votre configuration de route
+        'http://54.242.240.123/updateNameSurnameGenre', // Assurez-vous que cette URL correspond à votre configuration de route
         { nom, prenom, genre, tel },
         { headers: { Authorization: `Bearer ${token}` } }
       );

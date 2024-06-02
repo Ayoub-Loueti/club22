@@ -19,7 +19,7 @@ const PostSide = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        let url = 'http://3.88.157.0/posts';
+        let url = 'http://54.242.240.123/posts';
         if (postType !== 'tous') {
           url += `/${postType}`; // Append the selected post type to the URL
         }

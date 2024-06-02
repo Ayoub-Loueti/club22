@@ -229,7 +229,7 @@ const ModifyReservation = ({
       await Promise.all(
         deletedRooms.map(async (deletedRoom) => {
           await axios.delete(
-            `http://3.88.157.0/hotel/${deletedRoom.id_hotel}`,
+            `http://54.242.240.123/hotel/${deletedRoom.id_hotel}`,
             {
               headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
             }
@@ -238,7 +238,7 @@ const ModifyReservation = ({
       );
 
       const response = await axios.put(
-        `http://3.88.157.0/updateReservation/${reservationData.id_reservation}`,
+        `http://54.242.240.123/updateReservation/${reservationData.id_reservation}`,
         updatedData,
         {
           headers: { Authorization: `Bearer ${JSON.parse(token).token}` },

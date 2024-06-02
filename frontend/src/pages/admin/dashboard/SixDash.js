@@ -10,9 +10,12 @@ const SixDash = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://3.88.157.0/TotalPrixCollabs', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get(
+          'http://54.242.240.123/TotalPrixCollabs',
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setData(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);

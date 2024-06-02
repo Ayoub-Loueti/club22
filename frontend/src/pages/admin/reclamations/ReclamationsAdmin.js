@@ -45,7 +45,7 @@ function ReclamationsAdmin() {
 
   const fetchReclamations = async () => {
     try {
-      const response = await axios.get('http://3.88.157.0/reclamations', {
+      const response = await axios.get('http://54.242.240.123/reclamations', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const sortedReclamations = response.data.sort(
@@ -84,7 +84,7 @@ function ReclamationsAdmin() {
 
     try {
       await axios.post(
-        `http://3.88.157.0/reclamations/${id}/message`,
+        `http://54.242.240.123/reclamations/${id}/message`,
         { message_admin: message },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -112,7 +112,7 @@ function ReclamationsAdmin() {
   const updateStatus = async (id, newStatus) => {
     try {
       await axios.post(
-        `http://3.88.157.0/reclamations/${id}/status`,
+        `http://54.242.240.123/reclamations/${id}/status`,
         { newStatus },
         {
           headers: { Authorization: `Bearer ${token}` },

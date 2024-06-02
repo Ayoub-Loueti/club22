@@ -17,7 +17,7 @@ function CollaborateurPage() {
       const fetchCollaborateurs = async () => {
         try {
           const response = await axios.get(
-            'http://3.88.157.0/allCollaborateursAD',
+            'http://54.242.240.123/allCollaborateursAD',
             { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } }
           );
           setCollaborateurs(response.data);
@@ -75,7 +75,7 @@ function CollaborateurPage() {
                 }
               >
                 <img
-                  src={`http://3.88.157.0/${collaborateur.logo}`}
+                  src={`http://54.242.240.123/${collaborateur.logo}`}
                   alt={collaborateur.nom}
                 />
                 <div className="collab-card-title">{collaborateur.nom}</div>

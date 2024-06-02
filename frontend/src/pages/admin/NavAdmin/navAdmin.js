@@ -50,7 +50,7 @@ function NavAdmin() {
         ? { Authorization: `Bearer ${storedToken}` }
         : {};
       try {
-        const response = await axios.get('http://3.88.157.0/randomUsers', {
+        const response = await axios.get('http://54.242.240.123/randomUsers', {
           headers,
         });
         setRandomUsers(response.data);
@@ -73,9 +73,12 @@ function NavAdmin() {
       if (storedToken) {
         const headers = { Authorization: `Bearer ${storedToken}` };
         try {
-          const response = await axios.get('http://3.88.157.0/signalsCount', {
-            headers,
-          });
+          const response = await axios.get(
+            'http://54.242.240.123/signalsCount',
+            {
+              headers,
+            }
+          );
           setSignalsCount(response.data.count);
         } catch (error) {
           console.error('Error fetching signals count:', error);
@@ -98,7 +101,7 @@ function NavAdmin() {
 
     try {
       const response = await axios.patch(
-        'http://3.88.157.0/updateAllSignalerOpen',
+        'http://54.242.240.123/updateAllSignalerOpen',
         {},
         { headers }
       );

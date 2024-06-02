@@ -17,7 +17,7 @@ const TrendCard = () => {
 
     const fetchTrends = async () => {
       try {
-        const response = await axios.get('http://3.88.157.0/hashtags', {
+        const response = await axios.get('http://54.242.240.123/hashtags', {
           headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
         });
         setTrends(response.data.hashtags);

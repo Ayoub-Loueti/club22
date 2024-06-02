@@ -46,7 +46,7 @@ const DetailPostModal = ({
   const fetchPostDetails = async () => {
     try {
       const response = await axios.get(
-        `http://3.88.157.0/getPostById/${postId}`,
+        `http://54.242.240.123/getPostById/${postId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -60,7 +60,7 @@ const DetailPostModal = ({
   const fetchCommentDetails = async () => {
     try {
       const response = await axios.get(
-        `http://3.88.157.0/comment/${commentId}`,
+        `http://54.242.240.123/comment/${commentId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -77,7 +77,7 @@ const DetailPostModal = ({
   const fetchResponseDetails = async () => {
     try {
       const response = await axios.get(
-        `http://3.88.157.0/comment/${commentId}`,
+        `http://54.242.240.123/comment/${commentId}`,
         {
           // Using the comment endpoint to fetch the response
           headers: { Authorization: `Bearer ${token}` },
@@ -123,7 +123,7 @@ const DetailPostModal = ({
             <Avatar
               src={
                 postDetails.utilisateur.photo
-                  ? `http://3.88.157.0/${postDetails.utilisateur.photo}`
+                  ? `http://54.242.240.123/${postDetails.utilisateur.photo}`
                   : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
               }
               alt="User"
@@ -141,7 +141,7 @@ const DetailPostModal = ({
               <Avatar
                 src={
                   commentDetails.utilisateur.photo
-                    ? `http://3.88.157.0/${commentDetails.utilisateur.photo}`
+                    ? `http://54.242.240.123/${commentDetails.utilisateur.photo}`
                     : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
                 }
                 alt="CommentUser"
@@ -157,7 +157,7 @@ const DetailPostModal = ({
               <Avatar
                 src={
                   responseDetails.utilisateur.photo
-                    ? `http://3.88.157.0/${responseDetails.utilisateur.photo}`
+                    ? `http://54.242.240.123/${responseDetails.utilisateur.photo}`
                     : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
                 }
                 alt="Response USER"
@@ -177,7 +177,7 @@ const DetailPostModal = ({
                 <ArrowBackIosIcon />
               </IconButton>
               <img
-                src={`http://3.88.157.0/${postDetails.lesImages[currentImageIndex].pathImage}`}
+                src={`http://54.242.240.123/${postDetails.lesImages[currentImageIndex].pathImage}`}
                 alt="Post"
                 style={{ maxHeight: 300, maxWidth: '100%' }}
               />

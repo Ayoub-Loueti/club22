@@ -45,7 +45,7 @@ function Login() {
       return;
     }
     try {
-      await axios.post('http://3.88.157.0/forgot-password', { email });
+      await axios.post('http://54.242.240.123/forgot-password', { email });
       MySwal.fire(
         'Succès',
         'Email de réinitialisation du mot de passe envoyé.',
@@ -69,7 +69,7 @@ function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post('http://3.88.157.0/login', {
+      const response = await axios.post('http://54.242.240.123/login', {
         email,
         motDePasse,
       });
@@ -178,7 +178,7 @@ function Login() {
   const handleResendEmail = async () => {
     setResendDisabled(true);
     try {
-      await axios.post('http://3.88.157.0/resendEmail', { email });
+      await axios.post('http://54.242.240.123/resendEmail', { email });
       MySwal.fire(
         'Email envoyé',
         'Veuillez vérifier votre boîte de réception',
@@ -324,7 +324,7 @@ function Login() {
                 </a>
               </Typography>
               <a
-                href="http://3.88.157.0/auth/google"
+                href="http://54.242.240.123/auth/google"
                 className="google-auth-link"
                 style={{
                   display: 'block',
@@ -472,7 +472,7 @@ function Login() {
                   OU
                 </p>
                 <a
-                  href="http://3.88.157.0/auth/google"
+                  href="http://54.242.240.123/auth/google"
                   className="google-auth-link"
                   style={{
                     position: 'absolute',

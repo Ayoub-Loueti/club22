@@ -77,7 +77,7 @@ const Post = (props) => {
       const fetchUserData = async () => {
         try {
           const response = await axios.get(
-            `http://3.88.157.0/profil/${storedUserId}`,
+            `http://54.242.240.123/profil/${storedUserId}`,
             {
               headers: {
                 Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -100,7 +100,7 @@ const Post = (props) => {
     const fetchLikesCount = async () => {
       try {
         const response = await axios.get(
-          `http://3.88.157.0/post/${data.id_post}/likesCount`,
+          `http://54.242.240.123/post/${data.id_post}/likesCount`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setLikes(response.data.likesCount);
@@ -116,7 +116,7 @@ const Post = (props) => {
     const fetchComments = async () => {
       try {
         const response = await axios.get(
-          `http://3.88.157.0/post/${data.id_post}/comment`,
+          `http://54.242.240.123/post/${data.id_post}/comment`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setComments(response.data.comments);
@@ -133,7 +133,7 @@ const Post = (props) => {
     const checkIfPostIsSaved = async () => {
       try {
         const response = await axios.get(
-          `http://3.88.157.0/posts/${data.id_post}/is-saved`,
+          `http://54.242.240.123/posts/${data.id_post}/is-saved`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -150,7 +150,7 @@ const Post = (props) => {
     const newLikedStatus = !liked;
     try {
       await axios.post(
-        `http://3.88.157.0/post/${data.id_post}/toggle-like`,
+        `http://54.242.240.123/post/${data.id_post}/toggle-like`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -209,7 +209,7 @@ const Post = (props) => {
   // Dans Post.js, remplacez window.location.reload(); par une fonction de rappel
   const deletePost = async () => {
     try {
-      await axios.delete(`http://3.88.157.0/posts/${data.id_post}`, {
+      await axios.delete(`http://54.242.240.123/posts/${data.id_post}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       Swal.fire(t('Supprimé!'), t('Votre post a été supprimé.'), 'success');
@@ -231,7 +231,7 @@ const Post = (props) => {
     if (editContent !== data.contenu || editLieu !== data.lieu) {
       try {
         const response = await axios.put(
-          `http://3.88.157.0/posts/${data.id_post}`,
+          `http://54.242.240.123/posts/${data.id_post}`,
           { contenu: editContent, lieu: editLieu },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -271,7 +271,7 @@ const Post = (props) => {
   // Extraire la logique de suppression dans une fonction séparée
   const performCommentDeletion = async (commentId) => {
     try {
-      await axios.delete(`http://3.88.157.0/deleteComment/${commentId}`, {
+      await axios.delete(`http://54.242.240.123/deleteComment/${commentId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       // Notifier l'utilisateur de la suppression réussie
@@ -304,7 +304,7 @@ const Post = (props) => {
     if (editCommentContent && editingCommentId) {
       try {
         await axios.put(
-          `http://3.88.157.0/modifyComment/${editingCommentId}`,
+          `http://54.242.240.123/modifyComment/${editingCommentId}`,
           { newContent: editCommentContent },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -340,7 +340,7 @@ const Post = (props) => {
   const reloadComments = async () => {
     try {
       const response = await axios.get(
-        `http://3.88.157.0/post/${data.id_post}/comment`,
+        `http://54.242.240.123/post/${data.id_post}/comment`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -361,7 +361,7 @@ const Post = (props) => {
       if (isPostSaved) {
         // Unsave post
         await axios.delete(
-          `http://3.88.157.0/posts/${data.id_post}/enregistrement`,
+          `http://54.242.240.123/posts/${data.id_post}/enregistrement`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setIsPostSaved(false);
@@ -373,7 +373,7 @@ const Post = (props) => {
       } else {
         // Save post
         await axios.post(
-          `http://3.88.157.0/posts/${data.id_post}/enregistrement`,
+          `http://54.242.240.123/posts/${data.id_post}/enregistrement`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -418,7 +418,7 @@ const Post = (props) => {
   const toggleLikeComment = async (commentId) => {
     try {
       const response = await axios.post(
-        `http://3.88.157.0/comment/${commentId}/toggle-like`,
+        `http://54.242.240.123/comment/${commentId}/toggle-like`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -432,14 +432,14 @@ const Post = (props) => {
     try {
       // Toggle the like status in the backend
       await axios.post(
-        `http://3.88.157.0/reponse/${responseId}/toggle-like`,
+        `http://54.242.240.123/reponse/${responseId}/toggle-like`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       // Fetch the updated likes count for the response
       const likesCountResponse = await axios.get(
-        `http://3.88.157.0/reponse/${responseId}/likesCount`,
+        `http://54.242.240.123/reponse/${responseId}/likesCount`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -492,7 +492,7 @@ const Post = (props) => {
 
       // Make the PUT request to the server with the edited content
       const response = await axios.put(
-        `http://3.88.157.0/replies/${responseId}`, // Ensure this is the correct endpoint for updating a response
+        `http://54.242.240.123/replies/${responseId}`, // Ensure this is the correct endpoint for updating a response
         { contenu: editedContent }, // Make sure to send the updated content in the format expected by the server
         { headers: { Authorization: `Bearer ${token}` } } // Include the Authorization header with the token
       );
@@ -523,7 +523,7 @@ const Post = (props) => {
     e.preventDefault(); // Prevent the default form submission behavior
     try {
       const response = await axios.post(
-        `http://3.88.157.0/comments/${commentId}/responses`,
+        `http://54.242.240.123/comments/${commentId}/responses`,
         { contenu: responseContent },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -550,7 +550,7 @@ const Post = (props) => {
       if (result.isConfirmed) {
         try {
           const token = JSON.parse(localStorage.getItem('login'))?.token;
-          await axios.delete(`http://3.88.157.0/replies/${responseId}`, {
+          await axios.delete(`http://54.242.240.123/replies/${responseId}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
 
@@ -606,7 +606,7 @@ const Post = (props) => {
         : `/reponse/${id}/afficherLikes`;
 
     try {
-      const response = await axios.get(`http://3.88.157.0${endpoint}`, {
+      const response = await axios.get(`http://54.242.240.123${endpoint}`, {
         headers: { Authorization: `Bearer ${token}` }, // Assuming 'token' is defined in your component's scope
       });
       setLikesData(response.data.likes); // Update the state with the fetched likes
@@ -620,7 +620,7 @@ const Post = (props) => {
 
   const handleReportPost = async () => {
     const userStatus = await axios.get(
-      `http://3.88.157.0/user-block-status/${userId}`,
+      `http://54.242.240.123/user-block-status/${userId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -684,7 +684,7 @@ const Post = (props) => {
     if (cause) {
       try {
         await axios.post(
-          `http://3.88.157.0/signals`,
+          `http://54.242.240.123/signals`,
           {
             id_post: data.id_post,
             id_cmntr: 0,
@@ -750,7 +750,7 @@ const Post = (props) => {
     if (cause) {
       try {
         await axios.post(
-          `http://3.88.157.0/signals`,
+          `http://54.242.240.123/signals`,
           {
             id_post: data.id_post,
             id_cmntr: commentId,
@@ -817,7 +817,7 @@ const Post = (props) => {
     if (cause) {
       try {
         await axios.post(
-          `http://3.88.157.0/signals`,
+          `http://54.242.240.123/signals`,
           {
             id_post: data.id_post,
             id_cmntr: commentId,
@@ -869,7 +869,7 @@ const Post = (props) => {
           <img
             src={
               data.utilisateur.photo
-                ? `http://3.88.157.0/${data.utilisateur.photo}`
+                ? `http://54.242.240.123/${data.utilisateur.photo}`
                 : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
             }
             alt="Profil"
@@ -1000,14 +1000,14 @@ const Post = (props) => {
             {data.lesImages[currentImageIndex].pathImage.endsWith('.mp4') ? (
               <video controls className="postImage">
                 <source
-                  src={`http://3.88.157.0/${data.lesImages[currentImageIndex].pathImage}`}
+                  src={`http://54.242.240.123/${data.lesImages[currentImageIndex].pathImage}`}
                   type="video/mp4"
                 />
                 Your browser does not support the video tag.
               </video>
             ) : (
               <img
-                src={`http://3.88.157.0/${data.lesImages[currentImageIndex].pathImage}`}
+                src={`http://54.242.240.123/${data.lesImages[currentImageIndex].pathImage}`}
                 alt="Post"
                 className="postImage"
               />
@@ -1067,7 +1067,7 @@ const Post = (props) => {
             <img
               src={
                 comment.utilisateur.photo
-                  ? `http://3.88.157.0/${comment.utilisateur.photo}`
+                  ? `http://54.242.240.123/${comment.utilisateur.photo}`
                   : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
               }
               alt="Profile"
@@ -1249,7 +1249,7 @@ const Post = (props) => {
                       <img
                         src={
                           reponse.utilisateur.photo
-                            ? `http://3.88.157.0/${reponse.utilisateur.photo}`
+                            ? `http://54.242.240.123/${reponse.utilisateur.photo}`
                             : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
                         }
                         alt="Profile"

@@ -24,7 +24,7 @@ function ListClient() {
 
   const fetchClients = async () => {
     try {
-      const response = await axios.get('http://3.88.157.0/listCli', {
+      const response = await axios.get('http://54.242.240.123/listCli', {
         headers: {
           Authorization: `Bearer ${JSON.parse(token).token}`,
         },
@@ -40,7 +40,7 @@ function ListClient() {
       etat.toLowerCase() === 'autorise' ? '/block/' : '/unblock/';
     try {
       await axios.put(
-        `http://3.88.157.0${endpoint}${id}`,
+        `http://54.242.240.123${endpoint}${id}`,
         {},
         {
           headers: {
@@ -61,7 +61,7 @@ function ListClient() {
         <img
           src={
             cell.getValue()
-              ? `http://3.88.157.0/${cell.getValue()}`
+              ? `http://54.242.240.123/${cell.getValue()}`
               : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
           }
           alt="Client"

@@ -27,11 +27,14 @@ function OffreEmploye({ offers }) {
     if (!offers || offers.length === 0) {
       const fetchOffres = async () => {
         try {
-          const response = await axios.get('http://3.88.157.0/employeOffers', {
-            headers: {
-              Authorization: `Bearer ${JSON.parse(token).token}`,
-            },
-          });
+          const response = await axios.get(
+            'http://54.242.240.123/employeOffers',
+            {
+              headers: {
+                Authorization: `Bearer ${JSON.parse(token).token}`,
+              },
+            }
+          );
           setOffres(
             response.data.map((offre) => ({ ...offre, currentImageIndex: 0 }))
           );
@@ -111,7 +114,7 @@ function OffreEmploye({ offers }) {
           {currentOffres.map((offre, index) => (
             <div key={index} className="offre-employee-card">
               <img
-                src={`http://3.88.157.0/${
+                src={`http://54.242.240.123/${
                   offre.lesImages[offre.currentImageIndex]?.image
                 }`}
                 alt={`Image ${offre.currentImageIndex}`}

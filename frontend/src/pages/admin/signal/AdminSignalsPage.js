@@ -31,7 +31,7 @@ const AdminSignalsPage = () => {
 
   const fetchSignals = async () => {
     try {
-      const response = await axios.get('http://3.88.157.0/signals', {
+      const response = await axios.get('http://54.242.240.123/signals', {
         headers: { Authorization: `Bearer ${token}` },
       });
       // Trier les données: non lus en premier
@@ -61,7 +61,7 @@ const AdminSignalsPage = () => {
   const updateSignalStatus = async (id, isRead) => {
     try {
       await axios.patch(
-        `http://3.88.157.0/signaler/${id}`,
+        `http://54.242.240.123/signaler/${id}`,
         { isRead },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -86,7 +86,7 @@ const AdminSignalsPage = () => {
   const blockUser = async (userId) => {
     try {
       await axios.put(
-        `http://3.88.157.0/block/${userId}`,
+        `http://54.242.240.123/block/${userId}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -113,7 +113,7 @@ const AdminSignalsPage = () => {
   const handleBlockUser = async (signal) => {
     if (signal.id_reponse) {
       const replyData = await axios.get(
-        `http://3.88.157.0/replies/${signal.id_reponse}`,
+        `http://54.242.240.123/replies/${signal.id_reponse}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -121,7 +121,7 @@ const AdminSignalsPage = () => {
       blockUser(replyData.data.utilisateur.id_utilisateur);
     } else if (signal.id_cmntr) {
       const commentData = await axios.get(
-        `http://3.88.157.0/comment/${signal.id_cmntr}`,
+        `http://54.242.240.123/comment/${signal.id_cmntr}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -151,22 +151,25 @@ const AdminSignalsPage = () => {
     try {
       if (signal.id_reponse) {
         await axios.delete(
-          `http://3.88.157.0/response/${signal.id_reponse}/admin`,
+          `http://54.242.240.123/response/${signal.id_reponse}/admin`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
       } else if (signal.id_cmntr) {
         await axios.delete(
-          `http://3.88.157.0/comment/${signal.id_cmntr}/admin`,
+          `http://54.242.240.123/comment/${signal.id_cmntr}/admin`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
       } else {
-        await axios.delete(`http://3.88.157.0/post/${signal.id_post}/admin`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await axios.delete(
+          `http://54.242.240.123/post/${signal.id_post}/admin`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
       }
       Swal.fire('Succès', 'Le contenu a été supprimé.', 'success');
       fetchSignals(); // Refresh the list after deletion
@@ -261,7 +264,7 @@ const AdminSignalsPage = () => {
   const blockSignalant = async (userId) => {
     try {
       await axios.put(
-        `http://3.88.157.0/block/${userId}`,
+        `http://54.242.240.123/block/${userId}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -288,7 +291,7 @@ const AdminSignalsPage = () => {
     if (days) {
       try {
         await axios.put(
-          `http://3.88.157.0/block-reporting/${userId}`,
+          `http://54.242.240.123/block-reporting/${userId}`,
           { days },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -364,7 +367,7 @@ const AdminSignalsPage = () => {
                         <Avatar
                           src={
                             signal.utilisateur.photo
-                              ? `http://3.88.157.0/${signal.utilisateur.photo}`
+                              ? `http://54.242.240.123/${signal.utilisateur.photo}`
                               : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
                           }
                           alt={signal.utilisateur.prenom}

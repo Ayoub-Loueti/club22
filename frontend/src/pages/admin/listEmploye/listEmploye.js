@@ -24,7 +24,7 @@ const ListEmploye = () => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await axios.get('http://3.88.157.0/listEmp', {
+      const response = await axios.get('http://54.242.240.123/listEmp', {
         headers: {
           Authorization: `Bearer ${JSON.parse(token).token}`,
         },
@@ -40,7 +40,7 @@ const ListEmploye = () => {
       etat.toLowerCase() === 'autorise' ? '/block/' : '/unblock/';
     try {
       await axios.put(
-        `http://3.88.157.0${endpoint}${id}`,
+        `http://54.242.240.123${endpoint}${id}`,
         {},
         {
           headers: {
@@ -73,7 +73,7 @@ const ListEmploye = () => {
         <img
           src={
             cell.getValue()
-              ? `http://3.88.157.0/${cell.getValue()}`
+              ? `http://54.242.240.123/${cell.getValue()}`
               : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
           }
           alt="Employee"

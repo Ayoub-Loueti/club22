@@ -35,9 +35,12 @@ function VerificationToken() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://3.88.157.0/check-reset-token', {
-        resetPasswordToken: resetToken,
-      });
+      const response = await axios.post(
+        'http://54.242.240.123/check-reset-token',
+        {
+          resetPasswordToken: resetToken,
+        }
+      );
 
       if (response.data.isValid) {
         navigate(`/changerPass/${resetToken}`);
@@ -64,7 +67,7 @@ function VerificationToken() {
     setResendDisabled(true);
     try {
       await axios.post(
-        `http://3.88.157.0/resend-forgot-password-email/${email}`
+        `http://54.242.240.123/resend-forgot-password-email/${email}`
       );
       MySwal.fire(
         'Succès',

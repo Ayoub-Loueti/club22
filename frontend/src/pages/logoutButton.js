@@ -8,7 +8,7 @@ function LogoutButton() {
   const handleLogout = async () => {
     try {
       localStorage.removeItem('token');
-      await axios.get('http://3.88.157.0/auth/logout', {
+      await axios.get('http://54.242.240.123/auth/logout', {
         withCredentials: true,
       });
       localStorage.removeItem('login');

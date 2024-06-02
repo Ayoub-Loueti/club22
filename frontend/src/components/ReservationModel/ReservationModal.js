@@ -292,7 +292,7 @@ const ReservationModal = ({
       const fetchUserData = async () => {
         try {
           const response = await axios.get(
-            `http://3.88.157.0/profil/${storedUserId}`,
+            `http://54.242.240.123/profil/${storedUserId}`,
             { headers: { Authorization: `Bearer ${JSON.parse(token).token}` } }
           );
           setUserInfo(response.data.user);
@@ -515,7 +515,7 @@ const ReservationModal = ({
     console.log(reservationData);
 
     try {
-      await axios.post('http://3.88.157.0/reservation', reservationData, {
+      await axios.post('http://54.242.240.123/reservation', reservationData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -544,7 +544,7 @@ const ReservationModal = ({
             <Avatar
               src={
                 userInfo.photo
-                  ? `http://3.88.157.0/${userInfo.photo}`
+                  ? `http://54.242.240.123/${userInfo.photo}`
                   : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
               }
               alt="User"

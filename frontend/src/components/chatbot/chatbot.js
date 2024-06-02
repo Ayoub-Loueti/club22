@@ -16,7 +16,7 @@ const Chatbot = () => {
 
     try {
       const response = await axios.post(
-        'http://3.88.157.0/chatbot',
+        'http://54.242.240.123/chatbot',
         {
           inputText,
         },
