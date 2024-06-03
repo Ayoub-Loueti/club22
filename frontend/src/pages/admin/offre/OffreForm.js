@@ -84,6 +84,14 @@ const [selectedTypes, setSelectedTypes] = useState([]);
 const [defaultChambre, setDefaultChambre] = useState('');
 const [supplements, setSupplements] = useState({});
 
+const [vueMer, setVueMer] = useState({});
+const [prixVueMer, setPrixVueMer] = useState({});
+const [vuePiscine, setVuePiscine] = useState({});
+const [prixVuePiscine, setPrixVuePiscine] = useState({});
+
+const [single, setSingle] = useState({});
+const [prixsingle, setPrixsingle] = useState({});
+
  const typesChambresOptions = [
    { id: 'standard', nom: 'Chambre standard' },
    { id: 'double', nom: 'Chambre double' },
@@ -368,22 +376,144 @@ setChangeMonetaire(data.details.changeMonetaire);
         </Select>
       </FormControl>
 
-      {selectedTypes.map(
-        (typeId) =>
-          typeId !== defaultChambre && (
-            <TextField
-              key={typeId}
-              label={`Supplément pour ${
-                typesChambresOptions.find((type) => type.id === typeId).nom
-              }`}
-              type="number"
-              value={supplements[typeId] || ''}
-              onChange={(e) => handleSupplementChange(typeId, e.target.value)}
-              fullWidth
-              className="supplement-input"
+      {selectedTypes.map((typeId) => {
+  if (typeId === defaultChambre) {
+    return (
+      <div key={typeId} style={{ color: 'red' }}>
+        <div>
+          {typesChambresOptions.find((type) => type.id === typeId).nom} (Par defaut)
+        </div>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={single[typeId] || false}
+              onChange={(e) => setSingle({ ...single, [typeId]: e.target.checked })}
             />
-          )
-      )}
+          }
+          label="Single"
+        />
+        {single[typeId] && (
+          <TextField
+            label="Prix pour single"
+            type="number"
+            value={prixsingle[typeId] || ''}
+            onChange={(e) => setPrixsingle({ ...prixsingle, [typeId]: e.target.value })}
+            fullWidth
+          />
+        )}
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={vueMer[typeId] || false}
+              onChange={(e) => setVueMer({ ...vueMer, [typeId]: e.target.checked })}
+            />
+          }
+          label="Vue sur Mer"
+        />
+        {vueMer[typeId] && (
+          <TextField
+            label="Prix pour vue sur mer"
+            type="number"
+            value={prixVueMer[typeId] || ''}
+            onChange={(e) => setPrixVueMer({ ...prixVueMer, [typeId]: e.target.value })}
+            fullWidth
+          />
+        )}
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={vuePiscine[typeId] || false}
+              onChange={(e) => setVuePiscine({ ...vuePiscine, [typeId]: e.target.checked })}
+            />
+          }
+          label="Vue sur Piscine"
+        />
+        {vuePiscine[typeId] && (
+          <TextField
+            label="Prix pour vue sur piscine"
+            type="number"
+            value={prixVuePiscine[typeId] || ''}
+            onChange={(e) => setPrixVuePiscine({ ...prixVuePiscine, [typeId]: e.target.value })}
+            fullWidth
+          />
+        )}
+      </div>
+    );
+  } else {
+    return (
+      <div key={typeId}>
+        <TextField
+          label={`Supplément pour ${typesChambresOptions.find((type) => type.id === typeId).nom}`}
+          type="number"
+          value={supplements[typeId] || ''}
+          onChange={(e) => handleSupplementChange(typeId, e.target.value)}
+          fullWidth
+          className="supplement-input"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={single[typeId] || false}
+              onChange={(e) => setSingle({ ...single, [typeId]: e.target.checked })}
+            />
+          }
+          label="Single"
+        />
+        {single[typeId] && (
+          <TextField
+            label="Prix pour single"
+            type="number"
+            value={prixsingle[typeId] || ''}
+            onChange={(e) => setPrixsingle({ ...prixsingle, [typeId]: e.target.value })}
+            fullWidth
+          />
+        )}
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={vueMer[typeId] || false}
+              onChange={(e) => setVueMer({ ...vueMer, [typeId]: e.target.checked })}
+            />
+          }
+          label="Vue sur Mer"
+        />
+        {vueMer[typeId] && (
+          <TextField
+            label="Prix pour vue sur mer"
+            type="number"
+            value={prixVueMer[typeId] || ''}
+            onChange={(e) => setPrixVueMer({ ...prixVueMer, [typeId]: e.target.value })}
+            fullWidth
+          />
+        )}
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={vuePiscine[typeId] || false}
+              onChange={(e) => setVuePiscine({ ...vuePiscine, [typeId]: e.target.checked })}
+            />
+          }
+          label="Vue sur Piscine"
+        />
+        {vuePiscine[typeId] && (
+          <TextField
+            label="Prix pour vue sur piscine"
+            type="number"
+            value={prixVuePiscine[typeId] || ''}
+            onChange={(e) => setPrixVuePiscine({ ...prixVuePiscine, [typeId]: e.target.value })}
+            fullWidth
+          />
+        )}
+      </div>
+    );
+  }
+})}
+
+      
       <label
         style={{
           flexDirection: 'row',
@@ -872,6 +1002,13 @@ selectedTypes.forEach((typeId, index) => {
     `typechambres[${index}][defaultChambre]`,
     defaultChambre === typeId
   );
+    formData.append(`typechambres[${index}][vuemer]`, vueMer[typeId] || false);
+    formData.append(`typechambres[${index}][supplementmer]`, prixVueMer[typeId] || 0);
+    formData.append(`typechambres[${index}][vuepis]`, vuePiscine[typeId] || false);
+    formData.append(`typechambres[${index}][supplementpis]`, prixVuePiscine[typeId] || 0);
+    formData.append(`typechambres[${index}][single]`, single[typeId] || false);
+    formData.append(`typechambres[${index}][prixsingle]`, prixsingle[typeId] || 0);
+ 
 });    } else if (typeOffre === 'activite') {
       formData.append('programme', programme);
       formData.append('inclus', inclus);

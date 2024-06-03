@@ -9,6 +9,7 @@ import NavAdmin from '../NavAdmin/navAdmin';
 import { Link } from 'react-router-dom';
 import ScrollToTop from '../../../components/designs/ScrollToTop';
 import ReactPaginate from 'react-paginate';
+import NavbarHaut from '../../../components/navbar/navbarHaut';
 
 function OffreAdmin({ isCollabMode, collaborateurId, onOffreAddedOrUpdated }) {
   const [offres, setOffres] = useState([]);
@@ -143,7 +144,7 @@ const [categoryFilter, setCategoryFilter] = useState('tous');
   return (
     <>
       <ScrollToTop />
-
+      <NavbarHaut />
       <NavAdmin />
       <div className="offre-admin-container">
         <AddOffreModal

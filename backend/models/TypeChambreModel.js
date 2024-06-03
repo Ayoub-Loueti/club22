@@ -37,9 +37,32 @@ const TypeChambreModel = sequelize.define(
 
     defaultChambre: {
       type: DataTypes.BOOLEAN,
-
     },
-    
+
+    single: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    prixsingle: {
+      type: DataTypes.FLOAT,
+      defaultValue: 0.0,
+    },
+    vuemer: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    supplementmer: {
+      type: DataTypes.FLOAT,
+      defaultValue: 0.0,
+    },
+    vuepis: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    supplementpis: {
+      type: DataTypes.FLOAT,
+      defaultValue: 0.0,
+    },
   },
 
   {

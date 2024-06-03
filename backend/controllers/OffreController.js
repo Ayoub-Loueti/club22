@@ -180,6 +180,12 @@ exports.createOffre = async (req, res) => {
           nom: typechambre.nom,
           supplement: typechambre.supplement,
           defaultChambre: typechambre.defaultChambre,
+          single: typechambre.single,
+          prixsingle: typechambre.prixsingle,
+          vuemer: typechambre.vuemer,
+          supplementmer: typechambre.supplementmer,
+          vuepis: typechambre.vuepis,
+          supplementpis: typechambre.supplementpis,
         });
       })
     );

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-
+import NavbarHaut from '../../components/navbar/navbarHaut';
 import {
   Autocomplete,
   Switch,
@@ -428,6 +428,7 @@ function MessagePage() {
 
   return (
     <>
+    <NavbarHaut />
       <Navbar />
       <div className="messagePageContainer">
         <Grid container spacing={2} className="containerMsg">

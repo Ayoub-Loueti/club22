@@ -8,6 +8,8 @@ import { mkConfig, generateCsv, download } from 'export-to-csv'; // Ensure this 
 import NavAdmin from '../NavAdmin/navAdmin';
 import './listEmployE.css';
 import { MRT_Localization_FR } from 'material-react-table/locales/fr';
+import NavbarHaut from '../../../components/navbar/navbarHaut';
+
 const columnHelper = createMRTColumnHelper();
 
 const ListEmploye = () => {
@@ -143,6 +145,7 @@ const ListEmploye = () => {
   return (
     <>
       <NavAdmin />
+      <NavbarHaut />
       <div className="list-Employe-container">
         <div className="list-Employe-header">
           <h1>LISTE DES EMPLOYES</h1>

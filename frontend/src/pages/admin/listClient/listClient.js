@@ -7,6 +7,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import NavAdmin from '../NavAdmin/navAdmin';
 import './listClient.css';
 import { MRT_Localization_FR } from 'material-react-table/locales/fr';
+import NavbarHaut from '../../../components/navbar/navbarHaut';
 
 const columnHelper = createMRTColumnHelper();
 
@@ -148,6 +149,7 @@ function ListClient() {
   return (
     <>
       <NavAdmin />
+      <NavbarHaut />
       <div className="list-client-container">
         <div className="list-client-header">
           <h1>LISTE DES CLIENTS</h1>

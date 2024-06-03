@@ -35,32 +35,53 @@ const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete,details,updateRoo
   const defaultRoomType = details.typechambres.find(tc => tc.defaultChambre);
   const [selectedRoomType, setSelectedRoomType] = useState(defaultRoomType?.id_TypeChambre || details.typechambres[0].id_TypeChambre);
   const [roomSupplement, setRoomSupplement] = useState(0); 
+  const [roomTypeDetails, setRoomTypeDetails] = useState(defaultRoomType || details.typechambres[0]);
+  const [selectedView, setSelectedView] = useState('simple'); // Default view
+  const [viewPrice, setViewPrice] = useState(0);
 
   useEffect(() => {
-    updateRoom(room.id, 'supplement', roomSupplement);
-  }, [roomSupplement]);
+    updateRoom(room.id, 'supplement', roomSupplement + viewPrice);
+  }, [roomSupplement, viewPrice]);
 
   const handleRoomTypeChange = (event) => {
-
     const selectedTypeId = event.target.value;
-    const selectedType = details.typechambres.find(
-      (tc) => tc.id_TypeChambre === selectedTypeId
-    );
+    const selectedType = details.typechambres.find(tc => tc.id_TypeChambre === selectedTypeId);
     setSelectedRoomType(selectedTypeId);
+    setRoomTypeDetails(selectedType);
     updateRoomType(room.id, selectedType.nom);
-    if (!selectedType.defaultChambre) {
-      setRoomSupplement(selectedType.supplement);
-    } else {
-      setRoomSupplement(0);
-    }
-  };
-    const incrementAdults = () => {
-        updateRoom(room.id, 'adults', room.adults + 1);
-    };
 
-    const decrementAdults = () => {
-        updateRoom(room.id, 'adults', Math.max(1, room.adults - 1));
-    };
+    // Reset view to 'simple' and remove additional view price
+    setSelectedView('simple');
+    setViewPrice(0);
+
+    // Update room supplement based on the room type
+    if (selectedType.single && room.adults === 1) {
+        setRoomSupplement(selectedType.prixsingle);
+    } else {
+        setRoomSupplement(selectedType.supplement);
+    }
+};
+
+const incrementAdults = () => {
+  updateRoom(room.id, 'adults', room.adults + 1);
+  if (roomTypeDetails.single && room.adults === 1) {
+      setRoomSupplement(roomSupplement - roomTypeDetails.prixsingle);
+  }
+};
+
+const decrementAdults = () => {
+  if (roomTypeDetails.single || room.adults > 1) {
+      if (!roomTypeDetails.single && room.adults <= 2) {
+          return; // Prevent decrementing to 1 when `single` is false
+      }
+      updateRoom(room.id, 'adults', room.adults - 1);
+      // Apply single price if single is true and adults count is decremented to 1
+      if (roomTypeDetails.single && room.adults === 2) {
+          setRoomSupplement(roomSupplement + roomTypeDetails.prixsingle);
+      }
+  }
+};
+
 
     const incrementChildren = () => {
       updateRoom(room.id, 'children', room.children + 1);
@@ -80,7 +101,22 @@ const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete,details,updateRoo
       setChildAges(updatedAges);
   };
 
-    
+  const handleViewChange = (event) => {
+    const view = event.target.value;
+    setSelectedView(view);
+    updateRoom(room.id, 'vue', view);
+    switch(view) {
+      case 'mer':
+        setViewPrice(roomTypeDetails.supplementmer);
+        break;
+      case 'piscine':
+        setViewPrice(roomTypeDetails.supplementpis);
+        break;
+      default:
+        setViewPrice(0);
+    }
+  };
+
 const adapter = new AdapterDateFns({ locale: fr });
     return (
       <Box
@@ -124,6 +160,23 @@ const adapter = new AdapterDateFns({ locale: fr });
               </MenuItem>
             ))}
           </Select>
+          <br></br>
+          <FormControl fullWidth>
+        <InputLabel>{t('Vue')}</InputLabel>
+        <Select
+          value={selectedView}
+          label={t('Vue')}
+          onChange={handleViewChange}
+        >
+          <MenuItem value="simple">{t('Vue simple')}</MenuItem>
+          {roomTypeDetails.vuemer && (
+            <MenuItem value="mer">{t('Vue sur mer')} (+{roomTypeDetails.supplementmer} DT)</MenuItem>
+          )}
+          {roomTypeDetails.vuepis && (
+            <MenuItem value="piscine">{t('Vue sur piscine')} (+{roomTypeDetails.supplementpis} DT)</MenuItem>
+          )}
+        </Select>
+      </FormControl>
         </FormControl>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <IconButton
@@ -190,6 +243,7 @@ const adapter = new AdapterDateFns({ locale: fr });
 };
 
 const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise,nombre_enfants_gratuits,age_limit_gratuite, type, isAdherant, debut , fin ,details,prix_enfants_payants,enfants_autorises}) => {
+  
   const calculateDaysMultiplier = (start, end) => {
     if (!start || !end) return 1;
     const diffDays = (end - start) / (1000 * 3600 * 24) + 1; 
@@ -198,8 +252,8 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise,nombre
 
 const calculateRoomPrice = (adults, children, basePrice, isAdherant, supplement) => {
   let priceIncrease = 0;
-  if (adults > 1) {
-    priceIncrease += (adults - 1) * basePrice;
+  if (adults > 2) {
+    priceIncrease += (adults - 2) * basePrice;
   }
   const chargeableChildren = Math.max(0, children - nombre_enfants_gratuits);
   priceIncrease += chargeableChildren * prix_enfants_payants;
@@ -210,7 +264,7 @@ const calculateRoomPrice = (adults, children, basePrice, isAdherant, supplement)
   return totalCost;
 };
 
-    const initialRoomPrice = calculateRoomPrice(1, 0, prix, isAdherant);
+    const initialRoomPrice = calculateRoomPrice(2, 0, prix, isAdherant);
 
     const [userInfo, setUserInfo] = useState(null);
     const [rooms, setRooms] = useState([{ id: 1, adults: 2, children: 0, prix: initialRoomPrice }]);
@@ -270,7 +324,7 @@ const calculateRoomPrice = (adults, children, basePrice, isAdherant, supplement)
 
     const handleAddRoom = () => {
         const newRoomId = rooms.length ? rooms[rooms.length - 1].id + 1 : 1;
-        const newRoom = { id: newRoomId, adults: 2, children: 0, prix: calculateRoomPrice(1, 0, prix, isAdherant) };
+        const newRoom = { id: newRoomId, adults: 2, children: 0, prix: calculateRoomPrice(2, 0, prix, isAdherant) };
         setRooms([...rooms, newRoom]);
     };
 
@@ -427,6 +481,7 @@ const [nombreAdultes, setNombreAdultes] = useState(1);
                   nbr_enfants: room.children,
                   prix: room.prix,
                   typechambreR: room.typechambreR,
+                  vue: room.vue, 
                 }))
               : [],
           nombre: type !== 'hotel' ? nombre : rooms.length,

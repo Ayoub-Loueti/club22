@@ -21,6 +21,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useSpring, animated } from '@react-spring/web';
 import './ReclamationEmploye.css';
 import recla from '../../assets/recla.png';
+import NavbarHaut from '../../components/navbar/navbarHaut';
 
 function ReclamationEmploye() {
   const [contenu, setContenu] = useState('');
@@ -155,6 +156,7 @@ function ReclamationEmploye() {
 return (
   <>
     <Navbar />
+    <NavbarHaut />
     <div
       style={{
         minHeight: '100vh',

@@ -40,6 +40,13 @@ const HotelModel = sequelize.define('Hotel', {
           'Suite royale'
         ),
       },
+      vue: {
+        type: DataTypes.ENUM(
+          'simple',
+          'mer',
+          'piscine',
+        ),
+      },
 }, {
     tableName: 'hotel',
     timestamps: false,
