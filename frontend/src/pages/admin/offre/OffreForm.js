@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import './OffreForm.css';
@@ -12,7 +12,6 @@ import {
   Checkbox,
   ListItemText,
   TextField,
-  Button,
   OutlinedInput,
   FormControlLabel,
 } from '@mui/material';
@@ -52,152 +51,226 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
   const [ascenseur, setAscenseur] = useState(false);
   const [salleDeSport, setSalleDeSport] = useState(false);
   const [aireDeJeuxEnfants, setAireDeJeuxEnfants] = useState(false);
-//nv pour hotel
- const [spa, setSpa] = useState(false);
- const [sauna, setSauna] = useState(false);
- const [hammam, setHammam] = useState(false);
- const [thalasso, setThalasso] = useState(false);
- const [centreEsthetique, setCentreEsthetique] = useState(false);
- const [toboggan, setToboggan] = useState(false);
- const [piedsDansLEau, setPiedsDansLEau] = useState(false);
- const [piscineEauDeMer, setPiscineEauDeMer] = useState(false);
- const [babySetting, setBabySetting] = useState(false);
- const [tennisDeTable, setTennisDeTable] = useState(false);
- const [locationDeVoiture, setLocationDeVoiture] = useState(false);
- const [changeMonetaire, setChangeMonetaire] = useState(false);
- const [interditCelibataires, setInterditCelibataires] = useState(false);
- const [interditBurkini, setInterditBurkini] = useState(false);
- const [interditAlcohol, setInterditAlcohol] = useState(false);
+  //nv pour hotel
+  const [spa, setSpa] = useState(false);
+  const [sauna, setSauna] = useState(false);
+  const [hammam, setHammam] = useState(false);
+  const [thalasso, setThalasso] = useState(false);
+  const [centreEsthetique, setCentreEsthetique] = useState(false);
+  const [toboggan, setToboggan] = useState(false);
+  const [piedsDansLEau, setPiedsDansLEau] = useState(false);
+  const [piscineEauDeMer, setPiscineEauDeMer] = useState(false);
+  const [babySetting, setBabySetting] = useState(false);
+  const [tennisDeTable, setTennisDeTable] = useState(false);
+  const [locationDeVoiture, setLocationDeVoiture] = useState(false);
+  const [changeMonetaire, setChangeMonetaire] = useState(false);
+  const [interditCelibataires, setInterditCelibataires] = useState(false);
+  const [interditBurkini, setInterditBurkini] = useState(false);
+  const [interditAlcohol, setInterditAlcohol] = useState(false);
   // States for Activité-specific fields
 
   const [duree, setDuree] = useState(0);
 
   //nv
-const [enfantsAutorises, setEnfantsAutorises] = useState(null);
-const [ageLimiteGratuite, setAgeLimiteGratuite] = useState(0);
-const [nombreEnfantsGratuits, setNombreEnfantsGratuits] = useState(0);
-const [prixEnfantsPayants, setPrixEnfantsPayants] = useState(0.0);
-const [conditions_speciales_enfants, setConditions_speciales_enfants] = useState("");
+  const [enfantsAutorises, setEnfantsAutorises] = useState(null);
+  const [ageLimiteGratuite, setAgeLimiteGratuite] = useState(0);
+  const [nombreEnfantsGratuits, setNombreEnfantsGratuits] = useState(0);
+  const [prixEnfantsPayants, setPrixEnfantsPayants] = useState(0.0);
+  const [conditions_speciales_enfants, setConditions_speciales_enfants] =
+    useState('');
 
-//bch
-const [selectedTypes, setSelectedTypes] = useState([]);
-const [defaultChambre, setDefaultChambre] = useState('');
-const [supplements, setSupplements] = useState({});
+  //bch
+  const [selectedTypes, setSelectedTypes] = useState([]);
+  const [defaultChambre, setDefaultChambre] = useState('');
+  const [supplements, setSupplements] = useState({});
 
-const [vueMer, setVueMer] = useState({});
-const [prixVueMer, setPrixVueMer] = useState({});
-const [vuePiscine, setVuePiscine] = useState({});
-const [prixVuePiscine, setPrixVuePiscine] = useState({});
+  const [vueMer, setVueMer] = useState({});
+  const [prixVueMer, setPrixVueMer] = useState({});
+  const [vuePiscine, setVuePiscine] = useState({});
+  const [prixVuePiscine, setPrixVuePiscine] = useState({});
 
-const [single, setSingle] = useState({});
-const [prixsingle, setPrixsingle] = useState({});
+  const [single, setSingle] = useState({});
+  const [prixsingle, setPrixsingle] = useState({});
 
-const [logementSeulement, setLogementSeulement] = useState(false);
-const [prixLogementSeulement, setPrixLogementSeulement] = useState(0);
-const [petitDejeuner, setPetitDejeuner] = useState(false);
-const [prixDemiPension, setPrixDemiPension] = useState(0);
-const [demiPension, setDemiPension] = useState(false);
-const [prixDemiPensionPlus, setPrixDemiPensionPlus] = useState(0);
-const [demiPensionPlus, setDemiPensionPlus] = useState(false);
-const [prixPensionComplete, setPrixPensionComplete] = useState(0);
-const [pensionComplete, setPensionComplete] = useState(false);
-const [prixPensionCompletePlus, setPrixPensionCompletePlus] = useState(0);
-const [pensionCompletePlus, setPensionCompletePlus] = useState(false);
-const [prixAllInclusive, setPrixAllInclusive] = useState(0);
-const [allInclusive, setAllInclusive] = useState(false);
-const [prixAllInclusiveSoft, setPrixAllInclusiveSoft] = useState(0);
-const [allInclusiveSoft, setAllInclusiveSoft] = useState(false);
-const [pensionDefault, setPensionDefault] = useState('');
-const [prixPetitDejeuner, setPrixPetitDejeuner] = useState('');
+  const [logementSeulement, setLogementSeulement] = useState(false);
+  const [prixLogementSeulement, setPrixLogementSeulement] = useState(0);
+  const [petitDejeuner, setPetitDejeuner] = useState(false);
+  const [prixDemiPension, setPrixDemiPension] = useState(0);
+  const [demiPension, setDemiPension] = useState(false);
+  const [prixDemiPensionPlus, setPrixDemiPensionPlus] = useState(0);
+  const [demiPensionPlus, setDemiPensionPlus] = useState(false);
+  const [prixPensionComplete, setPrixPensionComplete] = useState(0);
+  const [pensionComplete, setPensionComplete] = useState(false);
+  const [prixPensionCompletePlus, setPrixPensionCompletePlus] = useState(0);
+  const [pensionCompletePlus, setPensionCompletePlus] = useState(false);
+  const [prixAllInclusive, setPrixAllInclusive] = useState(0);
+  const [allInclusive, setAllInclusive] = useState(false);
+  const [prixAllInclusiveSoft, setPrixAllInclusiveSoft] = useState(0);
+  const [allInclusiveSoft, setAllInclusiveSoft] = useState(false);
+  const [pensionDefault, setPensionDefault] = useState('');
+  const [prixPetitDejeuner, setPrixPetitDejeuner] = useState('');
 
- const typesChambresOptions = [
-   { id: 'standard', nom: 'Chambre standard' },
-   { id: 'double', nom: 'Chambre double' },
-   { id: 'familiale', nom: 'Chambre familiale' },
-   { id: 'suite', nom: 'Suite' },
- ];
-const typeChambresData = selectedTypes.map((typeId) => ({
-  nom: typesChambresOptions.find((type) => type.id === typeId).nom,
-  supplement: supplements[typeId] || 0,
-  defaultChambre: defaultChambre === typeId,
-}));
- const handleTypeChambreChange = (event) => {
-   const {
-     target: { value },
-   } = event;
-   setSelectedTypes(
-     // On autofill we get a stringified value.
-     typeof value === 'string' ? value.split(',') : value
-   );
- };
+  const typesChambresOptions = [
+    { id: 'standard', nom: 'Chambre standard' },
+    { id: 'double', nom: 'Chambre double' },
+    { id: 'familiale', nom: 'Chambre familiale' },
+    { id: 'communicante', nom: 'Chambre communicante' },
+    { id: 'suite', nom: 'Suite' },
+    { id: 'suite_royale', nom: 'Suite royale' },
+  ];
+  const typeChambresData = selectedTypes.map((typeId) => ({
+    nom: typesChambresOptions.find((type) => type.id === typeId).nom,
+    supplement: supplements[typeId] || 0,
+    defaultChambre: defaultChambre === typeId,
+  }));
+  const handleTypeChambreChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedTypes(
+      typeof value === 'string' ? value.split(',') : value
+    );
+  };
 
- const handleDefaultPensionChange = (pens, setPrice) => {
-  // Reset all prices if another pension is set as default
-  if (pensionDefault !== pens) {
-    setPensionDefault(pens);
-    resetAllPensionPrices();
-    setPrice(0); // Set the price of the new default pension to 0
-  }
-};
+  const handleDefaultPensionChange = (pens, setPrice) => {
+    if (pensionDefault !== pens) {
+      setPensionDefault(pens);
+      resetAllPensionPrices();
+      setPrice(0);
+    }
+  };
 
-const resetAllPensionPrices = () => {
-  if (pensionDefault !== 'logement_seulement') setPrixLogementSeulement(0);
-  if (pensionDefault !== 'petit_dejeuner') setPrixPetitDejeuner(0);
-  if (pensionDefault !== 'demi_pension') setPrixDemiPension(0);
-  if (pensionDefault !== 'demi_pension_plus') setPrixDemiPensionPlus(0);
-  if (pensionDefault !== 'pension_complete') setPrixPensionComplete(0);
-  if (pensionDefault !== 'pension_complete_plus') setPrixPensionCompletePlus(0);
-  if (pensionDefault !== 'all_inclusive') setPrixAllInclusive(0);
-  if (pensionDefault !== 'all_inclusive_soft') setPrixAllInclusiveSoft(0);
-};
+  const resetAllPensionPrices = () => {
+    if (pensionDefault !== 'logement_seulement') setPrixLogementSeulement(0);
+    if (pensionDefault !== 'petit_dejeuner') setPrixPetitDejeuner(0);
+    if (pensionDefault !== 'demi_pension') setPrixDemiPension(0);
+    if (pensionDefault !== 'demi_pension_plus') setPrixDemiPensionPlus(0);
+    if (pensionDefault !== 'pension_complete') setPrixPensionComplete(0);
+    if (pensionDefault !== 'pension_complete_plus')
+      setPrixPensionCompletePlus(0);
+    if (pensionDefault !== 'all_inclusive') setPrixAllInclusive(0);
+    if (pensionDefault !== 'all_inclusive_soft') setPrixAllInclusiveSoft(0);
+  };
 
- const renderPensionOptions = () => (
-  <div>
-    <h3>Options de Pension</h3>
-    {renderPensionCheckbox('Logement Seulement','logement_seulement', logementSeulement, setLogementSeulement, prixLogementSeulement, setPrixLogementSeulement)}
-    {renderPensionCheckbox('Petit Déjeuner', 'petit_dejeuner',petitDejeuner, setPetitDejeuner, prixPetitDejeuner, setPrixPetitDejeuner)}
-    {renderPensionCheckbox('Demi Pension', 'demi_pension',demiPension, setDemiPension, prixDemiPension, setPrixDemiPension)}
-    {renderPensionCheckbox('Demi Pension Plus', 'demi_pension_plus',demiPensionPlus, setDemiPensionPlus, prixDemiPensionPlus, setPrixDemiPensionPlus)}
-    {renderPensionCheckbox('Pension Complète','pension_complete', pensionComplete, setPensionComplete, prixPensionComplete, setPrixPensionComplete)}
-    {renderPensionCheckbox('Pension Complète Plus','pension_complete_plus', pensionCompletePlus, setPensionCompletePlus, prixPensionCompletePlus, setPrixPensionCompletePlus)}
-    {renderPensionCheckbox('All Inclusive', 'all_inclusive',allInclusive, setAllInclusive, prixAllInclusive, setPrixAllInclusive)}
-    {renderPensionCheckbox('All Inclusive Soft', 'all_inclusive_soft',allInclusiveSoft, setAllInclusiveSoft, prixAllInclusiveSoft, setPrixAllInclusiveSoft)}
-  </div>
-);
+  const renderPensionOptions = () => (
+    <div>
+      <h3>Options de Pension</h3>
+      {renderPensionCheckbox(
+        'Logement Seulement',
+        'logement_seulement',
+        logementSeulement,
+        setLogementSeulement,
+        prixLogementSeulement,
+        setPrixLogementSeulement
+      )}
+      {renderPensionCheckbox(
+        'Petit Déjeuner',
+        'petit_dejeuner',
+        petitDejeuner,
+        setPetitDejeuner,
+        prixPetitDejeuner,
+        setPrixPetitDejeuner
+      )}
+      {renderPensionCheckbox(
+        'Demi Pension',
+        'demi_pension',
+        demiPension,
+        setDemiPension,
+        prixDemiPension,
+        setPrixDemiPension
+      )}
+      {renderPensionCheckbox(
+        'Demi Pension Plus',
+        'demi_pension_plus',
+        demiPensionPlus,
+        setDemiPensionPlus,
+        prixDemiPensionPlus,
+        setPrixDemiPensionPlus
+      )}
+      {renderPensionCheckbox(
+        'Pension Complète',
+        'pension_complete',
+        pensionComplete,
+        setPensionComplete,
+        prixPensionComplete,
+        setPrixPensionComplete
+      )}
+      {renderPensionCheckbox(
+        'Pension Complète Plus',
+        'pension_complete_plus',
+        pensionCompletePlus,
+        setPensionCompletePlus,
+        prixPensionCompletePlus,
+        setPrixPensionCompletePlus
+      )}
+      {renderPensionCheckbox(
+        'All Inclusive',
+        'all_inclusive',
+        allInclusive,
+        setAllInclusive,
+        prixAllInclusive,
+        setPrixAllInclusive
+      )}
+      {renderPensionCheckbox(
+        'All Inclusive Soft',
+        'all_inclusive_soft',
+        allInclusiveSoft,
+        setAllInclusiveSoft,
+        prixAllInclusiveSoft,
+        setPrixAllInclusiveSoft
+      )}
+    </div>
+  );
 
-const renderPensionCheckbox = (label,pens, checked, setChecked, price, setPrice) => (
-  <div>
-    <FormControlLabel
-      control={<Checkbox checked={checked} onChange={(e) => setChecked(e.target.checked)} />}
-      label={label}
-    />
-   {checked && (
-  <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
-    <TextField
-      label="Prix"
-      type="number"
-      value={price}
-      onChange={(e) => setPrice(parseFloat(e.target.value))}
-      InputProps={{ inputProps: { min: 0 } }}
-      disabled={pensionDefault === pens} // Disable price input if this pension is the default
-    />
-    <FormControlLabel
-      control={<Checkbox checked={pensionDefault === pens} onChange={() => handleDefaultPensionChange(pens, setPrice)} />}
-      label="Défaut"
-    />
-  </div>
-)}
-  </div>
-);
+  const renderPensionCheckbox = (
+    label,
+    pens,
+    checked,
+    setChecked,
+    price,
+    setPrice
+  ) => (
+    <div>
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={checked}
+            onChange={(e) => setChecked(e.target.checked)}
+          />
+        }
+        label={label}
+      />
+      {checked && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+          <TextField
+            label="Prix +"
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(parseFloat(e.target.value))}
+            InputProps={{ inputProps: { min: 0 } }}
+            disabled={pensionDefault === pens} 
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={pensionDefault === pens}
+                onChange={() => handleDefaultPensionChange(pens, setPrice)}
+              />
+            }
+            label="Défaut"
+          />
+        </div>
+      )}
+    </div>
+  );
 
- const handleDefaultChambreChange = (event) => {
-   setDefaultChambre(event.target.value);
- };
+  const handleDefaultChambreChange = (event) => {
+    setDefaultChambre(event.target.value);
+  };
 
- const handleSupplementChange = (typeId, value) => {
-   setSupplements((prev) => ({ ...prev, [typeId]: value }));
- };
-
+  const handleSupplementChange = (typeId, value) => {
+    setSupplements((prev) => ({ ...prev, [typeId]: value }));
+  };
 
   const token = localStorage.getItem('login');
   useEffect(() => {
@@ -208,7 +281,7 @@ const renderPensionCheckbox = (label,pens, checked, setChecked, price, setPrice)
         .get(`http://localhost:5000/offer/${offreId}`, { headers })
         .then((response) => {
           const data = response.data;
-          console.log('Data received:', data); 
+          console.log('Data received:', data);
 
           setTitre(data.titre);
           setDescription(data.description);
@@ -221,9 +294,9 @@ const renderPensionCheckbox = (label,pens, checked, setChecked, price, setPrice)
           setRemise(data.remise ? data.remise.toString().padStart(2, '0') : '');
           setEnfantsAutorises(data.enfants_autorises); // Utilisation de la clé correcte
 
-         setNombreEnfantsGratuits(data.nombre_enfants_gratuits);
-         setAgeLimiteGratuite(data.age_limite_gratuite);
-         setPrixEnfantsPayants(data.prix_enfants_payants);
+          setNombreEnfantsGratuits(data.nombre_enfants_gratuits);
+          setAgeLimiteGratuite(data.age_limite_gratuite);
+          setPrixEnfantsPayants(data.prix_enfants_payants);
           setConditions_speciales_enfants(data.conditions_speciales_enfants);
           if (data.type === 'voyage' || data.type === 'activite') {
             setProgramme(data.details?.programme || '');
@@ -246,22 +319,21 @@ const renderPensionCheckbox = (label,pens, checked, setChecked, price, setPrice)
             setAscenseur(data.details.ascenseur);
             setSalleDeSport(data.details.salle_de_sport);
             setAireDeJeuxEnfants(data.details.aire_de_jeux_enfants);
-setSpa(data.details.spa);
-setSauna(data.details.sauna);
-setHammam(data.details.hammam);
-setThalasso(data.details.thalasso);
-setCentreEsthetique(data.details.centreEsthetique);
-setToboggan(data.details.toboggan);
-setPiedsDansLEau(data.details.piedsDansLEau);
-setPiscineEauDeMer(data.details.piscineEauDeMer);
-setBabySetting(data.details.babySetting);
-setTennisDeTable(data.details.tennisDeTable);
-setLocationDeVoiture(data.details.locationDeVoiture);
-setChangeMonetaire(data.details.changeMonetaire);
-      setInterditCelibataires(data.details.interdit_celibataires);
-      setInterditBurkini(data.details.interdit_burkini);
-      setInterditAlcohol(data.details.interdit_alcohol);
-
+            setSpa(data.details.spa);
+            setSauna(data.details.sauna);
+            setHammam(data.details.hammam);
+            setThalasso(data.details.thalasso);
+            setCentreEsthetique(data.details.centreEsthetique);
+            setToboggan(data.details.toboggan);
+            setPiedsDansLEau(data.details.piedsDansLEau);
+            setPiscineEauDeMer(data.details.piscineEauDeMer);
+            setBabySetting(data.details.babySetting);
+            setTennisDeTable(data.details.tennisDeTable);
+            setLocationDeVoiture(data.details.locationDeVoiture);
+            setChangeMonetaire(data.details.changeMonetaire);
+            setInterditCelibataires(data.details.interdit_celibataires);
+            setInterditBurkini(data.details.interdit_burkini);
+            setInterditAlcohol(data.details.interdit_alcohol);
           } else if (data.type === 'activite') {
             setDuree(data.details.duree);
           }
@@ -336,7 +408,7 @@ setChangeMonetaire(data.details.changeMonetaire);
       <label>
         Programme:
         <Editor
-          apiKey="nyu5ch81cg147ar48dr3dpt08jl8gau8vgog2m8n5sn4iqi9"
+          apiKey="t6iyui9hiq7n6y06u5ycbr6nnm4lhe54ovujihs4nc6k4ija"
           init={{
             plugins:
               'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
@@ -407,7 +479,7 @@ setChangeMonetaire(data.details.changeMonetaire);
         />
       </label>
       <FormControl fullWidth className="type-chambre-selection">
-        <InputLabel id="demo-multiple-checkbox-label" >
+        <InputLabel id="demo-multiple-checkbox-label">
           Type de Chambre
         </InputLabel>
         <Select
@@ -454,143 +526,181 @@ setChangeMonetaire(data.details.changeMonetaire);
       </FormControl>
 
       {selectedTypes.map((typeId) => {
-  if (typeId === defaultChambre) {
-    return (
-      <div key={typeId} style={{ color: 'red' }}>
-        <div>
-          {typesChambresOptions.find((type) => type.id === typeId).nom} (Par defaut)
-        </div>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={single[typeId] || false}
-              onChange={(e) => setSingle({ ...single, [typeId]: e.target.checked })}
-            />
-          }
-          label="Single"
-        />
-        {single[typeId] && (
-          <TextField
-            label="Prix pour single"
-            type="number"
-            value={prixsingle[typeId] || ''}
-            onChange={(e) => setPrixsingle({ ...prixsingle, [typeId]: e.target.value })}
-            fullWidth
-          />
-        )}
+        if (typeId === defaultChambre) {
+          return (
+            <div key={typeId} style={{ color: 'red' }}>
+              <div>
+                {typesChambresOptions.find((type) => type.id === typeId).nom}{' '}
+                (Par defaut)
+              </div>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={single[typeId] || false}
+                    onChange={(e) =>
+                      setSingle({ ...single, [typeId]: e.target.checked })
+                    }
+                  />
+                }
+                label="Single"
+              />
+              {single[typeId] && (
+                <TextField
+                  label="Prix + supp single"
+                  type="number"
+                  value={prixsingle[typeId] || ''}
+                  onChange={(e) =>
+                    setPrixsingle({ ...prixsingle, [typeId]: e.target.value })
+                  }
+                  fullWidth
+                />
+              )}
 
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={vueMer[typeId] || false}
-              onChange={(e) => setVueMer({ ...vueMer, [typeId]: e.target.checked })}
-            />
-          }
-          label="Vue sur Mer"
-        />
-        {vueMer[typeId] && (
-          <TextField
-            label="Prix pour vue sur mer"
-            type="number"
-            value={prixVueMer[typeId] || ''}
-            onChange={(e) => setPrixVueMer({ ...prixVueMer, [typeId]: e.target.value })}
-            fullWidth
-          />
-        )}
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={vueMer[typeId] || false}
+                    onChange={(e) =>
+                      setVueMer({ ...vueMer, [typeId]: e.target.checked })
+                    }
+                  />
+                }
+                label="Vue sur Mer"
+              />
+              {vueMer[typeId] && (
+                <TextField
+                  label="Prix + supp vue sur mer"
+                  type="number"
+                  value={prixVueMer[typeId] || ''}
+                  onChange={(e) =>
+                    setPrixVueMer({ ...prixVueMer, [typeId]: e.target.value })
+                  }
+                  fullWidth
+                />
+              )}
 
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={vuePiscine[typeId] || false}
-              onChange={(e) => setVuePiscine({ ...vuePiscine, [typeId]: e.target.checked })}
-            />
-          }
-          label="Vue sur Piscine"
-        />
-        {vuePiscine[typeId] && (
-          <TextField
-            label="Prix pour vue sur piscine"
-            type="number"
-            value={prixVuePiscine[typeId] || ''}
-            onChange={(e) => setPrixVuePiscine({ ...prixVuePiscine, [typeId]: e.target.value })}
-            fullWidth
-          />
-        )}
-      </div>
-    );
-  } else {
-    return (
-      <div key={typeId}>
-        <TextField
-          label={`Supplément pour ${typesChambresOptions.find((type) => type.id === typeId).nom}`}
-          type="number"
-          value={supplements[typeId] || ''}
-          onChange={(e) => handleSupplementChange(typeId, e.target.value)}
-          fullWidth
-          className="supplement-input"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={single[typeId] || false}
-              onChange={(e) => setSingle({ ...single, [typeId]: e.target.checked })}
-            />
-          }
-          label="Single"
-        />
-        {single[typeId] && (
-          <TextField
-            label="Prix pour single"
-            type="number"
-            value={prixsingle[typeId] || ''}
-            onChange={(e) => setPrixsingle({ ...prixsingle, [typeId]: e.target.value })}
-            fullWidth
-          />
-        )}
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={vuePiscine[typeId] || false}
+                    onChange={(e) =>
+                      setVuePiscine({
+                        ...vuePiscine,
+                        [typeId]: e.target.checked,
+                      })
+                    }
+                  />
+                }
+                label="Vue sur Piscine"
+              />
+              {vuePiscine[typeId] && (
+                <TextField
+                  label="Prix + supp vue sur piscine"
+                  type="number"
+                  value={prixVuePiscine[typeId] || ''}
+                  onChange={(e) =>
+                    setPrixVuePiscine({
+                      ...prixVuePiscine,
+                      [typeId]: e.target.value,
+                    })
+                  }
+                  fullWidth
+                />
+              )}
+            </div>
+          );
+        } else {
+          return (
+            <div key={typeId}>
+              <TextField
+                label={`Supplément pour ${
+                  typesChambresOptions.find((type) => type.id === typeId).nom
+                }`}
+                type="number"
+                value={supplements[typeId] || ''}
+                onChange={(e) => handleSupplementChange(typeId, e.target.value)}
+                fullWidth
+                className="supplement-input"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={single[typeId] || false}
+                    onChange={(e) =>
+                      setSingle({ ...single, [typeId]: e.target.checked })
+                    }
+                  />
+                }
+                label="Single"
+              />
+              {single[typeId] && (
+                <TextField
+                  label="Prix + supp single"
+                  type="number"
+                  value={prixsingle[typeId] || ''}
+                  onChange={(e) =>
+                    setPrixsingle({ ...prixsingle, [typeId]: e.target.value })
+                  }
+                  fullWidth
+                />
+              )}
 
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={vueMer[typeId] || false}
-              onChange={(e) => setVueMer({ ...vueMer, [typeId]: e.target.checked })}
-            />
-          }
-          label="Vue sur Mer"
-        />
-        {vueMer[typeId] && (
-          <TextField
-            label="Prix pour vue sur mer"
-            type="number"
-            value={prixVueMer[typeId] || ''}
-            onChange={(e) => setPrixVueMer({ ...prixVueMer, [typeId]: e.target.value })}
-            fullWidth
-          />
-        )}
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={vueMer[typeId] || false}
+                    onChange={(e) =>
+                      setVueMer({ ...vueMer, [typeId]: e.target.checked })
+                    }
+                  />
+                }
+                label="Vue sur Mer"
+              />
+              {vueMer[typeId] && (
+                <TextField
+                  label="Prix + supp vue sur mer"
+                  type="number"
+                  value={prixVueMer[typeId] || ''}
+                  onChange={(e) =>
+                    setPrixVueMer({ ...prixVueMer, [typeId]: e.target.value })
+                  }
+                  fullWidth
+                />
+              )}
 
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={vuePiscine[typeId] || false}
-              onChange={(e) => setVuePiscine({ ...vuePiscine, [typeId]: e.target.checked })}
-            />
-          }
-          label="Vue sur Piscine"
-        />
-        {vuePiscine[typeId] && (
-          <TextField
-            label="Prix pour vue sur piscine"
-            type="number"
-            value={prixVuePiscine[typeId] || ''}
-            onChange={(e) => setPrixVuePiscine({ ...prixVuePiscine, [typeId]: e.target.value })}
-            fullWidth
-          />
-        )}
-      </div>
-    );
-  }
-})}
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={vuePiscine[typeId] || false}
+                    onChange={(e) =>
+                      setVuePiscine({
+                        ...vuePiscine,
+                        [typeId]: e.target.checked,
+                      })
+                    }
+                  />
+                }
+                label="Vue sur Piscine"
+              />
+              {vuePiscine[typeId] && (
+                <TextField
+                  label="Prix + supp vue sur piscine"
+                  type="number"
+                  value={prixVuePiscine[typeId] || ''}
+                  onChange={(e) =>
+                    setPrixVuePiscine({
+                      ...prixVuePiscine,
+                      [typeId]: e.target.value,
+                    })
+                  }
+                  fullWidth
+                />
+              )}
+            </div>
+          );
+        }
+      })}
 
-      
       <label
         style={{
           flexDirection: 'row',
@@ -949,37 +1059,38 @@ setChangeMonetaire(data.details.changeMonetaire);
 
       <div className="interdictions-section">
         <h3>Interdictions</h3>
-        <div className='offre-checkbox-groupInterdit '> 
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={interditCelibataires}
-              onChange={(e) => setInterditCelibataires(e.target.checked)}
-              name="interditCelibataires"
-            />
-          }
-          label="Célibataires"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={interditBurkini}
-              onChange={(e) => setInterditBurkini(e.target.checked)}
-              name="interditBurkini"
-            />
-          }
-          label="Burkini"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={interditAlcohol}
-              onChange={(e) => setInterditAlcohol(e.target.checked)}
-              name="interditAlcohol"
-            />
-          }
-          label="Alcool"
-        /></div>
+        <div className="offre-checkbox-groupInterdit ">
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={interditCelibataires}
+                onChange={(e) => setInterditCelibataires(e.target.checked)}
+                name="interditCelibataires"
+              />
+            }
+            label="Célibataires"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={interditBurkini}
+                onChange={(e) => setInterditBurkini(e.target.checked)}
+                name="interditBurkini"
+              />
+            }
+            label="Burkini"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={interditAlcohol}
+                onChange={(e) => setInterditAlcohol(e.target.checked)}
+                name="interditAlcohol"
+              />
+            }
+            label="Alcool"
+          />
+        </div>
       </div>
       {renderPensionOptions()}
     </>
@@ -1012,7 +1123,15 @@ setChangeMonetaire(data.details.changeMonetaire);
       );
       return;
     }
-    const isDefaultPensionSelected = logementSeulement || petitDejeuner || demiPension || demiPensionPlus || pensionComplete || pensionCompletePlus || allInclusive || allInclusiveSoft;
+    const isDefaultPensionSelected =
+      logementSeulement ||
+      petitDejeuner ||
+      demiPension ||
+      demiPensionPlus ||
+      pensionComplete ||
+      pensionCompletePlus ||
+      allInclusive ||
+      allInclusiveSoft;
 
     if (!isDefaultPensionSelected) {
       Swal.fire(
@@ -1039,9 +1158,8 @@ setChangeMonetaire(data.details.changeMonetaire);
       'conditions_speciales_enfants',
       conditions_speciales_enfants
     );
-    
-    formData.append('remise', remise === '' ? 0 : parseInt(remise, 10));
 
+    formData.append('remise', remise === '' ? 0 : parseInt(remise, 10));
 
     // Append additional fields based on type
     if (typeOffre === 'voyage') {
@@ -1074,45 +1192,65 @@ setChangeMonetaire(data.details.changeMonetaire);
       formData.append('tennis_de_table', tennisDeTable);
       formData.append('location_de_voiture', locationDeVoiture);
       formData.append('change_monetaire', changeMonetaire);
-  formData.append('interdit_celibataires', interditCelibataires);
-  formData.append('interdit_burkini', interditBurkini);
-  formData.append('interdit_alcohol', interditAlcohol);
-  formData.append('logement_seulement', logementSeulement ? 1 : 0);
-  formData.append('prix_logement_seulement', prixLogementSeulement);
-  formData.append('petit_dejeuner', petitDejeuner ? 1 : 0);
-  formData.append('prix_petit_dejeuner', prixPetitDejeuner);
-  formData.append('demi_pension', demiPension ? 1 : 0);
-  formData.append('prix_demi_pension', prixDemiPension);
-  formData.append('demi_pension_plus', demiPensionPlus ? 1 : 0);
-  formData.append('prix_demi_pension_plus', prixDemiPensionPlus);
-  formData.append('pension_complete', pensionComplete ? 1 : 0);
-  formData.append('prix_pension_complete', prixPensionComplete);
-  formData.append('pension_complete_plus', pensionCompletePlus ? 1 : 0);
-  formData.append('prix_pension_complete_plus', prixPensionCompletePlus);
-  formData.append('all_inclusive', allInclusive ? 1 : 0);
-  formData.append('prix_all_inclusive', prixAllInclusive);
-  formData.append('all_inclusive_soft', allInclusiveSoft ? 1 : 0);
-  formData.append('prix_all_inclusive_soft', prixAllInclusiveSoft);
-  formData.append('pensiondefault', pensionDefault);
-selectedTypes.forEach((typeId, index) => {
-  const typeChambre = typesChambresOptions.find((type) => type.id === typeId);
-  formData.append(`typechambres[${index}][nom]`, typeChambre.nom);
-  formData.append(
-    `typechambres[${index}][supplement]`,
-    supplements[typeId] || 0
-  );
-  formData.append(
-    `typechambres[${index}][defaultChambre]`,
-    defaultChambre === typeId
-  );
-    formData.append(`typechambres[${index}][vuemer]`, vueMer[typeId] || false);
-    formData.append(`typechambres[${index}][supplementmer]`, prixVueMer[typeId] || 0);
-    formData.append(`typechambres[${index}][vuepis]`, vuePiscine[typeId] || false);
-    formData.append(`typechambres[${index}][supplementpis]`, prixVuePiscine[typeId] || 0);
-    formData.append(`typechambres[${index}][single]`, single[typeId] || false);
-    formData.append(`typechambres[${index}][prixsingle]`, prixsingle[typeId] || 0);
- 
-});    } else if (typeOffre === 'activite') {
+      formData.append('interdit_celibataires', interditCelibataires);
+      formData.append('interdit_burkini', interditBurkini);
+      formData.append('interdit_alcohol', interditAlcohol);
+      formData.append('logement_seulement', logementSeulement ? 1 : 0);
+      formData.append('prix_logement_seulement', prixLogementSeulement);
+      formData.append('petit_dejeuner', petitDejeuner ? 1 : 0);
+      formData.append('prix_petit_dejeuner', prixPetitDejeuner);
+      formData.append('demi_pension', demiPension ? 1 : 0);
+      formData.append('prix_demi_pension', prixDemiPension);
+      formData.append('demi_pension_plus', demiPensionPlus ? 1 : 0);
+      formData.append('prix_demi_pension_plus', prixDemiPensionPlus);
+      formData.append('pension_complete', pensionComplete ? 1 : 0);
+      formData.append('prix_pension_complete', prixPensionComplete);
+      formData.append('pension_complete_plus', pensionCompletePlus ? 1 : 0);
+      formData.append('prix_pension_complete_plus', prixPensionCompletePlus);
+      formData.append('all_inclusive', allInclusive ? 1 : 0);
+      formData.append('prix_all_inclusive', prixAllInclusive);
+      formData.append('all_inclusive_soft', allInclusiveSoft ? 1 : 0);
+      formData.append('prix_all_inclusive_soft', prixAllInclusiveSoft);
+      formData.append('pensiondefault', pensionDefault);
+      selectedTypes.forEach((typeId, index) => {
+        const typeChambre = typesChambresOptions.find(
+          (type) => type.id === typeId
+        );
+        formData.append(`typechambres[${index}][nom]`, typeChambre.nom);
+        formData.append(
+          `typechambres[${index}][supplement]`,
+          supplements[typeId] || 0
+        );
+        formData.append(
+          `typechambres[${index}][defaultChambre]`,
+          defaultChambre === typeId
+        );
+        formData.append(
+          `typechambres[${index}][vuemer]`,
+          vueMer[typeId] || false
+        );
+        formData.append(
+          `typechambres[${index}][supplementmer]`,
+          prixVueMer[typeId] || 0
+        );
+        formData.append(
+          `typechambres[${index}][vuepis]`,
+          vuePiscine[typeId] || false
+        );
+        formData.append(
+          `typechambres[${index}][supplementpis]`,
+          prixVuePiscine[typeId] || 0
+        );
+        formData.append(
+          `typechambres[${index}][single]`,
+          single[typeId] || false
+        );
+        formData.append(
+          `typechambres[${index}][prixsingle]`,
+          prixsingle[typeId] || 0
+        );
+      });
+    } else if (typeOffre === 'activite') {
       formData.append('programme', programme);
       formData.append('inclus', inclus);
       formData.append('duree', duree);
@@ -1164,7 +1302,6 @@ selectedTypes.forEach((typeId, index) => {
     }
   };
 
-
   const handleLocationSelect = (location) => {
     setDestination(location);
     console.log('Selected location coordinates: ', location);
@@ -1172,15 +1309,15 @@ selectedTypes.forEach((typeId, index) => {
   const today = new Date().toISOString().split('T')[0];
   const handleNbrJoursChange = (e) => {
     const newNbrJours = parseInt(e.target.value, 10);
-    setNbrJours(Math.max(0, newNbrJours)); // Assure que nbr_jours ne soit pas négatif
+    setNbrJours(Math.max(0, newNbrJours));
   };
   const handleDureeChange = (e) => {
     const newDuree = parseInt(e.target.value, 10);
-    setDuree(Math.max(0, newDuree)); // Assure que la durée ne soit pas négative
+    setDuree(Math.max(0, newDuree));
   };
   const handleEtoilesChange = (e) => {
     const newEtoiles = parseInt(e.target.value, 10);
-    setEtoiles(Math.max(0, newEtoiles)); // Assure que etoiles ne soit pas négatif
+    setEtoiles(Math.max(0, newEtoiles));
   };
 
   return (
@@ -1224,10 +1361,10 @@ selectedTypes.forEach((typeId, index) => {
       <label>
         Remise (Entre 1% et 100%):
         <input
-          type="text" // Use text type to maintain zero padding
+          type="text"
           value={remise}
           onChange={handleRemiseChange}
-          maxLength="3" // Limit length to 3 to avoid over 100
+          maxLength="3"
           required={remise !== ''}
         />
       </label>
@@ -1238,7 +1375,7 @@ selectedTypes.forEach((typeId, index) => {
           value={date_debut}
           onChange={(e) => setDateDebut(e.target.value)}
           min={isUpdate && initialDataLoaded ? undefined : today}
-          disabled={!remise} // Désactiver si remise n'est pas spécifiée
+          disabled={!remise}
         />
       </label>
       <label>
@@ -1248,7 +1385,7 @@ selectedTypes.forEach((typeId, index) => {
           value={date_fin}
           onChange={(e) => setDateFin(e.target.value)}
           min={date_debut || today}
-          disabled={!remise} // Désactiver si remise n'est pas spécifiée
+          disabled={!remise}
         />
       </label>
       <label>

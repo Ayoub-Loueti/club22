@@ -64,14 +64,19 @@ function ListClient() {
           }
           alt="Client"
           style={{ width: 50, height: 50, borderRadius: '50%' }}
-          onClick={() => navigate(`/profil/${cell.row.original.id_utilisateur}`)}
+          onClick={() =>
+            navigate(`/profil/${cell.row.original.id_utilisateur}`)
+          }
         />
       ),
     }),
     columnHelper.accessor('nom', {
       header: 'Nom',
       Cell: ({ row }) => (
-        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+        <span
+          onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
+          style={{ cursor: 'pointer' }}
+        >
           {row.original.nom}
         </span>
       ),
@@ -79,7 +84,10 @@ function ListClient() {
     columnHelper.accessor('prenom', {
       header: 'Prénom',
       Cell: ({ row }) => (
-        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+        <span
+          onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
+          style={{ cursor: 'pointer' }}
+        >
           {row.original.prenom}
         </span>
       ),
@@ -87,7 +95,10 @@ function ListClient() {
     columnHelper.accessor('email', {
       header: 'Email',
       Cell: ({ row }) => (
-        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+        <span
+          onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
+          style={{ cursor: 'pointer' }}
+        >
           {row.original.email}
         </span>
       ),
@@ -95,8 +106,12 @@ function ListClient() {
     columnHelper.accessor('genre', {
       header: 'Genre',
       Cell: ({ row }) => (
-        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
-          {row.original.genre.charAt(0).toUpperCase() + row.original.genre.slice(1)}
+        <span
+          onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
+          style={{ cursor: 'pointer' }}
+        >
+          {row.original.genre.charAt(0).toUpperCase() +
+            row.original.genre.slice(1)}
         </span>
       ),
     }),
@@ -115,10 +130,12 @@ function ListClient() {
             padding: '0.25em 0.6em',
             color: '#000',
             textAlign: 'center',
+            maxWidth: 90,
           }}
           onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
         >
-          {row.original.etat.charAt(0).toUpperCase() + row.original.etat.slice(1)}
+          {row.original.etat.charAt(0).toUpperCase() +
+            row.original.etat.slice(1)}
         </div>
       ),
     }),

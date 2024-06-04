@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { MaterialReactTable, createMRTColumnHelper } from 'material-react-table';
+import {
+  MaterialReactTable,
+  createMRTColumnHelper,
+} from 'material-react-table';
 import { Box, Button } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import { mkConfig, generateCsv, download } from 'export-to-csv'; // Ensure this package is correctly installed
+import { mkConfig, generateCsv, download } from 'export-to-csv';
 import NavAdmin from '../NavAdmin/navAdmin';
 import './listEmployE.css';
 import { MRT_Localization_FR } from 'material-react-table/locales/fr';
@@ -35,14 +38,19 @@ const ListEmploye = () => {
   };
 
   const handleBlockUnblock = async (id, etat) => {
-    const endpoint = etat.toLowerCase() === 'autorise' ? '/block/' : '/unblock/';
+    const endpoint =
+      etat.toLowerCase() === 'autorise' ? '/block/' : '/unblock/';
     try {
-      await axios.put(`http://localhost:5000${endpoint}${id}`, {}, {
-        headers: {
-          Authorization: `Bearer ${JSON.parse(token).token}`,
-        },
-      });
-      fetchEmployees(); // Refresh the list after the operation
+      await axios.put(
+        `http://localhost:5000${endpoint}${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(token).token}`,
+          },
+        }
+      );
+      fetchEmployees();
     } catch (error) {
       console.error('Error updating user state:', error);
     }
@@ -57,7 +65,6 @@ const ListEmploye = () => {
     useTextFile: false,
     useBom: true,
     useKeysAsHeaders: true,
-    // headers: ['Column 1', 'Column 2', etc...] <-- Won't be needed as useKeysAsHeaders is true
   });
 
   const columns = [
@@ -65,7 +72,11 @@ const ListEmploye = () => {
       header: 'Photo',
       Cell: ({ cell }) => (
         <img
-          src={cell.getValue() ? `http://localhost:5000/${cell.getValue()}` : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'}
+          src={
+            cell.getValue()
+              ? `http://localhost:5000/${cell.getValue()}`
+              : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+          }
           alt="Employee"
           style={{ width: 50, height: 50, borderRadius: '50%' }}
         />
@@ -74,7 +85,10 @@ const ListEmploye = () => {
     columnHelper.accessor('nom', {
       header: 'Nom',
       Cell: ({ row }) => (
-        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+        <span
+          onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
+          style={{ cursor: 'pointer' }}
+        >
           {row.original.nom}
         </span>
       ),
@@ -82,7 +96,10 @@ const ListEmploye = () => {
     columnHelper.accessor('prenom', {
       header: 'Prénom',
       Cell: ({ row }) => (
-        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+        <span
+          onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
+          style={{ cursor: 'pointer' }}
+        >
           {row.original.prenom}
         </span>
       ),
@@ -90,47 +107,85 @@ const ListEmploye = () => {
     columnHelper.accessor('email', {
       header: 'Email',
       Cell: ({ row }) => (
-        <span onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)} style={{ cursor: 'pointer' }}>
+        <span
+          onClick={() => navigate(`/profil/${row.original.id_utilisateur}`)}
+          style={{ cursor: 'pointer' }}
+        >
           {row.original.email}
         </span>
       ),
     }),
     columnHelper.accessor('genre', {
       header: 'Genre',
-      Cell: ({ cell }) => cell.getValue().charAt(0).toUpperCase() + cell.getValue().slice(1),
+      Cell: ({ cell }) =>
+        cell.getValue().charAt(0).toUpperCase() + cell.getValue().slice(1),
+    }),
+    columnHelper.accessor('adherant', {
+      header: 'Adhérent',
+      Cell: ({ cell }) => (
+        <div
+          style={{
+            backgroundColor: cell.getValue() ? '#d8f8e1' : '#ffdfac',
+            borderRadius: '0.5rem',
+            padding: '0.25em 0.3em',
+            color: '#000',
+            textAlign: 'center',
+            maxWidth: 90,
+          }}
+        >
+          {cell.getValue() ? 'Oui' : 'Non'}
+        </div>
+      ),
     }),
     columnHelper.accessor('etat', {
       header: 'État',
       Cell: ({ cell }) => (
-        <div style={{
-          backgroundColor: cell.getValue().toLowerCase() === 'autorise' ? '#34c38f' :
-                           cell.getValue().toLowerCase() === 'bloque' ? '#f8d7da' : '#ffecb3',
-          borderRadius: '0.5rem', padding: '0.25em 0.6em', color: '#000', textAlign: 'center',
-        }}>
+        <div
+          style={{
+            backgroundColor:
+              cell.getValue().toLowerCase() === 'autorise'
+                ? '#34c38f'
+                : cell.getValue().toLowerCase() === 'bloque'
+                ? '#f8d7da'
+                : '#ffecb3',
+            borderRadius: '0.5rem',
+            padding: '0.25em 0.3em',
+            color: '#000',
+            textAlign: 'center',
+            maxWidth: 90,
+          }}
+        >
           {cell.getValue().charAt(0).toUpperCase() + cell.getValue().slice(1)}
         </div>
       ),
     }),
-  
+
     columnHelper.accessor('id_utilisateur', {
       header: 'Actions',
-      Cell: ({ row }) => (
+      Cell: ({ row }) =>
         row.original.etat !== 'En attente' && (
           <Button
             variant="contained"
-            color={row.original.etat.toLowerCase() === 'autorise' ? 'error' : 'success'}
-            onClick={() => handleBlockUnblock(row.original.id_utilisateur, row.original.etat)}
-            style={{ margin: '0 10px' }} // Apply inline styling for button margin
+            color={
+              row.original.etat.toLowerCase() === 'autorise'
+                ? 'error'
+                : 'success'
+            }
+            onClick={() =>
+              handleBlockUnblock(row.original.id_utilisateur, row.original.etat)
+            }
+            style={{ margin: '0 10px' }}
           >
-            {row.original.etat.toLowerCase() === 'autorise' ? 'Bloquer' : 'Débloquer'}
+            {row.original.etat.toLowerCase() === 'autorise'
+              ? 'Bloquer'
+              : 'Débloquer'}
           </Button>
-        )
-      ),
+        ),
     }),
   ];
 
   const handleExportData = () => {
-    const dataToExport = employees.map(emp => ({
+    const dataToExport = employees.map((emp) => ({
       photo: emp.photo,
       nom: emp.nom,
       prenom: emp.prenom,
@@ -176,7 +231,7 @@ const ListEmploye = () => {
           }}
           muiTableHeadCellProps={{
             sx: {
-              backgroundColor: '#A2C8CC', // Couleur de fond des cellules d'en-tête
+              backgroundColor: '#A2C8CC',
               '&:hover': {},
             },
           }}

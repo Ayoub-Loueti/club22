@@ -182,7 +182,7 @@ exports.getAllClients = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 }; */
-
+/*
 exports.getAllEmploye = async (req, res) => {
   try {
     const isAdmin = await Utilisateur.findOne({
@@ -209,8 +209,53 @@ exports.getAllEmploye = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+};*/
+exports.getAllEmploye = async (req, res) => {
+  try {
+    const isAdmin = await Utilisateur.findOne({
+      where: {
+        id_utilisateur: req.userId,
+        type: 'admin',
+      },
+    });
 
+    if (!isAdmin) {
+      return res.status(403).json({
+        error:
+          'Autorisation refusée. Seuls les administrateurs peuvent effectuer cette action.',
+      });
+    }
+
+    const employes = await Employe.findAll({
+      include: [
+        {
+          model: Utilisateur,
+          as: 'utilisateur',
+          attributes: [
+            'id_utilisateur',
+            'nom',
+            'prenom',
+            'email',
+            'photo',
+            'genre',
+            'etat',
+          ],
+        },
+      ],
+      attributes: ['id_employe', 'adherant'],
+    });
+
+    const results = employes.map((employe) => ({
+      ...employe.utilisateur.get({ plain: true }),
+      id_employe: employe.id_employe,
+      adherant: employe.adherant,
+    }));
+
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 /* exports.getAllBlockedEmploye = async (req, res) => {
   try {
     const isAdmin = await Utilisateur.findOne({

@@ -1,48 +1,47 @@
-/* OffreForm.css */
 .offre-form-container {
   display: flex;
   flex-direction: column;
   gap: 20px;
   padding: 20px;
-  background-color: #ffffff; /* Fond blanc pour une apparence claire et propre */
+  background-color: #ffffff;
   border-radius: 10px;
   margin-right: 24px;
 }
 
-
 .offre-form-container textarea {
   padding: 11px;
   width: 100%;
-  height: 150px; /* Set a fixed height */
-  min-height: 150px; /* Or set a minimum height */
+  height: 150px;
+  min-height: 150px;
   border-radius: 5px;
-  border: 2px solid #CBD5E0;
-  background-color: #EDF2F7;
-  color: #2D3748;
+  border: 2px solid #cbd5e0;
+  background-color: #edf2f7;
+  color: #2d3748;
 }
 
-.offre-form-container input[type="text"],
-.offre-form-container input[type="number"],
-.offre-form-container input[type="date"],
-.offre-form-container select  {
+.offre-form-container input[type='text'],
+.offre-form-container input[type='number'],
+.offre-form-container input[type='date'],
+.offre-form-container select {
   padding: 11px;
   width: 100%;
   border-radius: 5px;
-  border: 2px solid #CBD5E0; /* Bordure plus claire pour un look raffiné */
-  background-color: #EDF2F7; /* Fond légèrement bleu pour les champs de saisie */
-  color: #2D3748; /* Couleur de texte foncé pour un contraste */
+  border: 2px solid #cbd5e0;
+  background-color: #edf2f7;
+  color: #2d3748;
 }
 
-.offre-form-container input[type="file"] {
+.offre-form-container input[type='file'] {
   padding: 10px;
   border-radius: 5px;
-  border: 2px dashed #CBD5E0; /* Bordure en pointillés dans une teinte légère */
-  background-color: #EDF2F7; /* Assorti au fond des autres champs de saisie */
-  color: #4A5568; /* Légèrement plus foncé pour les instructions du champ fichier */
+  border: 2px dashed #cbd5e0;
+  background-color: #edf2f7;
+  color: #4a5568;
 }
 
-.cancelBut, .subButton {
-  padding: 10px 30px; /* Augmente le padding pour des boutons plus larges */
+.cancelBut,
+.subButton {
+  padding: 10px 30px;
   border-radius: 5px;
   border: none;
   color: white;
@@ -50,9 +49,7 @@
   transition: background-color 0.3s ease;
   width: 30%;
   font-weight: bold;
-           text-transform: uppercase; 
-           
-
+  text-transform: uppercase;
 }
 
 .subButton {
@@ -70,13 +67,12 @@
 .cancelBut:hover {
   background-color: #879eb9;
 }
-.formBut{
- display: flex;
-  justify-content: center; /* Centre les boutons horizontalement */
+.formBut {
+  display: flex;
+  justify-content: center;
   gap: 20px;
 }
 
-/* Add responsiveness */
 @media (max-width: 768px) {
   .offre-form-container {
     width: 90%;
@@ -88,19 +84,19 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  color: #4A5568;
+  color: #4a5568;
   text-transform: uppercase;
   font-weight: bold;
 }
 
 .offre-form-container select {
-  padding: 7px; 
+  padding: 7px;
   border-radius: 5px;
-  border: 2px solid #CBD5E0;
-  background-color: #EDF2F7;
-  color: #2D3748;
-  width: 90%; 
-font-size: smaller;
+  border: 2px solid #cbd5e0;
+  background-color: #edf2f7;
+  color: #2d3748;
+  width: 90%;
+  font-size: smaller;
 }
 .suggestions-list {
   list-style: none;
@@ -112,14 +108,12 @@ font-size: smaller;
   width: 90%;
   z-index: 1000;
   font-size: smaller;
-
 }
 
 .suggestions-list li {
   padding: 6px;
   cursor: pointer;
   border-bottom: 1px solid #e2e8f0;
-  
 }
 
 .suggestions-list li:hover {
@@ -130,7 +124,7 @@ font-size: smaller;
   padding: 15px;
   background-color: #f8f9fa;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .interdictions-section h3 {
@@ -139,40 +133,41 @@ font-size: smaller;
   font-size: 18px;
 }
 
-/* Style pour les labels des checkboxes */
 .offre-form-container .MuiFormControlLabel-label {
-  color: #4A5568;
+  color: #4a5568;
   font-weight: normal;
-}/* Espacement pour les sélections de type de chambre et les champs associés */
+}
+
 .offre-form-container .type-chambre-selection,
 .offre-form-container .default-chambre-selection,
 .offre-form-container .supplement-input {
-  margin-bottom: 20px; /* Ajoute un espace en dessous de chaque élément */
+  margin-bottom: 20px;
+  margin-top: 20px;
 }
 .offre-form-container .type-chambre-selection {
-  margin-top: 20px;}
-/* Style spécifique pour les labels dans les sections de type de chambre */
+  margin-top: 20px;
+}
 .offre-form-container .type-chambre-label,
 .offre-form-container .default-chambre-label,
 .offre-form-container .supplement-label {
   font-weight: bold;
-  color: #4A5568;
+  color: #4a5568;
   text-transform: uppercase;
-  margin-top: 20px; /* Espacement au-dessus du label */
+  margin-top: 20px;
 }
 .offre-radio-group {
   display: flex;
-  align-items: center; /* Alignement vertical centré */
-  gap: 10px; /* Espace entre le bouton radio et le label */
+  align-items: center;
+  gap: 10px;
 }
 
 .offre-radio-label {
-  margin: 0; /* Ajustement pour éviter tout espace supplémentaire */
+  margin: 0;
   font-weight: normal;
-  color: #4A5568;
+  color: #4a5568;
 }
 .offre-checkbox-groupInterdit {
   display: flex;
-  align-items: center; /* Alignement vertical centré */
-  gap: 10px; /* Espace entre la checkbox et le label */
+  align-items: center;
+  gap: 10px;
 }

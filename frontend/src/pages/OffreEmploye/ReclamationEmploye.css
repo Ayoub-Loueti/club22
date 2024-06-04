@@ -29,15 +29,14 @@
 .recl-cards-slider {
   position: relative;
   width: 100%;
-  max-width: 1140px; /* Adjust based on your layout */
-  overflow: hidden;
+  max-width: 1140px; 
   display: flex;
   align-items: center;
 }
 
 .recl-card {
-  width: 550px; /* Adjust card width */
-  height: 300px; /* Set a fixed height for all cards */
+  width: 550px; 
+  height: 320px; 
   flex: 0 0 auto;
   margin: 10px;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -51,8 +50,8 @@
 
 .recl-cards-container {
   display: flex;
-  width: calc(100% + 20px); /* Adjust margin for card spacing */
-  height: 320px; /* Set a fixed height for the container */
+  width: calc(100% + 20px); 
+  height: 320px; 
   transition: transform 0.5s ease-in-out;
 }
 

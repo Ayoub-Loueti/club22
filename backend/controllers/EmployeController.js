@@ -123,7 +123,7 @@ exports.createReclamation = async (req, res) => {
 
     if (!isEmploye) {
       return res.status(403).json({
-        error: 'Permission denied. Only employees can create reclamations.',
+        error: 'Seuls les employés peuvent créer des réclamations.',
       });
     }
 
@@ -133,7 +133,7 @@ exports.createReclamation = async (req, res) => {
 
     if (!employe.adherant) {
       return res.status(403).json({
-        message: 'Only adherent employees can create reclamations.',
+        message: 'Seuls les employés adhérents peuvent créer des réclamations',
       });
     }
 
