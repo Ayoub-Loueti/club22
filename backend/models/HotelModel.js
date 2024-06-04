@@ -47,6 +47,18 @@ const HotelModel = sequelize.define('Hotel', {
           'piscine',
         ),
       },
+      pension: {
+        type: DataTypes.ENUM(
+          'logement_seulement',
+          'petit_dejeuner',
+          'demi_pension',
+          'demi_pension_plus',
+          'pension_complete',
+          'pension_complete_plus',
+          'all_inclusive',
+          'all_inclusive_soft'
+        ),
+      },
 }, {
     tableName: 'hotel',
     timestamps: false,

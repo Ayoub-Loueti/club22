@@ -38,10 +38,24 @@ const RoomDetails = ({ room, updateRoom, deleteRoom, canDelete,details,updateRoo
   const [roomTypeDetails, setRoomTypeDetails] = useState(defaultRoomType || details.typechambres[0]);
   const [selectedView, setSelectedView] = useState('simple'); // Default view
   const [viewPrice, setViewPrice] = useState(0);
+  const [selectedPension, setSelectedPension] = useState(details.pensiondefault);
+  const [pensionPrice, setPensionPrice] = useState(0);
 
+  
   useEffect(() => {
-    updateRoom(room.id, 'supplement', roomSupplement + viewPrice);
-  }, [roomSupplement, viewPrice]);
+    updateRoom(room.id, 'supplement', roomSupplement + viewPrice + pensionPrice);
+  }, [roomSupplement, viewPrice,pensionPrice]);
+
+
+  const handlePensionChange = (event) => {
+    const newPension = event.target.value;
+    setSelectedPension(newPension);
+    const additionalPrice = newPension === details.pensiondefault ? 0 : details[`prix_${newPension}`];
+    setPensionPrice(additionalPrice);
+    updateRoom(room.id, 'pensionPrice', additionalPrice);
+    updateRoom(room.id, 'pension', selectedPension);
+    console.log('the pension is => ',selectedPension);
+  };
 
   const handleRoomTypeChange = (event) => {
     const selectedTypeId = event.target.value;
@@ -117,6 +131,7 @@ const decrementAdults = () => {
     }
   };
 
+  
 const adapter = new AdapterDateFns({ locale: fr });
     return (
       <Box
@@ -178,6 +193,22 @@ const adapter = new AdapterDateFns({ locale: fr });
         </Select>
       </FormControl>
         </FormControl>
+        <FormControl fullWidth margin="normal">
+        <InputLabel id="pension-select-label">{t('Pension')}</InputLabel>
+        <Select
+          labelId="pension-select-label"
+          id="pension-select"
+          value={selectedPension}
+          label={t('Pension')}
+          onChange={handlePensionChange}
+        >
+          {Object.keys(details).filter(key => key.startsWith('prix_') && details[key.replace('prix_', '')]).map(key => (
+            <MenuItem key={key} value={key.replace('prix_', '')}>
+              {t(key.replace('prix_', '').replace('_', ' '))} (+{details[key].toFixed(2)} TND)
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <IconButton
             onClick={decrementAdults}
@@ -252,8 +283,8 @@ const ReservationModal = ({ isOpen, onRequestClose, offreId, prix, remise,nombre
 
 const calculateRoomPrice = (adults, children, basePrice, isAdherant, supplement) => {
   let priceIncrease = 0;
-  if (adults > 2) {
-    priceIncrease += (adults - 2) * basePrice;
+  if (adults > 0) {
+    priceIncrease += (adults - 2) * (basePrice/2);
   }
   const chargeableChildren = Math.max(0, children - nombre_enfants_gratuits);
   priceIncrease += chargeableChildren * prix_enfants_payants;
@@ -482,6 +513,7 @@ const [nombreAdultes, setNombreAdultes] = useState(1);
                   prix: room.prix,
                   typechambreR: room.typechambreR,
                   vue: room.vue, 
+                  pension:room.pension || details.pensiondefault,
                 }))
               : [],
           nombre: type !== 'hotel' ? nombre : rooms.length,

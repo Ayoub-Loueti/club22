@@ -92,6 +92,24 @@ const [prixVuePiscine, setPrixVuePiscine] = useState({});
 const [single, setSingle] = useState({});
 const [prixsingle, setPrixsingle] = useState({});
 
+const [logementSeulement, setLogementSeulement] = useState(false);
+const [prixLogementSeulement, setPrixLogementSeulement] = useState(0);
+const [petitDejeuner, setPetitDejeuner] = useState(false);
+const [prixDemiPension, setPrixDemiPension] = useState(0);
+const [demiPension, setDemiPension] = useState(false);
+const [prixDemiPensionPlus, setPrixDemiPensionPlus] = useState(0);
+const [demiPensionPlus, setDemiPensionPlus] = useState(false);
+const [prixPensionComplete, setPrixPensionComplete] = useState(0);
+const [pensionComplete, setPensionComplete] = useState(false);
+const [prixPensionCompletePlus, setPrixPensionCompletePlus] = useState(0);
+const [pensionCompletePlus, setPensionCompletePlus] = useState(false);
+const [prixAllInclusive, setPrixAllInclusive] = useState(0);
+const [allInclusive, setAllInclusive] = useState(false);
+const [prixAllInclusiveSoft, setPrixAllInclusiveSoft] = useState(0);
+const [allInclusiveSoft, setAllInclusiveSoft] = useState(false);
+const [pensionDefault, setPensionDefault] = useState('');
+const [prixPetitDejeuner, setPrixPetitDejeuner] = useState('');
+
  const typesChambresOptions = [
    { id: 'standard', nom: 'Chambre standard' },
    { id: 'double', nom: 'Chambre double' },
@@ -112,6 +130,65 @@ const typeChambresData = selectedTypes.map((typeId) => ({
      typeof value === 'string' ? value.split(',') : value
    );
  };
+
+ const handleDefaultPensionChange = (pens, setPrice) => {
+  // Reset all prices if another pension is set as default
+  if (pensionDefault !== pens) {
+    setPensionDefault(pens);
+    resetAllPensionPrices();
+    setPrice(0); // Set the price of the new default pension to 0
+  }
+};
+
+const resetAllPensionPrices = () => {
+  if (pensionDefault !== 'logement_seulement') setPrixLogementSeulement(0);
+  if (pensionDefault !== 'petit_dejeuner') setPrixPetitDejeuner(0);
+  if (pensionDefault !== 'demi_pension') setPrixDemiPension(0);
+  if (pensionDefault !== 'demi_pension_plus') setPrixDemiPensionPlus(0);
+  if (pensionDefault !== 'pension_complete') setPrixPensionComplete(0);
+  if (pensionDefault !== 'pension_complete_plus') setPrixPensionCompletePlus(0);
+  if (pensionDefault !== 'all_inclusive') setPrixAllInclusive(0);
+  if (pensionDefault !== 'all_inclusive_soft') setPrixAllInclusiveSoft(0);
+};
+
+ const renderPensionOptions = () => (
+  <div>
+    <h3>Options de Pension</h3>
+    {renderPensionCheckbox('Logement Seulement','logement_seulement', logementSeulement, setLogementSeulement, prixLogementSeulement, setPrixLogementSeulement)}
+    {renderPensionCheckbox('Petit Déjeuner', 'petit_dejeuner',petitDejeuner, setPetitDejeuner, prixPetitDejeuner, setPrixPetitDejeuner)}
+    {renderPensionCheckbox('Demi Pension', 'demi_pension',demiPension, setDemiPension, prixDemiPension, setPrixDemiPension)}
+    {renderPensionCheckbox('Demi Pension Plus', 'demi_pension_plus',demiPensionPlus, setDemiPensionPlus, prixDemiPensionPlus, setPrixDemiPensionPlus)}
+    {renderPensionCheckbox('Pension Complète','pension_complete', pensionComplete, setPensionComplete, prixPensionComplete, setPrixPensionComplete)}
+    {renderPensionCheckbox('Pension Complète Plus','pension_complete_plus', pensionCompletePlus, setPensionCompletePlus, prixPensionCompletePlus, setPrixPensionCompletePlus)}
+    {renderPensionCheckbox('All Inclusive', 'all_inclusive',allInclusive, setAllInclusive, prixAllInclusive, setPrixAllInclusive)}
+    {renderPensionCheckbox('All Inclusive Soft', 'all_inclusive_soft',allInclusiveSoft, setAllInclusiveSoft, prixAllInclusiveSoft, setPrixAllInclusiveSoft)}
+  </div>
+);
+
+const renderPensionCheckbox = (label,pens, checked, setChecked, price, setPrice) => (
+  <div>
+    <FormControlLabel
+      control={<Checkbox checked={checked} onChange={(e) => setChecked(e.target.checked)} />}
+      label={label}
+    />
+   {checked && (
+  <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+    <TextField
+      label="Prix"
+      type="number"
+      value={price}
+      onChange={(e) => setPrice(parseFloat(e.target.value))}
+      InputProps={{ inputProps: { min: 0 } }}
+      disabled={pensionDefault === pens} // Disable price input if this pension is the default
+    />
+    <FormControlLabel
+      control={<Checkbox checked={pensionDefault === pens} onChange={() => handleDefaultPensionChange(pens, setPrice)} />}
+      label="Défaut"
+    />
+  </div>
+)}
+  </div>
+);
 
  const handleDefaultChambreChange = (event) => {
    setDefaultChambre(event.target.value);
@@ -904,6 +981,7 @@ setChangeMonetaire(data.details.changeMonetaire);
           label="Alcool"
         /></div>
       </div>
+      {renderPensionOptions()}
     </>
   );
 
@@ -934,7 +1012,16 @@ setChangeMonetaire(data.details.changeMonetaire);
       );
       return;
     }
- 
+    const isDefaultPensionSelected = logementSeulement || petitDejeuner || demiPension || demiPensionPlus || pensionComplete || pensionCompletePlus || allInclusive || allInclusiveSoft;
+
+    if (!isDefaultPensionSelected) {
+      Swal.fire(
+        'Erreur',
+        'Vous devez sélectionner au moins une pension par défaut avant de soumettre.',
+        'error'
+      );
+      return;
+    }
     const formData = new FormData();
     formData.append('titre', titre);
     formData.append('description', description);
@@ -990,7 +1077,23 @@ setChangeMonetaire(data.details.changeMonetaire);
   formData.append('interdit_celibataires', interditCelibataires);
   formData.append('interdit_burkini', interditBurkini);
   formData.append('interdit_alcohol', interditAlcohol);
-
+  formData.append('logement_seulement', logementSeulement ? 1 : 0);
+  formData.append('prix_logement_seulement', prixLogementSeulement);
+  formData.append('petit_dejeuner', petitDejeuner ? 1 : 0);
+  formData.append('prix_petit_dejeuner', prixPetitDejeuner);
+  formData.append('demi_pension', demiPension ? 1 : 0);
+  formData.append('prix_demi_pension', prixDemiPension);
+  formData.append('demi_pension_plus', demiPensionPlus ? 1 : 0);
+  formData.append('prix_demi_pension_plus', prixDemiPensionPlus);
+  formData.append('pension_complete', pensionComplete ? 1 : 0);
+  formData.append('prix_pension_complete', prixPensionComplete);
+  formData.append('pension_complete_plus', pensionCompletePlus ? 1 : 0);
+  formData.append('prix_pension_complete_plus', prixPensionCompletePlus);
+  formData.append('all_inclusive', allInclusive ? 1 : 0);
+  formData.append('prix_all_inclusive', prixAllInclusive);
+  formData.append('all_inclusive_soft', allInclusiveSoft ? 1 : 0);
+  formData.append('prix_all_inclusive_soft', prixAllInclusiveSoft);
+  formData.append('pensiondefault', pensionDefault);
 selectedTypes.forEach((typeId, index) => {
   const typeChambre = typesChambresOptions.find((type) => type.id === typeId);
   formData.append(`typechambres[${index}][nom]`, typeChambre.nom);

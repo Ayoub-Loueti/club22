@@ -92,6 +92,7 @@ exports.createReservation = async (req, res) => {
     if (hotels && Array.isArray(hotels)) {
       await Promise.all(
         hotels.map((hotel) => {
+          console.log("aaaa",hotel.pension)
           return Hotel.create({
             id_reservation: reservation.id_reservation,
             nbr_adults: hotel.nbr_adults,
@@ -99,6 +100,7 @@ exports.createReservation = async (req, res) => {
             prix: hotel.prix,
             typechambreR: hotel.typechambreR,
             vue:hotel.vue,
+            pension:hotel.pension,
           });
         })
       );
@@ -180,7 +182,7 @@ exports.getReservationDemande = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue'],
+            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue','pension'],
           });
 
           const totalPeople = hotels.reduce(
@@ -278,7 +280,7 @@ exports.getReservationReponse = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue'],
+            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue','pension'],
           });
 
           const totalPeople = hotels.reduce(
@@ -1004,7 +1006,7 @@ exports.getMyReservations = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue'],
+            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue','pension'],
           });
 
           const totalPeople = hotels.reduce(
@@ -1114,7 +1116,7 @@ exports.getMyReservationsBoxD = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue'],
+            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue','pension'],
           });
 
           const totalPeople = hotels.reduce(
@@ -1221,7 +1223,7 @@ exports.getMyReservationsBoxT = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue'],
+            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue','pension'],
           });
 
           const totalPeople = hotels.reduce(
@@ -1387,7 +1389,7 @@ exports.getReservByCollabA = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue'],
+            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue','pension'],
           });
 
           const totalPeople = hotels.reduce(
@@ -1489,7 +1491,7 @@ exports.getReservByCollabB = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue'],
+            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue','pension'],
           });
 
           const totalPeople = hotels.reduce(
