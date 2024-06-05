@@ -21,6 +21,7 @@ import NavAdmin from '../NavAdmin/navAdmin';
 import '../collaborateur/listCollaborateur.css'; 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import NavbarHaut from '../../../components/navbar/navbarHaut';
 
 const MessageField = styled(TextField)({
   margin: '7px 0',
@@ -71,7 +72,6 @@ const fetchReclamations = async () => {
 
   const sendMessage = async (id, message) => {
     if (!message.trim()) {
-      // Vérifie si le message est vide ou ne contient que des espaces blancs
       Swal.fire({
         title: 'Erreur!',
         text: 'Vous ne pouvez pas envoyer un message vide.',
@@ -97,7 +97,7 @@ const fetchReclamations = async () => {
         timer: 1500,
         showConfirmButton: false,
       });
-      fetchReclamations(); // Recharge les réclamations pour mettre à jour l'affichage
+      fetchReclamations(); 
     } catch (error) {
       Swal.fire({
         title: 'Erreur!',
@@ -152,6 +152,15 @@ const fetchReclamations = async () => {
 
   return (
     <>
+      <div
+        style={{
+          background: 'linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5)',
+        }}
+      >
+        {' '}
+        <NavbarHaut />
+      </div>
+
       <NavAdmin />
       <div className="reclamation-container">
         <Typography

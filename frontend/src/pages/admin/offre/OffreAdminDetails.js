@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import UpdateOffreModal from './UpdateOffreModal';
 import ScrollToTop from '../../../components/designs/ScrollToTop';
 import NavAdmin from '../NavAdmin/navAdmin';
+import NavbarHaut from '../../../components/navbar/navbarHaut';
 
 function OffreAdminDetails() {
   const { offreId } = useParams();
@@ -107,6 +108,8 @@ const renderInterdictions = () => {
 
   return (
     <>
+        {' '}
+        <NavbarHaut />
       <NavAdmin />
 
       <ScrollToTop />

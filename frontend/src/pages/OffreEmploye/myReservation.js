@@ -15,10 +15,14 @@ import {
 } from '@mui/material';
 import Navbar from '../../components/navbar/navbar';
 import NavbarHaut from '../../components/navbar/navbarHaut';
-import ShowReservationDialog from './ShowReservationDialog'; // Import the dialog component
-import ModifyReservation from './ModifyReservation'; // Import the ModifyReservation component
+import ShowReservationDialog from './ShowReservationDialog'; 
+import ModifyReservation from './ModifyReservation'; 
 import jsPDF from 'jspdf';
 import QRCode from 'qrcode';
+import deduchis from '../../assets/deduchis.png';
+import    resac   from '../../assets/resac.png';
+import respend from '../../assets/respend.png';
+import rescnf from '../../assets/rescnf.png';
 
 const MyReservations = () => {
     const { t } = useTranslation();
@@ -656,9 +660,17 @@ const handlePayment = (event,reservation) => {
                 maxWidth: '400px',
                 margin: 'auto',
                 marginTop: '150px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              <Typography>{t('Aucun détail de déduction à afficher.')}</Typography>
+              <img
+                src={deduchis}
+                alt="Deduchis"
+                style={{ width: '600px', height: 'auto' }}
+              />
             </div>
           )}
         </Fade>
@@ -681,112 +693,134 @@ const handlePayment = (event,reservation) => {
                 </Typography>
                 <Card raised sx={{ height: 308, overflowY: 'auto' }}>
                   <CardContent>
-                    {reservations.map((reservation) => (
-                      <Card
-                        key={reservation.id_reservation}
-                        variant="outlined"
-                        sx={{
-                          mb: 2,
-                          display: 'flex',
-                          backgroundColor: '#F4F4F4',
-                          cursor: 'pointer',
-                        }}
-                        onClick={() => handleOpenDialog(reservation)}
-                      >
-                        <Box
-                          component="img"
+                    {reservations.length > 0 ? (
+                      reservations.map((reservation) => (
+                        <Card
+                          key={reservation.id_reservation}
+                          variant="outlined"
                           sx={{
-                            width: 150,
-                            height: 'auto',
-                            maxWidth: '100%',
-                            maxHeight: 150,
-                            objectFit: 'cover',
-                          }}
-                          src={`http://localhost:5000/${reservation.offre.images[0]}`}
-                          alt="Offre"
-                        />
-                        <Box
-                          sx={{
+                            mb: 2,
                             display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'space-between',
-                            flexGrow: 1,
-                            padding: 2,
+                            backgroundColor: '#F4F4F4',
+                            cursor: 'pointer',
                           }}
+                          onClick={() => handleOpenDialog(reservation)}
                         >
-                          <Box>
-                            <Typography variant="h6">
-                              {reservation.offre.titre}
-                            </Typography>
-                            <Typography variant="body2">
-                              {reservation.offre.collaborateur.nom}
-                            </Typography>
-                            <Typography variant="body1" color="primary">
-                              {reservation.prix_totale} TND
-                            </Typography>
-                            {reservation.etat === 'annuler' && (
-                              <Typography
-                                style={{ color: 'red', fontWeight: 'bold' }}
-                              >
-                                {t('Réservation annulée')}
+                          <Box
+                            component="img"
+                            sx={{
+                              width: 150,
+                              height: 'auto',
+                              maxWidth: '100%',
+                              maxHeight: 150,
+                              objectFit: 'cover',
+                            }}
+                            src={`http://localhost:5000/${reservation.offre.images[0]}`}
+                            alt="Offre"
+                          />
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'space-between',
+                              flexGrow: 1,
+                              padding: 2,
+                            }}
+                          >
+                            <Box>
+                              <Typography variant="h6">
+                                {reservation.offre.titre}
                               </Typography>
+                              <Typography variant="body2">
+                                {reservation.offre.collaborateur.nom}
+                              </Typography>
+                              <Typography variant="body1" color="primary">
+                                {reservation.prix_totale} TND
+                              </Typography>
+                              {reservation.etat === 'annuler' && (
+                                <Typography
+                                  style={{ color: 'red', fontWeight: 'bold' }}
+                                >
+                                  {t('Réservation annulée')}
+                                </Typography>
+                              )}
+                            </Box>
+                            {reservation.etat === 'en_cours' && (
+                              <Box display="flex" justifyContent="flex-end">
+                                <Button
+                                  size="small"
+                                  variant="contained"
+                                  sx={{
+                                    backgroundColor: '#5CA163',
+                                    '&:hover': { backgroundColor: '#4B8A50' },
+                                    mr: 1,
+                                  }}
+                                  onClick={(event) =>
+                                    confirmReservation(
+                                      event,
+                                      reservation.id_reservation
+                                    )
+                                  }
+                                >
+                                  {t('Confirmer')}
+                                </Button>
+                                <Button
+                                  size="small"
+                                  variant="contained"
+                                  sx={{
+                                    backgroundColor: '#E3D97F',
+                                    '&:hover': { backgroundColor: '#D0C170' },
+                                    mr: 1,
+                                  }}
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    handleModifyDialogOpen(reservation);
+                                  }}
+                                >
+                                  {t('Modifier')}
+                                </Button>
+                                <Button
+                                  size="small"
+                                  variant="contained"
+                                  sx={{
+                                    backgroundColor: '#C50F10',
+                                    '&:hover': { backgroundColor: '#B00C0E' },
+                                  }}
+                                  onClick={(event) =>
+                                    cancelReservation(
+                                      event,
+                                      reservation.id_reservation
+                                    )
+                                  }
+                                >
+                                  {t('Annuler')}
+                                </Button>
+                              </Box>
                             )}
                           </Box>
-                          {reservation.etat === 'en_cours' && (
-                            <Box display="flex" justifyContent="flex-end">
-                              <Button
-                                size="small"
-                                variant="contained"
-                                sx={{
-                                  backgroundColor: '#5CA163',
-                                  '&:hover': { backgroundColor: '#4B8A50' },
-                                  mr: 1,
-                                }}
-                                onClick={(event) =>
-                                  confirmReservation(
-                                    event,
-                                    reservation.id_reservation
-                                  )
-                                }
-                              >
-                                {t('Confirmer')}
-                              </Button>
-                              <Button
-                                size="small"
-                                variant="contained"
-                                sx={{
-                                  backgroundColor: '#E3D97F',
-                                  '&:hover': { backgroundColor: '#D0C170' },
-                                  mr: 1,
-                                }}
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  handleModifyDialogOpen(reservation);
-                                }}
-                              >
-                                {t('Modifier')}
-                              </Button>
-                              <Button
-                                size="small"
-                                variant="contained"
-                                sx={{
-                                  backgroundColor: '#C50F10',
-                                  '&:hover': { backgroundColor: '#B00C0E' },
-                                }}
-                                onClick={(event) =>
-                                  cancelReservation(
-                                    event,
-                                    reservation.id_reservation
-                                  )
-                                }
-                              >
-                                {t('Annuler')}
-                              </Button>
-                            </Box>
-                          )}
-                        </Box>
-                      </Card>
-                    ))}
+                        </Card>
+                      ))
+                    ) : (
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          width: '100%', 
+                        }}
+                      >
+                        <img
+                          src={rescnf}
+                          alt="Rescnf"
+                          style={{
+                            maxHeight: '240px', 
+                            maxWidth: '100%', 
+                            width: 'auto', 
+                            height: 'auto', 
+                          }}
+                        />
+                      </Box>
+                    )}
                   </CardContent>
                 </Card>
               </Box>
@@ -803,66 +837,88 @@ const handlePayment = (event,reservation) => {
                     textTransform: 'uppercase',
                   }}
                 >
-                  {('Vos réservations confirmées')}
+                  {t('Vos réservations confirmées')}
                 </Typography>
                 <Card raised sx={{ height: 290, overflowY: 'auto' }}>
                   <CardContent>
-                    {boxDReservations.map((reservation) => (
-                      <Card
-                        key={reservation.id_reservation}
-                        variant="outlined"
-                        sx={{
-                          mb: 2,
-                          display: 'flex',
-                          backgroundColor: getCardBackgroundColor(
-                            reservation.etat
-                          ),
-                          cursor: 'pointer',
-                        }}
-                        onClick={() => handleOpenDialog(reservation)}
-                      >
-                        <Box
-                          component="img"
+                    {boxDReservations.length > 0 ? (
+                      boxDReservations.map((reservation) => (
+                        <Card
+                          key={reservation.id_reservation}
+                          variant="outlined"
                           sx={{
-                            width: 150,
-                            height: 'auto',
-                            maxWidth: '100%',
-                            maxHeight: 150,
-                            objectFit: 'cover',
-                          }}
-                          src={`http://localhost:5000/${reservation.offre.images[0]}`}
-                          alt="Offre"
-                        />
-                        <Box
-                          sx={{
+                            mb: 2,
                             display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'space-between',
-                            flexGrow: 1,
-                            padding: 2,
+                            backgroundColor: getCardBackgroundColor(
+                              reservation.etat
+                            ),
+                            cursor: 'pointer',
                           }}
+                          onClick={() => handleOpenDialog(reservation)}
                         >
-                          <Box>
-                            <Typography variant="h6">
-                              {reservation.offre.titre}
-                            </Typography>
-                            <Typography variant="body2">
-                              {reservation.offre.collaborateur.nom}
-                            </Typography>
-                            <Typography variant="body1" color="primary">
-                              {reservation.prix_totale} TND
-                            </Typography>
-                            {reservation.etat === 'reparation' && (
-                              <Typography
-                                style={{ color: 'red', fontWeight: 'bold' }}
-                              >
-                                {t('Demande envoyée au collaborateur')}
+                          <Box
+                            component="img"
+                            sx={{
+                              width: 150,
+                              height: 'auto',
+                              maxWidth: '100%',
+                              maxHeight: 150,
+                              objectFit: 'cover',
+                            }}
+                            src={`http://localhost:5000/${reservation.offre.images[0]}`}
+                            alt="Offre"
+                          />
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'space-between',
+                              flexGrow: 1,
+                              padding: 2,
+                            }}
+                          >
+                            <Box>
+                              <Typography variant="h6">
+                                {reservation.offre.titre}
                               </Typography>
-                            )}
+                              <Typography variant="body2">
+                                {reservation.offre.collaborateur.nom}
+                              </Typography>
+                              <Typography variant="body1" color="primary">
+                                {reservation.prix_totale} TND
+                              </Typography>
+                              {reservation.etat === 'reparation' && (
+                                <Typography
+                                  style={{ color: 'red', fontWeight: 'bold' }}
+                                >
+                                  {t('Demande envoyée au collaborateur')}
+                                </Typography>
+                              )}
+                            </Box>
                           </Box>
-                        </Box>
-                      </Card>
-                    ))}
+                        </Card>
+                      ))
+                    ) : (
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          width: '100%',
+                        }}
+                      >
+                        <img
+                          src={respend}
+                          alt="Respend"
+                          style={{
+                            maxHeight: '240px',
+                            maxWidth: '100%',
+                            width: 'auto',
+                            height: 'auto',
+                          }}
+                        />
+                      </Box>
+                    )}
                   </CardContent>
                 </Card>
               </Box>
@@ -885,147 +941,176 @@ const handlePayment = (event,reservation) => {
             </Typography>
             <Card raised sx={{ height: 670, overflowY: 'auto' }}>
               <CardContent>
-                {boxTReservations.map((reservation) => (
-                  <Card
-                    id={`reservation-card-${reservation.id_reservation}`}
-                    key={reservation.id_reservation}
-                    variant="outlined"
-                    sx={{
-                      mb: 2,
-                      display: 'flex',
-                      backgroundColor: getCardBackgroundColor(reservation.etat),
-                      cursor: 'pointer',
-                    }}
-                    onClick={() => handleOpenDialog(reservation)}
-                  >
-                    <Box
-                      component="img"
+                {boxTReservations.length > 0 ? (
+                  boxTReservations.map((reservation) => (
+                    <Card
+                      id={`reservation-card-${reservation.id_reservation}`}
+                      key={reservation.id_reservation}
+                      variant="outlined"
                       sx={{
-                        width: 150,
-                        height: 'auto',
-                        maxWidth: '100%',
-                        maxHeight: 150,
-                        objectFit: 'cover',
-                      }}
-                      src={`http://localhost:5000/${reservation.offre.images[0]}`}
-                      alt="Offre"
-                    />
-                    <Box
-                      sx={{
+                        mb: 2,
                         display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        flexGrow: 1,
-                        padding: 2,
+                        backgroundColor: getCardBackgroundColor(
+                          reservation.etat
+                        ),
+                        cursor: 'pointer',
                       }}
+                      onClick={() => handleOpenDialog(reservation)}
                     >
-                      <Typography variant="h6">
-                        {reservation.offre.titre}
-                      </Typography>
-                      <Typography variant="body2">
-                        {reservation.offre.collaborateur.nom}
-                      </Typography>
-                      <Typography variant="body1" color="primary">
-                        {reservation.prix_totale} TND
-                      </Typography>
-                      {reservation.etat === 'accepter' &&
-                        new Date(currentDate.toISOString().split('T')[0]) >
-                          new Date(reservation.date_debut) && (
-                          <> {renderStars(reservation)}</>
-                        )}
-                      {reservation.etat === 'accepter' &&
-                        reservation.mode_paiement === 'paiement_en_ligne' &&
-                        reservation.statut_paiement === 'en_attente' && (
-                          <Button
-                            onClick={(event) =>
-                              handlePayment(event, reservation)
-                            }
-                            variant="contained"
-                            sx={{
-                              backgroundColor: '#FF5722',
-                              '&:hover': {
-                                backgroundColor: '#E64A19',
-                              },
-                              padding: '6px 16px',
-                              width: '40%',
-                              display: 'block', 
-                              marginLeft: 'auto', 
-                              marginRight: 'auto',
-                              width: 'fit-content', 
-                              marginBottom: '10px',
-                            }}
-                          >
+                      <Box
+                        component="img"
+                        sx={{
+                          width: 150,
+                          height: 'auto',
+                          maxWidth: '100%',
+                          maxHeight: 150,
+                          objectFit: 'cover',
+                        }}
+                        src={`http://localhost:5000/${reservation.offre.images[0]}`}
+                        alt="Offre"
+                      />
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          flexGrow: 1,
+                          padding: 2,
+                        }}
+                      >
+                        <Typography variant="h6">
+                          {reservation.offre.titre}
+                        </Typography>
+                        <Typography variant="body2">
+                          {reservation.offre.collaborateur.nom}
+                        </Typography>
+                        <Typography variant="body1" color="primary">
+                          {reservation.prix_totale} TND
+                        </Typography>
+                        {reservation.etat === 'accepter' &&
+                          new Date(currentDate.toISOString().split('T')[0]) >
+                            new Date(reservation.date_debut) && (
+                            <> {renderStars(reservation)}</>
+                          )}
+                        {reservation.etat === 'accepter' &&
+                          reservation.mode_paiement === 'paiement_en_ligne' &&
+                          reservation.statut_paiement === 'en_attente' && (
+                            <Button
+                              onClick={(event) =>
+                                handlePayment(event, reservation)
+                              }
+                              variant="contained"
+                              sx={{
+                                backgroundColor: '#FF5722',
+                                '&:hover': {
+                                  backgroundColor: '#E64A19',
+                                },
+                                padding: '6px 16px',
+                                width: '40%',
+                                display: 'block',
+                                marginLeft: 'auto',
+                                marginRight: 'auto',
+                                width: 'fit-content',
+                                marginBottom: '10px',
+                              }}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                style={{
+                                  marginRight: 8,
+                                  width: 14,
+                                  height: 14,
+                                }}
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                />
+                              </svg>
+                              {t('Payer')}
+                            </Button>
+                          )}
+                        {reservation.etat === 'accepter' &&
+                          reservation.mode_paiement === 'paiement_en_ligne' &&
+                          reservation.statut_paiement === 'payé' && (
+                            <strong
+                              style={{
+                                color: 'green',
+                                fontSize: '18px',
+                                fontWeight: 'bold',
+                              }}
+                            >
+                              ✅ {t('PAYÉE EN LIGNE')} 💳
+                            </strong>
+                          )}
+                        {reservation.etat === 'accepter' && (
+                          <>
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
                               viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              style={{ marginRight: 8, width: 14, height: 14 }} 
+                              width="24"
+                              height="24"
+                              color="#3275c4"
+                              fill="none"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                downloadReservationPDF(reservation);
+                              }}
                             >
                               <path
+                                d="M12.5 2H12.7727C16.0339 2 17.6645 2 18.7969 2.79784C19.1214 3.02643 19.4094 3.29752 19.6523 3.60289C20.5 4.66867 20.5 6.20336 20.5 9.27273V11.8182C20.5 14.7814 20.5 16.2629 20.0311 17.4462C19.2772 19.3486 17.6829 20.8491 15.6616 21.5586C14.4044 22 12.8302 22 9.68182 22C7.88275 22 6.98322 22 6.26478 21.7478C5.10979 21.3424 4.19875 20.4849 3.76796 19.3979C3.5 18.7217 3.5 17.8751 3.5 16.1818V12"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                              />
+                              <path
+                                d="M20.5 12C20.5 13.8409 19.0076 15.3333 17.1667 15.3333C16.5009 15.3333 15.716 15.2167 15.0686 15.3901C14.4935 15.5442 14.0442 15.9935 13.8901 16.5686C13.7167 17.216 13.8333 18.0009 13.8333 18.6667C13.8333 20.5076 12.3409 22 10.5 22"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <path
+                                d="M4.5 7.5C4.99153 8.0057 6.29977 10 7 10M9.5 7.5C9.00847 8.0057 7.70023 10 7 10M7 10L7 2"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
                               />
                             </svg>
-                            {t('Payer')}
-                          </Button>
+                          </>
                         )}
-                      {reservation.etat === 'accepter' &&
-                        reservation.mode_paiement === 'paiement_en_ligne' &&
-                        reservation.statut_paiement === 'payé' && (
-                          <strong
-                            style={{
-                              color: 'green',
-                              fontSize: '18px',
-                              fontWeight: 'bold',
-                            }}
-                          >
-                            ✅ {t('PAYÉE EN LIGNE')} 💳
-                          </strong>
-                        )}
-                      {reservation.etat === 'accepter' && (
-                        <>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            width="24"
-                            height="24"
-                            color="#3275c4"
-                            fill="none"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              downloadReservationPDF(reservation);
-                            }}
-                          >
-                            <path
-                              d="M12.5 2H12.7727C16.0339 2 17.6645 2 18.7969 2.79784C19.1214 3.02643 19.4094 3.29752 19.6523 3.60289C20.5 4.66867 20.5 6.20336 20.5 9.27273V11.8182C20.5 14.7814 20.5 16.2629 20.0311 17.4462C19.2772 19.3486 17.6829 20.8491 15.6616 21.5586C14.4044 22 12.8302 22 9.68182 22C7.88275 22 6.98322 22 6.26478 21.7478C5.10979 21.3424 4.19875 20.4849 3.76796 19.3979C3.5 18.7217 3.5 17.8751 3.5 16.1818V12"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                            <path
-                              d="M20.5 12C20.5 13.8409 19.0076 15.3333 17.1667 15.3333C16.5009 15.3333 15.716 15.2167 15.0686 15.3901C14.4935 15.5442 14.0442 15.9935 13.8901 16.5686C13.7167 17.216 13.8333 18.0009 13.8333 18.6667C13.8333 20.5076 12.3409 22 10.5 22"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                            <path
-                              d="M4.5 7.5C4.99153 8.0057 6.29977 10 7 10M9.5 7.5C9.00847 8.0057 7.70023 10 7 10M7 10L7 2"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </>
-                      )}
-                    </Box>
-                  </Card>
-                ))}
+                      </Box>
+                    </Card>
+                  ))
+                ) : (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      height: '570px',
+                      width: '100%',
+                    }}
+                  >
+                    <img
+                      src={resac}
+                      alt="Resac"
+                      style={{
+                        maxHeight: '600px',
+                        maxWidth: '100%',
+                        width: 'auto',
+                        height: 'auto',
+                      }}
+                    />
+                  </Box>
+                )}
               </CardContent>
             </Card>
           </Box>

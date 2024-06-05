@@ -4,6 +4,7 @@ import './collabResev.css';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import ListReservation from './listReservation';
 import ListResevClick from './listReservClick';
+import NavbarHaut from '../../../components/navbar/navbarHaut';
 
 function CollaborateurPage() {
   const [collaborateurs, setCollaborateurs] = useState([]);
@@ -53,6 +54,8 @@ function CollaborateurPage() {
 
   return (
     <>
+      <NavbarHaut />
+
       <div className="PageCollaborateur-container">
         {showOffreCollab && (
           <button className="voir-tous-bttn" onClick={handleViewAllOffers}>

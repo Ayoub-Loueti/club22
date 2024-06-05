@@ -96,15 +96,15 @@ const DemandeReservation = () => {
   const getCardBackgroundColor = (etat) => {
     switch (etat) {
       case 'reparation':
-        return '#ADD8E6'; // Light blue color for 'reparation' state
+        return '#ADD8E6'; 
       case 'refuser':
-        return '#FF6347'; // Tomato red, a beautiful shade for 'refuser' state
+        return '#FF6347';
       case 'accepter':
-        return '#70CD32'; // Lime green, a bright and positive color for 'accepter' state
+        return '#70CD32'; 
       case 'en_cours':
-        return '#F4F4F4'; // Default light grey color for 'in progress' state
+        return '#F4F4F4'; 
       default:
-        return '#F4F4F4'; // Default color for other states
+        return '#F4F4F4'; 
     }
   };
 
@@ -146,9 +146,9 @@ Swal.fire({
   title: 'Acceptation réussie !',
   text: 'La réservation a été acceptée avec succès.',
   icon: 'success',
-  timer: 2500, // L'alerte disparaîtra après 2500 millisecondes (3 secondes)
-  timerProgressBar: true, // Affiche une barre de progression qui indique le temps restant
-  showConfirmButton: false, // N'affiche pas le bouton de confirmation
+  timer: 2500,
+  timerProgressBar: true, 
+  showConfirmButton: false, 
 });    
  setDemandeReservations((prevReservations) =>
    prevReservations.filter((reservation) => reservation.id_reservation !== id)
@@ -162,7 +162,7 @@ Swal.fire({
   };
 
   const handleRefuse = async (id, event) => {
-    event.stopPropagation(); // Prevent opening the dialog
+    event.stopPropagation();
     const token = JSON.parse(localStorage.getItem('login'))?.token;
     try {
       const response = await axios.put(
@@ -192,7 +192,7 @@ Swal.fire({
   };
   
 const handlerepair = async (id, event) => {
-  event.stopPropagation(); // Empêcher l'ouverture du dialogue
+  event.stopPropagation(); 
   const token = JSON.parse(localStorage.getItem('login'))?.token;
   try {
     const response = await axios.put(
@@ -265,7 +265,7 @@ ${
     ? `Inclus: ${reservation.details.inclus}`
     : ''
 }
-        `.replace(/^\s*[\r\n]/gm, ''); // Remove empty lines
+        `.replace(/^\s*[\r\n]/gm, ''); 
 
         const mailtoLink = `mailto:${
           reservation.offre.collaborateur.email
@@ -277,7 +277,7 @@ ${
         window.open(mailtoLink, '_blank');
       }
 
-      fetchDemandeReservations(); // Recharger ou mettre à jour l'état local ici
+      fetchDemandeReservations(); 
     }
   } catch (error) {
     console.error('Erreur lors de la réparation de la réservation :', error);
@@ -298,7 +298,6 @@ ${
 
    const pdf = new jsPDF();
 
-   // Ajouter le logo et le texte d'en-tête
    pdf.addImage(ooredooLogo, 'PNG', 10, 5, 25, 25);
    pdf.setFontSize(14);
    pdf.setTextColor('#333333');
@@ -310,22 +309,19 @@ ${
      30
    );
 
-   // Dessiner un rectangle comme carte pour la réservation
-   pdf.setFillColor('#f2f2f2'); // Couleur de fond gris clair pour la carte
-   const cardHeight = calculateCardHeight(reservation); // Calculer la hauteur de la carte en fonction du contenu
-   pdf.rect(10, 40, 180, cardHeight, 'F'); // Dessiner un rectangle rempli comme carte
-   pdf.setTextColor('#000000'); // Définir la couleur du texte en noir pour une meilleure lisibilité
+   pdf.setFillColor('#f2f2f2'); 
+   const cardHeight = calculateCardHeight(reservation); 
+   pdf.rect(10, 40, 180, cardHeight, 'F'); 
+   pdf.setTextColor('#000000'); 
 
-   // Ajouter le logo du collaborateur et le nom en haut au centre
    const logoData = getCollaborateurLogoUrl(reservation);
-   pdf.addImage(logoData, 'JPEG', 70, 45, 30, 30); // Ajuster le positionnement au besoin
+   pdf.addImage(logoData, 'JPEG', 70, 45, 30, 30); 
    pdf.text(
      `Nom Collaborateur: ${reservation.offre.collaborateur.nom}`,
      105,
      60
    );
 
-   // Ajouter les détails de la réservation à la carte
    pdf.text(
      `Date : De ${reservation.date_debut} Jusq'ua ${reservation.date_fin}`,
      30,
@@ -351,12 +347,11 @@ ${
    );
    pdf.text(`Prix: ${reservation.prix_totale.toFixed(2)} DT`, 30, 160);
 
-   // Ajouter des détails spécifiques en fonction du type de réservation
    let yPos = 170;
    switch (reservation.typeR) {
      case 'hotel':
        pdf.text(`Nom de l'hotel: ${reservation.details.nom_hotel}`, 30, yPos);
-       yPos += 20; // Augmenter la position Y pour une séparation visuelle entre le nom de l'hôtel et les détails des chambres
+       yPos += 20; 
        pdf.text('Chambres:', 30, yPos);
        reservation.rooms.forEach((room, roomIndex) => {
          const roomDetails = `Chambre ${roomIndex + 1}: Adultes - ${
@@ -381,11 +376,9 @@ ${
        break;
    }
 
-   // Ajouter l'image à la carte
-   const imgData = reservation.offre.images[0]; // Supposons qu'il y a au moins une image
+   const imgData = reservation.offre.images[0];
    pdf.addImage(imgData, 'JPEG', 130, 45, 60, 60);
 
-   // Enregistrer et télécharger le PDF
    pdf.save(`reservation_${reservationId}.pdf`);
  };
 
@@ -395,13 +388,13 @@ ${
 
 
   const handleDownloadClick = (e, reservationId) => {
-    e.stopPropagation(); // This will prevent the event from bubbling up to the parent
+    e.stopPropagation();
     downloadPDF(reservationId);
   };
 const groupReservationsByDate = (reservations) => {
   const groupedReservations = {};
   reservations.forEach((reservation) => {
-    const date = reservation.date_reservation.split('T')[0]; // Extract date without time
+    const date = reservation.date_reservation.split('T')[0];
     if (groupedReservations[date]) {
       groupedReservations[date].push(reservation);
     } else {
@@ -409,7 +402,6 @@ const groupReservationsByDate = (reservations) => {
     }
   });
 
-  // Sort grouped reservations by date in descending order
   const sortedGroupedReservations = Object.entries(groupedReservations)
     .sort(([dateA], [dateB]) => new Date(dateB) - new Date(dateA))
     .reduce((acc, [date, reservations]) => {
@@ -424,12 +416,9 @@ const groupedReservations = groupReservationsByDate(
   filteredDemandeReservations
 );
 const getCollaborateurLogoUrl = (reservation) => {
-  // Vérifiez si l'URL du logo est disponible dans les données de la réservation
   if (reservation.offre.collaborateur.logo) {
-    // Retournez l'URL complète du logo du collaborateur
     return `http://localhost:5000/${reservation.offre.collaborateur.logo}`;
   } else {
-    // Si l'URL du logo n'est pas disponible, retournez une URL par défaut ou une image générique
     return 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.flaticon.com%2Ffr%2Ficone-gratuite%2Fpas-dappareil-photo_482432&psig=AOvVaw2oESc9luFlfvNxWovo3iww&ust=1714921741095000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCPis3Lqj9IUDFQAAAAAdAAAAABAE'; // Remplacez par votre URL par défaut
   }
 };
@@ -437,41 +426,35 @@ const getCollaborateurLogoUrl = (reservation) => {
 const downloadPDFConfirmedByDate = async (date) => {
   const pdf = new jsPDF();
 
-  // Add Ooredoo logo and header text
   pdf.addImage(ooredooLogo, 'PNG', 10, 5, 25, 25);
   pdf.setFontSize(14);
   pdf.setTextColor('#333333');
   pdf.text(`Le(s) réservation(s) Confirmée(s) pour le ${date}`, 70, 30);
 
-  // Add confirmed reservations for the date to the PDF
   groupedReservations[date].forEach((reservation, index) => {
     if (reservation.etat === 'confirmer') {
-      // Add a new page for each reservation except the first one
       if (index > 0) {
         pdf.addPage();
       }
 
-      // Draw a rectangle as a card for the reservation
-      pdf.setFillColor('#f2f2f2'); // Light gray background color for the card
-      const cardHeight = calculateCardHeight(reservation); // Calculate card height based on content
-      pdf.rect(10, 40, 180, cardHeight, 'F'); // Draw a filled rectangle as a card
-      pdf.setTextColor('#000000'); // Set text color to black for better readability
+      pdf.setFillColor('#f2f2f2'); 
+      const cardHeight = calculateCardHeight(reservation);
+      pdf.rect(10, 40, 180, cardHeight, 'F'); 
+      pdf.setTextColor('#000000'); 
 
-      // Add collaborator's logo and name at the top center
       const logoData = getCollaborateurLogoUrl(reservation);
-      pdf.addImage(logoData, 'JPEG', 70, 45, 30, 30); // Adjust the positioning as needed
+      pdf.addImage(logoData, 'JPEG', 70, 45, 30, 30); 
       pdf.text(
         `Nom Collaborateur: ${reservation.offre.collaborateur.nom}`,
         105,
         60
       );
 
-      // Add reservation details to the card
       pdf.text(
         `Date : De ${reservation.date_debut} Jusq'ua ${reservation.date_fin}`,
         30,
         80
-      ); // Add dates
+      );
 
       pdf.text(`Titre: ${reservation.offre.titre}`, 30, 100);
       pdf.text(`Destination: ${reservation.offre.destination}`, 30, 110);
@@ -493,7 +476,6 @@ const downloadPDFConfirmedByDate = async (date) => {
        );
       pdf.text(`Prix: ${reservation.prix_totale.toFixed(2)} DT`, 30, 160);
 
-      // Add specific details based on reservation type
       let yPos = 170;
       switch (reservation.typeR) {
         case 'hotel':
@@ -502,7 +484,7 @@ const downloadPDFConfirmedByDate = async (date) => {
             30,
             yPos
           );
-          yPos += 20; // Increase Y position for visual separation between hotel name and room details
+          yPos += 20; 
 
           pdf.text('Chambres:', 30, yPos);
           reservation.rooms.forEach(
@@ -528,7 +510,7 @@ const downloadPDFConfirmedByDate = async (date) => {
             30,
             yPos
           );
-          pdf.text(`Nombre de personnes: ${reservation.nombre}`, 30, yPos + 10); // Add number of persons for voyages
+          pdf.text(`Nombre de personnes: ${reservation.nombre}`, 30, yPos + 10); 
           pdf.text(`Inclus: ${reservation.details.inclus}`, 30, yPos + 20);
           // Add other specific details for voyage
           break;
@@ -542,30 +524,27 @@ const downloadPDFConfirmedByDate = async (date) => {
       }
 
       // Add image to the card
-      const imgData = reservation.offre.images[0]; // Assuming there is at least one image
+      const imgData = reservation.offre.images[0];
       pdf.addImage(imgData, 'JPEG', 130, 45, 60, 60);
 
-      // Move down for the next card
       yPos += 30;
     }
   });
 
-  // Save and download the PDF
   pdf.save(`reservations_confirmees_${date}.pdf`);
 };
 
-// Function to calculate card height based on content
 const calculateCardHeight = (reservation) => {
-  let height = 160; // Initial height for common details
+  let height = 160; 
   switch (reservation.typeR) {
     case 'hotel':
-      height += 20 + reservation.rooms.length * 10; // Add room details height
+      height += 20 + reservation.rooms.length * 10;
       break;
     case 'voyage':
-      height += 30; // Add additional details for voyage
+      height += 30; 
       break;
     case 'activité':
-      height += 20; // Add additional details for activite
+      height += 20;
       break;
     default:
       break;
@@ -592,7 +571,7 @@ Swal.fire({
   timer: 2500,
   timerProgressBar: true,
   showConfirmButton: false,
-});      // Reload or update local state here
+});     
       fetchDemandeReservations();
     }
   } catch (error) {
@@ -681,7 +660,7 @@ Swal.fire({
                           src={
                             reservation.employe.utilisateur.photo
                               ? `http://localhost:5000/${reservation.employe.utilisateur.photo}`
-                              : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg' // URL de votre image par défaut
+                              : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg' 
                           }
                           alt="Profil"
                           style={{
@@ -830,9 +809,7 @@ Swal.fire({
         ))}
       </Grid>
 
-      {/* Grid for reponse Reservations */}
 
-      {/* Dialog for showing reservation details */}
       {selectedReservation && (
         <>
           <ShowReservationDialog

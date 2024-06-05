@@ -50,7 +50,6 @@ const [categoryFilter, setCategoryFilter] = useState('tous');
   }, [isCollabMode, collaborateurId, offreAddedOrUpdated]);
 
   useEffect(() => {
-    // Automatically switch to the next image for each offer every 5 seconds
     const intervalId = setInterval(() => {
       setOffres((prevOffres) =>
         prevOffres.map((offre) => ({

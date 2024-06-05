@@ -127,9 +127,7 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
     const {
       target: { value },
     } = event;
-    setSelectedTypes(
-      typeof value === 'string' ? value.split(',') : value
-    );
+    setSelectedTypes(typeof value === 'string' ? value.split(',') : value);
   };
 
   const handleDefaultPensionChange = (pens, setPrice) => {
@@ -248,7 +246,7 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
             value={price}
             onChange={(e) => setPrice(parseFloat(e.target.value))}
             InputProps={{ inputProps: { min: 0 } }}
-            disabled={pensionDefault === pens} 
+            disabled={pensionDefault === pens}
           />
           <FormControlLabel
             control={
@@ -1123,6 +1121,26 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
       );
       return;
     }
+        const isDefaultPensionSelected =
+          typeOffre === 'hotel' &&
+          (logementSeulement ||
+            petitDejeuner ||
+            demiPension ||
+            demiPensionPlus ||
+            pensionComplete ||
+            pensionCompletePlus ||
+            allInclusive ||
+            allInclusiveSoft);
+
+        if (typeOffre === 'hotel' && !isDefaultPensionSelected) {
+          Swal.fire(
+            'Erreur',
+            "Vous devez sélectionner au moins une pension par défaut pour les offres d'hôtel avant de soumettre.",
+            'error'
+          );
+          return;
+        }
+    /*
     const isDefaultPensionSelected =
       logementSeulement ||
       petitDejeuner ||
@@ -1140,7 +1158,7 @@ function OffreForm({ onRequestClose, onSuccess, isUpdate, offreId }) {
         'error'
       );
       return;
-    }
+    } */
     const formData = new FormData();
     formData.append('titre', titre);
     formData.append('description', description);

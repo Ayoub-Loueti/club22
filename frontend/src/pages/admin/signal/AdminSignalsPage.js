@@ -15,6 +15,7 @@ import DetailPostModal from './DetailedPostModal';
 import { NavLink } from 'react-router-dom';
 import NavAdmin from '../NavAdmin/navAdmin';
 import PostModal from '../../../components/postModal/postModal';
+import NavbarHaut from '../../../components/navbar/navbarHaut';
 
 const AdminSignalsPage = () => {
   const [signals, setSignals] = useState([]);
@@ -307,171 +308,184 @@ const confirmBlockReporting = async (userId) => {
 };
   return (
     <>
+      <div
+        style={{
+          background: 'linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5)',
+          
+        }}
+      >
+        {' '}
+        <NavbarHaut />
+      </div>
       <NavAdmin />
-      <div   style={{
+      <div
+        style={{
           background: 'linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5)',
           padding: '20px',
-          borderRadius: '8px',
           boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-        }}>
-      <Container maxWidth="md">
-        <Typography
-          variant="h4"
-          component="h1"
-          gutterBottom
-          style={{
-            color: '#191f43',
-            marginBottom: '50px',
-            marginTop: '50px',
-          }}
-        >
-          GESTION DES CONTENUS SIGNALÉS{' '}
-        </Typography>
+        }}
+      >
+        <Container maxWidth="md">
+          <Typography
+            variant="h4"
+            component="h1"
+            gutterBottom
+            style={{
+              color: '#191f43',
+              marginBottom: '50px',
+              marginTop: '50px',
+            }}
+          >
+            GESTION DES CONTENUS SIGNALÉS{' '}
+          </Typography>
 
-        {signals.length > 0 ? (
-          signals.map((signal, index) => (
-            <Card
-              key={`${signal.id_signaler}-${index}`}
-              sx={{
-                mb: 4, // Increased bottom margin for more space between cards
-                padding: '28px', // Increased padding inside the card for a larger appearance
-                boxShadow: '0 14px 18px rgba(0,0,0,0.1)', // Optional: adding a subtle shadow for depth
-                '&:hover': {
-                  boxShadow: '0 18px 16px rgba(0,0,0,0.2)', // Deeper shadow on hover for a dynamic effect
-                },
-                backgroundColor: signal.isRead ? '#F8F8F8' : '#D6D6D6', // Keeping your color scheme
-                maxWidth: 'none',
-                width: '100%',
-              }}
-            >
-              <CardContent>
-                <Typography variant="button">
-                  <Typography
-                    display="flex"
-                    alignItems="center"
-                    gap={2}
-                    marginBottom={2}
-                    component="div"
-                  >
-                    Signalé par:{' '}
-                    <Link
-                      color="#6b85a4"
-                      component={NavLink}
-                      to={`/profil/${signal.utilisateur.id_utilisateur}`}
-                      underline="hover"
-                      style={{ display: 'flex', alignItems: 'center' }}
+          {signals.length > 0 ? (
+            signals.map((signal, index) => (
+              <Card
+                key={`${signal.id_signaler}-${index}`}
+                sx={{
+                  mb: 4, // Increased bottom margin for more space between cards
+                  padding: '28px', // Increased padding inside the card for a larger appearance
+                  boxShadow: '0 14px 18px rgba(0,0,0,0.1)', // Optional: adding a subtle shadow for depth
+                  '&:hover': {
+                    boxShadow: '0 18px 16px rgba(0,0,0,0.2)', // Deeper shadow on hover for a dynamic effect
+                  },
+                  backgroundColor: signal.isRead ? '#F8F8F8' : '#D6D6D6', // Keeping your color scheme
+                  maxWidth: 'none',
+                  width: '100%',
+                }}
+              >
+                <CardContent>
+                  <Typography variant="button">
+                    <Typography
+                      display="flex"
+                      alignItems="center"
+                      gap={2}
+                      marginBottom={2}
+                      component="div"
                     >
-                      <Avatar
-                        src={
-                          signal.utilisateur.photo
-                            ? `http://localhost:5000/${signal.utilisateur.photo}`
-                            : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
-                        }
-                        alt={signal.utilisateur.prenom}
-                        sx={{ width: 38, height: 38 }}
-                      />
-                      <Typography
-                        variant="body1"
-                        sx={{ marginLeft: 1 }}
+                      Signalé par:{' '}
+                      <Link
                         color="#6b85a4"
+                        component={NavLink}
+                        to={`/profil/${signal.utilisateur.id_utilisateur}`}
                         underline="hover"
-                        component="span"
+                        style={{ display: 'flex', alignItems: 'center' }}
                       >
-                        {' '}
-                        {signal.utilisateur.prenom} {signal.utilisateur.nom}
-                      </Typography>{' '}
-                    </Link>{' '}
+                        <Avatar
+                          src={
+                            signal.utilisateur.photo
+                              ? `http://localhost:5000/${signal.utilisateur.photo}`
+                              : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+                          }
+                          alt={signal.utilisateur.prenom}
+                          sx={{ width: 38, height: 38 }}
+                        />
+                        <Typography
+                          variant="body1"
+                          sx={{ marginLeft: 1 }}
+                          color="#6b85a4"
+                          underline="hover"
+                          component="span"
+                        >
+                          {' '}
+                          {signal.utilisateur.prenom} {signal.utilisateur.nom}
+                        </Typography>{' '}
+                      </Link>{' '}
+                      <Button
+                        variant="contained"
+                        sx={buttonStyles.blockUser}
+                        onClick={() => confirmBlockSignalant(signal)}
+                      >
+                        Bloquer le signalant
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={buttonStyles.blockUser}
+                        onClick={() =>
+                          confirmBlockReporting(
+                            signal.utilisateur.id_utilisateur
+                          )
+                        }
+                      >
+                        Bloquer les signalements
+                      </Button>
+                    </Typography>
+                  </Typography>
+                  <Typography variant="body2">
+                    TYPE DE CONTENU :{' '}
+                    {signal.id_reponse
+                      ? 'Response'
+                      : signal.id_cmntr
+                      ? 'Comment'
+                      : 'Post'}
+                  </Typography>
+                  <Typography variant="body2" color="error">
+                    Raison: {signal.cause}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button
+                    variant="contained"
+                    sx={buttonStyles.viewContent}
+                    onClick={() => openPostModal(signal)}
+                  >
+                    Voir le contenu
+                  </Button>
+                  <Button
+                    onClick={() => handleViewOriginalPost(signal)}
+                    sx={buttonStyles.viewOriginalPost}
+                  >
+                    Voir post
+                  </Button>
+
+                  <Button
+                    variant="contained"
+                    sx={buttonStyles.deleteContent}
+                    onClick={() => confirmDelete(signal)}
+                  >
+                    Supprimer le contenu
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={buttonStyles.blockUser}
+                    onClick={() => confirmBlockUser(signal)}
+                  >
+                    Bloquer L'auteur du contenu signalé
+                  </Button>
+                  {!signal.isRead ? null : (
                     <Button
-                      variant="contained"
-                      sx={buttonStyles.blockUser}
-                      onClick={() => confirmBlockSignalant(signal)}
-                    >
-                      Bloquer le signalant
-                    </Button>
-                    <Button
-                      variant="contained"
-                      sx={buttonStyles.blockUser}
+                      variant="outlined"
+                      sx={buttonStyles.markAsUnread}
                       onClick={() =>
-                        confirmBlockReporting(signal.utilisateur.id_utilisateur)
+                        updateSignalStatus(signal.id_signaler, false)
                       }
                     >
-                      Bloquer les signalements
+                      Marquer comme non lu
                     </Button>
-                  </Typography>
-                </Typography>
-                <Typography variant="body2">
-                  TYPE DE CONTENU :{' '}
-                  {signal.id_reponse
-                    ? 'Response'
-                    : signal.id_cmntr
-                    ? 'Comment'
-                    : 'Post'}
-                </Typography>
-                <Typography variant="body2" color="error">
-                  Raison: {signal.cause}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button
-                  variant="contained"
-                  sx={buttonStyles.viewContent}
-                  onClick={() => openPostModal(signal)}
-                >
-                  Voir le contenu
-                </Button>
-                <Button
-                  onClick={() => handleViewOriginalPost(signal)}
-                  sx={buttonStyles.viewOriginalPost}
-                >
-                  Voir post
-                </Button>
-
-                <Button
-                  variant="contained"
-                  sx={buttonStyles.deleteContent}
-                  onClick={() => confirmDelete(signal)}
-                >
-                  Supprimer le contenu
-                </Button>
-                <Button
-                  variant="contained"
-                  sx={buttonStyles.blockUser}
-                  onClick={() => confirmBlockUser(signal)}
-                >
-                  Bloquer L'auteur du contenu signalé
-                </Button>
-                {!signal.isRead ? null : (
-                  <Button
-                    variant="outlined"
-                    sx={buttonStyles.markAsUnread}
-                    onClick={() =>
-                      updateSignalStatus(signal.id_signaler, false)
-                    }
-                  >
-                    Marquer comme non lu
-                  </Button>
-                )}
-              </CardActions>
-            </Card>
-          ))
-        ) : (
-          <Typography>Aucun signalement à afficher.</Typography>
-        )}
-        {isPostModalOpen && (
-          <DetailPostModal
-            isOpen={isPostModalOpen}
-            onRequestClose={() => setIsPostModalOpen(false)}
+                  )}
+                </CardActions>
+              </Card>
+            ))
+          ) : (
+            <Typography>Aucun signalement à afficher.</Typography>
+          )}
+          {isPostModalOpen && (
+            <DetailPostModal
+              isOpen={isPostModalOpen}
+              onRequestClose={() => setIsPostModalOpen(false)}
+              postId={selectedPostId}
+              commentId={selectedCommentId}
+              responseId={selectedResponseId}
+            />
+          )}
+          <PostModal
+            isOpen={isPostModalOpenD}
+            onRequestClose={() => setIsPostModalOpenD(false)}
             postId={selectedPostId}
-            commentId={selectedCommentId}
-            responseId={selectedResponseId}
           />
-        )}
-        <PostModal
-          isOpen={isPostModalOpenD}
-          onRequestClose={() => setIsPostModalOpenD(false)}
-          postId={selectedPostId}
-        />
-      </Container></div>
+        </Container>
+      </div>
     </>
   );
 };

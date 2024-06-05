@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { useNavigate, Link, useLocation  } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import nonotif from '../../assets/nonotif.png';
 import {
@@ -27,10 +27,10 @@ import france from '../../assets/france.png';
 import uk from '../../assets/uk.png';
 
 function NavbarHaut() {
-    const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
-  const [userId, setUserId] = useState(null); // Add this line
+  const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -38,7 +38,7 @@ function NavbarHaut() {
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const menuRef = useRef();
-    const languageRef = useRef();
+  const languageRef = useRef();
 
   const notificationsRef = useRef();
 
@@ -49,15 +49,13 @@ function NavbarHaut() {
     collaborators: [],
   });
   const [userPoints, setUserPoints] = useState(null);
-  const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false); // State to control the phone modal visibility
+  const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
   const location = useLocation();
-    const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
 
-  // This function toggles the notification dropdown
   const handleBellClick = async () => {
     setShowNotifications(!showNotifications);
     if (!showNotifications) {
-      // Only fetch notifications and reset count if notifications are not currently shown
       await fetchNotifications();
       await resetNotificationsCount();
     }
@@ -70,7 +68,7 @@ function NavbarHaut() {
     if (inputValue.length > 0) {
       fetchUsersAndOffersBySubstring(inputValue);
     } else {
-      setSearchResults({ users: [], offers: [], collaborators: [] }); // Clear results if input is cleared
+      setSearchResults({ users: [], offers: [], collaborators: [] });
     }
   };
 
@@ -110,7 +108,7 @@ function NavbarHaut() {
           },
         }
       );
-      setNotificationsCount(0); // Reset the notifications count in the frontend as well
+      setNotificationsCount(0);
     } catch (error) {
       console.error(
         'Erreur lors de la réinitialisation du nombre de notifications',
@@ -133,19 +131,18 @@ function NavbarHaut() {
     }
   };
   const handleNotificationClick = (notification) => {
-    if (
-      ![ 'signal'].includes(notification.type)
-    ) {
-
-      if (notification.type === 'reservaccepte' || notification.type === 'reservrefuse') {
+    if (!['signal'].includes(notification.type)) {
+      if (
+        notification.type === 'reservaccepte' ||
+        notification.type === 'reservrefuse'
+      ) {
         navigate('/mesReservations');
       } else {
-        // Existing logic for other types of notifications
-        console.log(notification); // For debugging
-        setSelectedPostId(notification.post.id_post); // Use notification.post.id_post
+        console.log(notification);
+        setSelectedPostId(notification.post.id_post);
         setIsPostModalOpen(true);
-        setShowNotifications(false); // Close the notifications dropdown
-        markAsRead(notification.id_notif, notification.isRead); // Mark as read, assuming this function exists and works correctly
+        setShowNotifications(false);
+        markAsRead(notification.id_notif, notification.isRead);
       }
     }
   };
@@ -255,7 +252,6 @@ function NavbarHaut() {
           },
         }
       );
-      // Update the notification state to reflect changes
       setNotifications(
         notifications.map((notification) => {
           if (notification.id_notif === notificationId) {
@@ -291,11 +287,11 @@ function NavbarHaut() {
 
   useEffect(() => {
     fetchNotificationsCount();
-  }, []); // The empty array ensures this effect runs once on mount
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem('login');
-    const storedUserId = JSON.parse(localStorage.getItem('userId')); // Rename for clarity
+    const storedUserId = JSON.parse(localStorage.getItem('userId'));
     setUserId(storedUserId);
 
     if (token && storedUserId) {
@@ -334,40 +330,32 @@ function NavbarHaut() {
       console.error('Logout failed:', error);
     }
   };
-useEffect(() => {
-  function handleClickOutside(event) {
-    // Fermeture du menu utilisateur
-    if (menuRef.current && !menuRef.current.contains(event.target)) {
-      setShowUserDropdown(false);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowUserDropdown(false);
+      }
+
+      if (
+        notificationsRef.current &&
+        !notificationsRef.current.contains(event.target)
+      ) {
+        setShowNotifications(false);
+      }
+      if (languageRef.current && !languageRef.current.contains(event.target)) {
+        setShowLanguageDropdown(false);
+      }
     }
 
-    // Fermeture du menu des notifications
-    if (
-      notificationsRef.current &&
-      !notificationsRef.current.contains(event.target)
-    ) {
-      setShowNotifications(false);
-    }
-    if (languageRef.current && !languageRef.current.contains(event.target)) {
-      setShowLanguageDropdown(false);
-    }
+    document.addEventListener('mousedown', handleClickOutside);
 
-    
-  
-  }
-
-  // Ajoute l'écouteur lors du montage
-  document.addEventListener('mousedown', handleClickOutside);
-
-  // Retire l'écouteur lors du démontage
-  return () => {
-    document.removeEventListener('mousedown', handleClickOutside);
-  };
-}, [menuRef, notificationsRef, languageRef]);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [menuRef, notificationsRef, languageRef]);
   const toggleUserDropdown = () => {
     setShowUserDropdown(!showUserDropdown);
   };
-  // Now, 'userId' is available here because it's part of the component's state
   const UserInfo = () => (
     <div className="user-info" ref={menuRef}>
       {userInfo && (
@@ -419,7 +407,6 @@ useEffect(() => {
         );
       }
 
-      // Filter out the deleted notification from the state
       setNotifications(
         notifications.filter((n) => n.id_notif !== notificationId)
       );
@@ -437,7 +424,7 @@ useEffect(() => {
             Authorization: `Bearer ${token}`,
           },
         });
-        setUserPoints(response.data.points); // Set user points in state
+        setUserPoints(response.data.points);
       } catch (error) {
         console.error('Error fetching user points', error);
       }
@@ -457,12 +444,12 @@ useEffect(() => {
   const isProfilePage = location.pathname.includes('/profil/');
   const isHomePage = location.pathname.includes('/Home');
 
-   const changeLanguage = (language) => {
-     i18n.changeLanguage(language);
-   };
-    const toggleLanguageDropdown = () => {
-      setShowLanguageDropdown(!showLanguageDropdown);
-    };
+  const changeLanguage = (language) => {
+    i18n.changeLanguage(language);
+  };
+  const toggleLanguageDropdown = () => {
+    setShowLanguageDropdown(!showLanguageDropdown);
+  };
   return (
     <div
       className={`navbar-horizontal ${
@@ -547,7 +534,9 @@ useEffect(() => {
             userInfo.type === 'employe' &&
             searchResults.collaborators.length > 0 && (
               <>
-                <div className="search-results-title">{t('collaborateurs')} :</div>
+                <div className="search-results-title">
+                  {t('collaborateurs')} :
+                </div>
                 {searchResults.collaborators.map((collab) => (
                   <div
                     key={collab.id_collaborateur}
@@ -574,7 +563,7 @@ useEffect(() => {
       ) : (
         searchInput && (
           <div className="search-results search-no-results-message">
-           {t ('Aucun résultat trouvé pour votre recherche.')}{' '}
+            {t('Aucun résultat trouvé pour votre recherche.')}{' '}
           </div>
         )
       )}

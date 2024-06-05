@@ -5,6 +5,7 @@ import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
 import DemandeReserClick from './demandeReservClick';
 import DemandeReservation from './demandeReservation';
+import NavbarHaut from '../../../components/navbar/navbarHaut';
 function CollaborateurPage2() {
   const [collaborateurs, setCollaborateurs] = useState([]);
   const [selectedCollaborateurId2, setSelectedCollaborateurId2] = useState(null);
@@ -53,53 +54,55 @@ function CollaborateurPage2() {
 
   return (
     <>
-        <div className="PageCollaborateur-container">
-          {showOffreCollab2 && (
-            <button className="voir-tous-bttn" onClick={handleViewAllOffers}>
-              Tous les Réservations
-            </button>
-          )}
-          <div className="collabora-scroll-container">
-            {collaborateurs
-              .slice(startIndex, startIndex + 6)
-              .map((collaborateur, index) => (
-                <div
-                  key={index}
-                  className={`collab-card ${
-                    selectedCollaborateurId2 === collaborateur.id_collaborateur
-                      ? 'active'
-                      : ''
-                  }`}
-                  onClick={() =>
-                    handleCollaboratorClick(collaborateur.id_collaborateur)
-                  }
-                >
-                  <img
-                    src={`http://localhost:5000/${collaborateur.logo}`}
-                    alt={collaborateur.nom}
-                  />
-                  <div className="collab-card-title">{collaborateur.nom}</div>
-                </div>
-              ))}
-          </div>
-          <div className="navig-buttons">
-            <FaArrowLeft
-              onClick={handlePrevious}
-              className="nav-icon"
-              disabled={startIndex === 0}
-            />
-            <FaArrowRight
-              onClick={handleNext}
-              className="nav-icon"
-              disabled={startIndex + 4 >= collaborateurs.length}
-            />
-          </div>
-          {showOffreCollab2 ? (
-            <DemandeReserClick collaborateurId={selectedCollaborateurId2} />
-          ) : (
-            <DemandeReservation />
-          )}
+      <NavbarHaut />
+
+      <div className="PageCollaborateur-container">
+        {showOffreCollab2 && (
+          <button className="voir-tous-bttn" onClick={handleViewAllOffers}>
+            Tous les Réservations
+          </button>
+        )}
+        <div className="collabora-scroll-container">
+          {collaborateurs
+            .slice(startIndex, startIndex + 6)
+            .map((collaborateur, index) => (
+              <div
+                key={index}
+                className={`collab-card ${
+                  selectedCollaborateurId2 === collaborateur.id_collaborateur
+                    ? 'active'
+                    : ''
+                }`}
+                onClick={() =>
+                  handleCollaboratorClick(collaborateur.id_collaborateur)
+                }
+              >
+                <img
+                  src={`http://localhost:5000/${collaborateur.logo}`}
+                  alt={collaborateur.nom}
+                />
+                <div className="collab-card-title">{collaborateur.nom}</div>
+              </div>
+            ))}
         </div>
+        <div className="navig-buttons">
+          <FaArrowLeft
+            onClick={handlePrevious}
+            className="nav-icon"
+            disabled={startIndex === 0}
+          />
+          <FaArrowRight
+            onClick={handleNext}
+            className="nav-icon"
+            disabled={startIndex + 4 >= collaborateurs.length}
+          />
+        </div>
+        {showOffreCollab2 ? (
+          <DemandeReserClick collaborateurId={selectedCollaborateurId2} />
+        ) : (
+          <DemandeReservation />
+        )}
+      </div>
     </>
   );
 }

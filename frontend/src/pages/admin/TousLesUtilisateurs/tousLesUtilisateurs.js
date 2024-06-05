@@ -5,6 +5,7 @@ import { MaterialReactTable, createMRTColumnHelper } from 'material-react-table'
 import NavAdmin from '../NavAdmin/navAdmin';
 import './tousLesUtilisateurs.css';
 import { MRT_Localization_FR } from 'material-react-table/locales/fr';
+import NavbarHaut from '../../../components/navbar/navbarHaut';
 
 const columnHelper = createMRTColumnHelper();
 
@@ -124,6 +125,10 @@ function TousLesUtilisateurs() {
 
   return (
     <>
+      <div className="tousLesUtilisateurs-container">
+        {' '}
+        <NavbarHaut />
+      </div>
       <NavAdmin />
       <div className="tousLesUtilisateurs-container">
         <div className="tousLesUtilisateurs-header">
@@ -147,26 +152,30 @@ function TousLesUtilisateurs() {
           columns={columns}
           data={utilisateurs.filter(
             (utilisateur) =>
-              utilisateur.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              utilisateur.prenom.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              utilisateur.nom
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
+              utilisateur.prenom
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
               utilisateur.email.toLowerCase().includes(searchTerm.toLowerCase())
-              )}
-              getRowId={(row) => row.id_utilisateur}
-              localization={MRT_Localization_FR}
-              muiSearchTextFieldProps={{
-                variant: 'outlined',
-                label: 'Rechercher des utilisateurs',
-              }}
-              muiTableHeadCellProps={{
-                sx: {
-                  backgroundColor: '#A2C8CC', // Couleur de fond des cellules d'en-tête
-                  '&:hover': {},
-                },
-              }}
-            />
-          </div>
-        </>
-      );
+          )}
+          getRowId={(row) => row.id_utilisateur}
+          localization={MRT_Localization_FR}
+          muiSearchTextFieldProps={{
+            variant: 'outlined',
+            label: 'Rechercher des utilisateurs',
+          }}
+          muiTableHeadCellProps={{
+            sx: {
+              backgroundColor: '#A2C8CC', // Couleur de fond des cellules d'en-tête
+              '&:hover': {},
+            },
+          }}
+        />
+      </div>
+    </>
+  );
     }
     
     export default TousLesUtilisateurs;

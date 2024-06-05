@@ -27,7 +27,10 @@ const Dashboard = () => {
         <Grid
           container
           spacing={2}
-          style={{ padding: '30px', backgroundColor: '#d3d3d3',marginTop:'5px' }}
+          style={{
+            padding: '40px',
+            backgroundColor: '#bee6f4',
+          }}
         >
           <Grid item xs={12}>
             <Grid container justifyContent="center" spacing={2}>

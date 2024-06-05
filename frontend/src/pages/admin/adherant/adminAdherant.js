@@ -6,6 +6,7 @@ import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import ooredooLogo from './../../../assets/ooredoo2.png';
 import NavAdmin from '../NavAdmin/navAdmin';
+import NavbarHaut from '../../../components/navbar/navbarHaut';
 const AdminPanel = () => {
   const [demandes, setDemandes] = useState([]);
   const demandesRef = useRef(null);
@@ -62,7 +63,7 @@ const AdminPanel = () => {
               } avec succès.`,
               'success'
             );
-            fetchDemandes(); // Refresh after update
+            fetchDemandes(); 
           })
           .catch((error) => {
             console.error('Error updating adherant status:', error);
@@ -113,7 +114,7 @@ const AdminPanel = () => {
        pdf.text(title, textOffset, 30);
 
        // Draw the Ooredoo logo
-       pdf.addImage(ooredooLogo, 'PNG', 10, 5, 35, 35); // Position (x=10, y=10), Size (width=50, height=50)
+       pdf.addImage(ooredooLogo, 'PNG', 10, 5, 35, 35); 
 
        // Add the form screenshot to the PDF
        const imgProps = pdf.getImageProperties(imgData);
@@ -152,6 +153,7 @@ const AdminPanel = () => {
 
   return (
     <>
+    <NavbarHaut/>
       <NavAdmin />
       <h2
         style={{
