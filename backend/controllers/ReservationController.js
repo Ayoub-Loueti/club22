@@ -85,22 +85,22 @@ exports.createReservation = async (req, res) => {
       montant_deduit: prix_totale,
       statut_paiement,
       months: months,
-      nbr_enfants:nbr_enfants,
+      nbr_enfants: nbr_enfants,
     });
 
     // Create associated hotel records
     if (hotels && Array.isArray(hotels)) {
       await Promise.all(
         hotels.map((hotel) => {
-          console.log("aaaa",hotel.pension)
+          console.log('aaaa', hotel.pension);
           return Hotel.create({
             id_reservation: reservation.id_reservation,
             nbr_adults: hotel.nbr_adults,
             nbr_enfants: hotel.nbr_enfants,
             prix: hotel.prix,
             typechambreR: hotel.typechambreR,
-            vue:hotel.vue,
-            pension:hotel.pension,
+            vue: hotel.vue,
+            pension: hotel.pension,
           });
         })
       );
@@ -182,7 +182,15 @@ exports.getReservationDemande = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue','pension'],
+            attributes: [
+              'id_hotel',
+              'nbr_adults',
+              'nbr_enfants',
+              'prix',
+              'typeChambreR',
+              'vue',
+              'pension',
+            ],
           });
 
           const totalPeople = hotels.reduce(
@@ -280,7 +288,15 @@ exports.getReservationReponse = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue','pension'],
+            attributes: [
+              'id_hotel',
+              'nbr_adults',
+              'nbr_enfants',
+              'prix',
+              'typeChambreR',
+              'vue',
+              'pension',
+            ],
           });
 
           const totalPeople = hotels.reduce(
@@ -511,12 +527,11 @@ exports.reparationReservation = async (req, res) => {
   }
 };
 
-// Configuration de Nodemailer avec les variables d'environnement
 const transporter = nodemailer.createTransport({
-  service: 'gmail', // ou autre service de messagerie
+  service: 'gmail',
   auth: {
-    user: process.env.MAILER_EMAIL_ID, // Utilisez la variable d'environnement pour l'email
-    pass: process.env.MAILER_PASSWORD, // Utilisez la variable d'environnement pour le mot de passe
+    user: process.env.MAILER_EMAIL_ID,
+    pass: process.env.MAILER_PASSWORD,
   },
 });
 
@@ -549,37 +564,70 @@ exports.reparationReservations = async (req, res) => {
           as: 'employe',
           include: [{ model: Utilisateur, as: 'utilisateur' }],
         },
-       
       ],
     });
 
     await Promise.all(
       reservations.map(async (reservation) => {
         await reservation.update({ etat: 'reparation' });
-        // Création du PDF
         const doc = new PDFDocument();
         const pdfPath = path.join(
           __dirname,
           `Reservation_${reservation.id_reservation}.pdf`
         );
         doc.pipe(fs.createWriteStream(pdfPath));
+
+        doc;
         doc
-          .fontSize(12)
+          .fontSize(24)
+          .fillColor('#879eb9')
           .text(
             `Détails de la réservation pour l'offre ${reservation.offre.titre}`,
-            { align: 'left' }
-          )
-          .moveDown(0.5);
+            100,
+            50
+          );
         doc
-          .text(`Date de début: ${reservation.date_debut}`, { align: 'left' })
-          .text(`Date de fin: ${reservation.date_fin}`, { align: 'left' })
-          .text(`Type: ${reservation.typeR}`, { align: 'left' })
+          .moveDown()
+          .strokeColor('black')
+          .lineWidth(1)
+          .moveTo(50, doc.y)
+          .lineTo(550, doc.y)
+          .stroke();
+        doc.moveDown();
+
+        doc
+          .fontSize(17)
+          .fillColor('#191f43')
+
+          .text(`Date de début: ${reservation.date_debut}`)
+          .text(`Date de fin: ${reservation.date_fin}`);
+        doc
+          .moveDown()
+          .strokeColor('black')
+          .lineWidth(1)
+          .moveTo(50, doc.y)
+          .lineTo(550, doc.y)
+          .stroke();
+        doc
+          .moveDown()
+
+          .text(`Type: ${reservation.typeR}`)
           .text(`Prix total: ${reservation.prix_totale.toFixed(2)} TND`, {
             align: 'left',
           })
           .text(`Statut de paiement: ${reservation.statut_paiement}`, {
             align: 'left',
-          })
+          });
+        doc
+          .moveDown()
+          .strokeColor('black')
+          .lineWidth(1)
+          .moveTo(50, doc.y)
+          .lineTo(550, doc.y)
+          .stroke();
+        doc
+          .moveDown()
+
           .text(
             `Nom de l'employé: ${reservation.employe.utilisateur.nom} ${reservation.employe.utilisateur.prenom}`,
             { align: 'left' }
@@ -591,30 +639,47 @@ exports.reparationReservations = async (req, res) => {
           .text(
             `Téléphone de l'employé: ${reservation.employe.utilisateur.tel}`,
             { align: 'left' }
-          )
-          .moveDown(0.5);
+          );
+        doc
+          .moveDown()
+          .strokeColor('black')
+          .lineWidth(1)
+          .moveTo(50, doc.y)
+          .lineTo(550, doc.y)
+          .stroke()
+          .moveDown();
 
-        // Ajout des détails spécifiques en fonction du type de réservation
         switch (reservation.typeR) {
           case 'hotel':
             const grandhot = await GrandHotelModel.findOne({
               where: { id_offre: reservation.id_offre },
             });
-            doc.text(`Nom de l'hôtel: ${grandhot.nom_hotel}`, {
-              align: 'left',
+            doc.text(`Nom de l'hôtel: ${grandhot.nom_hotel}`);
+            const hotelss = await Hotel.findAll({
+              where: { id_reservation: reservation.id_reservation },
             });
-              const hotelss = await Hotel.findAll({
-                where: { id_reservation: reservation.id_reservation },
-              });
             hotelss.forEach((hotel, index) => {
               doc.text(
                 `Chambre ${index + 1}: Adultes - ${
                   hotel.nbr_adults
                 }, Enfants - ${hotel.nbr_enfants}, Prix - ${hotel.prix.toFixed(
                   2
-                )} TND`,
-                { align: 'left' }
+                )} TND`
               );
+              doc.text(`Type de chambre: ${hotel.typechambreR}`);
+
+              if (hotel.vue !== 'simple') {
+                doc.text(`Supplément  la vue: ${hotel.vue}`);
+              }
+              if (hotel.single) {
+                doc.text(
+                  `Supplément chambre single: ${hotel.prixsingle.toFixed(
+                    2
+                  )} TND`
+                );
+              }
+
+              doc.text(`Pension: ${hotel.pension}`);
             });
             break;
           case 'voyage':
@@ -625,11 +690,12 @@ exports.reparationReservations = async (req, res) => {
               .text(`Nombre de jours: ${voyag.nbr_jours}`, {
                 align: 'left',
               })
+
               .text(`Inclus: ${voyag.inclus}`, {
                 align: 'left',
               });
             break;
-          case 'activite':
+          case 'activité':
             const activi = await ActiviteModel.findOne({
               where: { id_offre: reservation.id_offre },
             });
@@ -645,9 +711,8 @@ exports.reparationReservations = async (req, res) => {
 
         doc.end();
 
-        // Envoi de l'email
         const mailOptions = {
-          from: process.env.MAILER_EMAIL_ID, // Utilisez l'email de l'expéditeur depuis les variables d'environnement
+          from: process.env.MAILER_EMAIL_ID,
           to: reservation.offre.collaborateur.email,
           subject: 'Notification de réparation de réservation',
           text: 'Veuillez trouver ci-joint le document PDF avec les détails de la réparation.',
@@ -677,10 +742,9 @@ exports.reparationReservations = async (req, res) => {
 
 exports.acceptationReservation = async (req, res) => {
   const userId = req.userId;
-  const reservationId = req.params.id; // Assuming reservation ID is passed as a parameter
+  const reservationId = req.params.id;
 
   try {
-    // Find the employee corresponding to the logged-in user
     const admin = await Utilisateur.findOne({
       where: {
         id_utilisateur: userId,
@@ -691,7 +755,6 @@ exports.acceptationReservation = async (req, res) => {
       return res.status(404).json({ error: 'admin not found' });
     }
 
-    // Find the reservation to be cancelled
     const userReservation = await Reservation.findOne({
       where: {
         id_reservation: reservationId,
@@ -701,9 +764,7 @@ exports.acceptationReservation = async (req, res) => {
         {
           model: Offre,
           as: 'offre',
-          include: [
-            { model: Collaborateur, as: 'collaborateur' },
-          ],
+          include: [{ model: Collaborateur, as: 'collaborateur' }],
         },
         {
           model: Employe,
@@ -776,9 +837,7 @@ exports.refuserReservation = async (req, res) => {
         {
           model: Offre,
           as: 'offre',
-          include: [
-            { model: Collaborateur, as: 'collaborateur' },
-          ],
+          include: [{ model: Collaborateur, as: 'collaborateur' }],
         },
         {
           model: Employe,
@@ -966,7 +1025,7 @@ exports.getMyReservations = async (req, res) => {
         },
         // Ensure other necessary models are included as needed
       ],
-      order: [['id_reservation', 'DESC']]
+      order: [['id_reservation', 'DESC']],
     });
 
     reservations = await Promise.all(
@@ -1006,7 +1065,15 @@ exports.getMyReservations = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue','pension'],
+            attributes: [
+              'id_hotel',
+              'nbr_adults',
+              'nbr_enfants',
+              'prix',
+              'typeChambreR',
+              'vue',
+              'pension',
+            ],
           });
 
           const totalPeople = hotels.reduce(
@@ -1076,7 +1143,7 @@ exports.getMyReservationsBoxD = async (req, res) => {
         },
         // Ensure other necessary models are included as needed
       ],
-      order: [['id_reservation', 'DESC']]
+      order: [['id_reservation', 'DESC']],
     });
 
     reservations = await Promise.all(
@@ -1116,7 +1183,15 @@ exports.getMyReservationsBoxD = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue','pension'],
+            attributes: [
+              'id_hotel',
+              'nbr_adults',
+              'nbr_enfants',
+              'prix',
+              'typeChambreR',
+              'vue',
+              'pension',
+            ],
           });
 
           const totalPeople = hotels.reduce(
@@ -1183,7 +1258,7 @@ exports.getMyReservationsBoxT = async (req, res) => {
         },
         // Ensure other necessary models are included as needed
       ],
-      order: [['id_reservation', 'DESC']]
+      order: [['id_reservation', 'DESC']],
     });
 
     reservations = await Promise.all(
@@ -1223,7 +1298,15 @@ exports.getMyReservationsBoxT = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue','pension'],
+            attributes: [
+              'id_hotel',
+              'nbr_adults',
+              'nbr_enfants',
+              'prix',
+              'typeChambreR',
+              'vue',
+              'pension',
+            ],
           });
 
           const totalPeople = hotels.reduce(
@@ -1389,7 +1472,15 @@ exports.getReservByCollabA = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue','pension'],
+            attributes: [
+              'id_hotel',
+              'nbr_adults',
+              'nbr_enfants',
+              'prix',
+              'typeChambreR',
+              'vue',
+              'pension',
+            ],
           });
 
           const totalPeople = hotels.reduce(
@@ -1491,7 +1582,15 @@ exports.getReservByCollabB = async (req, res) => {
         if (reservation.typeR === 'hotel') {
           const hotels = await Hotel.findAll({
             where: { id_reservation: reservation.id_reservation },
-            attributes: ['id_hotel', 'nbr_adults', 'nbr_enfants', 'prix','typeChambreR','vue','pension'],
+            attributes: [
+              'id_hotel',
+              'nbr_adults',
+              'nbr_enfants',
+              'prix',
+              'typeChambreR',
+              'vue',
+              'pension',
+            ],
           });
 
           const totalPeople = hotels.reduce(
@@ -1602,21 +1701,31 @@ exports.getMyReservationsDeduction = async (req, res) => {
 };
 
 exports.payeReservation = async (req, res) => {
-  const  reservationId  = req.params.id ;
+  const reservationId = req.params.id;
 
   try {
-      const reservation = await Reservation.findByPk(reservationId);
-      if (!reservation) {
-          return res.status(404).json({ error: 'Reservation not found' });
-      }
-      await reservation.update({
-          statut_paiement: 'payé'
-      });
+    const reservation = await Reservation.findByPk(reservationId);
+    if (!reservation) {
+      return res.status(404).json({ error: 'Reservation not found' });
+    }
+    await reservation.update({
+      statut_paiement: 'payé',
+    });
 
-      res.status(200).json({ message: 'Payment status updated to paid successfully', reservation });
+    res
+      .status(200)
+      .json({
+        message: 'Payment status updated to paid successfully',
+        reservation,
+      });
   } catch (error) {
-      console.error('Error updating payment status:', error);
-      res.status(500).json({ error: 'Failed to update payment status', details: error.message });
+    console.error('Error updating payment status:', error);
+    res
+      .status(500)
+      .json({
+        error: 'Failed to update payment status',
+        details: error.message,
+      });
   }
 };
 

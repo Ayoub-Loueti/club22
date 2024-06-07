@@ -125,7 +125,11 @@ function TousLesUtilisateurs() {
 
   return (
     <>
-      <div className="tousLesUtilisateurs-container">
+      <div
+        style={{
+          background: 'linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5)',
+        }}
+      >
         {' '}
         <NavbarHaut />
       </div>
