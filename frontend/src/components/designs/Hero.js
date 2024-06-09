@@ -8,7 +8,7 @@ import { Range } from 'react-range';
 
 export default function Hero({ onFiltered }) {
   const [destination, setDestination] = useState('');
-  const [promotionType, setPromotionType] = useState('all'); // 'all', 'promo', 'nonpromo'
+  const [promotionType, setPromotionType] = useState('all'); 
 const [minPrice, setMinPrice] = useState(0);
 const [maxPrice, setMaxPrice] = useState(1000);
 const [prices, setPrices] = useState([minPrice, maxPrice]);
@@ -150,7 +150,7 @@ const [prices, setPrices] = useState([minPrice, maxPrice]);
                     {...props}
                     style={{
                       ...props.style,
-                      height: '1rem', // Réduire la taille des poignées
+                      height: '1rem', 
                       width: '1rem',
                       backgroundColor: '#384696',
                       borderRadius: '50%',
@@ -299,10 +299,10 @@ const Section = styled.section`
         font-size: 0.9rem;
       }
       .min-price {
-        margin-right: 1rem; // Ajoutez un espace à droite du prix minimum
+        margin-right: 1rem; 
       }
       .max-price {
-        margin-left: 1rem; // Ajoutez un espace à gauche du prix maximum
+        margin-left: 1rem;
       }
       input[type='range'] {
         width: 100%;

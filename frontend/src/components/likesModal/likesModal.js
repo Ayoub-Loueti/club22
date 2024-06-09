@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from 'react-modal';
 import '../likesModal/likesModal.css';
-import { NavLink } from 'react-router-dom'; // Assurez-vous d'importer NavLink de 'react-router-dom'
+import { NavLink } from 'react-router-dom'; 
 import { useTranslation } from 'react-i18next';
 
 const LikesModal = ({ isOpen, onRequestClose, likes }) => {

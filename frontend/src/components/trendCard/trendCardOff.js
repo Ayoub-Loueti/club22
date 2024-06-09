@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './trendCard.css';
-import axios from 'axios';  // Ensure axios is installed
+import axios from 'axios'; 
 
 const TrendCard = () => {
-  const [trends, setTrends] = useState([]);  // State to store the fetched hashtags
+  const [trends, setTrends] = useState([]); 
 
   useEffect(() => {
     const fetchTrends = async () => {

@@ -1,46 +1,45 @@
-/* Styles spécifiques pour le modal des likes */
 .likes-modal-content {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   max-width: 400px;
-  width: 90%; /* Adaptatif à la taille de l'écran */
-  background: #f9f9f9; /* Un fond légèrement gris pour un look doux */
+  width: 90%; 
+  background: #f9f9f9; 
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  outline: none; /* Supprime le contour lors de la sélection du modal */
+  outline: none; 
 }
 
 .likes-modal-header {
-  color: #333; /* Couleur de texte foncée pour un contraste élevé */
+  color: #333; 
   font-size: 24px;
   margin-bottom: 20px;
-  text-align: center; /* Centre le titre dans le modal */
+  text-align: center;
 }
 
 .likes-modal-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  max-height: 300px; /* Hauteur maximale avant de faire défiler */
-  overflow-y: auto; /* Permet le défilement si le contenu dépasse max-height */
+  max-height: 300px; 
+  overflow-y: auto; 
 }
 
 .likes-modal-list-item {
-  display: flex; /* Affichage en flex pour aligner la photo et le nom */
-  align-items: center; /* Centre les éléments verticalement */
+  display: flex; 
+  align-items: center; 
   padding: 10px;
-  border-bottom: 1px solid #ddd; /* Une bordure plus claire pour séparer les éléments */
+  border-bottom: 1px solid #ddd; 
 }
 
 .likes-modal-close-btn {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: #ff5a5f; /* Couleur de fond du bouton fermer */
-  color: #fff; /* Texte blanc pour le bouton fermer */
+  background: #ff5a5f; 
+  color: #fff; 
   border: none;
   border-radius: 50%;
   font-size: 20px;
@@ -56,18 +55,18 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  object-fit: cover; /* Assure que la photo couvre tout le cercle */
+  object-fit: cover; 
   margin-right: 15px;
 }
 
 .likes-modal-user-link {
   text-decoration: none;
-  color: #0077b6; /* Une teinte de bleu un peu différente */
-  font-weight: 500; /* Rend le texte légèrement plus épais */
+  color: #0077b6; 
+  font-weight: 500; 
 }
 
 .likes-modal-user-link:hover {
-  color: #005f99; /* Un bleu plus foncé au survol */
+  color: #005f99; 
 }
 
 .likes-modal-overlay {
@@ -76,6 +75,6 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7); /* Un fond plus foncé pour plus de contraste */
-  z-index: 1000; /* S'assure que l'overlay est au-dessus de tout autre contenu */
+  background-color: rgba(0, 0, 0, 0.7); 
+  z-index: 1000; 
 }

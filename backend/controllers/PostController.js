@@ -84,10 +84,10 @@ exports.createPost = (req, res) => {
           oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
           if (!lastPointsAddition || lastPointsAddition < oneWeekAgo) {
             // If it has been more than a week, add the points and update the derniereAddition field
-            await Client.update({ points: existingClient.points + 10, derniereAddition: new Date() }, { where: { id_utilisateur } });
+            await Client.update({ points: existingClient.points + 5, derniereAddition: new Date() }, { where: { id_utilisateur } });
             await Notification.create({
               id_post: newPost.id_post,
-              notifier: '10 points sont ajoutés à votre boutique',
+              notifier: '5 points sont ajoutés à votre boutique',
               id_own_post: id_utilisateur,
               id_utilisateur: id_utilisateur,
               date_notif: new Date(),

@@ -69,35 +69,164 @@ function AddFromCollaborateur() {
       case 'voyage':
         return (
           <>
-            <label>Programme: <textarea value={programme} onChange={(e) => setProgramme(e.target.value)} /></label>
-            <label>Inclus: <textarea value={inclus} onChange={(e) => setInclus(e.target.value)} /></label>
-            <label>Nombre de Jours: <input type="number" value={nbr_jours} onChange={(e) => setNbrJours(parseInt(e.target.value, 10))} /></label>
+            <label>
+              Programme:{' '}
+              <textarea
+                value={programme}
+                onChange={(e) => setProgramme(e.target.value)}
+              />
+            </label>
+            <label>
+              Inclus:{' '}
+              <textarea
+                value={inclus}
+                onChange={(e) => setInclus(e.target.value)}
+              />
+            </label>
+            <label>
+              Nombre de Jours:{' '}
+              <input
+                type="number"
+                value={nbr_jours}
+                onChange={(e) => setNbrJours(parseInt(e.target.value, 10))}
+              />
+            </label>
           </>
         );
       case 'hotel':
         return (
           <>
-            <label>Nom de l'Hôtel: <input type="text" value={hotelName} onChange={(e) => setHotelName(e.target.value)} /></label>
-            <label>Étoiles: <input type="number" value={etoiles} onChange={(e) => setEtoiles(parseInt(e.target.value, 10))} /></label>
-            <label>Climatisation: <input type="checkbox" checked={climatisation} onChange={(e) => setClimatisation(e.target.checked)} /></label>
-            <label>Wi-Fi: <input type="checkbox" checked={wifi} onChange={(e) => setWifi(e.target.checked)} /></label>
-            <label>Piscine Extérieure: <input type="checkbox" checked={piscineExterieure} onChange={(e) => setPiscineExterieure(e.target.checked)} /></label>
-            <label>Piscine Couverte: <input type="checkbox" checked={piscineCouverte} onChange={(e) => setPiscineCouverte(e.target.checked)} /></label>
-            <label>Bassin pour Enfants: <input type="checkbox" checked={bassinEnfants} onChange={(e) => setBassinEnfants(e.target.checked)} /></label>
-            <label>Parking: <input type="checkbox" checked={parking} onChange={(e) => setParking(e.target.checked)} /></label>
-            <label>Discothèque: <input type="checkbox" checked={discotheque} onChange={(e) => setDiscotheque(e.target.checked)} /></label>
-            <label>Plage Privée: <input type="checkbox" checked={plagePrivee} onChange={(e) => setPlagePrivee(e.target.checked)} /></label>
-            <label>Ascenseur: <input type="checkbox" checked={ascenseur} onChange={(e) => setAscenseur(e.target.checked)} /></label>
-            <label>Salle de Sport: <input type="checkbox" checked={salleDeSport} onChange={(e) => setSalleDeSport(e.target.checked)} /></label>
-            <label>Aire de Jeux pour Enfants: <input type="checkbox" checked={aireDeJeuxEnfants} onChange={(e) => setAireDeJeuxEnfants(e.target.checked)} /></label>
+            <label>
+              Nom de l'Hôtel:{' '}
+              <input
+                type="text"
+                value={hotelName}
+                onChange={(e) => setHotelName(e.target.value)}
+              />
+            </label>
+            <label>
+              Étoiles:{' '}
+              <input
+                type="number"
+                value={etoiles}
+                onChange={(e) => setEtoiles(parseInt(e.target.value, 10))}
+              />
+            </label>
+            <label>
+              Climatisation:{' '}
+              <input
+                type="checkbox"
+                checked={climatisation}
+                onChange={(e) => setClimatisation(e.target.checked)}
+              />
+            </label>
+            <label>
+              Wi-Fi:{' '}
+              <input
+                type="checkbox"
+                checked={wifi}
+                onChange={(e) => setWifi(e.target.checked)}
+              />
+            </label>
+            <label>
+              Piscine Extérieure:{' '}
+              <input
+                type="checkbox"
+                checked={piscineExterieure}
+                onChange={(e) => setPiscineExterieure(e.target.checked)}
+              />
+            </label>
+            <label>
+              Piscine Couverte:{' '}
+              <input
+                type="checkbox"
+                checked={piscineCouverte}
+                onChange={(e) => setPiscineCouverte(e.target.checked)}
+              />
+            </label>
+            <label>
+              Bassin pour Enfants:{' '}
+              <input
+                type="checkbox"
+                checked={bassinEnfants}
+                onChange={(e) => setBassinEnfants(e.target.checked)}
+              />
+            </label>
+            <label>
+              Parking:{' '}
+              <input
+                type="checkbox"
+                checked={parking}
+                onChange={(e) => setParking(e.target.checked)}
+              />
+            </label>
+            <label>
+              Discothèque:{' '}
+              <input
+                type="checkbox"
+                checked={discotheque}
+                onChange={(e) => setDiscotheque(e.target.checked)}
+              />
+            </label>
+            <label>
+              Plage Privée:{' '}
+              <input
+                type="checkbox"
+                checked={plagePrivee}
+                onChange={(e) => setPlagePrivee(e.target.checked)}
+              />
+            </label>
+            <label>
+              Ascenseur:{' '}
+              <input
+                type="checkbox"
+                checked={ascenseur}
+                onChange={(e) => setAscenseur(e.target.checked)}
+              />
+            </label>
+            <label>
+              Salle de Sport:{' '}
+              <input
+                type="checkbox"
+                checked={salleDeSport}
+                onChange={(e) => setSalleDeSport(e.target.checked)}
+              />
+            </label>
+            <label>
+              Aire de Jeux pour Enfants:{' '}
+              <input
+                type="checkbox"
+                checked={aireDeJeuxEnfants}
+                onChange={(e) => setAireDeJeuxEnfants(e.target.checked)}
+              />
+            </label>
           </>
         );
       case 'activite':
         return (
           <>
-            <label>Programme: <textarea value={programme} onChange={(e) => setProgramme(e.target.value)} /></label>
-            <label>Inclus: <textarea value={inclus} onChange={(e) => setInclus(e.target.value)} /></label>
-            <label>Durée (en heures): <input type="number" value={duree} onChange={(e) => setDuree(parseInt(e.target.value, 10))} /></label>
+            <label>
+              Programme:{' '}
+              <textarea
+                value={programme}
+                onChange={(e) => setProgramme(e.target.value)}
+              />
+            </label>
+            <label>
+              Inclus:{' '}
+              <textarea
+                value={inclus}
+                onChange={(e) => setInclus(e.target.value)}
+              />
+            </label>
+            <label>
+              Durée (en heures):{' '}
+              <input
+                type="number"
+                value={duree}
+                onChange={(e) => setDuree(parseInt(e.target.value, 10))}
+              />
+            </label>
           </>
         );
       default:
@@ -108,12 +237,14 @@ function AddFromCollaborateur() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/checkValidation/${id_collaborateur}`);
+        const response = await axios.get(
+          `http://localhost:5000/checkValidation/${id_collaborateur}`
+        );
         if (response.data.result === 0) {
           setAccessGranted(false);
           Swal.fire({
             title: 'Accès refusé',
-            text: 'Vous n\'avez pas accès à cette page, veuillez contacter l\'administrateur.',
+            text: "Vous n'avez pas accès à cette page, veuillez contacter l'administrateur.",
             icon: 'error',
             confirmButtonText: 'OK',
           });
@@ -134,7 +265,7 @@ function AddFromCollaborateur() {
     const files = Array.from(e.target.files);
     setImages(files);
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -171,39 +302,99 @@ function AddFromCollaborateur() {
       formData.append('duree', duree);
     }
     images.forEach((image, index) =>
-        formData.append('photos', image, image.name || `image_${index}.jpg`)
-      );
+      formData.append('photos', image, image.name || `image_${index}.jpg`)
+    );
     try {
-      const response = await axios.post(`http://localhost:5000/offerFromCollab/${id_collaborateur}`, formData);
-      Swal.fire('Succès', 'L\'offre a été ajoutée avec succès.', 'success');
+      const response = await axios.post(
+        `http://localhost:5000/offerFromCollab/${id_collaborateur}`,
+        formData
+      );
+      Swal.fire('Succès', "L'offre a été ajoutée avec succès.", 'success');
     } catch (error) {
       console.error('Erreur:', error);
-      Swal.fire('Erreur', 'Une erreur s\'est produite lors de l\'ajout de l\'offre.', 'error');
+      Swal.fire(
+        'Erreur',
+        "Une erreur s'est produite lors de l'ajout de l'offre.",
+        'error'
+      );
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <label>Titre: <input type="text" value={titre} onChange={(e) => setTitre(e.target.value)} required /></label>
-      <label>Description: <textarea value={description} onChange={(e) => setDescription(e.target.value)} required /></label>
-      <label>Prix: <input type="number" value={prix} onChange={(e) => setPrix(parseFloat(e.target.value))} required /></label>
-      <label>Date de début: <input type="date" value={date_debut} onChange={(e) => setDateDebut(e.target.value)}required /></label>
-      <label>Date de fin: <input type="date" value={date_fin} onChange={(e) => setDateFin(e.target.value)} required /></label>
-<label>Type d'offre:
-<select value={typeOffre} onChange={handleTypeChange} required>
-<option value="">Sélectionnez le type d'offre</option>
-<option value="voyage">Voyage</option>
-<option value="hotel">Hôtel</option>
-<option value="activite">Activité</option>
-</select>
-</label>
-{renderFieldsForTypeOffre()}
-<label>Remise: <input type="number" value={remise} onChange={(e) => setRemise(parseInt(e.target.value, 10))} /></label>
-<label>Images:
-        <input type="file" accept="image/*" multiple onChange={handleImageChange} />
+      <label>
+        Titre:{' '}
+        <input
+          type="text"
+          value={titre}
+          onChange={(e) => setTitre(e.target.value)}
+          required
+        />
       </label>
-<button type="submit">Ajouter l'offre</button>
-</form>
-);
+      <label>
+        Description:{' '}
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
+        />
+      </label>
+      <label>
+        Prix:{' '}
+        <input
+          type="number"
+          value={prix}
+          onChange={(e) => setPrix(parseFloat(e.target.value))}
+          required
+        />
+      </label>
+      <label>
+        Date de début:{' '}
+        <input
+          type="date"
+          value={date_debut}
+          onChange={(e) => setDateDebut(e.target.value)}
+          required
+        />
+      </label>
+      <label>
+        Date de fin:{' '}
+        <input
+          type="date"
+          value={date_fin}
+          onChange={(e) => setDateFin(e.target.value)}
+          required
+        />
+      </label>
+      <label>
+        Type d'offre:
+        <select value={typeOffre} onChange={handleTypeChange} required>
+          <option value="">Sélectionnez le type d'offre</option>
+          <option value="voyage">Voyage</option>
+          <option value="hotel">Hôtel</option>
+          <option value="activite">Activité</option>
+        </select>
+      </label>
+      {renderFieldsForTypeOffre()}
+      <label>
+        Remise:{' '}
+        <input
+          type="number"
+          value={remise}
+          onChange={(e) => setRemise(parseInt(e.target.value, 10))}
+        />
+      </label>
+      <label>
+        Images:
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleImageChange}
+        />
+      </label>
+      <button type="submit">Ajouter l'offre</button>
+    </form>
+  );
 }
 export default AddFromCollaborateur;

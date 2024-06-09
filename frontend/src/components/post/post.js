@@ -20,7 +20,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns'; 
 import { fr, enUS } from 'date-fns/locale'; 
-import { faBookmark as farBookmark } from '@fortawesome/free-regular-svg-icons'; // Importing the regular (outline) bookmark icon
+import { faBookmark as farBookmark } from '@fortawesome/free-regular-svg-icons'; 
 
 import Swal from 'sweetalert2';
 import { NavLink } from 'react-router-dom';
@@ -57,7 +57,7 @@ const Post = (props) => {
   const [likesModalVisible, setLikesModalVisible] = useState(false);
   const [likesData, setLikesData] = useState([]);
   const [showToast, setShowToast] = useState(false);
-  const [editLieu, setEditLieu] = useState(data.lieu || ''); // Provide a default empty string if data.lieu is null
+  const [editLieu, setEditLieu] = useState(data.lieu || ''); 
   const [showLocationModal, setShowLocationModal] = useState(false);
 
   const { i18n } = useTranslation();
@@ -66,7 +66,7 @@ const Post = (props) => {
     const locale = i18n.language.startsWith('fr') ? fr : enUS;
     const dateFormat = `dd MMMM yyyy '${t('à')}' HH:mm`;
     setDateFormatted(format(new Date(data.date_post), dateFormat, { locale }));
-  }, [data.date_post, i18n.language, t]); // Ajoutez t ici pour réagir aux changements de traduction
+  }, [data.date_post, i18n.language, t]);
 
   useEffect(() => {
     const token = localStorage.getItem('login');
@@ -129,7 +129,6 @@ const Post = (props) => {
   }, []);
 
   useEffect(() => {
-    // Assuming this endpoint checks if a post is saved and returns { isSaved: true/false }
     const checkIfPostIsSaved = async () => {
       try {
         const response = await axios.get(

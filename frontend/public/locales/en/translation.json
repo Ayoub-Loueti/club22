@@ -197,146 +197,97 @@
   "Nombre de mois": "Number of months",
   "J'autorise la déduction sur mon salaire pour cette réservation": "I authorize the deduction from my salary for this reservation",
   "Réserver": "Book",
-  "Prix":"Price",
+  "Prix": "Price",
   "Chambre": "Room",
-  "ANNULER":"CANCEL",
-  "Célibataires":"Single",
-  "Alcool":"Alcohol",
-  "Découvrir plus":"Discover more",
-  "Évaluations":"Ratings",
-  "Adhérent":"Member",
+  "ANNULER": "CANCEL",
+  "Célibataires": "Single",
+  "Alcool": "Alcohol",
+  "Découvrir plus": "Discover more",
+  "Évaluations": "Ratings",
+  "Adhérent": "Member",
   "Présentation de l'Hôtel": "Hotel Presentation",
-  "Étoiles":"Stars",
-  "Equipements":"Amenities",
-  "Climatisation":"Air conditioning",
-"Piscine Extérieure":"Outdoor Pool",
-"Piscine Couverte":"Indoor Pool",
-"Bassin pour enfants":"Children's Pool",
-"Discothèque":"NightClub",
-"Plage privée":"Private Beach",
-"Ascenseur":"Elevator",
-"Salle de sport":"Gym",
-"Aire de jeux pour enfants":"Children's playground",
-"Centre Esthétique":"Beauty Center",
-"Toboggan":"Water slide",
-"Pieds dans l'Eau":"Beachfront",
-"Piscine Eau de Mer":"Sea Water Pool",
-"Garde d'enfants":"Baby Setting",
-"Tennis de Table":"Ping Pong",
-"Location de Voiture":"Car rental",
-"Change Monétaire":"Currency Exchange",
-"Non spécifié":"Not specified",
-"Nombre de jours":"Number of days",
-"Inclus":"Included",
-"Voir Programme":"See program",
-"Durée":"Duration",
-"Une erreur s'est produite lors de la récupération des réservations.":"An error occurred while fetching reservations.",
-"Voulez-vous confirmer cette réservation ?":"Would you like to confirm this reservation ?",
-"Oui, confirmer !":"Yes, confirm!",
-"Non, annuler !":"No, cancel !",
-"Confirmé !":"Confirmed !",
-"La réservation a été confirmée.":"The reservation has been confirmed.",
-"Échec !":"Failure !",
-"Une erreur s'est produite lors de la confirmation de la réservation.":"An error occurred while confirming the reservation.",
-"Voulez-vous annuler cette réservation ?":"Do you want to cancel this reservation ?",
-"Oui, annuler":"Yes, cancel",
-"Non, la garder":"No, keep it.",
-"Annulé !":"Cancelled !",
-"La réservation a été annulée.":"The reservation has been cancelled.",
-"Une erreur s'est produite lors de l'annulation de la réservation.":"An error occurred while cancelling the reservation.",
-"Échec de la soumission du vote.":"Failed to submit the vote.",
-"Historique déduction salaire":"History of salary deductions",
-"Date Paiement":"Payment Date",
-"Montant Deduit":"Deducted Amount",
-"Aucun détail de déduction à afficher.":"No deduction details to display.",
-"Vos réservations en attente":"Your reservations pending",
-"Réservation annulée":"Reservation canceled",
-"Modifier":"Modify",
-"Vos réservations confirmées":"Your reservations confirmed",
-"Demande envoyée au collaborateur":"Request sent to collaborator",
-"État des réservations traitées":"Status of processed reservations",
-"PAYÉE EN LIGNE":"PAID ONLINE",
-"Payer":"Pay",
-"Prix de chambre":"Room price",
-"Mise à jour !":"Update!",
-"Votre réservation a été mise à jour avec succès.":"Your reservation has been successfully updated.",
-"Échec de la mise à jour de la réservation.":"Failed to update the reservation.",
-"Modifier Réservation":"Edit Reservation",
-"Nombre des personnes":"Number of people",
-"Prix totale":"Total price",
-"Enregistrer":"Save",
-"Détails de réservation":"Reservation details",
-"Employé":"Employee",
-"Nom et Prénom":"First and Last Name",
-"Date de réservation":"Reservation date",
-"De":"From",
-"Jusq'ua":"Until",
-"Nom de l'hotel":"Hotel name",
-"Nombres de personnes":"Number of people",
-"heures":"hours"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
+  "Étoiles": "Stars",
+  "Equipements": "Amenities",
+  "Climatisation": "Air conditioning",
+  "Piscine Extérieure": "Outdoor Pool",
+  "Piscine Couverte": "Indoor Pool",
+  "Bassin pour enfants": "Children's Pool",
+  "Discothèque": "NightClub",
+  "Plage privée": "Private Beach",
+  "Ascenseur": "Elevator",
+  "Salle de sport": "Gym",
+  "Aire de jeux pour enfants": "Children's playground",
+  "Centre Esthétique": "Beauty Center",
+  "Toboggan": "Water slide",
+  "Pieds dans l'Eau": "Beachfront",
+  "Piscine Eau de Mer": "Sea Water Pool",
+  "Garde d'enfants": "Baby Setting",
+  "Tennis de Table": "Ping Pong",
+  "Location de Voiture": "Car rental",
+  "Change Monétaire": "Currency Exchange",
+  "Non spécifié": "Not specified",
+  "Nombre de jours": "Number of days",
+  "Inclus": "Included",
+  "Voir Programme": "See program",
+  "Durée": "Duration",
+  "Une erreur s'est produite lors de la récupération des réservations.": "An error occurred while fetching reservations.",
+  "Voulez-vous confirmer cette réservation ?": "Would you like to confirm this reservation ?",
+  "Oui, confirmer !": "Yes, confirm!",
+  "Non, annuler !": "No, cancel !",
+  "Confirmé !": "Confirmed !",
+  "La réservation a été confirmée.": "The reservation has been confirmed.",
+  "Échec !": "Failure !",
+  "Une erreur s'est produite lors de la confirmation de la réservation.": "An error occurred while confirming the reservation.",
+  "Voulez-vous annuler cette réservation ?": "Do you want to cancel this reservation ?",
+  "Oui, annuler": "Yes, cancel",
+  "Non, la garder": "No, keep it.",
+  "Annulé !": "Cancelled !",
+  "La réservation a été annulée.": "The reservation has been cancelled.",
+  "Une erreur s'est produite lors de l'annulation de la réservation.": "An error occurred while cancelling the reservation.",
+  "Échec de la soumission du vote.": "Failed to submit the vote.",
+  "Historique déduction salaire": "History of salary deductions",
+  "Date Paiement": "Payment Date",
+  "Montant Deduit": "Deducted Amount",
+  "Aucun détail de déduction à afficher.": "No deduction details to display.",
+  "Vos réservations en attente": "Your reservations pending",
+  "Réservation annulée": "Reservation canceled",
+  "Modifier": "Modify",
+  "Vos réservations confirmées": "Your reservations confirmed",
+  "Demande envoyée au collaborateur": "Request sent to collaborator",
+  "État des réservations traitées": "Status of processed reservations",
+  "PAYÉE EN LIGNE": "PAID ONLINE",
+  "Payer": "Pay",
+  "Prix de chambre": "Room price",
+  "Mise à jour !": "Update!",
+  "Votre réservation a été mise à jour avec succès.": "Your reservation has been successfully updated.",
+  "Échec de la mise à jour de la réservation.": "Failed to update the reservation.",
+  "Modifier Réservation": "Edit Reservation",
+  "Nombre des personnes": "Number of people",
+  "Prix totale": "Total price",
+  "Enregistrer": "Save",
+  "Détails de réservation": "Reservation details",
+  "Employé": "Employee",
+  "Nom et Prénom": "First and Last Name",
+  "Date de réservation": "Reservation date",
+  "De": "From",
+  "Jusq'ua": "Until",
+  "Nom de l'hotel": "Hotel name",
+  "Nombres de personnes": "Number of people",
+  "heures": "hours",
+  "🎁 Récompenses chez les boutiques Ooredoo 🎁": "🎁 Rewards at Ooredoo stores 🎁",
+  "1 Go d'internet 🌐": "1 GB of internet 🌐",
+  "Bon d'achat de 30 DT 🛒": "30 DT gift card 💳",
+  "Chargeur portable 🔌": "Mobile charger 🔌",
+  "Câble de recharge 📱": "Charging cable 📱",
+  "Casque audio filaire 🎧": "Wired headphones 🎧",
+  "Carte cadeau de 100 DT 💳": "100 DT gift card 💳",
+  "Smartwatch basique ⌚": "Basic smartwatch ⌚",
+  "Tablette Android 📱": "Android tablet 📱",
+  "Smartphone entrée de gamme 📞": "Entry-level smartphone 📞",
+  "Carte cadeau de 200 DT 💳": "200 DT gift card 💳",
+  "Ordinateur portable 💻": "Laptop 💻",
+  "TV LED 32 pouces 📺": "32-inch LED TV 📺",
+  "Veuillez saisir du contenu.": "Please enter some content.",
+  "Veuillez sélectionner une catégorie.":"Please select a category.",
+  "Vous ne pouvez saisir que jusqu'à 600 caractères.":"You can only enter up to 600 characters."
 }

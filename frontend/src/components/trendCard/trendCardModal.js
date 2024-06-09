@@ -1,7 +1,6 @@
-// PostSavedModal.js
 import React from 'react';
 import Modal from 'react-modal';
-import TrendCard from './trendCard'; // Adjust the import path as needed
+import TrendCard from './trendCard';
 
 Modal.setAppElement('#root');
 
@@ -15,9 +14,8 @@ function TrendCardModal({ modalOpened, setModalOpened }) {
           marginRight: '-50%',
           borderRadius: '10px',
           transform: 'translate(-50%, -50%)',
-          maxHeight: '80vh', // Example max height
-          overflow: 'auto', // Enable scrolling
-          // Further customization as needed
+          maxHeight: '80vh', 
+          overflow: 'auto', 
         },
         overlay: {
           backgroundColor: 'rgba(0, 0, 0, 0.5)',

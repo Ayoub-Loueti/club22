@@ -1,22 +1,20 @@
 .PostSaved {
-  margin: 0 auto; /* Center the component horizontally */
-  max-width: 800px; /* Adjust the maximum width as needed */
-  padding: 20px; /* Add padding for spacing */
+  margin: 0 auto;
+  max-width: 800px; 
+  padding: 20px; 
 
-  /* Add a border to create separation from surrounding elements */
   border: 1px solid #ccc;
-  border-radius: 8px; /* Rounded corners for a modern look */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow for depth */
+  border-radius: 8px; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 
-  /* Optional: Add background color */
-  background-color: #fff; /* White background for contrast */
+  background-color: #fff; 
 }
 
 .PostSaved .no-posts-msg {
-  font-size: 22px; /* Adjust font size */
-  color: #555; /* Dark gray text color */
-  text-align: center; /* Center the message text */
-  margin-top: 20px; /* Add space above the message */
+  font-size: 22px; 
+  color: #555; 
+  text-align: center; 
+  margin-top: 20px; 
   
 }
 

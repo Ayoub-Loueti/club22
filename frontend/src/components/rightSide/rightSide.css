@@ -5,9 +5,9 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  align-items: flex-end; /* Align content to the right */
-  margin-right: 120px; /* Adjust as needed */
-  margin-top: 120px; /* Adjust as needed */
+  align-items: flex-end; 
+  margin-right: 120px; 
+  margin-top: 120px; 
   padding: 20px;
 }
 
@@ -30,8 +30,8 @@
   margin: 0;
   background: white;
   border-radius: 0.5rem;
-  color: #879eb9; /* White text color for high contrast */
-  font-weight: bold; /* Emphasize the button text */
+  color: #879eb9; 
+  font-weight: bold;
   transition: all 0.3s ease;
   padding: 0.5rem 0.5rem;
   border: 1px solid #879eb9;
@@ -43,8 +43,8 @@
     98.63deg,
     #879eb9 0%,
     #191f43 100%
-  ); /* Darker lavender on hover for a subtle shift */
-  color: white; /* Light grey for text to maintain contrast and soften the look */
+  ); 
+  color: white; 
   border: 1px solid #879eb9;
 }
 

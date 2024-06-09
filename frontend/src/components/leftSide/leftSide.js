@@ -19,9 +19,19 @@ const UserCard = ({ user, title }) => {
     <div className="user-card" onClick={handleClick}>
       <div className="user-card-title">{title}</div>
       <div className="user-container">
-        <img src={`http://localhost:5000/${user.photo}`} alt="Utilisateur" className="user-avatar" />
+        <img
+          src={
+            user.photo
+              ? `http://localhost:5000/${user.photo}`
+              : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+          }
+          alt="Utilisateur"
+          className="user-avatar"
+        />{' '}
         <div className="user-details">
-          <div>{user.prenom} {user.nom}</div>
+          <div>
+            {user.prenom} {user.nom}
+          </div>
         </div>
       </div>
     </div>
@@ -85,7 +95,7 @@ const LeftSide = () => {
 
     return () => clearInterval(interval);
 
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); 
 
   return (
     <>

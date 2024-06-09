@@ -1,0 +1,52 @@
+.rewards-modal-content {
+  display: flex;
+  justify-content: space-between;
+}
+
+.rewards-modal-left {
+  flex: 1;
+  padding-right: 20px;
+}
+
+.rewards-modal-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rewards-modal-image {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 10px;
+}
+
+.rewards-modal-header {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #191f43;
+}
+
+.rewards-modal-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.rewards-modal-list-item {
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 16px;
+  color: #191f43;
+}
+
+.rewards-modal-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #191f43;
+}

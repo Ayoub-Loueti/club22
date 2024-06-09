@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './trendCard.css';
-import Posts from '../posts/posts';  // Adjust the import path as needed
-import Modal from 'react-modal'; // Import Modal
+import Posts from '../posts/posts';  
+import Modal from 'react-modal'; 
 import { useTranslation } from 'react-i18next';
 
 const TrendCard = () => {
@@ -42,9 +42,8 @@ const TrendCard = () => {
         marginRight: '-50%',
         borderRadius: '10px',
         transform: 'translate(-50%, -50%)',
-        maxHeight: '80vh', // Example max height
-        overflow: 'auto', // Enable scrolling
-        // Further customization as needed
+        maxHeight: '80vh', 
+        overflow: 'auto', 
       },
       overlay: {
         backgroundColor: 'rgba(0, 0, 0, 0.5)',

@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
 import Post from '../post/post';
-import { useParams, useNavigate } from 'react-router-dom'; // Import useParams and useNavigate
+import { useParams, useNavigate } from 'react-router-dom'; 
 
-Modal.setAppElement('#root'); // Properly set the app element for accessibility
+Modal.setAppElement('#root'); 
 
 const PostLink = () => {
   const [postDetails, setPostDetails] = useState(null);
-  const { postId } = useParams(); // Get postId from URL parameters
-  const navigate = useNavigate(); // Hook to perform navigation
+  const { postId } = useParams(); 
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchPostDetails = async () => {
@@ -51,12 +51,12 @@ const PostLink = () => {
   };
 
   const onRequestClose = () => {
-    navigate(-1); // Go back to the previous page or history state
+    navigate(-1); 
   };
 
   return (
     <Modal
-      isOpen={!!postId} // Modal is open if there's a postId
+      isOpen={!!postId} 
       onRequestClose={onRequestClose}
       style={customStyles}
     >

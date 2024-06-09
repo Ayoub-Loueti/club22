@@ -23,18 +23,16 @@ import AdherantModal from "../AdherantModal/AdherantModal" ;
 function Navbar() {
   const [isVisible, setIsVisible] = useState(true);
   const [randomUsers, setRandomUsers] = useState([]);
-  const [navbarExtensionColor, setNavbarExtensionColor] = useState('#f3f3f3'); // Default color
+  const [navbarExtensionColor, setNavbarExtensionColor] = useState('#f3f3f3'); 
   const [userInfo, setUserInfo] = useState(null);
   const [userId, setUserId] = useState(null); 
   const [isAdherent, setIsAdherent] = useState(false); 
   const [isAdherantModalOpen, setIsAdherantModalOpen] = useState(false); 
 
   const navigate = useNavigate();
-  // Current user's ID for navigation to the profile page
   const [currentUserId, setCurrentUserId] = useState(null);
 
   useEffect(() => {
-    // Assuming the user ID is stored in localStorage under 'userId' after login
     const storedUserId = JSON.parse(localStorage.getItem('userId'));
     setCurrentUserId(storedUserId);
   }, []);
@@ -74,7 +72,7 @@ function Navbar() {
 
   useEffect(() => {
     const token = localStorage.getItem('login');
-    const storedUserId = JSON.parse(localStorage.getItem('userId')); // Rename for clarity
+    const storedUserId = JSON.parse(localStorage.getItem('userId')); 
     setUserId(storedUserId);
 
     if (token && storedUserId) {
@@ -169,7 +167,7 @@ function Navbar() {
           <FontAwesomeIcon
           icon={faCommentSlash}
           className="navbar-iconnn"
-          onClick={() => setIsAdherantModalOpen(true)} // This line changes to open the modal
+          onClick={() => setIsAdherantModalOpen(true)} 
           />
           <AdherantModal
           isOpen={isAdherantModalOpen}

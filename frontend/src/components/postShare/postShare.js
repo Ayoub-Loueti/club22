@@ -5,7 +5,6 @@ import EmojiModal from './ReactModal';
 import {
   UilScenery,
   UilLocationPoint,
-  UilSchedule,
   UilTimes,
   UilSmile,
 } from '@iconscout/react-unicons';
@@ -21,17 +20,17 @@ const PostShare = () => {
   const [contenu, setContenu] = useState('');
   const token = JSON.parse(localStorage.getItem('login'))?.token;
   const [userInfo, setUserInfo] = useState(null);
-  const [userId, setUserId] = useState(null); 
+  const [userId, setUserId] = useState(null);
   const [type, setType] = useState('');
   const [categorySelected, setCategorySelected] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [lieu, setLieu] = useState('');
-  const [showEmojiModal, setShowEmojiModal] = useState(false); // State to control the Emoji Modal
-  const [react, setReact] = useState(''); // State to store selected react
+  const [showEmojiModal, setShowEmojiModal] = useState(false);
+  const [react, setReact] = useState('');
 
   const handleEmojiClick = (emojiName) => {
     setReact(emojiName);
-    setShowEmojiModal(false); // Optionally close modal on emoji click
+    setShowEmojiModal(false);
   };
 
   useEffect(() => {
@@ -63,7 +62,7 @@ const PostShare = () => {
   }, []);
 
   const handleScheduleClick = () => {
-    setShowEmojiModal(true); // Function to open the Emoji Modal
+    setShowEmojiModal(true);
   };
 
   const onImageChange = (event) => {
@@ -73,21 +72,21 @@ const PostShare = () => {
         file: file,
       }));
 
-      setImage(files); 
+      setImage(files);
     }
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     let errorMessages = [];
     if (!contenu.trim()) {
-      errorMessages.push('Veuillez saisir du contenu.');
+      errorMessages.push(t('Veuillez saisir du contenu.'));
     }
     if (type === '') {
-      errorMessages.push('Veuillez sélectionner une catégorie.');
+      errorMessages.push(t('Veuillez sélectionner une catégorie.'));
     }
     if (contenu.length > 600) {
-      errorMessages.push("Vous ne pouvez saisir que jusqu'à 600 caractères.");
+      errorMessages.push(t("Vous ne pouvez saisir que jusqu'à 600 caractères."));
     }
 
     if (errorMessages.length > 0) {
@@ -103,7 +102,7 @@ const PostShare = () => {
     formData.append('contenu', contenu);
     formData.append('type', type);
     formData.append('lieu', lieu);
-    formData.append('react', react); // Append the selected react
+    formData.append('react', react);
     if (image && image.length > 0) {
       image.forEach((img) => {
         formData.append('photos', img.file);
@@ -200,7 +199,7 @@ const handleSubmit = async (e) => {
     setCategorySelected(true);
   };
   const handleLocationClick = () => {
-    setShowLocationModal(true); 
+    setShowLocationModal(true);
   };
   return (
     <div className="PostShare">
@@ -228,21 +227,35 @@ const handleSubmit = async (e) => {
           value={contenu}
           onChange={(e) => setContenu(e.target.value)}
         />
-       <div className="categoryContainer">
-      <span className="categoryLabel">{t('Sélectionnez une catégorie')}:</span>
-      <button className={`categoryButton ${type === 'hotel' ? 'active' : ''}`} onClick={() => handleTypeChange('hotel')}>
-        {t('Hôtel')}
-      </button>
-      <button className={`categoryButton ${type === 'voyage' ? 'active' : ''}`} onClick={() => handleTypeChange('voyage')}>
-        {t('Voyage')}
-      </button>
-      <button className={`categoryButton ${type === 'activité' ? 'active' : ''}`} onClick={() => handleTypeChange('activité')}>
-        {t('Activité')}
-      </button>
-      <button className={`categoryButton ${type === 'autre' ? 'active' : ''}`} onClick={() => handleTypeChange('autre')}>
-        {t('Autre')}
-      </button>
-    </div>
+        <div className="categoryContainer">
+          <span className="categoryLabel">
+            {t('Sélectionnez une catégorie')}:
+          </span>
+          <button
+            className={`categoryButton ${type === 'hotel' ? 'active' : ''}`}
+            onClick={() => handleTypeChange('hotel')}
+          >
+            {t('Hôtel')}
+          </button>
+          <button
+            className={`categoryButton ${type === 'voyage' ? 'active' : ''}`}
+            onClick={() => handleTypeChange('voyage')}
+          >
+            {t('Voyage')}
+          </button>
+          <button
+            className={`categoryButton ${type === 'activité' ? 'active' : ''}`}
+            onClick={() => handleTypeChange('activité')}
+          >
+            {t('Activité')}
+          </button>
+          <button
+            className={`categoryButton ${type === 'autre' ? 'active' : ''}`}
+            onClick={() => handleTypeChange('autre')}
+          >
+            {t('Autre')}
+          </button>
+        </div>
         <div className="postOptions">
           <div
             className="option"
@@ -261,19 +274,31 @@ const handleSubmit = async (e) => {
             <UilLocationPoint />
             {t('Lieu')}{' '}
           </div>
-         {react ? (
-          <div className="option" style={{ color: 'var(--react)' }} onClick={handleScheduleClick}>
-            <img src={require(`../../assets/${react}gif.gif`)} alt={react} style={{ width: '24px' }} />
-            {t(react)} 
-          </div>
-        ) : (
-          <div className="option" style={{ color: 'var(--schedule)' }} onClick={handleScheduleClick}>
-            <UilSmile />
-            {t('Réagir')}
-          </div>
-        )}
+          {react ? (
+            <div
+              className="option"
+              style={{ color: 'var(--react)' }}
+              onClick={handleScheduleClick}
+            >
+              <img
+                src={require(`../../assets/${react}gif.gif`)}
+                alt={react}
+                style={{ width: '24px' }}
+              />
+              {t(react)}
+            </div>
+          ) : (
+            <div
+              className="option"
+              style={{ color: 'var(--schedule)' }}
+              onClick={handleScheduleClick}
+            >
+              <UilSmile />
+              {t('Réagir')}
+            </div>
+          )}
           <button className="postShare-button" onClick={handleSubmit}>
-          {t ( 'Partager')}
+            {t('Partager')}
           </button>
           <div style={{ display: 'none' }}>
             <input

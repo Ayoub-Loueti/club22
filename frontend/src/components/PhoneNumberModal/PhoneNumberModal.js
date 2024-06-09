@@ -1,10 +1,9 @@
-// PhoneNumberModal.js
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import './PhoneNumberModal.css'; // Make sure the path is correct based on your project structure
+import './PhoneNumberModal.css'; 
 import Swal from 'sweetalert2'; 
 import withReactContent from 'sweetalert2-react-content';
 import { useTranslation } from 'react-i18next';
@@ -24,16 +23,16 @@ const PhoneNumberModal = ({ isOpen, onRequestClose }) => {
     try {
       const token = JSON.parse(localStorage.getItem('login'))?.token;
       await axios.post(
-        'http://localhost:5000/send-sms', // Adjusted to full URL for consistency with the working snippet
+        'http://localhost:5000/send-sms', 
         { phoneNumber: value },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      onRequestClose(); // Close the modal on success
+      onRequestClose(); 
        MySwal.fire({
          icon: 'success',
          title: t('SMS envoyé avec succès!'),
          showConfirmButton: false,
-         timer: 1500, // Fermer automatiquement après 1.5 secondes
+         timer: 1500, 
        });
     } catch (error) {
       console.error('Error sending SMS:', error);
@@ -46,7 +45,6 @@ const PhoneNumberModal = ({ isOpen, onRequestClose }) => {
     }
   };
 
-  // Custom styles for the modal as provided by you
   const customStyles = {
     content: {
       top: '50%',
@@ -87,7 +85,7 @@ const PhoneNumberModal = ({ isOpen, onRequestClose }) => {
           defaultCountry="TN"
           value={value}
           onChange={setValue}
-          className="PhoneInput" // Here we apply our custom styles
+          className="PhoneInput" 
         />
         {error && (
           <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>

@@ -25,7 +25,7 @@ import PhoneNumberModal from '../PhoneNumberModal/PhoneNumberModal';
 import { useTranslation } from 'react-i18next';
 import france from '../../assets/france.png';
 import uk from '../../assets/uk.png';
-
+import RewardsModal from '../RewardsMod/RewardsModal';
 function NavbarHaut() {
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
@@ -39,7 +39,8 @@ function NavbarHaut() {
   const [selectedPostId, setSelectedPostId] = useState(null);
   const menuRef = useRef();
   const languageRef = useRef();
-
+  const [isRewardsModalOpen, setIsRewardsModalOpen] = useState(false);
+const searchResultsRef = useRef();
   const notificationsRef = useRef();
 
   const [searchInput, setSearchInput] = useState('');
@@ -83,7 +84,6 @@ function NavbarHaut() {
           },
         }
       );
-      // Set the search results safely by ensuring both `users` and `offers` exist in the response data
       setSearchResults({
         users: Array.isArray(response.data.users) ? response.data.users : [],
         offers: Array.isArray(response.data.offers) ? response.data.offers : [],
@@ -264,6 +264,28 @@ function NavbarHaut() {
       console.error('Error marking notification as read', error);
     }
   };
+  const rewards = [
+    { points: 10, description: "1 Go d'internet 🌐" },
+    { points: 20, description: "Bon d'achat de 30 DT 🛒" },
+    { points: 40, description: 'Chargeur portable 🔌' },
+    { points: 60, description: 'Câble de recharge 📱' },
+    { points: 80, description: 'Casque audio filaire 🎧' },
+    { points: 100, description: 'Carte cadeau de 100 DT 💳' },
+    { points: 120, description: 'Smartwatch basique ⌚' },
+    { points: 160, description: 'Tablette Android 📱' },
+    { points: 200, description: 'Smartphone entrée de gamme 📞' },
+    { points: 250, description: 'Carte cadeau de 200 DT 💳' },
+    { points: 300, description: 'Ordinateur portable 💻' },
+    { points: 400, description: 'TV LED 32 pouces 📺' },
+  ];
+
+  const openRewardsModal = () => {
+    setIsRewardsModalOpen(true);
+  };
+
+  const closeRewardsModal = () => {
+    setIsRewardsModalOpen(false);
+  };
 
   const fetchNotificationsCount = async () => {
     const token = JSON.parse(localStorage.getItem('login')).token;
@@ -345,6 +367,13 @@ function NavbarHaut() {
       if (languageRef.current && !languageRef.current.contains(event.target)) {
         setShowLanguageDropdown(false);
       }
+      if (
+        searchResultsRef.current &&
+        !searchResultsRef.current.contains(event.target)
+      ) {
+        setSearchInput('');
+        setSearchResults({ users: [], offers: [], collaborators: [] });
+      }
     }
 
     document.addEventListener('mousedown', handleClickOutside);
@@ -352,7 +381,7 @@ function NavbarHaut() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [menuRef, notificationsRef, languageRef]);
+  }, [menuRef, notificationsRef, languageRef, searchResultsRef]);
   const toggleUserDropdown = () => {
     setShowUserDropdown(!showUserDropdown);
   };
@@ -479,7 +508,7 @@ function NavbarHaut() {
       {searchResults.users.length > 0 ||
       searchResults.offers.length > 0 ||
       searchResults.collaborators.length > 0 ? (
-        <div className="search-results">
+        <div className="search-results" ref={searchResultsRef}>
           {searchResults.users.length > 0 && (
             <>
               <div className="search-results-title">{t('Utilisateurs')} :</div>
@@ -576,8 +605,15 @@ function NavbarHaut() {
         />
       )}
       {userPoints !== null && userInfo && userInfo.type === 'client' && (
-        <span className="points">{userPoints} Points</span>
+        <span className="points" onClick={openRewardsModal}>
+          {userPoints} Points
+        </span>
       )}
+      <RewardsModal
+        isOpen={isRewardsModalOpen}
+        onRequestClose={closeRewardsModal}
+        rewards={rewards}
+      />
       <div className="icon-containerr">
         <div className="language-selector" ref={languageRef}>
           <FontAwesomeIcon

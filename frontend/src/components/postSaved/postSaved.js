@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Posts from '../posts/posts'; // Adjust the import path as needed
-import './postSaved.css'; // Make sure you have this CSS file for styling
+import Posts from '../posts/posts'; 
+import './postSaved.css'; 
 import PostModal from '../postModal/postModal';
 import { useTranslation } from 'react-i18next';
 
@@ -16,13 +16,12 @@ const PostSaved = () => {
   useEffect(() => {
     const fetchSavedPosts = async () => {
       try {
-        // Assuming the endpoint '/user/enregistrements' returns the list of saved posts for the logged-in user
         const response = await axios.get('http://localhost:5000/enregistrements', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setSavedPosts(response.data); // Assuming the response contains an array of saved posts
+        setSavedPosts(response.data); 
       } catch (error) {
         console.error('Error fetching saved posts:', error);
       }

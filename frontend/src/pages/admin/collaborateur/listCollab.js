@@ -3,14 +3,12 @@ import axios from 'axios';
 import './ListCollab.css';
 import UpdateCollaborateurModal from './UpdateCollaborateurModal';
 import AddCollaborateurModal from './AddCollaborateurModal';
-import OffreCollab from '../offre/OffreCollab'; // Ensure this path is correct
+import OffreCollab from '../offre/OffreCollab';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight, faCopy } from '@fortawesome/free-solid-svg-icons';
-import { FaArrowLeft } from 'react-icons/fa';
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import NavAdmin from '../NavAdmin/navAdmin';
-import { SHA256 } from 'crypto-js';
 function ListCollaborateur() {
   const [collaborateurs, setCollaborateurs] = useState([]);
   const [selectedCollaborateurId, setSelectedCollaborateurId] = useState(null);
@@ -125,7 +123,13 @@ function ListCollaborateur() {
       const response = await axios.put(
         `http://localhost:5000/collaborateurs/${id_collaborateur}/validation`,
         {},
-        { headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('login')).token}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem('login')).token
+            }`,
+          },
+        }
       );
       showAlert("Lien d'accès envoyé au collaborateur.", 'green');
     } catch (err) {
@@ -133,7 +137,7 @@ function ListCollaborateur() {
       showAlert('Failed to update validation', 'red');
     }
   };
-  
+
   const showAlert = (message, color) => {
     const alertBox = document.createElement('div');
     alertBox.textContent = message;
@@ -152,19 +156,18 @@ function ListCollaborateur() {
       font-weight: bold;
       font-family: Arial, sans-serif;
     `;
-  
+
     document.body.appendChild(alertBox);
-  
+
     setTimeout(() => {
       alertBox.remove();
-    }, 2000); // Remove the alert after 2 seconds
-  };  
+    }, 2000);
+  };
 
   return (
     <>
       <NavAdmin />
       <div className="listCollaborateur-container">
-
         <h1 className="listCollaborateur-title">LISTE DES COLLABORATEURS</h1>
 
         <button onClick={handleOpenModal} className="list-coll-button">
@@ -222,9 +225,12 @@ function ListCollaborateur() {
                   <h3 className="collaborateur-card-title">
                     {collaborateur.nom}
                     <FontAwesomeIcon
-                    icon={faCheck}
-                    className="validation-icon"
-                    onClick={() => handleCopyLink(collaborateur.id_collaborateur)}
+                      icon={faCheck}
+                      className="validation-icon"
+                      onClick={() =>
+                        handleCopyLink(collaborateur.id_collaborateur)
+                      }
+                      title="Envoyer lien ajout offre" 
                     />
                   </h3>
                   <p className="collaborateur-card-description">

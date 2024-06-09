@@ -21,7 +21,7 @@ const PostSide = () => {
       try {
         let url = 'http://localhost:5000/posts';
         if (postType !== 'tous') {
-          url += `/${postType}`; // Append the selected post type to the URL
+          url += `/${postType}`; 
         }
         const response = await axios.get(url, {
           headers: {
@@ -76,9 +76,7 @@ const PostSide = () => {
           {t('Activités')}
         </button>
       </div>
-      {/* Posts component */}
       <Posts posts={posts} openModalForPost={openModalForPost} />
-      {/* PostModal component */}
       <PostModal
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}

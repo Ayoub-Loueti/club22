@@ -1,6 +1,5 @@
 .listCollaborateur-container {
   background-color: #f0f4f8;
-  
 }
 
 .listCollaborateur-header {
@@ -35,9 +34,9 @@
 .collaborateur-scroll-container {
   display: flex;
   overflow-x: auto;
-  justify-content: start; /* Align to the start of the container */
-  align-items: center; 
-  padding: 0 20px; 
+  justify-content: start;
+  align-items: center;
+  padding: 0 20px;
   overflow-y: visible;
 }
 
@@ -50,15 +49,15 @@
   padding: 20px;
   margin-right: 10px;
   flex-shrink: 0;
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animation pour survol */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   margin: 0 10px;
   margin-bottom: 4%;
   margin-top: 4%;
-  border: 2px solid #cbd5e0; /* Bordure plus claire pour un look raffiné */
+  border: 2px solid #cbd5e0;
 }
 .collaborateur-card:hover {
-  transform: scale(1.04); /* Légère augmentation de la taille */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Ombre plus prononcée */
+  transform: scale(1.04);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 .collaborateur-card.active {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
@@ -85,23 +84,26 @@
   font-weight: bold;
 }
 .cards-and-navigation {
- position: relative; /* Le conteneur parent doit être positionné relativement */
+  position: relative;
   display: flex;
-  justify-content: center; /* Centre le conteneur des cartes */
-  align-items: center; /* Centrage vertical, si nécessaire */
+  justify-content: center;
+  align-items: center;
 }
-.prev{
- position: absolute;
-  left: 2%; /* Décale le bouton de 2% du bord gauche */
+.prev {
+  position: absolute;
+  left: 2%;
   top: 50%;
-  transform: translateY(-50%);}
+  transform: translateY(-50%);
+}
 .next {
   position: absolute;
-  right: 2%; /* Décale le bouton de 2% du bord droit */
+  right: 2%;
   top: 50%;
-  transform: translateY(-50%);}
+  transform: translateY(-50%);
+}
 
-.prev, .next {
+.prev,
+.next {
   background-color: #191f43;
   color: #fff;
   border: none;
@@ -109,18 +111,12 @@
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
-  /* Pas besoin de margin-top ici puisqu'on positionne absolument */
 }
 
-
 .stylish-separator {
-  height: 4px; /* Ligne plus fine */
-  background-image: linear-gradient(
-    to right,
-    #191f43,
-    #3182ce
-  ); /* Gradient moderne */
-  margin: 30px auto; /* Ajustement de l'espacement */
+  height: 4px;
+  background-image: linear-gradient(to right, #191f43, #3182ce);
+  margin: 30px auto;
 }
 
 .list-coll-button {
@@ -136,63 +132,64 @@
 }
 
 .list-coll-button:hover {
-  background-color: #191f43; /* Plus sombre au survol */
+  background-color: #191f43;
 }
-/* Styles généraux pour les boutons à l'intérieur des cartes */
 .collaborateur-card button {
   display: inline-block;
-  background-color: #879eb9; /* Couleur de fond */
-  color: #ffffff; /* Couleur du texte */
+  background-color: #879eb9;
+  color: #ffffff;
   border: none;
-  padding: 8px 12px; /* Padding autour du texte */
-  margin: 4px; /* Marge externe pour espacer les boutons */
-  border-radius: 4px; /* Bordures arrondies */
-  cursor: pointer; /* Change le curseur en main pour indiquer la possibilité de cliquer */
-  transition: background-color 0.3s ease; /* Transition douce pour le survol */
+  padding: 8px 12px;
+  margin: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-
-
-/* Effet au survol pour les boutons */
 .collaborateur-card button:hover {
-  opacity: 0.8; /* Rend le bouton légèrement transparent au survol */
+  opacity: 0.8;
 }
 .description-value {
-  color: #c53030; 
+  color: #c53030;
   font-weight: bold;
 }
 .collaborateur-card-title,
 .collaborateur-card-description {
-  white-space: nowrap; /* Prevent text from wrapping */
-  overflow: hidden; /* Hide text overflow */
-  text-overflow: ellipsis; /* Add ellipsis when text overflows */
-  width: 100%; /* Ensure the text spans the entire width of the card */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 }
-
 
 .description-value a {
-  color: #007bff; /* Bootstrap default link color */
-  text-decoration: none; /* Optional: removes underline from links */
+  color: #007bff;
+  text-decoration: none;
 }
 
-.description-value a:hover, .description-value a:focus {
-  text-decoration: underline; /* Adds underline on hover/focus for better visibility */
-  color: #0056b3; /* Darker shade of blue for hover state */
+.description-value a:hover,
+.description-value a:focus {
+  text-decoration: underline;
+  color: #0056b3;
 }
 .no-offers-card {
   padding: 20px;
   margin-top: 20px;
-  background-color: #f8d7da; /* light red */
-  color: #721c24; /* dark red */
+  background-color: #f8d7da;
+  color: #721c24;
   text-align: center;
   border-radius: 5px;
-  border: 1px solid #f5c6cb; /* slightly lighter red */
+  border: 1px solid #f5c6cb;
 }
 .no-offers-message {
   padding: 20px;
-  background-color: #f8d7da; /* Light red background for the message */
-  color: #721c24; /* Dark red text color */
+  background-color: #f8d7da;
+  color: #721c24;
   text-align: center;
   border-radius: 4px;
   margin-top: 20px;
+}
+.validation-icon {
+  margin-left: 8px;
+  color: #007bff;
+  cursor: pointer;
 }

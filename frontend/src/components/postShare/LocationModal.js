@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 const LocationModal = ({ isOpen, onClose, onLieuSubmit, lieu, setLieu }) => {
   const provider = new OpenStreetMapProvider();
   const [map, setMap] = useState(null);
-  const [position, setPosition] = useState([48.8566, 2.3522]); // Coordonnées initiales (Paris)
+  const [position, setPosition] = useState([48.8566, 2.3522]); 
   const [suggestions, setSuggestions] = useState([]);
     const { t } = useTranslation();
 

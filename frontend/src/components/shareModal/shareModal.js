@@ -3,8 +3,6 @@ import Modal from 'react-modal';
 import PostShare from '../postShare/postShare';
 
 
-// This line is important for accessibility reasons.
-// It binds your app and allows the screen readers to correctly announce the modal content.
 Modal.setAppElement('#root');
 
 function ShareModal({ modalOpened, setModalOpened }) {
@@ -29,9 +27,8 @@ function ShareModal({ modalOpened, setModalOpened }) {
       isOpen={modalOpened}
       onRequestClose={() => setModalOpened(false)}
       style={customStyles}
-      contentLabel="Share Modal" // This is important for accessibility reasons
+      contentLabel="Share Modal" 
     >
-      {/* Modal content goes here */}
       <PostShare />
     </Modal>
   );

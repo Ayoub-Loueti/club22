@@ -11,8 +11,8 @@ function SignaturePad({ setSignatureUrl }) {
   };
   const handleGenerate = () => {
   const url = sign.getTrimmedCanvas().toDataURL('image/png');
-  setSignatureUrl(url);  // Make sure this function is properly updating the parent state
-  setUrl(url);  // This updates the local state for display 
+  setSignatureUrl(url);  
+  setUrl(url);  
    
 };
 

@@ -18,12 +18,3 @@ const RightSide = () => {
 };
 
 export default RightSide;
-/*  <button
-        className="r-button" // Ensure you have this class styled as needed
-        onClick={() => {
-          console.log('Opening modal...');
-          setModalOpened(true);
-        }}
-      >
-        Partager
-      </button>dd c*/

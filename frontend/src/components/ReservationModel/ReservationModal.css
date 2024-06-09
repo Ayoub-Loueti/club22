@@ -1,43 +1,42 @@
-/* Base styles for the modal */
 .reservation-modal {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #ffffff; /* Crisp white background */
+  background-color: #ffffff; 
   padding: 20px;
-  border-radius: 8px; /* Soften the edges */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  width: 50%; /* Responsive width */
-  max-width: 600px; /* Maximum width */
+  border-radius: 8px; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  width: 50%; 
+  max-width: 600px; 
   z-index: 1000;
-  overflow: hidden; /* Ensures no internal content spills out */
+  overflow: hidden; 
 }
 
 .modal-user-info {
   display: flex;
   align-items: center;
   padding-bottom: 20px;
-  border-bottom: 1px solid #eee; /* Separator */
+  border-bottom: 1px solid #eee; 
 }
 
 .modal-user-photo {
-  width: 60px; /* Slightly larger photo */
+  width: 60px; 
   height: 60px;
   border-radius: 50%;
   margin-right: 20px;
-  object-fit: cover; /* Ensure the image covers the space properly */
+  object-fit: cover; 
 }
 
 .modal-user-details p {
   margin: 0;
-  color: #333; /* Darker font for better readability */
-  font-size: 16px; /* Larger font size for readability */
-  line-height: 1.5; /* More space between lines */
+  color: #333;
+  font-size: 16px; 
+  line-height: 1.5; 
 }
 
 .room-details {
-  background-color: #f9f9f9; /* Light grey background for each room block */
+  background-color: #f9f9f9; 
   border-radius: 8px;
   padding: 15px;
   margin-top: 20px;
@@ -45,30 +44,30 @@
 
 .room-details h3 {
   margin-top: 0;
-  color: #2a2a2a; /* Slightly darker color for heading */
+  color: #2a2a2a; 
 }
 
 .room-details p {
-  margin: 5px 0; /* Reduce spacing to compact the layout */
-  color: #555; /* Lighter text for less emphasis */
+  margin: 5px 0; 
+  color: #555;
 }
 
 button {
-  background-color: #5c67f2; /* A pleasant blue */
-  color: #fff; /* White text */
+  background-color: #5c67f2; 
+  color: #fff; 
   border: none;
   border-radius: 4px;
   padding: 8px 12px;
   cursor: pointer;
-  transition: background-color 0.3s; /* Smooth transition for hover effect */
+  transition: background-color 0.3s; 
 }
 
 button:hover {
-  background-color: #4a54e1; /* Darker shade on hover */
+  background-color: #4a54e1;
 }
 
 button:disabled {
-  background-color: #ccc; /* Gray out disabled buttons */
+  background-color: #ccc; 
   cursor: not-allowed;
 }
 
@@ -78,10 +77,9 @@ button:disabled {
   justify-content: space-between;
 }
 
-/* Adjust the width of buttons to ensure uniformity */
 .modal-actions button {
   flex-grow: 1;
-  margin: 0 10px; /* Space between buttons */
+  margin: 0 10px; 
 }
 .custom-alert {
     position: fixed;

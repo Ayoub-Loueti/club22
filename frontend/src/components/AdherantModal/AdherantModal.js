@@ -19,11 +19,11 @@ const customStyles = {
     transform: 'translate(-50%, -50%)',
     border: '1px solid #ccc',
     background: '#fff',
-    overflowY: 'auto', // Ensure vertical scroll is available if content is taller than max height
+    overflowY: 'auto', 
     borderRadius: '4px',
     outline: 'none',
     padding: '20px',
-    width: '620px', // Adjust width as needed
+    width: '620px', 
     maxHeight: '80vh',
     zIndex: '100',
   },

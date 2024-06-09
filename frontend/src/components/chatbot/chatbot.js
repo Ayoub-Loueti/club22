@@ -5,7 +5,7 @@ import './chatbot.css';
 const Chatbot = () => {
     const [messages, setMessages] = useState([]);
     const [inputText, setInputText] = useState('');
-    const [chatbotVisible, setChatbotVisible] = useState(false); // Initially false
+    const [chatbotVisible, setChatbotVisible] = useState(false); 
     const token = localStorage.getItem('login');
 
     const sendMessage = async () => {
