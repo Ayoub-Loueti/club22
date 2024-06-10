@@ -1,0 +1,176 @@
+.offre-collab-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 120px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  margin-right: 24px;
+}
+
+.offre-collab-container textarea {
+  padding: 11px;
+  width: 100%;
+  height: 150px;
+  min-height: 150px;
+  border-radius: 5px;
+  border: 2px solid #cbd5e0;
+  background-color: #edf2f7;
+  color: #2d3748;
+}
+
+.offre-collab-container input[type='text'],
+.offre-collab-container input[type='number'],
+.offre-collab-container input[type='date'],
+.offre-collab-container select {
+  padding: 11px;
+  width: 100%;
+  border-radius: 5px;
+  border: 2px solid #cbd5e0;
+  background-color: #edf2f7;
+  color: #2d3748;
+}
+
+.offre-collab-container input[type='file'] {
+  padding: 10px;
+  border-radius: 5px;
+  border: 2px dashed #cbd5e0;
+  background-color: #edf2f7;
+  color: #4a5568;
+}
+
+.cancelButCollab,
+.subButtonCollab {
+  padding: 10px 30px;
+  border-radius: 5px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 20%;
+  font-weight: bold;
+
+  text-transcollab: uppercase;
+}
+
+.subButtonCollab {
+  background-color: #c53030;
+    justify-content: center;
+  align-items: center;
+}
+
+.subButtonCollab:hover {
+  background-color: #9b2c2c;
+}
+
+.cancelButCollab {
+  background-color: #191f43;
+}
+
+.cancelButCollab:hover {
+  background-color: #879eb9;
+}
+.collabBut {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .offre-collab-container {
+    width: 90%;
+    margin: 0 auto;
+  }
+}
+
+.offre-collab-container label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: #4a5568;
+  text-transcollab: uppercase;
+  font-weight: bold;
+}
+
+.offre-collab-container select {
+  padding: 7px;
+  border-radius: 5px;
+  border: 2px solid #cbd5e0;
+  background-color: #edf2f7;
+  color: #2d3748;
+  width: 90%;
+  font-size: smaller;
+}
+.suggestions-listCollab {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background-color: #fff;
+  border: 1px solid #cbd5e0;
+  position: absolute;
+  width: 90%;
+  z-index: 1000;
+  font-size: smaller;
+}
+
+.suggestions-listCollab li {
+  padding: 6px;
+  cursor: pointer;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.suggestions-listCollab li:hover {
+  background-color: #ebf4ff;
+}
+.interdictions-sectionCollab {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.interdictions-sectionCollab h3 {
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 18px;
+}
+
+.offre-collab-container .MuiFormControlLabel-labelCollab {
+  color: #4a5568;
+  font-weight: normal;
+}
+
+.offre-collab-container .type-chambre-selectionCollab,
+.offre-collab-container .default-chambre-selectionCollab,
+.offre-collab-container .supplement-inputCollab {
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+.offre-collab-container .type-chambre-selectionCollab {
+  margin-top: 20px;
+}
+.offre-collab-container .type-chambre-label,
+.offre-collab-container .default-chambre-label,
+.offre-collab-container .supplement-label {
+  font-weight: bold;
+  color: #4a5568;
+  text-transcollab: uppercase;
+  margin-top: 20px;
+}
+.offre-radio-groupCollab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.offre-radio-labelCollab {
+  margin: 0;
+  font-weight: normal;
+  color: #4a5568;
+}
+.offre-checkbox-groupInterditCollab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

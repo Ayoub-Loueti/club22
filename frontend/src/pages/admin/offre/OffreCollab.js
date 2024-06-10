@@ -8,7 +8,6 @@ function OffreCollab({ collaborateurId }) {
       isCollabMode={true}
       collaborateurId={collaborateurId}
       onOffreAddedOrUpdated={() => {
-        /* Callback si nécessaire */
       }}
       
     />

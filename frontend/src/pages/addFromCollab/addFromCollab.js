@@ -13,7 +13,8 @@ import {
   OutlinedInput,
   FormControlLabel,
 } from '@mui/material';
-
+import { Editor } from '@tinymce/tinymce-react';
+import './addFromCollab.css';
 function AddFromCollaborateur() {
   const { id_collaborateur } = useParams();
   const [titre, setTitre] = useState('');
@@ -25,6 +26,7 @@ function AddFromCollaborateur() {
   const [remise, setRemise] = useState(0);
   const [accessGranted, setAccessGranted] = useState(true);
   const [images, setImages] = useState([]);
+  const [initialDataLoaded, setInitialDataLoaded] = useState(false);
 
   // States for Voyage-specific fields
   const [programme, setProgramme] = useState('');
@@ -288,10 +290,27 @@ function AddFromCollaborateur() {
         return (
           <>
             <label>
-              Programme:{' '}
-              <textarea
+              Programme:
+              <Editor
+                apiKey="t6iyui9hiq7n6y06u5ycbr6nnm4lhe54ovujihs4nc6k4ija"
+                init={{
+                  plugins:
+                    'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
+                  toolbar:
+                    'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                  tinycomments_mode: 'embedded',
+                  tinycomments_author: 'Author name',
+                  mergetags_list: [
+                    { value: 'First.Name', title: 'First Name' },
+                    { value: 'Email', title: 'Email' },
+                  ],
+                  ai_request: (request, respondWith) =>
+                    respondWith.string(() =>
+                      Promise.reject('See docs to implement AI Assistant')
+                    ),
+                }}
                 value={programme}
-                onChange={(e) => setProgramme(e.target.value)}
+                onEditorChange={(content, editor) => setProgramme(content)}
               />
             </label>
             <label>
@@ -307,6 +326,8 @@ function AddFromCollaborateur() {
                 type="number"
                 value={nbr_jours}
                 onChange={(e) => setNbrJours(parseInt(e.target.value, 10))}
+                min="0"
+                required
               />
             </label>
           </>
@@ -320,6 +341,7 @@ function AddFromCollaborateur() {
                 type="text"
                 value={hotelName}
                 onChange={(e) => setHotelName(e.target.value)}
+                required
               />
             </label>
             <label>
@@ -328,231 +350,264 @@ function AddFromCollaborateur() {
                 type="number"
                 value={etoiles}
                 onChange={(e) => setEtoiles(parseInt(e.target.value, 10))}
+                min="0"
+                required
               />
             </label>
-            <FormControl fullWidth className="type-chambre-selection">
-        <InputLabel id="demo-multiple-checkbox-label">
-          Type de Chambre
-        </InputLabel>
-        <Select
-          labelId="demo-multiple-checkbox-label"
-          id="demo-multiple-checkbox"
-          multiple
-          required
-          value={selectedTypes}
-          onChange={handleTypeChambreChange}
-          input={<OutlinedInput label="Type de Chambre" />}
-          renderValue={(selected) =>
-            selected
-              .map(
-                (id) => typesChambresOptions.find((type) => type.id === id).nom
-              )
-              .join(', ')
-          }
-        >
-          {typesChambresOptions.map((type) => (
-            <MenuItem key={type.id} value={type.id}>
-              <Checkbox checked={selectedTypes.includes(type.id)} />
-              <ListItemText primary={type.nom} />
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      <FormControl fullWidth className="default-chambre-selection">
-        <InputLabel id="default-chambre-label">Chambre par Défaut</InputLabel>
-        <Select
-          labelId="default-chambre-label"
-          id="default-chambre-select"
-          value={defaultChambre}
-          label="Chambre par Défaut"
-          onChange={handleDefaultChambreChange}
-          required
-        >
-          {selectedTypes.map((typeId) => (
-            <MenuItem key={typeId} value={typeId}>
-              {typesChambresOptions.find((type) => type.id === typeId).nom}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      {selectedTypes.map((typeId) => {
-        if (typeId === defaultChambre) {
-          return (
-            <div key={typeId} style={{ color: 'red' }}>
-              <div>
-                {typesChambresOptions.find((type) => type.id === typeId).nom}{' '}
-                (Par defaut)
-              </div>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={single[typeId] || false}
-                    onChange={(e) =>
-                      setSingle({ ...single, [typeId]: e.target.checked })
-                    }
-                  />
+            <FormControl fullWidth className="type-chambre-selectionCollab">
+              <InputLabel id="demo-multiple-checkbox-label">
+                Type de Chambre
+              </InputLabel>
+              <Select
+                labelId="demo-multiple-checkbox-label"
+                id="demo-multiple-checkbox"
+                multiple
+                required
+                value={selectedTypes}
+                onChange={handleTypeChambreChange}
+                input={<OutlinedInput label="Type de Chambre" />}
+                renderValue={(selected) =>
+                  selected
+                    .map(
+                      (id) =>
+                        typesChambresOptions.find((type) => type.id === id).nom
+                    )
+                    .join(', ')
                 }
-                label="Single"
-              />
-              {single[typeId] && (
-                <TextField
-                  label="Prix + supp single"
-                  type="number"
-                  value={prixsingle[typeId] || ''}
-                  onChange={(e) =>
-                    setPrixsingle({ ...prixsingle, [typeId]: e.target.value })
-                  }
-                  fullWidth
-                />
-              )}
+              >
+                {typesChambresOptions.map((type) => (
+                  <MenuItem key={type.id} value={type.id}>
+                    <Checkbox checked={selectedTypes.includes(type.id)} />
+                    <ListItemText primary={type.nom} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={vueMer[typeId] || false}
-                    onChange={(e) =>
-                      setVueMer({ ...vueMer, [typeId]: e.target.checked })
+            <FormControl fullWidth className="default-chambre-selectionCollab">
+              <InputLabel id="default-chambre-label">
+                Chambre par Défaut
+              </InputLabel>
+              <Select
+                labelId="default-chambre-label"
+                id="default-chambre-select"
+                value={defaultChambre}
+                label="Chambre par Défaut"
+                onChange={handleDefaultChambreChange}
+                required
+              >
+                {selectedTypes.map((typeId) => (
+                  <MenuItem key={typeId} value={typeId}>
+                    {
+                      typesChambresOptions.find((type) => type.id === typeId)
+                        .nom
                     }
-                  />
-                }
-                label="Vue sur Mer"
-              />
-              {vueMer[typeId] && (
-                <TextField
-                  label="Prix + supp vue sur mer"
-                  type="number"
-                  value={prixVueMer[typeId] || ''}
-                  onChange={(e) =>
-                    setPrixVueMer({ ...prixVueMer, [typeId]: e.target.value })
-                  }
-                  fullWidth
-                />
-              )}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={vuePiscine[typeId] || false}
-                    onChange={(e) =>
-                      setVuePiscine({
-                        ...vuePiscine,
-                        [typeId]: e.target.checked,
-                      })
-                    }
-                  />
-                }
-                label="Vue sur Piscine"
-              />
-              {vuePiscine[typeId] && (
-                <TextField
-                  label="Prix + supp vue sur piscine"
-                  type="number"
-                  value={prixVuePiscine[typeId] || ''}
-                  onChange={(e) =>
-                    setPrixVuePiscine({
-                      ...prixVuePiscine,
-                      [typeId]: e.target.value,
-                    })
-                  }
-                  fullWidth
-                />
-              )}
-            </div>
-          );
-        } else {
-          return (
-            <div key={typeId}>
-              <TextField
-                label={`Supplément pour ${
-                  typesChambresOptions.find((type) => type.id === typeId).nom
-                }`}
-                type="number"
-                value={supplements[typeId] || ''}
-                onChange={(e) => handleSupplementChange(typeId, e.target.value)}
-                fullWidth
-                className="supplement-input"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={single[typeId] || false}
-                    onChange={(e) =>
-                      setSingle({ ...single, [typeId]: e.target.checked })
-                    }
-                  />
-                }
-                label="Single"
-              />
-              {single[typeId] && (
-                <TextField
-                  label="Prix + supp single"
-                  type="number"
-                  value={prixsingle[typeId] || ''}
-                  onChange={(e) =>
-                    setPrixsingle({ ...prixsingle, [typeId]: e.target.value })
-                  }
-                  fullWidth
-                />
-              )}
+            {selectedTypes.map((typeId) => {
+              if (typeId === defaultChambre) {
+                return (
+                  <div key={typeId} style={{ color: 'red' }}>
+                    <div>
+                      {
+                        typesChambresOptions.find((type) => type.id === typeId)
+                          .nom
+                      }{' '}
+                      (Par defaut)
+                    </div>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={single[typeId] || false}
+                          onChange={(e) =>
+                            setSingle({ ...single, [typeId]: e.target.checked })
+                          }
+                        />
+                      }
+                      label="Single"
+                    />
+                    {single[typeId] && (
+                      <TextField
+                        label="Prix + supp single"
+                        type="number"
+                        value={prixsingle[typeId] || ''}
+                        onChange={(e) =>
+                          setPrixsingle({
+                            ...prixsingle,
+                            [typeId]: e.target.value,
+                          })
+                        }
+                        fullWidth
+                      />
+                    )}
 
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={vueMer[typeId] || false}
-                    onChange={(e) =>
-                      setVueMer({ ...vueMer, [typeId]: e.target.checked })
-                    }
-                  />
-                }
-                label="Vue sur Mer"
-              />
-              {vueMer[typeId] && (
-                <TextField
-                  label="Prix + supp vue sur mer"
-                  type="number"
-                  value={prixVueMer[typeId] || ''}
-                  onChange={(e) =>
-                    setPrixVueMer({ ...prixVueMer, [typeId]: e.target.value })
-                  }
-                  fullWidth
-                />
-              )}
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={vueMer[typeId] || false}
+                          onChange={(e) =>
+                            setVueMer({ ...vueMer, [typeId]: e.target.checked })
+                          }
+                        />
+                      }
+                      label="Vue sur Mer"
+                    />
+                    {vueMer[typeId] && (
+                      <TextField
+                        label="Prix + supp vue sur mer"
+                        type="number"
+                        value={prixVueMer[typeId] || ''}
+                        onChange={(e) =>
+                          setPrixVueMer({
+                            ...prixVueMer,
+                            [typeId]: e.target.value,
+                          })
+                        }
+                        fullWidth
+                      />
+                    )}
 
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={vuePiscine[typeId] || false}
-                    onChange={(e) =>
-                      setVuePiscine({
-                        ...vuePiscine,
-                        [typeId]: e.target.checked,
-                      })
-                    }
-                  />
-                }
-                label="Vue sur Piscine"
-              />
-              {vuePiscine[typeId] && (
-                <TextField
-                  label="Prix + supp vue sur piscine"
-                  type="number"
-                  value={prixVuePiscine[typeId] || ''}
-                  onChange={(e) =>
-                    setPrixVuePiscine({
-                      ...prixVuePiscine,
-                      [typeId]: e.target.value,
-                    })
-                  }
-                  fullWidth
-                />
-              )}
-            </div>
-          );
-        }
-      })}
-            <label>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={vuePiscine[typeId] || false}
+                          onChange={(e) =>
+                            setVuePiscine({
+                              ...vuePiscine,
+                              [typeId]: e.target.checked,
+                            })
+                          }
+                        />
+                      }
+                      label="Vue sur Piscine"
+                    />
+                    {vuePiscine[typeId] && (
+                      <TextField
+                        label="Prix + supp vue sur piscine"
+                        type="number"
+                        value={prixVuePiscine[typeId] || ''}
+                        onChange={(e) =>
+                          setPrixVuePiscine({
+                            ...prixVuePiscine,
+                            [typeId]: e.target.value,
+                          })
+                        }
+                        fullWidth
+                      />
+                    )}
+                  </div>
+                );
+              } else {
+                return (
+                  <div key={typeId}>
+                    <TextField
+                      label={`Supplément pour ${
+                        typesChambresOptions.find((type) => type.id === typeId)
+                          .nom
+                      }`}
+                      type="number"
+                      value={supplements[typeId] || ''}
+                      onChange={(e) =>
+                        handleSupplementChange(typeId, e.target.value)
+                      }
+                      fullWidth
+                      className="supplement-inputCollab"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={single[typeId] || false}
+                          onChange={(e) =>
+                            setSingle({ ...single, [typeId]: e.target.checked })
+                          }
+                        />
+                      }
+                      label="Single"
+                    />
+                    {single[typeId] && (
+                      <TextField
+                        label="Prix + supp single"
+                        type="number"
+                        value={prixsingle[typeId] || ''}
+                        onChange={(e) =>
+                          setPrixsingle({
+                            ...prixsingle,
+                            [typeId]: e.target.value,
+                          })
+                        }
+                        fullWidth
+                      />
+                    )}
+
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={vueMer[typeId] || false}
+                          onChange={(e) =>
+                            setVueMer({ ...vueMer, [typeId]: e.target.checked })
+                          }
+                        />
+                      }
+                      label="Vue sur Mer"
+                    />
+                    {vueMer[typeId] && (
+                      <TextField
+                        label="Prix + supp vue sur mer"
+                        type="number"
+                        value={prixVueMer[typeId] || ''}
+                        onChange={(e) =>
+                          setPrixVueMer({
+                            ...prixVueMer,
+                            [typeId]: e.target.value,
+                          })
+                        }
+                        fullWidth
+                      />
+                    )}
+
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={vuePiscine[typeId] || false}
+                          onChange={(e) =>
+                            setVuePiscine({
+                              ...vuePiscine,
+                              [typeId]: e.target.checked,
+                            })
+                          }
+                        />
+                      }
+                      label="Vue sur Piscine"
+                    />
+                    {vuePiscine[typeId] && (
+                      <TextField
+                        label="Prix + supp vue sur piscine"
+                        type="number"
+                        value={prixVuePiscine[typeId] || ''}
+                        onChange={(e) =>
+                          setPrixVuePiscine({
+                            ...prixVuePiscine,
+                            [typeId]: e.target.value,
+                          })
+                        }
+                        fullWidth
+                      />
+                    )}
+                  </div>
+                );
+              }
+            })}
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
               Climatisation:{' '}
               <input
                 type="checkbox"
@@ -560,7 +615,14 @@ function AddFromCollaborateur() {
                 onChange={(e) => setClimatisation(e.target.checked)}
               />
             </label>
-            <label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
               Wi-Fi:{' '}
               <input
                 type="checkbox"
@@ -568,7 +630,14 @@ function AddFromCollaborateur() {
                 onChange={(e) => setWifi(e.target.checked)}
               />
             </label>
-            <label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
               Piscine Extérieure:{' '}
               <input
                 type="checkbox"
@@ -576,7 +645,14 @@ function AddFromCollaborateur() {
                 onChange={(e) => setPiscineExterieure(e.target.checked)}
               />
             </label>
-            <label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
               Piscine Couverte:{' '}
               <input
                 type="checkbox"
@@ -584,7 +660,14 @@ function AddFromCollaborateur() {
                 onChange={(e) => setPiscineCouverte(e.target.checked)}
               />
             </label>
-            <label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
               Bassin pour Enfants:{' '}
               <input
                 type="checkbox"
@@ -592,7 +675,14 @@ function AddFromCollaborateur() {
                 onChange={(e) => setBassinEnfants(e.target.checked)}
               />
             </label>
-            <label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
               Parking:{' '}
               <input
                 type="checkbox"
@@ -600,7 +690,14 @@ function AddFromCollaborateur() {
                 onChange={(e) => setParking(e.target.checked)}
               />
             </label>
-            <label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
               Discothèque:{' '}
               <input
                 type="checkbox"
@@ -608,7 +705,14 @@ function AddFromCollaborateur() {
                 onChange={(e) => setDiscotheque(e.target.checked)}
               />
             </label>
-            <label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
               Plage Privée:{' '}
               <input
                 type="checkbox"
@@ -616,7 +720,14 @@ function AddFromCollaborateur() {
                 onChange={(e) => setPlagePrivee(e.target.checked)}
               />
             </label>
-            <label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
               Ascenseur:{' '}
               <input
                 type="checkbox"
@@ -624,7 +735,14 @@ function AddFromCollaborateur() {
                 onChange={(e) => setAscenseur(e.target.checked)}
               />
             </label>
-            <label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
               Salle de Sport:{' '}
               <input
                 type="checkbox"
@@ -632,7 +750,14 @@ function AddFromCollaborateur() {
                 onChange={(e) => setSalleDeSport(e.target.checked)}
               />
             </label>
-            <label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
               Aire de Jeux pour Enfants:{' '}
               <input
                 type="checkbox"
@@ -641,231 +766,250 @@ function AddFromCollaborateur() {
               />
             </label>
             <label
-        style={{
-          flexDirection: 'row',
-          color: '#4A5568',
-          textTransform: 'uppercase',
-          fontWeight: 'bold',
-        }}
-      >
-        Spa:
-        <input
-          type="checkbox"
-          checked={spa}
-          onChange={(e) => setSpa(e.target.checked)}
-        />
-      </label>
-      <label
-        style={{
-          flexDirection: 'row',
-          color: '#4A5568',
-          textTransform: 'uppercase',
-          fontWeight: 'bold',
-        }}
-      >
-        Sauna:
-        <input
-          type="checkbox"
-          checked={sauna}
-          onChange={(e) => setSauna(e.target.checked)}
-        />
-      </label>
-      <label
-        style={{
-          flexDirection: 'row',
-          color: '#4A5568',
-          textTransform: 'uppercase',
-          fontWeight: 'bold',
-        }}
-      >
-        Hammam:
-        <input
-          type="checkbox"
-          checked={hammam}
-          onChange={(e) => setHammam(e.target.checked)}
-        />
-      </label>
-      <label
-        style={{
-          flexDirection: 'row',
-          color: '#4A5568',
-          textTransform: 'uppercase',
-          fontWeight: 'bold',
-        }}
-      >
-        Thalasso:
-        <input
-          type="checkbox"
-          checked={thalasso}
-          onChange={(e) => setThalasso(e.target.checked)}
-        />
-      </label>
-      <label
-        style={{
-          flexDirection: 'row',
-          color: '#4A5568',
-          textTransform: 'uppercase',
-          fontWeight: 'bold',
-        }}
-      >
-        Centre Esthétique:
-        <input
-          type="checkbox"
-          checked={centreEsthetique}
-          onChange={(e) => setCentreEsthetique(e.target.checked)}
-        />
-      </label>
-      <label
-        style={{
-          flexDirection: 'row',
-          color: '#4A5568',
-          textTransform: 'uppercase',
-          fontWeight: 'bold',
-        }}
-      >
-        Toboggan:
-        <input
-          type="checkbox"
-          checked={toboggan}
-          onChange={(e) => setToboggan(e.target.checked)}
-        />
-      </label>
-      <label
-        style={{
-          flexDirection: 'row',
-          color: '#4A5568',
-          textTransform: 'uppercase',
-          fontWeight: 'bold',
-        }}
-      >
-        Pieds dans l'Eau:
-        <input
-          type="checkbox"
-          checked={piedsDansLEau}
-          onChange={(e) => setPiedsDansLEau(e.target.checked)}
-        />
-      </label>
-      <label
-        style={{
-          flexDirection: 'row',
-          color: '#4A5568',
-          textTransform: 'uppercase',
-          fontWeight: 'bold',
-        }}
-      >
-        Piscine Eau de Mer:
-        <input
-          type="checkbox"
-          checked={piscineEauDeMer}
-          onChange={(e) => setPiscineEauDeMer(e.target.checked)}
-        />
-      </label>
-      <label
-        style={{
-          flexDirection: 'row',
-          color: '#4A5568',
-          textTransform: 'uppercase',
-          fontWeight: 'bold',
-        }}
-      >
-        Baby Setting:
-        <input
-          type="checkbox"
-          checked={babySetting}
-          onChange={(e) => setBabySetting(e.target.checked)}
-        />
-      </label>
-      <label
-        style={{
-          flexDirection: 'row',
-          color: '#4A5568',
-          textTransform: 'uppercase',
-          fontWeight: 'bold',
-        }}
-      >
-        Tennis de Table:
-        <input
-          type="checkbox"
-          checked={tennisDeTable}
-          onChange={(e) => setTennisDeTable(e.target.checked)}
-        />
-      </label>
-      <label
-        style={{
-          flexDirection: 'row',
-          color: '#4A5568',
-          textTransform: 'uppercase',
-          fontWeight: 'bold',
-        }}
-      >
-        Location de Voiture:
-        <input
-          type="checkbox"
-          checked={locationDeVoiture}
-          onChange={(e) => setLocationDeVoiture(e.target.checked)}
-        />
-      </label>
-      <label
-        style={{
-          flexDirection: 'row',
-          color: '#4A5568',
-          textTransform: 'uppercase',
-          fontWeight: 'bold',
-        }}
-      >
-        Change Monétaire:
-        <input
-          type="checkbox"
-          checked={changeMonetaire}
-          onChange={(e) => setChangeMonetaire(e.target.checked)}
-        />
-      </label>
-      <div className="interdictions-section">
-        <h3>Interdictions</h3>
-        <div className="offre-checkbox-groupInterdit ">
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={interditCelibataires}
-                onChange={(e) => setInterditCelibataires(e.target.checked)}
-                name="interditCelibataires"
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
+              Spa:
+              <input
+                type="checkbox"
+                checked={spa}
+                onChange={(e) => setSpa(e.target.checked)}
               />
-            }
-            label="Célibataires"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={interditBurkini}
-                onChange={(e) => setInterditBurkini(e.target.checked)}
-                name="interditBurkini"
+            </label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
+              Sauna:
+              <input
+                type="checkbox"
+                checked={sauna}
+                onChange={(e) => setSauna(e.target.checked)}
               />
-            }
-            label="Burkini"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={interditAlcohol}
-                onChange={(e) => setInterditAlcohol(e.target.checked)}
-                name="interditAlcohol"
+            </label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
+              Hammam:
+              <input
+                type="checkbox"
+                checked={hammam}
+                onChange={(e) => setHammam(e.target.checked)}
               />
-            }
-            label="Alcool"
-          />
-        </div>
-        </div>
-        {renderPensionOptions()}
+            </label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
+              Thalasso:
+              <input
+                type="checkbox"
+                checked={thalasso}
+                onChange={(e) => setThalasso(e.target.checked)}
+              />
+            </label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
+              Centre Esthétique:
+              <input
+                type="checkbox"
+                checked={centreEsthetique}
+                onChange={(e) => setCentreEsthetique(e.target.checked)}
+              />
+            </label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
+              Toboggan:
+              <input
+                type="checkbox"
+                checked={toboggan}
+                onChange={(e) => setToboggan(e.target.checked)}
+              />
+            </label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
+              Pieds dans l'Eau:
+              <input
+                type="checkbox"
+                checked={piedsDansLEau}
+                onChange={(e) => setPiedsDansLEau(e.target.checked)}
+              />
+            </label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
+              Piscine Eau de Mer:
+              <input
+                type="checkbox"
+                checked={piscineEauDeMer}
+                onChange={(e) => setPiscineEauDeMer(e.target.checked)}
+              />
+            </label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
+              Baby Setting:
+              <input
+                type="checkbox"
+                checked={babySetting}
+                onChange={(e) => setBabySetting(e.target.checked)}
+              />
+            </label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
+              Tennis de Table:
+              <input
+                type="checkbox"
+                checked={tennisDeTable}
+                onChange={(e) => setTennisDeTable(e.target.checked)}
+              />
+            </label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
+              Location de Voiture:
+              <input
+                type="checkbox"
+                checked={locationDeVoiture}
+                onChange={(e) => setLocationDeVoiture(e.target.checked)}
+              />
+            </label>
+            <label
+              style={{
+                flexDirection: 'row',
+                color: '#4A5568',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
+              Change Monétaire:
+              <input
+                type="checkbox"
+                checked={changeMonetaire}
+                onChange={(e) => setChangeMonetaire(e.target.checked)}
+              />
+            </label>
+            <div className="interdictions-sectionCollab">
+              <h3>Interdictions</h3>
+              <div className="offre-checkbox-groupInterditCollab">
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={interditCelibataires}
+                      onChange={(e) =>
+                        setInterditCelibataires(e.target.checked)
+                      }
+                      name="interditCelibataires"
+                    />
+                  }
+                  label="Célibataires"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={interditBurkini}
+                      onChange={(e) => setInterditBurkini(e.target.checked)}
+                      name="interditBurkini"
+                    />
+                  }
+                  label="Burkini"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={interditAlcohol}
+                      onChange={(e) => setInterditAlcohol(e.target.checked)}
+                      name="interditAlcohol"
+                    />
+                  }
+                  label="Alcool"
+                />
+              </div>
+            </div>
+            {renderPensionOptions()}
           </>
         );
       case 'activite':
         return (
           <>
             <label>
-              Programme:{' '}
-              <textarea
+              Programme:
+              <Editor
+                apiKey="t6iyui9hiq7n6y06u5ycbr6nnm4lhe54ovujihs4nc6k4ija"
+                init={{
+                  plugins:
+                    'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
+                  toolbar:
+                    'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                  tinycomments_mode: 'embedded',
+                  tinycomments_author: 'Author name',
+                  mergetags_list: [
+                    { value: 'First.Name', title: 'First Name' },
+                    { value: 'Email', title: 'Email' },
+                  ],
+                  ai_request: (request, respondWith) =>
+                    respondWith.string(() =>
+                      Promise.reject('See docs to implement AI Assistant')
+                    ),
+                }}
                 value={programme}
-                onChange={(e) => setProgramme(e.target.value)}
+                onEditorChange={(content, editor) => setProgramme(content)}
               />
             </label>
             <label>
@@ -881,6 +1025,7 @@ function AddFromCollaborateur() {
                 type="number"
                 value={duree}
                 onChange={(e) => setDuree(parseInt(e.target.value, 10))}
+                required
               />
             </label>
           </>
@@ -889,7 +1034,11 @@ function AddFromCollaborateur() {
         return null;
     }
   };
-
+  const today = new Date().toISOString().split('T')[0];
+  const handleNbrJoursChange = (e) => {
+    const newNbrJours = parseInt(e.target.value, 10);
+    setNbrJours(Math.max(0, newNbrJours));
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -1066,7 +1215,8 @@ function AddFromCollaborateur() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="offre-collab-container">
+    <h3>AJOUTER UN OFFRE</h3>
       <label>
         Titre:{' '}
         <input
@@ -1094,20 +1244,32 @@ function AddFromCollaborateur() {
         />
       </label>
       <label>
-        Date de début:{' '}
+        Remise:{' '}
+        <input
+          type="number"
+          value={remise}
+          onChange={(e) => setRemise(parseInt(e.target.value, 10))}
+        />
+      </label>
+      <label>
+        Date de début de remise:
         <input
           type="date"
           value={date_debut}
           onChange={(e) => setDateDebut(e.target.value)}
+          min={initialDataLoaded ? undefined : today}
+          disabled={!remise}
           required
         />
       </label>
       <label>
-        Date de fin:{' '}
+        Date de fin de remise:
         <input
           type="date"
           value={date_fin}
           onChange={(e) => setDateFin(e.target.value)}
+          min={date_debut || today}
+          disabled={!remise}
           required
         />
       </label>
@@ -1121,14 +1283,7 @@ function AddFromCollaborateur() {
         </select>
       </label>
       {renderFieldsForTypeOffre()}
-      <label>
-        Remise:{' '}
-        <input
-          type="number"
-          value={remise}
-          onChange={(e) => setRemise(parseInt(e.target.value, 10))}
-        />
-      </label>
+
       <label>
         Images:
         <input
@@ -1138,7 +1293,9 @@ function AddFromCollaborateur() {
           onChange={handleImageChange}
         />
       </label>
-      <button type="submit">Ajouter l'offre</button>
+      <button type="submit" className="subButtonCollab">
+        Ajouter l'offre
+      </button>
     </form>
   );
 }
