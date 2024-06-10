@@ -852,17 +852,18 @@ exports.createOffreFromCollab = async (req, res) => {
     const {
       titre,
       description,
-      nombre_enfants_gratuits,
-      age_limite_gratuite,
-      prix_enfants_payants,
-      conditions_speciales_enfants,
-      enfants_autorises,
       date_debut,
       date_fin,
       prix,
       type,
       remise,
       destination,
+      nombre_enfants_gratuits,
+      age_limite_gratuite,
+      prix_enfants_payants,
+      conditions_speciales_enfants,
+      enfants_autorises,
+
       // Additional fields for specific types
       nom_hotel,
       etoiles,
@@ -893,10 +894,28 @@ exports.createOffreFromCollab = async (req, res) => {
       tennis_de_table,
       location_de_voiture,
       change_monetaire,
+      typechambres,
       interdit_celibataires,
       interdit_burkini,
       interdit_alcohol,
-    } = req.body;
+      logement_seulement,
+      prix_logement_seulement,
+      petit_dejeuner,
+      prix_petit_dejeuner,
+      demi_pension,
+      prix_demi_pension,
+      demi_pension_plus,
+      prix_demi_pension_plus,
+      pension_complete,
+      prix_pension_complete,
+      pension_complete_plus,
+      prix_pension_complete_plus,
+      all_inclusive,
+      prix_all_inclusive,
+      all_inclusive_soft,
+      prix_all_inclusive_soft,
+      pensiondefault,
+    }= req.body;
 
     const { id_collaborateur } = req.params;
 
@@ -930,46 +949,82 @@ exports.createOffreFromCollab = async (req, res) => {
 
     // Create specific type details based on offre type
     switch (type) {
-      case 'hotel':
-        await GrandHotelModel.create({
-          id_offre: offre.id_offre,
-          nom_hotel,
-          etoiles,
-          climatisation,
-          wifi,
-          piscine_exterieure,
-          piscine_couverte,
-          bassin_enfants,
-          parking,
-          discotheque,
-          plage_privee,
-          ascenseur,
-          salle_de_sport,
-          aire_de_jeux_enfants,
-          spa,
-          sauna,
-          hammam,
-          thalasso,
-          centre_esthetique,
-          toboggan,
-          pieds_dans_l_eau,
-          piscine_eau_de_mer,
-          baby_setting,
-          tennis_de_table,
-          location_de_voiture,
-          change_monetaire,
-          interdit_celibataires,
-          interdit_burkini,
-          interdit_alcohol,
+      case 'hotel':{
+     ho = await GrandHotelModel.create({
+       id_offre: offre.id_offre,
+       nom_hotel,
+       etoiles,
+       climatisation,
+       wifi,
+       piscine_exterieure,
+       piscine_couverte,
+       bassin_enfants,
+       parking,
+       discotheque,
+       plage_privee,
+       ascenseur,
+       salle_de_sport,
+       aire_de_jeux_enfants,
+       spa,
+       sauna,
+       hammam,
+       thalasso,
+       centre_esthetique,
+       toboggan,
+       pieds_dans_l_eau,
+       piscine_eau_de_mer,
+       baby_setting,
+       tennis_de_table,
+       location_de_voiture,
+       change_monetaire,
+       interdit_celibataires,
+       interdit_burkini,
+       interdit_alcohol,
+       logement_seulement,
+       prix_logement_seulement,
+       petit_dejeuner,
+       prix_petit_dejeuner,
+       demi_pension,
+       prix_demi_pension,
+       demi_pension_plus,
+       prix_demi_pension_plus,
+       pension_complete,
+       prix_pension_complete,
+       pension_complete_plus,
+       prix_pension_complete_plus,
+       all_inclusive,
+       prix_all_inclusive,
+       all_inclusive_soft,
+       prix_all_inclusive_soft,
+       pensiondefault,
+     });
+
+  if (typechambres && Array.isArray(typechambres)) {
+    await Promise.all(
+      typechambres.map((typechambre) => {
+        return TypeChambreModel.create({
+          id_grandhotel: ho.id_grandhotel,
+          nom: typechambre.nom,
+          supplement: typechambre.supplement,
+          defaultChambre: typechambre.defaultChambre,
+          single: typechambre.single,
+          prixsingle: typechambre.prixsingle,
+          vuemer: typechambre.vuemer,
+          supplementmer: typechambre.supplementmer,
+          vuepis: typechambre.vuepis,
+          supplementpis: typechambre.supplementpis,
         });
-        break;
+      })
+    );
+  }
+        break;  }
       case 'voyage':
         await VoyageModel.create({
           id_offre: offre.id_offre,
           programme,
           inclus,
           nbr_jours,
-        
+         
         });
         break;
       case 'activite':
@@ -978,7 +1033,7 @@ exports.createOffreFromCollab = async (req, res) => {
           programme,
           inclus,
           duree,
-      
+       
         });
         break;
     }

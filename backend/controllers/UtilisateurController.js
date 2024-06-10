@@ -594,7 +594,7 @@ exports.getRandomUsers = async (req, res) => {
       const shuffledUsers = users.sort(() => 0.5 - Math.random());
       
       // Slice the first 7 elements from the shuffled array
-      const randomUsers = shuffledUsers.slice(0, 7);
+      const randomUsers = shuffledUsers.slice(0, 12);
 
       if (randomUsers.length === 0) {
           return res.status(404).json({ message: 'No users found' });
