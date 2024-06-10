@@ -285,20 +285,9 @@ exports.checkIfUserIsAdmin = async (req, res) => {
 exports.deleteMemberFromDiscussion = async (req, res) => {
     const { userId } = req.params; 
     const { id_disc } = req.params; 
-    const adminUserId = req.userId; 
 
     try {
-        const adminMember = await MembreModel.findOne({
-            where: {
-                id_utilisateur: adminUserId,
-                id_discussion: id_disc,
-                isAdmin: true
-            }
-        });
-
-        if (!adminMember) {
-            return res.status(403).json({ message: 'Only admins can remove members from the discussion.' });
-        }
+        
 
         const result = await MembreModel.destroy({
             where: {

@@ -57,7 +57,7 @@ function MessagePage() {
   const [isMembersModalOpen, setIsMembersModalOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const { t } = useTranslation();
-
+  const userIds = parseInt(localStorage.getItem('userId').replace(/"/g, ''), 10);
   const handleOpenMembersModal = () => setIsMembersModalOpen(true);
   const handleCloseMembersModal = () => setIsMembersModalOpen(false);
 
@@ -313,6 +313,7 @@ function MessagePage() {
 
   useEffect(() => {
     console.log(selectedDiscussion); 
+    console.log(members);
     if (selectedDiscussion && selectedDiscussion.id_disc) {
       axios
         .get(`http://localhost:5000/messages/${selectedDiscussion.id_disc}`, {
@@ -359,6 +360,7 @@ function MessagePage() {
   }, [selectedDiscussion]);
 
   const handleSendMessage = () => {
+    console.log(members);
     if (selectedDiscussion && newMessage.trim()) {
       axios
         .post(
@@ -544,30 +546,30 @@ function MessagePage() {
                       {t('Les membres de cette discussion')}
                     </Typography>
                     <List dense>
-                      {members.map((member, index) => (
-                        <ListItem key={index}>
-                          <Avatar
-                            src={
-                              member.utilisateur.photo
-                                ? `http://localhost:5000/${member.utilisateur.photo}`
-                                : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
-                            }
-                            alt={`${member.utilisateur.prenom} ${member.utilisateur.nom}`}
-                            sx={{ width: 56, height: 56, marginRight: 2 }}
-                          />
-                          <ListItemText
-                            primary={`${member.utilisateur.prenom} ${member.utilisateur.nom}`}
-                          />
-                          {isAdmin && member.id_utilisateur !== userId && (
-                            <IconButton
-                              onClick={() => handleKickMember(member.id_membre)}
-                            >
-                              <HighlightOffIcon />
-                            </IconButton>
-                          )}
-                        </ListItem>
-                      ))}
-                    </List>
+  {members.map((member, index) => (
+    <ListItem key={index}>
+      <Avatar
+        src={
+          member.utilisateur.photo
+            ? `http://localhost:5000/${member.utilisateur.photo}`
+            : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+        }
+        alt={`${member.utilisateur.prenom} ${member.utilisateur.nom}`}
+        sx={{ width: 56, height: 56, marginRight: 2 }}
+      />
+      <ListItemText
+        primary={`${member.utilisateur.prenom} ${member.utilisateur.nom}`}
+      />
+      {(isAdmin || member.id_utilisateur === userIds) && (
+        <IconButton
+          onClick={() => handleKickMember(member.id_membre)}
+        >
+          <HighlightOffIcon />
+        </IconButton>
+      )}
+    </ListItem>
+  ))}
+</List>
                   </Box>
                 </Modal>
                 <List>
