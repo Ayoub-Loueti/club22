@@ -32,7 +32,12 @@ function AddFromCollaborateur() {
   const [programme, setProgramme] = useState('');
   const [inclus, setInclus] = useState('');
   const [nbr_jours, setNbrJours] = useState(0);
-
+ const [enfantsAutorises, setEnfantsAutorises] = useState(null);
+ const [ageLimiteGratuite, setAgeLimiteGratuite] = useState(0);
+ const [nombreEnfantsGratuits, setNombreEnfantsGratuits] = useState(0);
+ const [prixEnfantsPayants, setPrixEnfantsPayants] = useState(0.0);
+ const [conditions_speciales_enfants, setConditions_speciales_enfants] =
+   useState('');
   // States for Hotel-specific fields
   const [hotelName, setHotelName] = useState('');
   const [etoiles, setEtoiles] = useState(0);
@@ -1100,7 +1105,11 @@ function AddFromCollaborateur() {
     formData.append('date_fin', date_fin);
     formData.append('type', typeOffre);
     formData.append('remise', remise);
-
+formData.append('enfants_autorises', enfantsAutorises);
+formData.append('age_limite_gratuite', ageLimiteGratuite);
+formData.append('nombre_enfants_gratuits', nombreEnfantsGratuits);
+formData.append('prix_enfants_payants', prixEnfantsPayants);
+formData.append('conditions_speciales_enfants', conditions_speciales_enfants);
     // Append additional fields based on type
     if (typeOffre === 'voyage') {
       formData.append('programme', programme);
@@ -1216,7 +1225,7 @@ function AddFromCollaborateur() {
 
   return (
     <form onSubmit={handleSubmit} className="offre-collab-container">
-    <h3>AJOUTER UN OFFRE</h3>
+      <h3>AJOUTER UN OFFRE</h3>
       <label>
         Titre:{' '}
         <input
@@ -1273,6 +1282,82 @@ function AddFromCollaborateur() {
           required
         />
       </label>
+      <label>
+        Enfants autorisés:
+        <div className="offre-radio-group">
+          <label className="offre-radio-label">
+            <input
+              type="radio"
+              name="enfantsAutorises"
+              value="oui"
+              checked={enfantsAutorises === true}
+              onChange={() => setEnfantsAutorises(true)}
+            />{' '}
+            Oui
+          </label>
+          <label className="offre-radio-label">
+            <input
+              type="radio"
+              name="enfantsAutorises"
+              value="non"
+              checked={enfantsAutorises === false}
+              onChange={() => setEnfantsAutorises(false)}
+            />{' '}
+            Non
+          </label>
+        </div>
+      </label>
+      {enfantsAutorises && (
+        <>
+          <label>
+            Nombre d'enfants gratuits:
+            <input
+              type="number"
+              value={nombreEnfantsGratuits}
+              onChange={(e) =>
+                setNombreEnfantsGratuits(
+                  Math.max(0, parseInt(e.target.value, 10))
+                )
+              }
+              min="0"
+            />
+          </label>
+          <label>
+            Âge limite pour gratuité (max 12 ans):
+            <input
+              type="number"
+              value={ageLimiteGratuite}
+              onChange={(e) =>
+                setAgeLimiteGratuite(
+                  Math.min(12, Math.max(0, parseInt(e.target.value, 10)))
+                )
+              }
+              min="0"
+              max="12"
+            />
+          </label>
+          <label>
+            Prix pour les enfants payants:
+            <input
+              type="number"
+              value={prixEnfantsPayants}
+              onChange={(e) =>
+                setPrixEnfantsPayants(Math.max(0, parseFloat(e.target.value)))
+              }
+              min="0"
+              step="0.01"
+            />
+          </label>
+          <label>
+            conditions speciales enfants:
+            <input
+              type="text"
+              value={conditions_speciales_enfants}
+              onChange={(e) => setConditions_speciales_enfants(e.target.value)}
+            />
+          </label>
+        </>
+      )}
       <label>
         Type d'offre:
         <select value={typeOffre} onChange={handleTypeChange} required>
