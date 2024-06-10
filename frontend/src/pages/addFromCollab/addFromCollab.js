@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import { Editor } from '@tinymce/tinymce-react';
 import './addFromCollab.css';
+import LocationSearchInput from '../admin/offre/map/LocationSearchInput';
 function AddFromCollaborateur() {
   const { id_collaborateur } = useParams();
   const [titre, setTitre] = useState('');
@@ -36,8 +37,9 @@ function AddFromCollaborateur() {
  const [ageLimiteGratuite, setAgeLimiteGratuite] = useState(0);
  const [nombreEnfantsGratuits, setNombreEnfantsGratuits] = useState(0);
  const [prixEnfantsPayants, setPrixEnfantsPayants] = useState(0.0);
- const [conditions_speciales_enfants, setConditions_speciales_enfants] =
-   useState('');
+ const [conditions_speciales_enfants, setConditions_speciales_enfants] =useState('');
+   const [destination, setDestination] = useState('');
+
   // States for Hotel-specific fields
   const [hotelName, setHotelName] = useState('');
   const [etoiles, setEtoiles] = useState(0);
@@ -268,7 +270,10 @@ function AddFromCollaborateur() {
     // Reset fields when changing type
     resetFields();
   };
-
+ const handleLocationSelect = (location) => {
+   setDestination(location);
+   console.log('Selected location coordinates: ', location);
+ };
   const resetFields = () => {
     setProgramme('');
     setInclus('');
@@ -1241,6 +1246,13 @@ formData.append('conditions_speciales_enfants', conditions_speciales_enfants);
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
+        />
+      </label>
+      <label>
+        Destination:
+        <LocationSearchInput
+          onLocationSelect={handleLocationSelect}
+          initialLocation={destination}
         />
       </label>
       <label>
