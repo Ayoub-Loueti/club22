@@ -15,6 +15,7 @@ const Hachtag = require('../models/HachtagModel');
 const { Op } = require('sequelize');
 const { sequelize } = require('../config/db');
 const { Sequelize, DataTypes, fn, col, literal  } = require('sequelize'); 
+const NotificationSprintTroix = require('../models/NotifcationTModel');
 
 // crud 
 
@@ -85,6 +86,7 @@ exports.createPost = (req, res) => {
           if (!lastPointsAddition || lastPointsAddition < oneWeekAgo) {
             // If it has been more than a week, add the points and update the derniereAddition field
             await Client.update({ points: existingClient.points + 5, derniereAddition: new Date() }, { where: { id_utilisateur } });
+            await Post.update({ ispoint:1 }, { where: { id_post:newPost.id_post } })
             await Notification.create({
               id_post: newPost.id_post,
               notifier: '5 points sont ajoutés à votre boutique',
@@ -137,26 +139,50 @@ exports.updatePost = async (req, res) => {
 };
 
 exports.deletePost = async (req, res) => {
-    const { postId } = req.params; 
-    const id_utilisateur = req.userId;
+  const { postId } = req.params;
+  const id_utilisateur = req.userId;
 
-    try {
-        const post = await Post.findByPk(postId);
+  try {
+      const post = await Post.findByPk(postId);
 
-        if (!post) {
-            return res.status(404).json({ message: 'Post not found' });
-        }
+      if (!post) {
+          return res.status(404).json({ message: 'Post not found' });
+      }
 
-        if (post.id_utilisateur !== id_utilisateur) {
-            return res.status(403).json({ message: 'User not authorized to delete this post' });
-        }
+      if (post.id_utilisateur !== id_utilisateur) {
+          return res.status(403).json({ message: 'User not authorized to delete this post' });
+      }
 
-        await post.destroy();
+      
+      const existingClient = await Client.findOne({ where: { id_utilisateur } });
+      if (existingClient) {
+          const lastPointsAddition = post.date_post;
+          const points = existingClient.points;
+          const oneWeekAgo = new Date();
+          const isPoints = post.ispoint;
+          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-        return res.status(204).send(); // No content to send back
-    } catch (error) {
-        return res.status(500).json({ message: 'Error deleting post', error });
-    }
+          if (isPoints && (!lastPointsAddition || points > 5 || lastPointsAddition > oneWeekAgo)) {
+              await Client.update({ points: points - 5 }, { where: { id_utilisateur } });
+
+              await NotificationSprintTroix.create({
+                id_utilisateur: post.id_utilisateur,
+                contenu: "5 points sont déduits de votre compte",
+                type: "signal",
+                date_notif: new Date(),
+              });
+
+              const postOwner = await Utilisateur.findByPk(id_utilisateur);
+              if (postOwner) {
+                  await postOwner.increment('nbr_notifs', { by: 1 });
+              }
+          }
+      }
+      await post.destroy();
+      return res.status(204).send();
+  } catch (error) {
+      return res.status(500).json({ message: 'Error deleting post', error });
+  }
 };
 
 //affichage 

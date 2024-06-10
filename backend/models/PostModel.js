@@ -43,6 +43,10 @@ const PostModel = sequelize.define(
     react : {
       type: DataTypes.ENUM('coeur','haha','wow', 'feu','pff','pleur','dormir','fache'),
     },
+    ispoint: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     tableName: 'post',
