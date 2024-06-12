@@ -159,7 +159,11 @@ const searchResultsRef = useRef();
             onClick={() => handleNotificationClick(notification)}
           >
             <img
-              src={`http://localhost:5000/${notification.utilisateur.photo}`}
+               src={
+                notification.utilisateur.photo
+                  ? `http://localhost:5000/${notification.utilisateur.photo}`
+                  : 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
+              }
               alt="User"
               className="notification-user-photo"
             />
@@ -308,7 +312,11 @@ const searchResultsRef = useRef();
   };
 
   useEffect(() => {
-    fetchNotificationsCount();
+    const intervalId = setInterval(() => {
+      fetchNotificationsCount();
+    }, 100); 
+
+    return () => clearInterval(intervalId); 
   }, []);
 
   useEffect(() => {
