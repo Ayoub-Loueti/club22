@@ -376,8 +376,7 @@ ${
        break;
    }
 
-   const imgData = reservation.offre.images[0];
-   pdf.addImage(imgData, 'JPEG', 130, 45, 60, 60);
+ 
 
    pdf.save(`reservation_${reservationId}.pdf`);
  };
@@ -524,8 +523,7 @@ const downloadPDFConfirmedByDate = async (date) => {
       }
 
       // Add image to the card
-      const imgData = reservation.offre.images[0];
-      pdf.addImage(imgData, 'JPEG', 130, 45, 60, 60);
+      
 
       yPos += 30;
     }

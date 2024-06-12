@@ -245,20 +245,18 @@ exports.googleAuth = passport.authenticate('google', {
 exports.googleAuthCallback = (req, res, next) => {
   passport.authenticate('google', (error, user, info) => {
     if (error) {
-      return next(error); // Handle error
+      return next(error); 
     }
     if (!user) {
-      return res.redirect('http://localhost:3000/signup'); // Handle "no user" scenario
+      return res.redirect('http://localhost:3000/signup');
     }
 
-    // User is found or created successfully, now sign the JWT token with user's information
     const userToken = jwt.sign({ userId: user.id_utilisateur }, secretKey, {
-      expiresIn: '24h', // Adjust token expiration as needed
+      expiresIn: '24h', 
     });
 
-    // Redirect to the /load page with the token as a query parameter
     res.redirect(`http://localhost:3000/load?token=${userToken}&userId=${user.id_utilisateur}&type=${user.type}`);
-  })(req, res, next); // Make sure to pass req, res, next to the inner function
+  })(req, res, next); 
 };
 
 

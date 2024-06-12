@@ -27,12 +27,14 @@ function Profil() {
     prenom: false,
     genre: false,
     description: false,
+    tel:false,
   });
   const [editValues, setEditValues] = useState({
     nom: '',
     prenom: '',
     genre: '',
     description: '',
+    tel:'',
   });
 
   const fileInputRef = useRef(null);
@@ -56,6 +58,7 @@ function Profil() {
             nom: response.data.user.nom,
             prenom: response.data.user.prenom,
             genre: response.data.user.genre,
+            tel: response.data.user.tel,
             description: response.data.user.description,
           });
         } catch (error) {
@@ -78,8 +81,8 @@ function Profil() {
     const { name, value } = e.target;
 
     if (name === 'description' && value.length > 50) return;
-    if ((name === 'nom' || name === 'prenom') && value.length > 15) return;
-
+    if ((name === 'nom' || name === 'prenom') && (value.length > 15 || value.length < 1)) return;
+    if (name === 'tel' && !/^\d*$/.test(value)) return;
     setEditValues({ ...editValues, [name]: value });
   };
 
@@ -97,8 +100,12 @@ function Profil() {
       editValues[field].length > 15
     ) {
       console.error(
-        'Le nom et le prénom ne peuvent pas dépasser 11 caractères'
+        'Le nom et le prénom ne peuvent pas dépasser 15 caractères'
       );
+      return;
+    }
+    if (field === 'tel' && (!/^\d{8}$/.test(editValues[field]))) {
+      console.error('Le numéro de téléphone doit être numérique et contenir exactement 8 chiffres.');
       return;
     }
     try {
@@ -515,12 +522,14 @@ function Profil() {
               <span className="info-label">{t('Rôle')}:</span>
               <span className="info-value">{utilisateur.type}</span>
             </div>
+            {isOwnProfile && (
             <div className="info-item">
            <span className="info-label">{t('Mot de passe')}</span>
           <span onClick={() => setShowPasswordChange(true)} className="edit-icon">
           🖊️
           </span>
           </div>
+           )}
           </div>
         </>
         )}

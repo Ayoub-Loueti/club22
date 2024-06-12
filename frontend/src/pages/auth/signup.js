@@ -85,7 +85,7 @@ navigate("/")
  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
  const [isPasswordValid, setIsPasswordValid] = useState(false);
 
- const hasLength = (password) => password.length >= 12;
+ const hasLength = (password) => password.length >= 8;
  const hasUpperAndLower = (password) => /[A-Z]/.test(password) && /[a-z]/.test(password);
  const hasNumber = (password) => /\d/.test(password);
 
@@ -186,7 +186,7 @@ if (isMobile) {
                 </p>
                 <ul>
                   <li className={hasLength(password) ? 'valid' : 'invalid'}>
-                    <span className="icon"></span>12 caractères ou plus
+                    <span className="icon"></span>8 caractères ou plus
                   </li>
                   <li className={hasUpperAndLower(password) ? 'valid' : 'invalid'}>
                     <span className="icon"></span>des majuscules et des minuscules
@@ -405,7 +405,7 @@ if (isMobile) {
                     </p>
                     <ul>
                       <li className={hasLength(password) ? 'valid' : 'invalid'}>
-                        <span className="icon"></span>12 caractères ou plus
+                        <span className="icon"></span>8 caractères ou plus
                       </li>
                       <li
                         className={

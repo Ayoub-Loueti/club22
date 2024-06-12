@@ -20,7 +20,6 @@ function CollaborateurForm({
   const token = localStorage.getItem('login');
 
   useEffect(() => {
-    // Fetch collaborator data if in update mode
     const fetchCollaborateur = async () => {
       try {
         const response = await axios.get(
@@ -55,12 +54,12 @@ function CollaborateurForm({
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/upload-image', // Update URL as per your backend
+        'http://localhost:5000/upload-image', 
         data
       );
       const imageUrl = response.data.imageUrl;
 
-      setLogo(imageUrl); // Update the state with the uploaded image URL
+      setLogo(imageUrl);
     } catch (error) {
       console.error('Error uploading image:', error);
     }
@@ -70,13 +69,13 @@ function CollaborateurForm({
     e.preventDefault();
 
     const collaborateurData = { nom, type, adresse, tel, email, siteWeb, logo };
-  if (!/^\d+$/.test(tel)) {
+  if (tel.length !== 8 || !/^\d+$/.test(tel)) {
     Swal.fire({
       icon: 'error',
       title: 'Erreur',
-      text: 'Le numéro de téléphone doit être numérique.',
+      text: 'Le numéro de téléphone doit contenir exactement 8 chiffres.',
     });
-    return; // Ne pas soumettre le formulaire si la validation échoue
+    return; 
   }
     try {
       let response;

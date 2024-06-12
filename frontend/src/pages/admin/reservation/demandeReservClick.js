@@ -439,8 +439,7 @@ const markAllAsReparation = async (date) => {
     }
 
     // Ajouter l'image à la carte
-    const imgData = reservation.offre.images[0]; // Supposons qu'il y a au moins une image
-    pdf.addImage(imgData, 'JPEG', 130, 45, 60, 60);
+   
 
     // Enregistrer et télécharger le PDF
     pdf.save(`reservation_${reservationId}.pdf`);
@@ -582,8 +581,7 @@ const downloadPDFConfirmedByDate = async (date) => {
       }
 
       // Add image to the card
-      const imgData = reservation.offre.images[0]; // Assuming there is at least one image
-      pdf.addImage(imgData, 'JPEG', 130, 45, 60, 60);
+     
 
       // Move down for the next card
       yPos += 30;
