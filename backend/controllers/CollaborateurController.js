@@ -17,7 +17,17 @@ exports.createCollaborateur = async (req, res) => {
             'Permission refusée. Seuls les administrateurs peuvent effectuer cette action.',
         });
       }
-  
+  const existingCollaborateur = await Collaborateur.findOne({
+    where: {
+      email: req.body.email,
+    },
+  });
+
+  if (existingCollaborateur) {
+    return res
+      .status(409)
+      .json({ error: 'Un collaborateur avec cet email existe déjà.' });
+  }
       const collaborateur = await Collaborateur.create(req.body);
       res.status(201).json({ collaborateur });
     } catch (error) {

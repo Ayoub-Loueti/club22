@@ -113,7 +113,15 @@ function CollaborateurForm({
       });
       onSuccess();
       onRequestClose(); // Close the modal after adding/updating
-    } catch (error) {
+    }  catch (error) {
+      console.error('Error:', error);
+      if (error.response && error.response.status === 409) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Un collaborateur avec cet email existe déjà.',
+        });
+      } else {
       console.error('Error:', error);
       Swal.fire({
         icon: 'error',
@@ -123,6 +131,7 @@ function CollaborateurForm({
         } du collaborateur.`,
       });
     }
+  }
   };
 
   return (

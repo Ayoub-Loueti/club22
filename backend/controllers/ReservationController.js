@@ -787,7 +787,7 @@ exports.acceptationReservation = async (req, res) => {
     // Update the reservation state to 'annuler'
     await userReservation.update({
       etat: 'accepter',
-      statut_paiement: 'accpete',
+      statut_paiement: 'en_attente',
     });
 
     await NotificationSprintTroix.create({

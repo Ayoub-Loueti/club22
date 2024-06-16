@@ -412,6 +412,7 @@ const handleAuthorizationChange = (event) => {
 const [nombreAdultes, setNombreAdultes] = useState(1); 
     const [nombreEnfants, setNombreEnfants] = useState(0); 
     const [totalPrice, setTotalPrice] = useState(prix);
+const [childAgess, setChildAgess] = useState(Array(nombreEnfants).fill(1));
 
     const incrementAdults = () => {
         setNombreAdultes(nombreAdultes + 1);
@@ -423,12 +424,22 @@ const [nombreAdultes, setNombreAdultes] = useState(1);
 
     const incrementChildren = () => {
         setNombreEnfants(nombreEnfants + 1);
+        setChildAgess([...childAgess, 1]);
+
     };
 
+    
     const decrementChildren = () => {
         setNombreEnfants(Math.max(0, nombreEnfants - 1));
+        setChildAgess(childAgess.slice(0, -1)); 
     };
 
+    const handleAgeChangee = (index, age) => {
+      const updatedAgess = [...childAgess];
+      updatedAgess[index] = age;
+      setChildAgess(updatedAgess);
+    };
+    
     useEffect(() => {
       let newTotalPrice = prix; 
   
@@ -788,7 +799,9 @@ const [nombreAdultes, setNombreAdultes] = useState(1);
                       <TextField
                         size="small"
                         value={nombreEnfants}
-                        onChange={(e) => setNombreEnfants2(Number(e.target.value))}
+                        onChange={(e) =>
+                          setNombreEnfants2(Number(e.target.value))
+                        }
                         inputProps={{
                           readOnly: true,
                           style: { textAlign: 'center' },
@@ -801,6 +814,20 @@ const [nombreAdultes, setNombreAdultes] = useState(1);
                     </Box>
                   </Box>
                 )}
+                <br></br>
+                {childAgess.map((age, index) => (
+                  <TextField
+                    key={index}
+                    type="number"
+                    size="small"
+                    value={age}
+                    onChange={(e) =>
+                      handleAgeChangee(index, parseInt(e.target.value))
+                    }
+                    inputProps={{ min: 1, max: 12, style: { width: '50px' } }}
+                    sx={{ mx: 1 }}
+                  />
+                ))}
                 <Typography variant="h6" sx={{ mt: 2 }}>
                   {t('Prix total:')} {totalPrice.toFixed(2)} DT
                 </Typography>
@@ -933,7 +960,7 @@ const [nombreAdultes, setNombreAdultes] = useState(1);
             color="secondary"
             onClick={onRequestClose}
           >
-          {t('Annuler')}
+            {t('Annuler')}
           </Button>
           <Button
             onClick={handleReservation}
