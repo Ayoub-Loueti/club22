@@ -1,0 +1,173 @@
+.offre-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  margin-right: 24px;
+}
+
+.offre-form-container textarea {
+  padding: 11px;
+  width: 100%;
+  height: 150px;
+  min-height: 150px;
+  border-radius: 5px;
+  border: 2px solid #cbd5e0;
+  background-color: #edf2f7;
+  color: #2d3748;
+}
+
+.offre-form-container input[type='text'],
+.offre-form-container input[type='number'],
+.offre-form-container input[type='date'],
+.offre-form-container select {
+  padding: 11px;
+  width: 100%;
+  border-radius: 5px;
+  border: 2px solid #cbd5e0;
+  background-color: #edf2f7;
+  color: #2d3748;
+}
+
+.offre-form-container input[type='file'] {
+  padding: 10px;
+  border-radius: 5px;
+  border: 2px dashed #cbd5e0;
+  background-color: #edf2f7;
+  color: #4a5568;
+}
+
+.cancelBut,
+.subButton {
+  padding: 10px 30px;
+  border-radius: 5px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 30%;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.subButton {
+  background-color: #c53030;
+}
+
+.subButton:hover {
+  background-color: #9b2c2c;
+}
+
+.cancelBut {
+  background-color: #191f43;
+}
+
+.cancelBut:hover {
+  background-color: #879eb9;
+}
+.formBut {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .offre-form-container {
+    width: 90%;
+    margin: 0 auto;
+  }
+}
+
+.offre-form-container label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: #4a5568;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.offre-form-container select {
+  padding: 7px;
+  border-radius: 5px;
+  border: 2px solid #cbd5e0;
+  background-color: #edf2f7;
+  color: #2d3748;
+  width: 90%;
+  font-size: smaller;
+}
+.suggestions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background-color: #fff;
+  border: 1px solid #cbd5e0;
+  position: absolute;
+  width: 90%;
+  z-index: 1000;
+  font-size: smaller;
+}
+
+.suggestions-list li {
+  padding: 6px;
+  cursor: pointer;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.suggestions-list li:hover {
+  background-color: #ebf4ff;
+}
+.interdictions-section {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.interdictions-section h3 {
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 18px;
+}
+
+.offre-form-container .MuiFormControlLabel-label {
+  color: #4a5568;
+  font-weight: normal;
+}
+
+.offre-form-container .type-chambre-selection,
+.offre-form-container .default-chambre-selection,
+.offre-form-container .supplement-input {
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+.offre-form-container .type-chambre-selection {
+  margin-top: 20px;
+}
+.offre-form-container .type-chambre-label,
+.offre-form-container .default-chambre-label,
+.offre-form-container .supplement-label {
+  font-weight: bold;
+  color: #4a5568;
+  text-transform: uppercase;
+  margin-top: 20px;
+}
+.offre-radio-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.offre-radio-label {
+  margin: 0;
+  font-weight: normal;
+  color: #4a5568;
+}
+.offre-checkbox-groupInterdit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

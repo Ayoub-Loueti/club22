@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const secretKey = 'ayoub'; // Replace with your actual secret key
+const secretKey = 'ayoub'; 
 
 module.exports = (req, res, next) => {
   const authHeader = req.header('Authorization');
@@ -15,7 +15,6 @@ module.exports = (req, res, next) => {
       return res.status(401).json({ error: 'Invalid token' });
     }
 
-    // Log the decoded token for debugging
     console.log('Decoded Token:', decodedToken);
 
     req.userId = decodedToken.userId;

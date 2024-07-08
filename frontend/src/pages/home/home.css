@@ -35,3 +35,9 @@
   filter: blur(72px);
 }
 */
+@media (max-width: 768px) {
+  .Home {
+    padding-left: 60px; 
+    padding-right: 0; 
+  }
+}

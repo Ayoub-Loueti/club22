@@ -1,0 +1,94 @@
+/* CollaborateurForm.css */
+.collab-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: #ffffff; /* Fond blanc pour une apparence claire et propre */
+  border-radius: 10px;
+}
+
+.collab-form-label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: #4A5568; /* Couleur gris foncé pour les labels */
+           text-transform: uppercase; 
+font-weight: bold;
+}
+
+.collab-form-input,
+.collab-form-select,
+.collab-form-textarea {
+  padding: 10px;
+  border-radius: 5px;
+  border: 2px solid #CBD5E0; /* Bordure plus claire pour un look raffiné */
+  background-color: #EDF2F7; /* Fond légèrement bleu pour les champs de saisie */
+  color: #2D3748; /* Couleur de texte foncé pour un contraste */
+}
+
+.upload-btn-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.btn {
+  border: 2px dashed #CBD5E0;
+  color: #4A5568;
+  background-color: #EDF2F7;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.upload-btn-wrapper input[type="file"] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
+
+.formBcont {
+display: flex;
+  justify-content: center; /* Centre les boutons horizontalement */
+  gap: 20px;
+}
+
+.collabCButton, .collabFButton {
+  padding: 10px 30px; /* Increase padding for wider buttons */
+  border-radius: 5px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: auto; /* Adjust the width as necessary */
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.collabCButton {
+  background-color: #c53030; /* Cancel button color */
+}
+
+.collabCButton:hover {
+  background-color: #9b2c2c; /* Darken on hover */
+}
+
+.collabFButton {
+  background-color: #3182ce; /* Submit button color */
+}
+
+.collabFButton:hover {
+  background-color: #2c5282; /* Darken on hover */
+}
+
+@media (max-width: 768px) {
+  .collab-form-container {
+    width: 90%;
+    margin: 0 auto; /* Center the form on smaller screens */
+  }
+}

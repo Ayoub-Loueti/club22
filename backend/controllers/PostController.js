@@ -2,8 +2,22 @@ const Post  = require('../models/PostModel');
 const Likes = require('../models/LikesModel'); 
 const Utilisateur = require('../models/UtilisateurModel');
 const Commentaire = require('../models/CommentairesModel');
+const Notification = require('../models/NotificationModel');
 const Image = require('../models/ImageModel');
+const Enregistrement = require('../models/EnregistrementModel');
 const multiImageUpload = require('../middleware/multiImageUpload');
+const Offre = require('../models/OffreModel');
+const Client = require('../models/ClientModel');
+const Collaborateur = require ('../models/CollaborateurModel');
+const Mention = require ('../models/MentionModel');
+const Signaler = require('../models/SignalerModel');
+const Hachtag = require('../models/HachtagModel');
+const { Op } = require('sequelize');
+const { sequelize } = require('../config/db');
+const { Sequelize, DataTypes, fn, col, literal  } = require('sequelize'); 
+const NotificationSprintTroix = require('../models/NotifcationTModel');
+
+// crud 
 
 exports.createPost = (req, res) => {
   multiImageUpload(req, res, async (error) => {
@@ -12,13 +26,15 @@ exports.createPost = (req, res) => {
     } else {
       // Using req.userId set by your authentication middleware
       const id_utilisateur = req.userId; // Ensure your authentication middleware sets this
-      const { contenu, type } = req.body;
+      const { contenu, type,lieu,react } = req.body;
 
       try {
         const newPost = await Post.create({
           contenu,
           type,
           date_post: new Date(),
+          lieu,
+          react,
           id_utilisateur, // Use the authenticated user's ID
         });
 
@@ -33,6 +49,60 @@ exports.createPost = (req, res) => {
           }));
         }
 
+        // Extract individual words from the post content (contenu)
+        const collaborators = await Collaborateur.findAll();
+
+        await Promise.all(collaborators.map(async (collaborator) => {
+          // Check if any collaborator's details are mentioned in the post content
+          if (contenu.includes(collaborator.nom) || contenu.includes(collaborator.adresse) ||
+              contenu.includes(collaborator.tel) || contenu.includes(collaborator.email) ||
+              (collaborator.siteWeb && contenu.includes(collaborator.siteWeb))) {
+            await Mention.create({
+              id_post: newPost.id_post,
+              id_collaborateur: collaborator.id_collaborateur,
+            });
+          }
+        }));
+
+        const words = contenu.split(/\s+/);
+        await Promise.all(words.map(async (word) => {
+          if (word.startsWith('#') && word.length > 1 && !/\s/.test(word.slice(1))) {
+            const hashtag = word.slice(1);
+            if (hashtag.length > 0) {
+              await Hachtag.create({
+                id_post: newPost.id_post,
+                hachtag: hashtag
+              });
+            }
+          }
+        }));   
+        // Check if the id_utilisateur exists in the client table
+        const existingClient = await Client.findOne({ where: { id_utilisateur } });
+        if (existingClient) {
+          // Check if it has been a week since the last points were added
+          const lastPointsAddition = existingClient.derniereAddition; // Corrected variable name
+          const oneWeekAgo = new Date();
+          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+          if (!lastPointsAddition || lastPointsAddition < oneWeekAgo) {
+            // If it has been more than a week, add the points and update the derniereAddition field
+            await Client.update({ points: existingClient.points + 5, derniereAddition: new Date() }, { where: { id_utilisateur } });
+            await Post.update({ ispoint:1 }, { where: { id_post:newPost.id_post } })
+            await Notification.create({
+              id_post: newPost.id_post,
+              notifier: '5 points sont ajoutés à votre boutique',
+              id_own_post: id_utilisateur,
+              id_utilisateur: id_utilisateur,
+              date_notif: new Date(),
+              type: 'post',
+              id_notifier:id_utilisateur,
+            });
+            const postOwner = await Utilisateur.findByPk(id_utilisateur);
+            if (postOwner) {
+              await postOwner.increment('nbr_notifs', { by: 1 });
+            }
+          }
+        }
+
         res.status(201).json({ message: "Post created successfully", post: newPost });
       } catch (err) {
         res.status(500).json({ message: "Error creating post", error: err.message });
@@ -42,7 +112,7 @@ exports.createPost = (req, res) => {
 };
 
 exports.updatePost = async (req, res) => {
-    const { contenu, type } = req.body; 
+    const { contenu, type,lieu } = req.body; 
     const postId = req.params.postId; 
     const id_utilisateur = req.userId; 
 
@@ -59,6 +129,7 @@ exports.updatePost = async (req, res) => {
 
         post.contenu = contenu;
         post.type = type;
+        post.lieu = lieu;
         await post.save();
 
         return res.status(200).json(post);
@@ -68,26 +139,50 @@ exports.updatePost = async (req, res) => {
 };
 
 exports.deletePost = async (req, res) => {
-    const { postId } = req.params; 
-    const id_utilisateur = req.userId;
+  const { postId } = req.params;
+  const id_utilisateur = req.userId;
 
-    try {
-        const post = await Post.findByPk(postId);
+  try {
+      const post = await Post.findByPk(postId);
 
-        if (!post) {
-            return res.status(404).json({ message: 'Post not found' });
-        }
+      if (!post) {
+          return res.status(404).json({ message: 'Post not found' });
+      }
 
-        if (post.id_utilisateur !== id_utilisateur) {
-            return res.status(403).json({ message: 'User not authorized to delete this post' });
-        }
+      if (post.id_utilisateur !== id_utilisateur) {
+          return res.status(403).json({ message: 'User not authorized to delete this post' });
+      }
 
-        await post.destroy();
+      
+      const existingClient = await Client.findOne({ where: { id_utilisateur } });
+      if (existingClient) {
+          const lastPointsAddition = post.date_post;
+          const points = existingClient.points;
+          const oneWeekAgo = new Date();
+          const isPoints = post.ispoint;
+          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-        return res.status(204).send(); // No content to send back
-    } catch (error) {
-        return res.status(500).json({ message: 'Error deleting post', error });
-    }
+          if (isPoints && (!lastPointsAddition || points > 5 || lastPointsAddition > oneWeekAgo)) {
+              await Client.update({ points: points - 5 }, { where: { id_utilisateur } });
+
+              await NotificationSprintTroix.create({
+                id_utilisateur: post.id_utilisateur,
+                contenu: "5 points sont déduits de votre compte",
+                type: "signal",
+                date_notif: new Date(),
+              });
+
+              const postOwner = await Utilisateur.findByPk(id_utilisateur);
+              if (postOwner) {
+                  await postOwner.increment('nbr_notifs', { by: 1 });
+              }
+          }
+      }
+      await post.destroy();
+      return res.status(204).send();
+  } catch (error) {
+      return res.status(500).json({ message: 'Error deleting post', error });
+  }
 };
 
 //affichage 
@@ -108,6 +203,266 @@ exports.getAllPosts = async (req, res) => {
 
     if (!posts.length) {
       return res.status(404).json({ message: 'No posts found' });
+    }
+
+    const postsWithDetails = await Promise.all(
+      posts.map(async (post) => {
+        const postJson = post.toJSON();
+
+        // Additional query to check if the current user has liked the post
+        const likeStatus = await Likes.findOne({
+          where: {
+            id_post: post.id_post,
+            id_utilisateur: userId,
+          },
+        });
+
+        // Add a new property to postJson indicating if the current user has liked the post
+        postJson.isLikedByCurrentUser = !!likeStatus;
+
+        const images = await Image.findAll({
+            where: {
+              id_post: post.id_post,
+            },
+          });
+          postJson.lesImages = images;
+
+            const collabs = await Mention.findAll({
+              where: {
+                id_post: post.id_post,
+              },
+              include: [
+                {
+                  
+                      model: Collaborateur,
+                      as: 'collaborateur',
+                      attributes: ['id_collaborateur', 'nom','type','siteweb','adresse'],
+                    
+                },
+              ],
+            });
+            postJson.lesCollab = collabs;
+          
+          
+        // Fetch comments for the post
+        const comments = await Commentaire.findAll({
+          where: { id_post: post.id_post },
+          include: [
+            {
+              model: Utilisateur,
+              as: 'utilisateur',
+              attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+            },
+          ],
+        });
+        postJson.commentaires = comments;
+
+        // Fetch likes for the post
+        const likes = await Likes.findAll({
+          where: { id_post: post.id_post },
+          include: [
+            {
+              model: Utilisateur,
+              as: 'utilisateur',
+              attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+            },
+          ],
+        });
+        postJson.likesCount = likes.length; // Add likes count
+        postJson.likes = likes; // This includes detailed likes info, adjust as needed
+
+        return postJson;
+      })
+    );
+
+    return res.status(200).json(postsWithDetails);
+  } catch (error) {
+    console.error('Error fetching all posts with details:', error);
+    return res
+      .status(500)
+      .json({ message: 'Error fetching posts', error: error.message });
+  }
+};
+
+exports.getPostByIdWithDetails = async (req, res) => {
+    const postId = req.params.id; 
+    const userId = req.userId;
+    try {
+         const post = await Post.findByPk(postId, {
+            include: [{
+                model: Utilisateur,
+                as: 'utilisateur',
+                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+            }]
+        });
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+        const likeStatus = await Likes.findOne({
+          where: {
+            id_post: post.id_post,
+            id_utilisateur: post.utilisateur.id_utilisateur,
+          },
+        });
+
+        // Add a new property to postJson indicating if the current user has liked the post
+        // Manually fetch comments for the post
+        const comments = await Commentaire.findAll({
+            where: { id_post: postId },
+            include: [{
+                model: Utilisateur,
+                as: 'utilisateur', 
+                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+            }],
+        });
+        const images = await Image.findAll({
+          where: {
+            id_post: post.id_post,
+          },
+        });
+        // Manually fetch likes for the post
+        const likes = await Likes.findAll({
+            where: { id_post: postId },
+            include: [{
+                model: Utilisateur,
+                as: 'utilisateur', 
+                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+            }],
+        });
+        const collabs = await Mention.findAll({
+          where: {
+            id_post: post.id_post,
+          },
+          include: [
+            {
+             
+                
+                  model: Collaborateur,
+                  as: 'collaborateur',
+                  attributes: ['id_collaborateur', 'nom','type','siteweb','adresse'],
+               
+            },
+          ],
+        });
+        
+        // Convert Sequelize model instance to JSON and manually aggregate comments and likes into the post data
+        const postWithDetails = post.toJSON();
+        postWithDetails.isLikedByCurrentUser = !!likeStatus;
+        postWithDetails.commentaires = comments;
+        postWithDetails.likes = likes;
+        postWithDetails.lesImages = images;
+        postWithDetails.lesCollab = collabs;
+        return res.status(200).json(postWithDetails);
+    } catch (error) {
+        console.error('Error fetching post by ID with details:', error);
+        return res.status(500).json({ message: 'Error fetching post', error: error.message });
+    }
+};
+
+exports.getAllPostsByUserWithDetails = async (req, res) => {
+    const userId = req.params.userId; // Capture the user ID from the request parameters
+
+    try {
+        // Fetch all posts created by the specified user
+       const posts = await Post.findAll({
+            where: { id_utilisateur: userId },
+            include: [{
+                model: Utilisateur,
+                as: 'utilisateur', // Adjust if using a different alias
+                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+            }]
+        });
+
+        if (!posts.length) {
+            return res.status(201).json({ message: 'No posts found for this user' });
+        }
+
+        // Manually fetch and aggregate comments and likes for each post
+        const postsWithDetails = await Promise.all(posts.map(async (post) => {
+            const postJson = post.toJSON();
+            const images = await Image.findAll({
+                where: {
+                  id_post: post.id_post,
+                },
+              });
+              postJson.lesImages = images;
+            // Fetch comments for the post
+            const comments = await Commentaire.findAll({
+                where: { id_post: post.id_post },
+                include: [{
+                    model: Utilisateur,
+                    as: 'utilisateur', // Adjust if using a different alias
+                    attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+                }],
+            });
+
+            const likeStatus = await Likes.findOne({
+              where: {
+                id_post: post.id_post,
+                id_utilisateur: userId,
+              },
+            });
+    
+            // Add a new property to postJson indicating if the current user has liked the post
+            postJson.isLikedByCurrentUser = !!likeStatus;
+            // Fetch likes for the post
+            const likes = await Likes.findAll({
+                where: { id_post: post.id_post },
+                include: [{
+                    model: Utilisateur,
+                    as: 'utilisateur', // Adjust if using a different alias
+                    attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+                }],
+            });
+            const collabs = await Mention.findAll({
+              where: {
+                id_post: post.id_post,
+              },
+              include: [
+                {
+                  
+                      model: Collaborateur,
+                      as: 'collaborateur',
+                      attributes: ['id_collaborateur', 'nom','type','siteweb','adresse'],
+                   
+                },
+              ],
+            });
+            postJson.lesCollab = collabs;
+            // Manually aggregate comments and likes into the post data
+            postJson.commentaires = comments;
+            postJson.likes = likes;
+
+            return postJson;
+        }));
+
+        return res.status(200).json(postsWithDetails);
+    } catch (error) {
+        console.error('Error fetching posts by user with details:', error);
+        return res.status(500).json({ message: 'Error fetching posts', error: error.message });
+    }
+};
+
+exports.getPostsByType = async (req, res) => {
+  const userId = req.userId; // Ensure you have access to the userId, typically set from the auth middleware
+  const type = req.params.type;
+
+  try {
+    const posts = await Post.findAll({
+      where: {
+        type: type // Filter posts by type
+      },
+      include: [
+        {
+          model: Utilisateur,
+          as: 'utilisateur',
+          attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+        },
+      ],
+    });
+
+    if (!posts.length) {
+      return res.status(404).json({ message: 'No posts found for this type' });
     }
 
     const postsWithDetails = await Promise.all(
@@ -156,6 +511,21 @@ exports.getAllPosts = async (req, res) => {
             },
           ],
         });
+        const collabs = await Mention.findAll({
+          where: {
+            id_post: post.id_post,
+          },
+          include: [
+            
+                {
+                  model: Collaborateur,
+                  as: 'collaborateur',
+                  attributes: ['id_collaborateur', 'nom','type','siteweb','adresse'],
+                
+            },
+          ],
+        });
+        postJson.lesCollab = collabs;
         postJson.likesCount = likes.length; // Add likes count
         postJson.likes = likes; // This includes detailed likes info, adjust as needed
 
@@ -165,270 +535,620 @@ exports.getAllPosts = async (req, res) => {
 
     return res.status(200).json(postsWithDetails);
   } catch (error) {
-    console.error('Error fetching all posts with details:', error);
+    console.error('Error fetching posts by type:', error);
     return res
       .status(500)
       .json({ message: 'Error fetching posts', error: error.message });
   }
 };
-// Fetch likes count for a post
-exports.getLikesCount = async (req, res) => {
-    const postId = req.params.postId; // Extract the post ID from the path
 
+// save posts
+
+exports.createEnregistrement = async (req, res) => {
+    const id_utilisateur = req.userId; // Obtained from authentication middleware
+    const id_post = req.params.id_post; // Obtained from URL path
+  
     try {
-        const likesCount = await Likes.count({
-            where: {
-                id_post: postId
-            }
-        });
-
-        return res.status(200).json({ likesCount });
+      // Check if the post exists
+      const postExists = await Post.findByPk(id_post);
+      if (!postExists) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+  
+      // Check if the enregistrement already exists for this user and post
+      const existingEnregistrement = await Enregistrement.findOne({
+        where: {
+          id_utilisateur: id_utilisateur,
+          id_post: id_post
+        }
+      });
+  
+      if (existingEnregistrement) {
+        // Enregistrement already exists, so inform the user
+        return res.status(409).json({ message: 'Post already saved' });
+      }
+  
+      // Since the enregistrement doesn't exist, create it
+      const newEnregistrement = await Enregistrement.create({
+        id_utilisateur,
+        id_post
+      });
+  
+      return res.status(201).json({ message: 'Enregistrement created successfully', enregistrement: newEnregistrement });
     } catch (error) {
-        console.error('Error fetching likes count:', error);
-        return res.status(500).json({ message: 'Error fetching likes count', error: error.message });
+      console.error('Error creating enregistrement:', error);
+      return res.status(500).json({ message: 'Error creating enregistrement', error: error.message });
     }
 };
 
-// Fetch comments for a post
-exports.getComments = async (req, res) => {
-    const postId = req.params.postId; // Extract the post ID from the path
-
+exports.getEnregistrementsByUser = async (req, res) => {
+    const userId = req.userId; // Assuming userId is set by your authentication middleware
+  
     try {
-        const comments = await Commentaire.findAll({
-            where: { id_post: postId },
-            include: [{
+      // First, find all enregistrements for the current user
+      const enregistrements = await Enregistrement.findAll({
+        where: {
+          id_utilisateur: userId,
+        },
+        include: [
+          {
+            model: Post,
+            as: 'post',
+            include: [
+              {
                 model: Utilisateur,
                 as: 'utilisateur',
                 attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-            }],
-        });
-
-        return res.status(200).json({ comments });
-    } catch (error) {
-        console.error('Error fetching comments:', error);
-        return res.status(500).json({ message: 'Error fetching comments', error: error.message });
-    }
-};
-
-
-exports.getPostByIdWithDetails = async (req, res) => {
-    const postId = req.params.id; 
-
-    try {
-         const post = await Post.findByPk(postId, {
-            include: [{
+              }
+            ]
+          }
+        ]
+      });
+  
+      if (!enregistrements.length) {
+        return res.status(404).json({ message: 'No saved posts found' });
+      }
+  
+      // Transform enregistrements to include post details similarly to getAllPosts
+      const postsWithDetails = await Promise.all(
+        enregistrements.map(async (enregistrement) => {
+          const post = enregistrement.post;
+          const postJson = post.toJSON();
+  
+          // Check if the current user has liked the post
+          const likeStatus = await Likes.findOne({
+            where: {
+              id_post: post.id_post,
+              id_utilisateur: userId,
+            },
+          });
+          postJson.isLikedByCurrentUser = !!likeStatus;
+  
+          // Fetch images for the post
+          const images = await Image.findAll({
+            where: { id_post: post.id_post },
+          });
+          postJson.lesImages = images;
+  
+          // Fetch comments for the post
+          const comments = await Commentaire.findAll({
+            where: { id_post: post.id_post },
+            include: [
+              {
                 model: Utilisateur,
                 as: 'utilisateur',
                 attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-            }]
-        });
-        if (!post) {
-            return res.status(404).json({ message: 'Post not found' });
-        }
-
-        // Manually fetch comments for the post
-        const comments = await Commentaire.findAll({
-            where: { id_post: postId },
-            include: [{
+              },
+            ],
+          });
+          postJson.commentaires = comments;
+  
+          // Fetch likes for the post
+          const likes = await Likes.findAll({
+            where: { id_post: post.id_post },
+            include: [
+              {
                 model: Utilisateur,
-                as: 'utilisateur', 
+                as: 'utilisateur',
                 attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-            }],
-        });
+              },
+            ],
+          });
+          postJson.likesCount = likes.length;
+          postJson.likes = likes;
 
-        // Manually fetch likes for the post
-        const likes = await Likes.findAll({
-            where: { id_post: postId },
-            include: [{
-                model: Utilisateur,
-                as: 'utilisateur', 
-                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-            }],
-        });
-
-        // Convert Sequelize model instance to JSON and manually aggregate comments and likes into the post data
-        const postWithDetails = post.toJSON();
-        postWithDetails.commentaires = comments;
-        postWithDetails.likes = likes;
-
-        return res.status(200).json(postWithDetails);
-    } catch (error) {
-        console.error('Error fetching post by ID with details:', error);
-        return res.status(500).json({ message: 'Error fetching post', error: error.message });
-    }
-};
-
-exports.getAllPostsByUserWithDetails = async (req, res) => {
-    const userId = req.params.userId; // Capture the user ID from the request parameters
-
-    try {
-        // Fetch all posts created by the specified user
-       const posts = await Post.findAll({
-            where: { id_utilisateur: userId },
-            include: [{
-                model: Utilisateur,
-                as: 'utilisateur', // Adjust if using a different alias
-                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-            }]
-        });
-
-        if (!posts.length) {
-            return res.status(404).json({ message: 'No posts found for this user' });
-        }
-
-        // Manually fetch and aggregate comments and likes for each post
-        const postsWithDetails = await Promise.all(posts.map(async (post) => {
-            const postJson = post.toJSON();
-            
-            // Fetch comments for the post
-            const comments = await Commentaire.findAll({
-                where: { id_post: post.id_post },
-                include: [{
-                    model: Utilisateur,
-                    as: 'utilisateur', // Adjust if using a different alias
-                    attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-                }],
-            });
-
-            // Fetch likes for the post
-            const likes = await Likes.findAll({
-                where: { id_post: post.id_post },
-                include: [{
-                    model: Utilisateur,
-                    as: 'utilisateur', // Adjust if using a different alias
-                    attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
-                }],
-            });
-
-            // Manually aggregate comments and likes into the post data
-            postJson.commentaires = comments;
-            postJson.likes = likes;
-
-            return postJson;
-        }));
-
-        return res.status(200).json(postsWithDetails);
-    } catch (error) {
-        console.error('Error fetching posts by user with details:', error);
-        return res.status(500).json({ message: 'Error fetching posts', error: error.message });
-    }
-};
-
-// commnts and likes 
-
-exports.toggleLikePost = async (req, res) => {
-    const postId = req.params.postId; // Extract the post ID from the path
-    const id_utilisateur = req.userId; // Extract user ID set by your authentication middleware
-
-    try {
-        // Check if the user has already liked this post
-        const existingLike = await Likes.findOne({
+          const collabs = await Mention.findAll({
             where: {
-                id_post: postId,
-                id_utilisateur: id_utilisateur
+              id_post: post.id_post,
+            },
+            include: [
+              {
+                
+                  
+                    model: Collaborateur,
+                    as: 'collaborateur',
+                    attributes: ['id_collaborateur', 'nom','type','siteweb','adresse'],
+                  
+              },
+            ],
+          });
+          postJson.lesCollab = collabs;
+          
+          return postJson;
+        })
+      );
+  
+      return res.status(200).json(postsWithDetails);
+    } catch (error) {
+      console.error('Error fetching saved posts:', error);
+      return res.status(500).json({ message: 'Error fetching saved posts', error: error.message });
+    }
+};
+  
+exports.deleteEnregistrement = async (req, res) => {
+    const userId = req.userId; // Assuming userId is set by your authentication middleware
+    const { id_post } = req.params; // Assuming the post ID is passed in the URL
+
+    try {
+        // First, find the enregistrement to ensure it exists and belongs to the current user
+        const enregistrement = await Enregistrement.findOne({
+            where: {
+                id_utilisateur: userId,
+                id_post: id_post
             }
         });
 
-        const post = await Post.findByPk(postId);
-        if (!post) {
-            return res.status(404).json({ message: 'Post not found' });
+        if (!enregistrement) {
+            return res.status(404).json({ message: 'Saved post not found or not owned by the user' });
         }
 
-        if (existingLike) {
-            // If a like exists, unlike the post
-            await existingLike.destroy();
-            await post.decrement('nbr_likes');
-            return res.status(200).json({ message: 'Post unliked successfully' });
-        } else {
-            // If no like exists, like the post, including the current date and time for date_like
-            await Likes.create({
-                id_post: postId,
-                id_utilisateur: id_utilisateur,
-                date_like: new Date() // Set the current date and time
-            });
-            await post.increment('nbr_likes');
-            return res.status(200).json({ message: 'Post liked successfully' });
-        }
+        // Delete the enregistrement
+        await enregistrement.destroy();
+
+        return res.status(200).json({ message: 'Post unsaved successfully' });
     } catch (error) {
-        return res.status(500).json({ message: 'Error toggling post like', error });
+        console.error('Error deleting saved post:', error);
+        return res.status(500).json({ message: 'Error deleting saved post', error: error.message });
     }
 };
 
-exports.createComment = async (req, res) => {
-    const { cmntr } = req.body; // Extract comment content from request body
-    const postId = req.params.postId; // Extract the post ID from the path
-    const id_utilisateur = req.userId; // Extract user ID set by your authentication middleware
+exports.checkIfPostIsSaved = async (req, res) => {
+    const userId = req.userId; // Assuming userId is set by your authentication middleware
+    const { id_post } = req.params; // Assuming the post ID is passed in the URL
 
     try {
-        // Optional: Check if the post exists before allowing a comment to be created
-        const postExists = await Post.findByPk(postId);
-        if (!postExists) {
-            return res.status(404).json({ message: 'Post not found' });
-        }
-
-        const newComment = await Commentaire.create({
-            cmntr: cmntr,
-            id_post: postId,
-            id_utilisateur: id_utilisateur,
-            date_cmntr: new Date() // Set the comment date to now
+        // Check if there is an enregistrement for the current user and post
+        const savedPost = await Enregistrement.findOne({
+            where: {
+                id_utilisateur: userId,
+                id_post: id_post
+            }
         });
 
-        return res.status(201).json(newComment);
+        // If the post is saved by the user, return 1, else return 0
+        const isSaved = savedPost ? 1 : 0;
+
+        return res.status(200).json({ isSaved });
     } catch (error) {
-        console.error('Error creating comment:', error);
-        return res.status(500).json({ message: 'Error creating comment', error });
+        console.error('Error checking if post is saved:', error);
+        return res.status(500).json({ message: 'Error checking if post is saved', error: error.message });
     }
 };
 
-exports.modifyComment = async (req, res) => {
-    const { id_cmntr } = req.params; // Comment ID from URL parameters
-    const { newContent } = req.body; // New comment content from the request body
-    const userId = req.userId; // User ID from the request, typically set after authentication
+//signaler
 
-    try {
-        const comment = await Commentaire.findByPk(id_cmntr);
+ exports.createSignal = async (req, res) => {
+   const { id_post, id_cmntr, id_reponse, cause } = req.body;
+   const id_utilisateur = req.userId;
 
-        if (!comment) {
-            return res.status(404).json({ message: 'Comment not found' });
-        }
+   try {
+     const user = await Utilisateur.findByPk(id_utilisateur);
+     if (user.blockSignalUntil && user.blockSignalUntil > new Date()) {
+       return res
+         .status(403)
+         .json({
+           message:
+             'Vous êtes temporairement bloqué de faire des signalements.',
+         });
+     }
 
-        // Check if the user making the request is the owner of the comment or has other valid permissions
-        if (comment.id_utilisateur !== userId) {
-            return res.status(403).json({ message: 'User not authorized to modify this comment' });
-        }
+     // Check if a similar signal already exists
+     const signalExists = await Signaler.findOne({
+       where: {
+         id_post: id_post,
+         id_cmntr: id_cmntr || 0,
+         id_reponse: id_reponse || 0,
+         id_utilisateur: id_utilisateur,
+       },
+     });
 
-        comment.cmntr = newContent; // Update the comment content
-        await comment.save();
+     if (signalExists) {
+       return res.status(409).json({ message: 'Signal already exists' });
+     }
 
-        return res.status(200).json({ message: 'Comment updated successfully', comment });
-    } catch (error) {
-        console.error('Error modifying comment:', error);
-        return res.status(500).json({ message: 'Error updating comment', error: error.message });
-    }
+     // Create a new signal
+     const newSignal = await Signaler.create({
+       id_post: id_post,
+       id_cmntr: id_cmntr || 0,
+       id_reponse: id_reponse || 0,
+       id_utilisateur: id_utilisateur,
+       cause: cause,
+     });
+
+     return res.status(201).json({
+       message: 'Report submitted successfully',
+       signal: newSignal,
+     });
+   } catch (error) {
+     console.error('Error submitting report:', error);
+     return res.status(500).json({
+       message: 'Error submitting report',
+       error: error.message,
+     });
+   }
+ };
+
+exports.getAllSignaler = async (req, res) => {
+  const userId = req.userId; // Ensure you have access to the userId, typically set from the auth middleware
+
+  try {
+      // First, verify if the current user is an admin
+      const currentUser = await Utilisateur.findByPk(userId);
+      if (!currentUser || currentUser.type !== 'admin') {
+          return res.status(403).json({ message: 'Access denied. Only admins can perform this operation.' });
+      }
+
+      // Fetch all Signaler entries with related Post and Utilisateur information
+      const allSignalerEntries = await Signaler.findAll({
+        include: [
+          {
+            model: Post,
+            as: 'post',
+            include: [
+              {
+                model: Utilisateur,
+                as: 'utilisateur',
+                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+              },
+            ],
+            attributes: [
+              'id_post',
+              'id_utilisateur',
+              'contenu',
+              'type',
+              'lieu',
+            ],
+          },
+          {
+            model: Utilisateur,
+            as: 'utilisateur',
+            attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+          },
+        ],
+        order: [['id_signaler', 'DESC']]
+      });
+
+      if (!allSignalerEntries.length) {
+          return res.status(404).json({ message: 'No signals found' });
+      }
+
+      return res.status(200).json(allSignalerEntries);
+  } catch (error) {
+      console.error('Error fetching signals:', error);
+      return res.status(500).json({ message: 'Error fetching signals', error: error.message });
+  }
 };
 
-exports.deleteComment = async (req, res) => {
-    const { id_cmntr } = req.params; // Comment ID from URL parameters
-    const userId = req.userId; // User ID from the request, typically set after authentication
+exports.deleteSignaler = async (req, res) => {
+  const signalerId = req.params.id;  // ID of the 'Signaler' from the URL parameter
 
-    try {
-        const comment = await Commentaire.findByPk(id_cmntr);
+  try {
+      const signaler = await Signaler.findByPk(signalerId);
 
-        if (!comment) {
-            return res.status(404).json({ message: 'Comment not found' });
-        }
+      if (!signaler) {
+          return res.status(404).json({ message: 'Signaler entry not found' });
+      }
 
-        if (comment.id_utilisateur !== userId) {
-            return res.status(403).json({ message: 'User not authorized to delete this comment' });
-        }
+      await signaler.destroy();  // Delete the found signaler
+      return res.status(200).json({ message: 'Signaler deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting Signaler:', error);
+      return res.status(500).json({ message: 'Error deleting Signaler', error: error.message });
+  }
+};
 
-        await comment.destroy();
+exports.updateSignalerStatus = async (req, res) => {
+  const signalerId  = req.params.id ; // Assuming you're passing the notification ID in the URL
+  const { isRead } = req.body; // Assuming you're passing the new status in the request body
 
-        return res.status(200).json({ message: 'Comment deleted successfully' });
-    } catch (error) {
-        console.error('Error deleting comment:', error);
-        return res.status(500).json({ message: 'Error deleting comment', error: error.message });
+  try {
+      const notification = await Signaler.findByPk(signalerId);
+
+      if (!notification) {
+          return res.status(404).json({ message: 'signaler not found' });
+      }
+
+      await notification.update({ isRead });
+
+      return res.status(200).json({ message: 'Notification status updated successfully', notification });
+  } catch (error) {
+      console.error('Error updating notification status:', error);
+      return res.status(500).json({ message: 'Error updating notification status', error });
+  }
+};
+
+exports.updateAllSignalerOpen = async (req, res) => {
+  try {
+      await Signaler.update({ isOpen: true }, {
+          where: {} 
+      });
+
+      return res.status(200).json({ message: 'All signals have been updated successfully' });
+  } catch (error) {
+      console.error('Error updating all signals:', error);
+      return res.status(500).json({ message: 'Error updating signals', error: error.message });
+  }
+};
+
+exports.getSignalsCount = async (req, res) => {
+  try {
+      const count = await Signaler.count({
+          where: {
+              isOpen: false  // Assuming this maps correctly to your database field
+          }
+      });
+
+      return res.status(200).json({
+          message: 'Unresolved signals count retrieved successfully',
+          count: count
+      });
+  } catch (error) {
+      console.error('Error fetching unresolved signals count:', error);
+      return res.status(500).json({ message: 'Error fetching signals count', error: error.message });
+  }
+};
+
+//hachtag
+
+exports.getTopHashtags = async (req, res) => {
+  try {
+    const topHashtags = await Hachtag.findAll({
+      attributes: [
+        'hachtag',
+        [Sequelize.fn('COUNT', Sequelize.col('hachtag')), 'nbr_hachtag']
+      ],
+      group: ['hachtag'], 
+      order: [[Sequelize.literal('nbr_hachtag'), 'DESC']], 
+      limit: 6, 
+    });
+
+    if (topHashtags.length > 0) {
+      res.status(200).json({
+        message: "Top hashtags retrieved successfully",
+        hashtags: topHashtags.map(tag => ({
+          hachtag: tag.hachtag,
+          nbr_hachtag: tag.get('nbr_hachtag'),
+        }))
+      });
+    } else {
+      res.status(404).json({
+        message: "No hashtags found"
+      });
     }
+  } catch (error) {
+    res.status(500).json({
+      message: "Error retrieving hashtags",
+      error: error.message
+    });
+  }
+};
+
+exports.getHashtagsWithPosts = async (req, res) => {
+  const userId = req.userId;  // Assume userId is set by your authentication middleware
+
+  try {
+    // First, retrieve all hashtags with their counts
+    const hashtagCounts = await Hachtag.findAll({
+      attributes: [
+        'hachtag',
+        [Sequelize.fn('COUNT', '*'), 'nbr_hachtag']
+      ],
+      group: 'hachtag',
+      order: [[Sequelize.literal('nbr_hachtag'), 'DESC']], 
+      limit: 6,
+    });
+
+    // Fetch posts for each hashtag
+    const hashtagsWithPosts = await Promise.all(hashtagCounts.map(async tag => {
+      const posts = await Hachtag.findAll({
+        where: { hachtag: tag.hachtag },
+        include: [
+          {
+            model: Post,
+            as: 'post',
+            attributes: [
+              'id_post',
+              'id_utilisateur',
+              'contenu',
+              'type',
+              'date_post',
+              'lieu',
+            ],
+            include: [
+              {
+                model: Utilisateur,
+                as: 'utilisateur',
+                attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+              },
+            ],
+          },
+        ],
+      });
+
+      // Map each hachtag to its posts and include additional details for each post
+      const postsWithDetails = await Promise.all(
+        posts.map(async (hachtag) => {
+          const post = hachtag.post;
+          const postJson = post.toJSON();
+
+          // Check if the current user has liked the post
+          const likeStatus = await Likes.findOne({
+            where: {
+              id_post: post.id_post,
+              id_utilisateur: userId,
+            },
+          });
+          postJson.isLikedByCurrentUser = !!likeStatus;
+
+          // Fetch images for the post
+          const images = await Image.findAll({
+            where: { id_post: post.id_post },
+          });
+          postJson.lesImages = images;
+
+          // Fetch comments for the post
+          const comments = await Commentaire.findAll({
+            where: { id_post: post.id_post },
+            include: [{
+              model: Utilisateur,
+              as: 'utilisateur',
+              attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+            }],
+          });
+          postJson.commentaires = comments;
+
+          // Fetch likes for the post
+          const likes = await Likes.findAll({
+            where: { id_post: post.id_post },
+            include: [{
+              model: Utilisateur,
+              as: 'utilisateur',
+              attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+            }],
+          });
+          postJson.likesCount = likes.length;
+          postJson.likes = likes;
+
+          // Fetch collaborations
+          const collabs = await Mention.findAll({
+            where: {
+              id_post: post.id_post,
+            },
+            include: [
+              {
+              
+                model: Collaborateur,
+                as: 'collaborateur',
+                attributes: ['id_collaborateur', 'nom','type','siteweb','adresse'],
+              
+            }
+          ],
+          });
+          postJson.lesCollab = collabs;
+
+          return postJson;
+        })
+      );
+
+      return {
+        hachtag: tag.hachtag,
+        nbr_hachtag: tag.get('nbr_hachtag'),
+        posts: postsWithDetails  // Now contains a detailed list of posts including images, comments, etc.
+      };
+    }));
+
+    res.status(200).json({
+      message: "Hashtags with related posts retrieved successfully",
+      hashtags: hashtagsWithPosts
+    });
+  } catch (error) {
+    console.error('Error retrieving hashtags with posts:', error);
+    res.status(500).json({ message: 'Error fetching hashtags with related posts', error: error.message });
+  }
+};
+
+
+exports.SumSeamine = async (req, res) => {
+  try {
+    const usersSemaineLike = await Post.findAll({
+      attributes: ['id_utilisateur', [Sequelize.fn('SUM', Sequelize.col('SemaineLike')), 'totalSemaineLike']],
+      group: ['id_utilisateur'],
+      order: [[Sequelize.literal('totalSemaineLike'), 'DESC']],
+      include: [
+        {
+          model: Utilisateur,
+          as: 'utilisateur',
+          attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+        },
+      ],
+    });
+
+    if (!usersSemaineLike.length) {
+      return res.status(404).json({ message: 'No users found' });
+    }
+
+    const sumAndUserWithHighestSemaineLike = {
+      totalSum: usersSemaineLike.reduce((total, user) => total + parseInt(user.dataValues.totalSemaineLike), 0),
+      userWithHighestSemaineLike: usersSemaineLike[0].toJSON(),
+    };
+
+    return res.status(200).json(sumAndUserWithHighestSemaineLike);
+  } catch (error) {
+    console.error('Error calculating user with highest SemaineLike:', error);
+    return res.status(500).json({ message: 'Error calculating user with highest SemaineLike', error: error.message });
+  }
+};
+
+exports.BestPost = async (req, res) => {
+  try {
+    const userWithHighestSemaineLike = await Post.findOne({
+      attributes: ['id_utilisateur'],
+      order: [['SemaineLike', 'DESC']],
+      include: [
+        {
+          model: Utilisateur,
+          as: 'utilisateur',
+          attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+        },
+      ],
+    });
+
+    if (!userWithHighestSemaineLike) {
+      return res.status(404).json({ message: 'No user found' });
+    }
+
+    const user = userWithHighestSemaineLike.toJSON();
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error('Error fetching user with highest SemaineLike:', error);
+    return res.status(500).json({ message: 'Error fetching user with highest SemaineLike', error: error.message });
+  }
+};
+
+exports.BestCmntr = async (req, res) => {
+  try {
+    const userWithHighestSemaineLike = await Commentaire.findOne({
+      attributes: ['id_utilisateur'],
+      order: [['SemaineCom', 'DESC']],
+      include: [
+        {
+          model: Utilisateur,
+          as: 'utilisateur',
+          attributes: ['id_utilisateur', 'nom', 'prenom', 'photo'],
+        },
+      ],
+    });
+
+    if (!userWithHighestSemaineLike) {
+      return res.status(404).json({ message: 'No user found' });
+    }
+
+    const user = userWithHighestSemaineLike.toJSON();
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error('Error fetching user with highest SemaineLike:', error);
+    return res.status(500).json({ message: 'Error fetching user with highest SemaineLike', error: error.message });
+  }
 };
 
 module.exports = exports;

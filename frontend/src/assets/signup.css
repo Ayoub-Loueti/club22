@@ -14,24 +14,24 @@ body, html {
 }*/
 .signup-white-square {
   background-color: white;
-  width: 500px;
-  height: 650px;
+  width: 600px;
+  height: 691px;
 }
 
 .signup-green-square {
-  width: 700px;
-  height: 650px;
+  width: 1000px;
+  height: 687px;
   position: relative;
 }
 
 .signup-gray-rectangle {
   background-color: #e4e4e4;
-  width: 140px;
-  height: 350px;
+  width: 240px;
+  height: 280px;
   padding: 130px;
   border-radius: 10px;
   position: absolute;
-  left: calc(90% - 0px); /* Adjust to move the rectangle to the left */
+  left: calc(84% - 0px); /* Adjust to move the rectangle to the left */
   top: 50%;
   transform: translateY(-50%);
   z-index: 1;
@@ -92,4 +92,159 @@ body, html {
   width: calc(
     100% - 1px
   ); /* Ajuster la largeur pour prendre en compte la marge à droite */
+}
+/* Main popup styling */
+.password-validation-popup {
+  position: absolute;
+  width: 85%;
+  top: 282px;
+  left:20px;
+  background-color: #cac5c3; /* Light red background */
+  border: 1px solid #7c7c7c;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 100;
+  margin-top: 20px; /* Added space for the arrow */
+}
+
+/* Speech bubble arrow */
+.password-validation-popup::after {
+  content: "";
+  position: absolute;
+  bottom: 100%; /* Position at the top of the popup */
+  left: 50%; /* Center the arrow */
+  margin-left: -10px; /* Center the arrow */
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent transparent #cac5c3 transparent;
+}
+
+/* Paragraph styling */
+.password-validation-popup p {
+  color: #000;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* List styling */
+.password-validation-popup ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* List item styling */
+.password-validation-popup li {
+  margin-bottom: 5px;
+  color: #888;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+}
+
+/* Icon styling */
+.password-validation-popup li .icon {
+  display: inline-block;
+  width: 20px;
+  margin-right: 5px;
+}
+
+/* Valid item styling */
+.password-validation-popup li.valid {
+  color: #58a700; /* Green color for valid items */
+}
+
+/* Invalid item styling */
+.password-validation-popup li.invalid {
+  color: #D8000C; /* Red color for invalid items */
+}
+
+/* Icon using emoji */
+.password-validation-popup li .icon:before {
+  content: '❌'; /* Cross mark for invalid items */
+  color: #D8000C;
+  font-size: 20px;
+}
+
+.password-validation-popup li.valid .icon:before {
+  content: '✔️'; /* Check mark for valid items */
+  color: #58a700;
+}
+
+/* Main popup styling */
+.email-validation-popup {
+  position: absolute;
+  width: 85%;
+  top: 182px;
+  left:20px;
+  background-color: #cac5c3; /* Light red background */
+  border: 1px solid #7c7c7c;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 100;
+  margin-top: 20px; /* Added space for the arrow */
+}
+
+/* Speech bubble arrow */
+.email-validation-popup::after {
+  content: "";
+  position: absolute;
+  bottom: 100%; /* Position at the top of the popup */
+  left: 50%; /* Center the arrow */
+  margin-left: -10px; /* Center the arrow */
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent transparent #cac5c3 transparent;
+}
+
+/* Paragraph styling */
+.email-validation-popup p {
+  color: #000;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* List styling */
+.email-validation-popup ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* List item styling */
+.email-validation-popup li {
+  margin-bottom: 5px;
+  color: #888;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+}
+
+/* Icon styling */
+.email-validation-popup li .icon {
+  display: inline-block;
+  width: 20px;
+  margin-right: 5px;
+}
+
+/* Valid item styling */
+.email-validation-popup li.valid {
+  color: #58a700; /* Green color for valid items */
+}
+
+/* Invalid item styling */
+.email-validation-popup li.invalid {
+  color: #D8000C; /* Red color for invalid items */
+}
+
+/* Icon using emoji */
+.email-validation-popup li .icon:before {
+  content: '❌'; /* Cross mark for invalid items */
+  color: #D8000C;
+  font-size: 20px;
+}
+
+.email-validation-popup li.valid .icon:before {
+  content: '✔️'; /* Check mark for valid items */
+  color: #58a700;
 }

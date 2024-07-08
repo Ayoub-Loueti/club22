@@ -132,7 +132,7 @@ function VerificationToken() {
                     className="verification-ok-button"
                     disabled={loading}
                   >
-                    OK
+                    Valider
                   </button>
                   {error && (
                     <p style={{ color: 'red', marginTop: '20px' }}>{error}</p>

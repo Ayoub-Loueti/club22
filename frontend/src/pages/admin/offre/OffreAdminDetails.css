@@ -1,0 +1,183 @@
+.contOffreAdminDetails-container {
+   max-width: 1000px;
+  margin: 20px auto; /* Augmentation de la marge extérieure pour plus d'espace */
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px; /* Ajout d'un rayon de bordure pour adoucir les coins */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Ombre subtile pour la profondeur */
+}
+
+.contOffreAdminDetails-container h1 {
+    color: #333;
+    text-align: center;
+}
+
+.contOffreAdminDetails-details {
+    margin-top: 20px;
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.contOffreAdminDetails-images-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    overflow-x: auto;
+    
+}
+
+.contOffreAdminDetails-images-container img {
+    height: 220px;
+    border-radius: 5px;
+    object-fit: cover;
+  
+    
+}
+
+.contOffreAdminDetails-retour-btn {
+    display: block;
+    background-color: #4A5568;
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    width: fit-content;
+}
+
+.contOffreAdminDetails-retour-btn:hover {
+    background-color: #2D3748;
+}
+.modifierOffreButton, .supprimerOffreButton {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+  color: white;
+}
+
+.modifierOffreButton {
+  background-color: #8ab4ca; /* Blue for modify */
+}
+
+.supprimerOffreButton {
+  background-color: #f56a7f; /* Tomato for delete */
+}
+
+.modifierOffreButton:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.supprimerOffreButton:hover {
+  background-color: #e53e30; /* Darker red on hover */
+}
+/* Styles pour les badges "oui" et "non" */
+
+.details-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Espacement entre les cartes */
+    justify-content: start; /* Alignement des cartes au début */
+}
+
+.detail-card {
+    flex: 1 1 120px; /* Chaque carte a une base de 180px et peut grandir */
+    height: 60px; /* Hauteur fixe pour toutes les cartes */
+    padding: 7px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Espacement entre le label et le badge */
+}
+
+.detail-label {
+    font-weight: bold;
+        font-size: 14px;
+
+    margin-right: 5px; /* Espacement entre le label et le badge */
+}
+
+.detail-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    color: white;
+    text-align: center;
+    min-width: 40px; /* Assurez-vous que les badges ont une largeur minimale */
+}
+
+.detail-oui {
+    background-color: #a0e2b3; /* Vert pour "oui" */
+}
+
+.detail-non {
+    background-color: #ed5c53; /* Rouge pour "non" */}
+
+.contOffreAdminDetails-retour-btn, .modifierOffreButton, .supprimerOffreButton {
+    transition: all 0.3s ease;
+}/* Hover effects pour les boutons */
+.contOffreAdminDetails-retour-btn:hover, .modifierOffreButton:hover, .supprimerOffreButton:hover {
+    transform: scale(1.05); /* Légère augmentation de taille au survol */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Ombre pour un effet de profondeur */
+}
+.type-chambre-container {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #f3f5f8; /* Couleur de fond légère */
+  border-radius: 5px; /* Bords arrondis */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Ombre subtile */
+}
+
+.type-chambre-info {
+  display: flex;
+  align-items: center; /* Alignement vertical */
+  justify-content: flex-start; /* Alignement horizontal au début */
+  font-size: 0.9rem; /* Taille de police réduite */
+  color: #191f43; /* Couleur de texte foncée */
+  margin-bottom: 5px; /* Marge en bas pour séparer les lignes */
+}
+
+.type-chambre-label {
+  font-weight: bold;
+  margin-right: 5px; /* Espace entre le label et la valeur */
+  color: #c50f10; /* Couleur pour les labels */
+}
+
+.type-chambre-value {
+  margin-right: 190px; /* Espace après la valeur avant le prochain label */
+}
+.type-chambre-info strong {
+  margin-right: 5px; /* Marge à droite pour le label */
+  color: #c50f10; /* Couleur pour les labels */
+}
+.interdictions-container {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  font-weight: bold;
+}
+
+.interdictions-container h3 {
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 18px;
+}
+
+.interdiction-item {
+  font-size: 16px;
+  color: #4A5568;
+  list-style-type: none; /* Supprime les puces */
+}
+
+.allowed {
+  color: #38a169; /* Vert pour autorisé */
+}
+
+.not-allowed {
+  color: #e53e3e; /* Rouge pour non autorisé */
+}

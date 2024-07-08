@@ -1,0 +1,237 @@
+/* CSS personnalisé pour la page listCollaborateur */
+.listCollaborateur-container {
+  padding: 50px;
+  
+}
+
+.listCollaborateur-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.listCollaborateur-title {
+  color: #191f43;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.listCollaborateur-search-input {
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 2px solid #bbb;
+  border-radius: 20px;
+  width: 300px;
+  margin-top: -67px;
+  outline: none;
+  margin-left: auto;
+}
+
+.listCollaborateur-search-input:focus {
+  border-color: #191f43;
+}
+
+.listCollaborateur-table {
+    height: 600px;
+  margin: 25px auto;
+  border-collapse: collapse;
+  font-size: 1em;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  
+}
+
+.listCollaborateur-table thead tr {
+  background-color: #191f43;
+  color: #ffffff;
+  text-align: left;
+}
+
+.listCollaborateur-table tbody tr {
+  border-bottom: thin solid #dddddd;
+}
+
+.listCollaborateur-table tbody tr:nth-of-type(even) {
+  background-color: #f2f2f2;
+}
+
+.listCollaborateur-table tbody tr:hover {
+  background-color: #f1f7ff;
+}
+
+.listCollaborateur-table th {
+  padding: 12px;
+  text-align: center;
+  white-space: nowrap; /* Empêche le texte de se couper sur plusieurs lignes */
+}
+.listCollaborateur-table td {
+  padding: 12px;
+  text-align: center;
+  white-space: nowrap; /* Empêche le texte de se couper sur plusieurs lignes */
+}
+
+.listCollaborateur-table th, .listCollaborateur-table td {
+  padding: 12px;
+  text-align: center;
+  white-space: normal; /* Allows text wrapping */
+}
+
+.list-collab-button {
+  padding: 8px 16px;
+  background-color: #163172;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-right: 10px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.list-collab-button:hover {
+  background-color: #191f43; /* Plus sombre au survol */
+}
+
+.collaborateur-picturee {
+  width: 160px; 
+  height: 80px; 
+  object-fit: cover; /* Maintain aspect ratio */
+  border-radius: 5px; /* Add border radius for rounded corners */
+}
+
+.collabo-butt {
+    padding: 8px 16px;
+
+  background-color: #163172;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+align-items: center;  font-weight: bold;
+justify-content: center;}
+
+.collabo-butt:hover {
+  background-color: #191f43; /* Plus sombre au survol */
+}
+
+.reclamation-table {
+    height: 610px;
+  margin: 25px auto;
+  border-collapse: collapse;
+  font-size: 1em;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  overflow-y: auto;
+  
+}
+
+.reclamation-table thead tr {
+  background-color: #bcf7f4;
+  text-align: left;
+
+}
+
+.reclamation-table tbody tr {
+  border-bottom: thin solid #dddddd;
+  
+}
+
+.reclamation-table tbody tr:nth-of-type(even) {
+  background-color: #f2f2f2;
+}
+
+.reclamation-table tbody tr:hover {
+  background-color: #eafdfb;
+}
+
+.reclamation-table th {
+   position: sticky;
+  top: 0;
+  z-index: 10; 
+  padding: 14px;
+  text-align: center;
+  white-space: nowrap;
+    background-color: #bcf7f4;
+
+}
+.reclamation-table td {
+  padding: 24px;
+  text-align: center;
+  white-space: nowrap; /* Empêche le texte de se couper sur plusieurs lignes */
+}
+.navigation-buttons {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 10px;
+}
+
+.navigation-buttons button {
+  background-color: #191f43;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.navigation-buttons button:hover {
+  background-color: #163172;
+}
+.reclamation-table th, .reclamation-table td {
+  padding: 12px;
+  text-align: center;
+  white-space: normal; /* Allows text wrapping */
+}
+.message-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espace entre l'input et le bouton */
+}
+
+.message-field {
+  flex-grow: 1; /* Permet à l'input de prendre la majorité de l'espace */
+}
+
+.send-button {
+  white-space: nowrap; /* Empêche le texte du bouton de passer à la ligne */
+}
+.reclamation-container {
+  padding: 60px;
+  background: #7F7FD5;
+	background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+	background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+  
+}
+.reclamation-table td {
+  padding: 12px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px; 
+}
+.reclamation-table th, .reclamation-table td {
+  padding: 12px;
+  text-align: left;
+  white-space: nowrap;
+  box-sizing: border-box; /* Inclut le padding et la bordure dans la largeur totale */
+}
+
+/* Si les en-têtes et les cellules utilisent des polices de taille différente, cela peut aussi affecter l'alignement */
+.reclamation-table th, .reclamation-table td {
+  font-size: 16px; /* Assurez-vous que la taille de la police est la même */
+}
+
+/* Vérifiez les hauteurs pour s'assurer qu'elles sont uniformes */
+.reclamation-table th, .reclamation-table td {
+  height: 50px; /* Ajustez selon les besoins */
+}

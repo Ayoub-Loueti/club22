@@ -1,0 +1,69 @@
+.tousLesUtilisateurs-container {
+  padding: 40px;
+  font-family: 'Arial', sans-serif;
+  background: #7F7FD5;
+	background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+	background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+}
+
+.tousLesUtilisateurs-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.tousLesUtilisateurs-header h1 {
+  margin: 0;
+  font-size: 24px;
+  color: #191F43;
+  flex: 1 100%;
+}
+
+.navigation-buttons {
+  display: flex;
+  gap: 10px;
+  flex: 1 100%;
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+
+.tousLesUtilisateurs-search-input {
+  padding: 8px 16px;
+  border: 2px solid #ccc;
+  border-radius: 20px;
+  outline: none;
+  width: 300px;
+  margin-left: auto; /* Push the search bar to the right */
+}
+
+.tousLesUtilisateurs-search-input:focus {
+  border-color: #191F43;
+}
+
+.navigation-buttons button {
+  padding: 8px 16px;
+  background-color: #A2C8CC;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+   .navigation-buttons .navigation-buttonsTous {
+     background-color: #A2C8CC; /* Couleur spécifique */
+     border-radius: 10px; /* Rayon de bordure spécifique */
+   }
+
+   .navigation-buttons .navigation-buttonsTous:hover {
+     background-color: #c5e0dc
+ !important;
+   }
+   .navigation-buttonsTous {
+     background-color: #A2C8CC !important;
+     border-radius: 10px !important;
+     font-weight: bold;
+     color:black !important;
+   }

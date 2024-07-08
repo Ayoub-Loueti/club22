@@ -1,0 +1,195 @@
+.listCollaborateur-container {
+  background-color: #f0f4f8;
+}
+
+.listCollaborateur-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.listCollaborateur-title {
+  color: #191f43;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.listCollaborateur-search-input {
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 2px solid #bbb;
+  border-radius: 20px;
+  width: 300px;
+  margin-top: -67px;
+  outline: none;
+  margin-left: auto;
+  transition: border-color 0.3s ease;
+}
+
+.listCollaborateur-search-input:focus {
+  border-color: #3182ce;
+}
+
+.collaborateur-scroll-container {
+  display: flex;
+  overflow-x: auto;
+  justify-content: start;
+  align-items: center;
+  padding: 0 20px;
+  overflow-y: visible;
+}
+
+.collaborateur-card {
+  width: 270px;
+  height: 420px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  padding: 20px;
+  margin-right: 10px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin: 0 10px;
+  margin-bottom: 4%;
+  margin-top: 4%;
+  border: 2px solid #cbd5e0;
+}
+.collaborateur-card:hover {
+  transform: scale(1.04);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+.collaborateur-card.active {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.collaborateur-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.collaborateur-card-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #191f43;
+  text-transform: uppercase;
+}
+
+.collaborateur-card-description {
+  font-size: 14px;
+  color: #555;
+  font-weight: bold;
+}
+.cards-and-navigation {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.prev {
+  position: absolute;
+  left: 2%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.next {
+  position: absolute;
+  right: 2%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.prev,
+.next {
+  background-color: #191f43;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.stylish-separator {
+  height: 4px;
+  background-image: linear-gradient(to right, #191f43, #3182ce);
+  margin: 30px auto;
+}
+
+.list-coll-button {
+  padding: 8px 16px;
+  background-color: #879eb9;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.list-coll-button:hover {
+  background-color: #191f43;
+}
+.collaborateur-card button {
+  display: inline-block;
+  background-color: #879eb9;
+  color: #ffffff;
+  border: none;
+  padding: 8px 12px;
+  margin: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.collaborateur-card button:hover {
+  opacity: 0.8;
+}
+.description-value {
+  color: #c53030;
+  font-weight: bold;
+}
+.collaborateur-card-title,
+.collaborateur-card-description {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.description-value a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.description-value a:hover,
+.description-value a:focus {
+  text-decoration: underline;
+  color: #0056b3;
+}
+.no-offers-card {
+  padding: 20px;
+  margin-top: 20px;
+  background-color: #f8d7da;
+  color: #721c24;
+  text-align: center;
+  border-radius: 5px;
+  border: 1px solid #f5c6cb;
+}
+.no-offers-message {
+  padding: 20px;
+  background-color: #f8d7da;
+  color: #721c24;
+  text-align: center;
+  border-radius: 4px;
+  margin-top: 20px;
+}
+.validation-icon {
+  margin-left: 8px;
+  color: #007bff;
+  cursor: pointer;
+}

@@ -3,16 +3,15 @@ import axios from 'axios';
 import { Card } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { useTranslation } from 'react-i18next';
 
-const CommentForm = ({ postId }) => {
+const CommentForm = ({ postId, onCommentSubmitted }) => {
   const [commentText, setCommentText] = useState('');
   const [showError, setShowError] = useState(false);
+  const { t } = useTranslation();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    // Débogage: Afficher la valeur de commentText lors de la soumission
-    console.log('Comment Text on Submit:', commentText);
 
     if (!commentText.trim()) {
       setShowError(true);
@@ -32,7 +31,9 @@ const CommentForm = ({ postId }) => {
       );
       setCommentText(''); // Réinitialise le champ de texte après la soumission réussie
       setShowError(false); // Cache le message d'erreur
-      window.location.reload(); // Recharge la page après la soumission réussie
+       if (onCommentSubmitted) {
+         onCommentSubmitted(); // Appel de la fonction de rappel
+       }
     } catch (error) {
       console.error('Error submitting comment:', error);
       setShowError(true); // Affiche le message d'erreur en cas d'erreur de soumission
@@ -49,16 +50,16 @@ const CommentForm = ({ postId }) => {
       <div
         style={{ display: 'flex', alignItems: 'center', position: 'relative' }}
       >
-        <textarea
+        <input
           value={commentText}
           onChange={handleInputChange}
-          placeholder="Ecrire un commentaire..."
+          placeholder={t('Ecrire un commentaire...')}
           className="commentContent"
           style={{ width: '60%', minHeight: '30px', marginRight: '10px' }}
         />
         <button type="submit" className="postShare-button">
-          Submit
-        </button>
+{          t('Commenter')
+}        </button>
       </div>
       {showError && (
         <div style={{ marginTop: '5px' }}>
@@ -74,8 +75,7 @@ const CommentForm = ({ postId }) => {
               icon={faExclamationTriangle}
               style={{ marginRight: '5px' }}
             />
-            Veuillez saisir un commentaire avant de soumettre.
-          </Card>
+{t('Veuillez saisir un commentaire avant de soumettre.')   }       </Card>
         </div>
       )}
     </form>

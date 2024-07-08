@@ -1,0 +1,403 @@
+.offre-cardDetails {
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Centrer les cartes verticalement */
+  position: relative; /* Ajoute un espace au-dessus de la carte */
+  margin-top: 50px;
+}
+
+.offre-cardDetails img {
+  width: 37%; /* Met la photo à gauche */
+  margin-bottom: 20px;  border-radius: 1%;
+
+}
+.offre-detail-image {
+  width: 100%; /* Ajustez la largeur selon vos besoins */
+  max-width: 600px; /* Limitez la largeur maximale pour de grandes images */
+  height: auto; /* Gardez le ratio d'aspect */
+  margin-bottom: 20px; /* Espace entre les images */
+}
+
+.offre-titleDetails {
+  color: #191f43;
+  text-align: center; /* Assure que le texte est centré */
+  font-size: 30px;
+  text-transform: uppercase; 
+  width: 100%; /* Utilisez 100% de la largeur pour centrer le titre */
+  margin-top: 10px;
+}
+.left-align-text {
+  text-align: left; /* Alignement du texte à gauche */
+}
+.offre-priceDetails {
+  color: #c50f10;
+  font-weight: bold; /* Met le prix en gras */
+  text-align: left;
+        font-size: 20px;
+             width: 450px;  
+ 
+
+}
+
+ .offre-descriptionDetails {
+     width: 500px;  
+ 
+    max-width: 500px;  
+    height: 150px;  
+    overflow-y: auto; 
+    text-align: justify;  
+    margin: 20px 0;
+    padding: 10px; 
+    box-sizing: border-box;  
+}
+/* General styles for the scrollbar */
+.offre-cardDetails .offre-descriptionDetails::-webkit-scrollbar {
+    width: 6px;  /* Thickness of the scrollbar */
+}
+
+/* Styling the track (part the thumb slides within) */
+.offre-cardDetails .offre-descriptionDetails::-webkit-scrollbar-track {
+    background: #f0f0f0;  /* Light grey background on the track */
+    border-radius: 10px;  /* Rounded corners for the track */
+}
+
+/* Styling the thumb (the part that can be dragged) */
+.offre-cardDetails .offre-descriptionDetails::-webkit-scrollbar-thumb {
+    background-color: #ED1C24;  /* Dark grey thumb */
+    border-radius: 10px;  /* Rounded corners for the thumb */
+    border: 2px solid #f0f0f0;  /* Slight border for the thumb with track color to create padding effect */
+}
+
+/* Styling the thumb when it is hovered or clicked */
+.offre-cardDetails .offre-descriptionDetails::-webkit-scrollbar-thumb:hover {
+    background-color: #879eb9;  /* Darker grey when hovered */
+}
+
+
+.offre-buttonsDetails {
+  justify-content: space-between;
+}
+
+.offre-cardDetails  {
+  border-radius: 5px;
+  padding: 10px 40px;
+  border: none; /* Supprime les contours */
+  outline: none; /* Supprime la mise en évidence du bouton lorsqu'il est cliqué */
+}
+
+.offre-cardDetails .offre-button-reserverDetails {
+  background-color: #879eb9;
+  color: white;
+  font-weight: bold; /* Met le prix en gras */
+  
+  font-size: large;
+    border-radius: 5px;
+  padding: 10px 40px;
+    margin-right: 10px; 
+  cursor: pointer;
+  border: none; /* Supprime les contours */
+  outline: none; /* Supprime la mise en évidence du bouton lorsqu'il est cliqué */
+  
+}
+
+.offre-cardDetails .offre-button-adherantDetails {
+  background-color: #ed1c24;
+  color: white;
+  font-weight: bold; /* Met le prix en gras */
+    font-size: large;
+      border-radius: 5px;
+  padding: 10px 40px;
+  cursor: pointer;
+  border: none; /* Supprime les contours */
+  outline: none; /* Supprime la mise en évidence du bouton lorsqu'il est cliqué */
+
+}
+.retour-btn {
+  background-color: #f2f2f2; /* Couleur de fond */
+  color: #333; /* Couleur du texte */
+  padding: 10px 20px; /* Padding */
+  font-size: 16px; /* Taille du texte */
+  border: none; /* Pas de bordure */
+  cursor: pointer; /* Style du curseur */
+  border-radius: 5px; /* Bords arrondis */
+margin-top: 0.3%;
+margin-right: 70% ;
+margin-bottom: -30%
+;}
+
+.retour-btn:hover {
+  background-color: #e0e0e0; /* Couleur de fond au survol */
+}
+
+
+
+.offre-details {
+  margin-left: 10px; /* Ajoute un espace entre la photo et les textes */
+}
+ /*.offre-details {
+  margin-bottom: 20px; 
+}*/
+.offre-additional-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 21px;
+  cursor: pointer;
+  justify-content: center; /* Centrer les images supplémentaires */
+  padding-top: 30px; /* Ajoute un espace au-dessus des images supplémentaires */
+  position: relative; /* Permet le déplacement relatif des images supplémentaires */
+  left: -11%; /* Déplace les images supplémentaires un peu à droite */
+  margin-bottom: 20px; /* Espace entre les images supplémentaires et l'image principale */
+}
+
+
+.offre-additional-image {
+  max-width: 110px; /* Taille fixe pour les images supplémentaires */
+  height: 80px;
+  border-radius: 3px; /* Bordures arrondies pour les images supplémentaires */
+   filter: grayscale(2%); /* Rend l'image entièrement grise */
+  opacity: 0.6; /* Rend l'image partiellement transparente */
+  transition: filter 0.3s ease, opacity 0.3s ease;
+}
+.offre-additional-image:hover, .offre-additional-image:focus {
+  filter: none; /* Retire le filtre gris */
+  opacity: 1; /* Restaure l'opacité complète */
+}
+.offre-main-image {
+  height: 430px; 
+  width: 35%; /* Met la photo à gauche */
+  border-radius: 1%;
+    object-fit: cover; /* Couvre l'espace sans distorsion, en coupant au besoin */
+
+}
+
+.remise-badgee {
+  position: absolute;
+  top: 2%;  /* Modifiez le pourcentage pour ajuster la position verticale */
+  left: 49%;  /* Modifiez le pourcentage pour ajuster la position horizontale, en le déplaçant vers la droite de l'image */
+  transform: translate(-50%, -50%); /* Centre le badge */
+  background-color: #ED1C24;
+  color: white;
+  border-radius: 50%;
+  padding: 17px 17px;
+  font-size: 26px;
+  font-weight: bold;
+  z-index: 10; /* S'assure que le badge est bien au-dessus de l'image */
+}
+
+.offre-type-specific-details {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  padding: 20px;
+  height: 100vh; /* Ensures the container takes the full viewport height */
+}
+
+
+/*.hotel-details-card, .details-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 20px; 
+  flex-basis: 45%; 
+  transition: transform 0.3s ease; 
+*/
+.hotel-details-card, .details-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px dashed #191f43;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 30px; /* Increased padding for more internal space */
+  margin: 20px;
+  min-height: 300px; /* Increased minimum height */
+  flex-direction: column;
+  justify-content: center; /* Center content vertically inside the card */
+  align-items: center; /* Center content horizontally */
+  flex-grow: 0.4;
+   width: 300px; /* Set the fixed width */
+  max-height: 400px; /* Set the maximum height */
+  overflow-y: auto; 
+  flex-shrink: 0;
+}
+
+.hotel-details-card:hover, .details-card:hover {
+  transform: translateY(-10px); /* Lifts the card slightly for a visual effect on hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+}
+.hotel-name, .hotel-stars, .service-item {
+  text-align: center; /* Ensures text is centered within the card */
+  width: 100%; /* Ensures text elements take full width of the card */
+}
+
+.hotel-name {
+  color: #2a3f5f;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.hotel-stars {
+  color: #ffc107;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.hotel-services, .details-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: auto; /* S'adapte à la largeur du contenu */
+}
+
+.service-item {
+ display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: #4a5568;
+  margin-bottom: 5px; /* Garde un espace constant entre les items */
+  transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 10px; 
+}
+
+.service-icon {
+ margin-right: 15px;   color: #3182ce;
+}
+
+/* Styling for hover effect */
+.service-item:hover {
+  background-color: #f7fafc; /* Changement de couleur de fond au survol */
+  border-radius: 5px; /* Arrondit les coins du fond */
+  transform: scale(1.05); /* Agrandit légèrement l'item pour un effet subtil */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ajoute une légère ombre pour le relief */
+  cursor: pointer;
+}
+.details-link {
+  padding: 10px 20px;
+  margin-top: 20px;
+  background-color: #fffec4;
+  color: #191f43;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  border-radius: 50px;
+}
+/* Styles pour la zone de destination */
+.destination-details {
+    width: 500px;  
+ 
+  height:65px;  /* Ajustez la hauteur selon vos besoins */
+  overflow-y: auto; 
+  text-align: justify;  
+margin-top: -25px;
+  padding: 10px; 
+  box-sizing: border-box;  
+    text-align: left;
+
+}
+.offre-rating {
+  display: flex;
+  align-items: center; /* Centre verticalement les étoiles avec le texte */
+  gap: 5px; /* Ajoute un petit espace entre les étoiles et le texte */
+}
+/* Styles généraux pour le scrollbar */
+.destination-details::-webkit-scrollbar {
+  width: 6px;  /* Épaisseur du scrollbar */
+}
+
+/* Styling du track (partie dans laquelle le thumb glisse) */
+.destination-details::-webkit-scrollbar-track {
+  background: #f0f0f0;  /* Fond gris clair pour le track */
+  border-radius: 10px;  /* Coins arrondis pour le track */
+}
+
+/* Styling du thumb (la partie que l'on peut glisser) */
+.destination-details::-webkit-scrollbar-thumb {
+  background-color: #ED1C24;  /* Couleur gris foncé pour le thumb */
+  border-radius: 10px;  /* Coins arrondis pour le thumb */
+  border: 2px solid #f0f0f0;  /* Petite bordure pour le thumb avec la couleur du track pour créer un effet de padding */
+}
+
+/* Styling du thumb lors du survol ou du clic */
+.destination-details::-webkit-scrollbar-thumb:hover {
+  background-color: #879eb9;  /* Gris plus foncé lors du survol */
+}
+
+
+.destination-icon {
+  text-align: left;
+  color: #c50f10; /* Or any color that fits your design */
+}
+.program-button {
+  background-color: #4a5568; /* Couleur de fond */
+  color: white; /* Couleur du texte */
+  border: none; /* Pas de bordure visible */
+  border-radius: 5px; /* Coins arrondis */
+  padding: 10px 20px; /* Espacement interne */
+  font-size: 16px; /* Taille de la police */
+  cursor: pointer; /* Curseur en forme de pointeur pour indiquer qu'il est cliquable */
+  outline: none; /* Suppression de la bordure de focus par défaut */
+  transition: background-color 0.3s, transform 0.2s; /* Transition pour le survol et le clic */
+  margin-top: 10px; /* Marge au-dessus du bouton */
+}
+
+.program-button:hover {
+  background-color: #2a3f5f; /* Changement de couleur au survol */
+  transform: translateY(-2px); /* Légère élévation au survol */
+}
+
+.program-button:active {
+  transform: translateY(1px); /* Effet enfoncé lors du clic */
+}
+
+.offre-inclus {
+  width: 750px;
+  max-width: 750px;
+  height: 100px;
+  overflow-y: auto;
+  text-align: center;
+  margin: 20px 0;
+  padding: 10px;
+  box-sizing: border-box;
+   display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* General styles for the scrollbar */
+.offre-inclus::-webkit-scrollbar {
+  width: 6px; /* Thickness of the scrollbar */
+}
+
+/* Styling the track (part the thumb slides within) */
+.offre-inclus::-webkit-scrollbar-track {
+  background: #f0f0f0; /* Light grey background on the track */
+  border-radius: 10px; /* Rounded corners for the track */
+}
+
+/* Styling the thumb (the part that can be dragged) */
+.offre-inclus::-webkit-scrollbar-thumb {
+  background-color: #191f43; /* Dark grey thumb */
+  border-radius: 10px; /* Rounded corners for the thumb */
+  border: 2px solid #f0f0f0; /* Slight border for the thumb with track color to create padding effect */
+}
+
+/* Styling the thumb when it is hovered or clicked */
+.offre-inclus::-webkit-scrollbar-thumb:hover {
+  background-color: #879eb9; /* Darker grey when hovered */
+}
+.interdictionsEmp {
+  color: #e53e3e; /* Rouge pour les interdictions */
+  font-weight: bold; /* Texte en gras */
+}
+
+.interdiction-itemEmp {
+  display: inline; /* Affichage en ligne pour une intégration fluide dans le texte */
+}
+
+.interdiction-iconEmp {
+    color: #e53e3e;
+  margin-right: 5px; /* Espace entre l'icône et le texte */
+}

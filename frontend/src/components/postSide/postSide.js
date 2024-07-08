@@ -1,34 +1,87 @@
-import { useEffect ,useState} from 'react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Posts from '../posts/posts';
 import PostShare from '../postShare/postShare';
+import PostModal from '../postModal/postModal';
+import { useTranslation } from 'react-i18next';
+
 import './postSide.css';
-import axios from 'axios';
 
 const PostSide = () => {
   const [posts, setPosts] = useState([]);
-  const token = JSON.parse(localStorage.getItem('login'))?.token; 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState(null);
+  const [postType, setPostType] = useState('tous');
+    const { t } = useTranslation();
+
+  const token = JSON.parse(localStorage.getItem('login'))?.token;
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/posts', {
+        let url = 'http://localhost:5000/posts';
+        if (postType !== 'tous') {
+          url += `/${postType}`; 
+        }
+        const response = await axios.get(url, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setPosts(response.data); // Stocker les posts dans l'état
+        setPosts(response.data);
       } catch (error) {
-        console.error('Erreur lors du chargement des posts', error);
+        console.error('Error loading posts', error);
       }
     };
 
     fetchPosts();
-  }, [token]);
+  }, [token, postType]);
+
+  const openModalForPost = (postId) => {
+    setSelectedPostId(postId);
+    setIsModalOpen(true);
+  };
+
+  const handlePostTypeChange = (type) => {
+    setPostType(type);
+  };
 
   return (
     <div className="PostSide">
       <PostShare />
-      <Posts posts={posts} /> {/* Passer les posts au composant Posts */}
+      {/* Mini navbar */}
+      <div className="mini-navbar">
+        <button
+          className={postType === 'tous' ? 'active' : ''}
+          onClick={() => handlePostTypeChange('tous')}
+        >
+          {t('Tous')}
+        </button>
+        <button
+          className={postType === 'hotel' ? 'active' : ''}
+          onClick={() => handlePostTypeChange('hotel')}
+        >
+          Hotels
+        </button>
+        <button
+          className={postType === 'voyage' ? 'active' : ''}
+          onClick={() => handlePostTypeChange('voyage')}
+        >
+          {t('Voyages')}
+        </button>
+        <button
+          className={postType === 'activité' ? 'active' : ''}
+          onClick={() => handlePostTypeChange('activité')}
+        >
+          {t('Activités')}
+        </button>
+      </div>
+      <Posts posts={posts} openModalForPost={openModalForPost} />
+      <PostModal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        postId={selectedPostId}
+      />
     </div>
   );
 };

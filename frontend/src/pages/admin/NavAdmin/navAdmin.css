@@ -1,0 +1,178 @@
+.adm-navbar {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  height: 100vh;
+  width: 100px; /* Initial width */
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: #e7e7e7;
+  overflow: hidden;
+  transition: width 0.3s ease; /* Transition for expanding the navbar */
+  border-radius: 1%;
+  z-index: 5000;
+}
+
+.adm-navbar.expanded {
+  width: 250px; /* Expanded width when an icon is hovered */
+}
+.adm-icon-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin: 15px 0; /* Augmentez cette valeur pour plus d'espacement */
+}
+
+.icon-and-tooltip {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content:left; /* Ensure contents align to the left */
+  background-color: transparent; /* Background transparent by default */
+  border-radius: 25px; /* Rounded corners for the hover background */
+  padding: 4px 20px 4px 20px; /* Symmetric padding for vertical and initial horizontal */
+   transition: background-color 0.2s ease; /* Smooth transition for all properties */
+  width: 190px;
+margin-left: -3px;}
+/*
+.icon-and-tooltip:hover {
+  background-color: #cdcaca;
+  }
+*/
+.adm-navbar-icon,
+.adm-tooltip {
+  transition: color 0.3s ease;
+  display: block;
+  text-align: center;
+}
+
+.adm-tooltip {
+  font-size: 14px;
+  margin-left: 10px; /* Ajustez l'espace entre l'icône et le tooltip */
+  visibility: hidden; /* Caché par défaut */
+  opacity: 0;
+  transition: visibility 0s, opacity 0.2s linear;
+  color: #191f43;
+  font-weight: bold;
+}
+
+
+.icon-and-tooltip:hover .adm-tooltip ,.icon-and-tooltip:hover .adm-navbar-icon {
+  visibility: visible;
+  opacity: 1;
+     color: #879EB9;
+
+}.adm-navbar.expanded .icon-and-tooltip:hover,
+.adm-navbar.expanded:hover .adm-tooltip {
+  visibility: visible; /* Make tooltips visible on navbar hover */
+  opacity: 1;
+}
+
+
+.adm-navbar-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  width: 54%; 
+  background-color: #CDCACA;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+  overflow-y: auto;
+}
+
+.adm-navbar-extension {
+  width: 30px;
+  height: 100%;
+  position: absolute;
+  right: -3px;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+}
+
+.adm-navbar:not(.adm-visible) {
+  transform: translateX(-120px);
+}
+
+.adm-navbar.adm-visible {
+  transform: translateX(0);
+}
+
+.adm-navbar-toggle {
+  position: absolute;
+  left: 60px;
+  z-index: 2000;
+  cursor: pointer;
+  padding: 10px;
+  color: #191f43;
+  opacity: 0.7;
+  top: 6px;
+    z-index: 7000;
+
+}
+
+.adm-navbar-logo {
+  height: 33px;
+  width: 33px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+
+
+
+.adm-icon-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Alignement à gauche */
+  height: 100%; /* Prend toute la hauteur disponible */
+  padding-left: 10px; /* Déplace toutes les icônes un peu plus à droite */
+  padding-top: 30px; /* Ajustez ici pour moins d'espacement en haut */
+  padding-bottom: 30px; /* Ajustez ici pour moins d'espacement en bas */
+}
+.adm-icon-container{
+  margin-bottom: 35px;
+    display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Alignement à gauche */
+  height: 100%; /* Prend toute la hauteur disponible */
+  padding-left: 10px; /* Déplace toutes les icônes un peu plus à droite */
+  padding-top: 70px; /* Espacement optionnel en haut */
+  padding-bottom: 50px; /* Espacement optionnel en bas */
+     color: #191f43; /* Couleur de l'icône */
+
+}
+
+
+
+
+
+.adm-inner-user {
+   color: #191f43; /* Couleur de l'icône */
+  font-size: 16px; /* Taille de l'icône */
+  margin: 20px 20px 20px 0; /* Espacement autour de l'icône avec une marge droite de 10px */
+  margin-top: 66px;
+
+  cursor: pointer; /* Curseur de type pointer */
+}
+
+.adm-user-photo {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 5px 0;
+  margin-right: 23px;
+  cursor: pointer;
+}
+
+.adm-user-photo:hover {
+  opacity: 0.6;
+}

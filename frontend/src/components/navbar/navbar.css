@@ -1,73 +1,90 @@
 .navbar {
   display: flex;
-  flex-direction: column; /* Align items vertically */
-  justify-content: start; /* Adjust as needed based on your design */
+  flex-direction: column;
+  justify-content: start;
   height: 100vh;
-  width: 120px;
+  width: 110px;
   position: fixed;
   left: 0;
   top: 0;
   background-color: #191f43;
   overflow: hidden;
-   transform: translateX(0); /* Affiche par défaut */
+  transform: translateX(0);
   transition: transform 0.3s ease;
+  z-index: 3000;
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
 }
 .navbar:not(.visible) {
-  transform: translateX(-120px); /* Cache hors écran */
+  transform: translateX(-120px);
 }
-/* Show navbar */
 .navbar.visible {
   transform: translateX(0);
 }
+
+.navbar:not(.visible) {
+  transform: translateX(-120px);
+}
+
 .navbar-toggle {
   position: fixed;
-  left: 10px; 
+  left: 20px;
   z-index: 2000;
   cursor: pointer;
   padding: 10px;
   margin-left: 41px;
   color: #191f43;
-  opacity: 0.7; 
+  opacity: 0.7;
   top: 6px;
-  
+  z-index: 6000;
 }
 
 .navbar-inner {
-  width: 63%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  width: 54%;
   background-color: #879eb9;
   height: 100%;
   position: absolute;
   right: 0;
   border-top-left-radius: 30px;
   border-bottom-left-radius: 30px;
+
+  overflow-y: auto;
+}
+.navbar-inner::before,
+.navbar-inner::after {
+  content: '';
+  position: absolute;
+
+  background-color: #879eb9;
+  border-radius: 50%;
+  right: -15px;
 }
 
-.navbar-extension {
-  width: 30px;
-  height: 100%;
-  background-color: #ffff;
-  position: absolute;
-  right: -3px;
-  border-top-left-radius: 30px;
-  border-bottom-left-radius: 30px;
+.navbar-inner::before {
+  top: -15px;
+}
+
+.navbar-inner::after {
+  bottom: -15px;
 }
 
 .navbar-logo {
   height: 33px;
   width: 33px;
   position: absolute;
-  top:10px;
+  top: 10px;
   left: 10px;
 }
 
-/* Styles pour la navbar horizontale */
 .navbar-horizontal {
   display: flex;
-  height: 40px; /* Hauteur réduite comme précédemment mentionné */
-  margin-left: 600px; /* Réduisez cette valeur pour diminuer l'espace à gauche */
-  width: calc(
-    100% - 150px
-  ); /* Ajustez la largeur en conséquence pour maintenir la cohérence */
+  height: 40px;
+  margin-left: 600px;
+  width: calc(100% - 150px);
   background-color: transparent;
   align-items: center;
   z-index: 1000;
@@ -76,141 +93,497 @@
 .searchh-formm {
   display: flex;
   align-items: center;
-  justify-content: center; /* Centrer horizontalement les éléments enfants */
-  margin-right: auto; /* Mettre à auto pour déplacer la barre de recherche à gauche */
+  justify-content: center;
+  margin-right: auto;
+}
+
+.hide-search-bar .searchh-formm {
+  display: none;
+}
+
+.khat {
+  border-left: 1px solid transparent;
+  width: 1px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .searchh-inputt {
-  color: #191f43; /* Change la couleur du texte en blanc */
-  border-radius: 20px; /* Arrondi des bords de l'input */
-  padding: 5px 10px; /* Espacement interne pour le texte */
-  width: 250px; /* Largeur de la barre de recherche */
-  outline: none; /* Supprime l'outline par défaut au focus */
+  color: #191f43;
+  border-radius: 20px;
+  padding: 5px 10px;
+  width: 250px;
+  outline: none;
 }
-/* Styles pour l'icône de recherche */
 .search-iconn {
-  color: #191f43; /* Couleur de l'icône de recherche */
-  font-size: 22px; /* Taille de l'icône */
-  background-color: transparent; /* Fond transparent */
-  border: none; /* Pas de bordure */
-  cursor: pointer; /* Curseur de type pointer */
-  padding: 0; /* Aucun espacement interne */
-  margin-left: -32px; /* Ajustement horizontal de la position */
-  margin-top: 1px; /* Ajustement vertical de la position */
+  color: #191f43;
+  font-size: 22px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: -32px;
+  margin-top: 1px;
 }
-
-
 
 .navbar-iconn {
-  cursor: pointer; /* Change le curseur pour indiquer la cliquabilité */
+  cursor: pointer;
 }
 #search-input-navbar::placeholder {
-  color: #191f43; /* Définit la couleur du placeholder en blanc uniquement pour cet input */
-  opacity: 1; /* Assure que la couleur du placeholder est pleinement visible */
+  color: #191f43;
+  opacity: 1;
 }
 .vertical-icon {
-  color: white; /* Définit la couleur des icônes en blanc */
-  font-size: 24px; /* Taille des icônes */
-  margin: 10px 0; /* Espacement vertical entre les icônes */
-  cursor: pointer; /* Indique que les icônes sont cliquables */
+  color: white;
+  font-size: 24px;
+  margin: 10px 0;
+  cursor: pointer;
 }
 .icon-containerrr {
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Alignement à gauche */
-  height: 100%; /* Prend toute la hauteur disponible */
-   padding-left: 10px; /* Déplace toutes les icônes un peu plus à droite */
-  padding-top: 180px; /* Espacement optionnel en haut */
-  padding-bottom: 10px; /* Espacement optionnel en bas */
+  align-items: flex-start;
+  height: 100%;
+  padding-left: 10px;
+  padding-top: 180px;
+  padding-bottom: 10px;
 }
 
-
 .icon-containerrr .navbar-iconnn {
-  margin-bottom: 15px; /* Ajoute un espacement en bas de chaque icône */
+  margin-bottom: 15px;
 }
 
 .icon-containerrr .navbar-iconnn:last-child {
-  margin-bottom: 0; /* Supprime la marge en bas de la dernière icône */
+  margin-bottom: 0;
 }
 
 .navbar-iconnn {
-  width: 25px; /* Définit une largeur fixe pour toutes les icônes */
-  height: 25px; /* Définit une hauteur fixe pour toutes les icônes */
-  margin-bottom: 15px; /* Espacement vertical uniforme */
-  color: white; /* Assure la visibilité contre l'arrière-plan du navbar */
-  font-size: 23px; 
+  width: 25px;
+  height: 25px;
+  margin-bottom: 15px;
+  color: white;
+  font-size: 23px;
+  cursor: pointer;
+}
+.icon-containerr {
+  display: flex;
+  gap: 22px;
+  padding-right: 500px;
+  color: #191f43;
+  font-size: 34px;
+  margin-top: 20px;
+}
+
+.inner-user {
+  color: #191f43;
+  font-size: 24px;
+  margin: 2px 2px 20px 0;
+  margin-top: 70px;
+
+  cursor: pointer;
+}
+.user-photo {
+  font-size: 34px;
+
+  width: 37px;
+  height: 37px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-photo:hover {
+  opacity: 0.6;
+}
+.user-photoo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 5px 0;
+  margin-right: 1px;
   cursor: pointer;
 }
 
-.icon-containerr {
-  display: flex;
-  gap: 22px; /* Espacement entre les icônes */
-  padding-right: 500px; /* Espacement à droite */
-  color: #191f43;
-  font-size: 33px; /* Taille des icônes */
-  margin-top: auto;
+.user-photoo:hover {
+  opacity: 0.6;
 }
-/* Styles pour l'icône d'utilisateur */
-.inner-user {
-  color: #191f43; /* Couleur de l'icône */
-  font-size: 24px; /* Taille de l'icône */
-  margin: 20px 20px 20px 0; /* Espacement autour de l'icône avec une marge droite de 10px */
-margin-top:50px;
 
-  cursor: pointer; /* Curseur de type pointer */
-  
-}
-.user-photo {
-    font-size: 34px; /* Taille de l'icône */
-
-  width: 35px; /* Réduction de la taille de la photo de profil */
-  height: 35px; /* Garde la photo de profil circulaire */
-  border-radius: 50%; /* Rend l'image complètement ronde */
-  object-fit: cover; /* Assure que l'image couvre bien l'espace sans être déformée */
-}
 body {
   overflow-x: hidden;
 }
 .user-info {
-  position: fixed;
+  position: absolute;
   top: 50px;
-  right: 10px;
-  background-color: white;
-  padding: 20px; /* Augmenté pour plus d'espace interne */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  border-radius: 5px;
+  right: 20px;
+  background-color: #ffffff;
+  padding: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
   z-index: 1001;
-  width: 200px; /* Largeur spécifiée pour augmenter la taille du conteneur */
   display: flex;
-  flex-direction: column; /* Organise les enfants verticalement */
-  align-items: start; /* Aligner les éléments à gauche */
+  flex-direction: column;
+  align-items: start;
+  transition: all 0.3s ease;
+  opacity: 0.95;
+  border: 1px solid #e2e8f0;
+  max-width: 200px;
 }
 
-.user-info .user-actions {
-  display: flex;
-  flex-direction: column; /* Affiche chaque action sur une nouvelle ligne */
+.user-info:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
-
-.user-info .user-actions a,
-.user-info .user-actions .logout-link {
-  color: #191f43; /* Couleur des liens */
-  padding: 8px 0; /* Ajoute de l'espace vertical pour une meilleure séparation */
-  text-decoration: none; /* Supprime le soulignement par défaut */
-  font-size: 16px; /* Augmente la taille de la police pour une meilleure lisibilité */
-  width: 100%; /* Utilise toute la largeur disponible pour faciliter le clic */
-  text-align: left; /* Assure que le texte est aligné à gauche */
+.user-actions a,
+.user-actions button {
+  color: #4a5568;
+  background-color: #ffffff;
+  padding: 12px 20px;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .user-actions a:hover,
-.user-actions .logout-link:hover {
-  background-color: #f2f2f2; /* Effet de survol pour améliorer l'interaction */
-  border-radius: 4px; /* Arrondit les coins lors du survol */
+.user-actions button:hover {
+  background-color: #edf2f7;
+  color: #2d3748;
 }
+
+.acceuil-icon,
+.profil-icon,
+.logout-icon {
+  margin-right: 8px;
+  color: #879eb9;
+}
+
 .logout-button {
+  color: #e53e3e;
+}
+
+.user-actions i:hover {
+  transform: scale(1.1);
+  transition: transform 0.2s;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.user-info {
+  animation: slideDown 0.3s ease forwards;
+}
+
+.notifications-count {
+  position: absolute;
+  background-color: #ed1c24;
+  color: #ffffff;
+  border-radius: 50%;
+  padding: 0 6px;
+  font-size: 11px;
+  height: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 3%;
+}
+
+.notifications-dropdown {
+  position: absolute;
+  right: 0;
+  margin-right: 15px;
+  top: 48px;
+  background-color: #ffffff;
+  width: 400px;
+  max-height: 450px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 5;
+  border-radius: 15px;
+  overflow-y: auto;
+  cursor: pointer;
+  text-align: left;
+}
+.notifications-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notifications-dropdown::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 45px;
+}
+
+.notifications-dropdown::-webkit-scrollbar-thumb {
+  background: #879eb9;
+  border-radius: 45px;
+}
+
+.notifications-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #191f43;
+}
+
+.notification-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.notification-item:hover {
+  background-color: #f8f8f8;
+}
+
+.notification-item.unseen {
+  background-color: #edf2fa;
+}
+
+.notification-user-photo {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.notification-text {
+  flex: 1;
+  font-size: 14px;
+}
+
+.notification-text strong {
+  font-weight: 600;
+}
+
+.notification-icon-Comment {
+  margin-right: 10px;
+  color: green;
+  font-size: 16px;
+}
+.notification-icon-jaime {
+  margin-right: 10px;
+  color: #ed1c24;
+  font-size: 16px;
+}
+.notification-delete-icon {
+  margin-left: auto;
+  color: #cb2431;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.notification-delete-icon:hover {
+  color: #ffffff;
+  background-color: #cb2431;
+}
+
+.notification-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.search-results {
+  position: absolute;
+  top: 40px;
+  left: 390px;
+  background-color: #fff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  width: 50%;
+  z-index: 1002;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.user-photooo {
+  margin-right: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 5px 0;
+  margin-right: 23px;
+  cursor: pointer;
+}
+
+.search-no-results-message {
+  padding: 10px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}
+
+.points {
+  position: absolute;
+  top: 10px;
+  margin-left: 36%;
+  background-color: #4299e1;
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+.points:hover {
+  background-color: #cb2431; 
+  transform: scale(1.1); 
+}
+
+.points:active {
+  background-color: #cb2431; 
+  transform: scale(0.95); 
+}
+.phone-icon {
+  font-size: 27px;
+  margin-right: 15%;
   color: #191f43;
   background-color: transparent;
   border: none;
   cursor: pointer;
-  padding: 8px 0;
-  font-size: 16px;
+  margin-top: 1px;
+}
+.language-selector {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.language-dropdown {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background-color: #ffffff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 7px;
+  z-index: 1000;
+  padding: 10px 0;
+}
+
+.language-dropdown button {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.language-dropdown button:hover {
+  background-color: #f0f0f0;
+}
+
+.flag-icon {
+  width: 27px;
+  height: 17px;
+  margin-right: 10px;
+}
+
+.globe-icon {
+  width: 31px;
+  margin-bottom: 20%;
+}
+.nonotif {
+  width: 70%;
+  height: 70%;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+.textNotif1 {
+  font-size: 12px;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+.textNotif2 {
+  font-size: 12px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-wrap: wrap;
+}
+.notification-no {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+  flex-direction: column;
+}
+@media (max-width: 768px) {
+  .navbar {
+    width: 60px;
+    transform: translateX(-60px);
+    transition: transform 0.3s ease;
+  }
+
+  .navbar.visible {
+    transform: translateX(0);
+  }
+
+  .navbar-toggle {
+    left: 65px;
+  }
+
+  .navbar-horizontal {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .icon-containerr {
+    padding-right: 20px;
+  }
+
+  .searchh-formm {
+    width: calc(100% - 40px);
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    width: 50px;
+  }
+
+  .user-info {
+    right: 5px;
+    width: 95%;
+  }
+
+  .language-dropdown {
+    right: 5px;
+  }
 }

@@ -6,13 +6,18 @@ const { Op } = require('sequelize');
 const passport = require('passport');
 const { Sequelize } = require('sequelize'); 
 const { sequelize } = require('../config/db'); // Ensure this import is correct
-
+const twilio = require('twilio');
+const Client = require('../models/ClientModel');
+const Offre = require('../models/OffreModel');
+const Collaborateur = require('../models/CollaborateurModel');
+const ImageOffre = require('../models/ImageOffreModel');
 const crypto = require('crypto');
 const Utilisateur = require('../models/UtilisateurModel');
 require('dotenv').config();
 
 exports.signup = async (req, res) => {
-  const { nom, prenom, email, motDePasse, genre, photo, type, etat } = req.body;
+  const { nom, prenom, email, motDePasse, genre, photo, type, etat, tel } =
+    req.body;
 
   try {
     const existingUser = await Utilisateur.findOne({ where: { email: email } });
@@ -32,6 +37,7 @@ exports.signup = async (req, res) => {
         photo,
         type,
         etat,
+        tel,
         resetPasswordToken: token,
         resetPasswordExpires: new Date(Date.now() + 3600000),
         lockUntil:0,
@@ -203,6 +209,35 @@ exports.login = async (req, res) => {
   }
 };
 
+exports.changerMdp = async (req, res) => {
+  const { motDePasse, newMDP } = req.body;
+  const userId = req.userId; 
+
+  try {
+      const utilisateur = await Utilisateur.findByPk(userId);
+
+      if (!utilisateur) {
+          return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+      }
+
+      const passwordIsValid = await bcrypt.compare(motDePasse, utilisateur.motDePasse);
+
+      if (!passwordIsValid) {
+          return res.status(401).json({ message: 'Mot de passe actuel incorrect.' });
+      }
+
+      const newHashedPassword = await bcrypt.hash(newMDP, 10);
+
+      await Utilisateur.update({ motDePasse: newHashedPassword }, {
+          where: { id_utilisateur: userId }
+      });
+
+      res.status(200).json({ message: 'Mot de passe changé avec succès.' });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
 exports.googleAuth = passport.authenticate('google', {
   scope: ['profile', 'email'],
 });
@@ -210,20 +245,18 @@ exports.googleAuth = passport.authenticate('google', {
 exports.googleAuthCallback = (req, res, next) => {
   passport.authenticate('google', (error, user, info) => {
     if (error) {
-      return next(error); // Handle error
+      return next(error); 
     }
     if (!user) {
-      return res.redirect('http://localhost:3000/signup'); // Handle "no user" scenario
+      return res.redirect('http://localhost:3000/signup');
     }
 
-    // User is found or created successfully, now sign the JWT token with user's information
     const userToken = jwt.sign({ userId: user.id_utilisateur }, secretKey, {
-      expiresIn: '24h', // Adjust token expiration as needed
+      expiresIn: '24h', 
     });
 
-    // Redirect to the /load page with the token as a query parameter
-    res.redirect(`http://localhost:3000/load?token=${userToken}&userId=${user.id_utilisateur}`);
-  })(req, res, next); // Make sure to pass req, res, next to the inner function
+    res.redirect(`http://localhost:3000/load?token=${userToken}&userId=${user.id_utilisateur}&type=${user.type}`);
+  })(req, res, next); 
 };
 
 
@@ -268,7 +301,7 @@ exports.updateUser = async (req, res) => {
 };
 
 exports.updateNameSurnameGenre = async (req, res) => {
-  const { nom, prenom, genre } = req.body;
+  const { nom, prenom, genre , tel} = req.body;
   const userId = req.userId; // Assurez-vous d'avoir l'ID de l'utilisateur, par exemple, depuis un token JWT
 
   try {
@@ -280,8 +313,11 @@ exports.updateNameSurnameGenre = async (req, res) => {
 
     // Vérifier si le nom et le prénom sont vides
     if (!user.nom.trim() && !user.prenom.trim()) {
-      await Utilisateur.update({ nom, prenom, genre }, { where: { id_utilisateur: userId } });
-      res.status(200).json({ message: 'Nom, prénom et genre mis à jour avec succès.' });
+      await Utilisateur.update(
+        { nom, prenom, genre, tel },
+        { where: { id_utilisateur: userId } }
+      );
+      res.status(200).json({ message: 'Nom, prénom et genre et tel mis à jour avec succès.' });
     } else {
       // Nom ou prénom n'est pas vide
       res.status(400).json({ message: 'Le nom et le prénom doivent être vides pour permettre la mise à jour.' });
@@ -532,12 +568,19 @@ exports.updateUserPhoto = async (req, res, filePath) => {
 
 exports.getRandomUsers = async (req, res) => {
   try {
-      let whereCondition = {};
+      let whereCondition = {
+          etat: 'autorise', // Ensure only users with 'etat' as 'autorise' are selected
+      };
       
       // Check if the user is authenticated (req.userId is set by your authentication middleware)
       if (req.userId) {
-          // Exclude the current user from the results
-          whereCondition = { id_utilisateur: { [Sequelize.Op.ne]: req.userId } };
+          // Exclude the current user from the results and ensure 'etat' is 'autorise'
+          whereCondition = {
+              [Sequelize.Op.and]: [
+                  { id_utilisateur: { [Sequelize.Op.ne]: req.userId } },
+                  { etat: 'autorise' }
+              ]
+          };
       }
 
       const users = await Utilisateur.findAll({
@@ -549,7 +592,7 @@ exports.getRandomUsers = async (req, res) => {
       const shuffledUsers = users.sort(() => 0.5 - Math.random());
       
       // Slice the first 7 elements from the shuffled array
-      const randomUsers = shuffledUsers.slice(0, 7);
+      const randomUsers = shuffledUsers.slice(0, 12);
 
       if (randomUsers.length === 0) {
           return res.status(404).json({ message: 'No users found' });
@@ -563,4 +606,185 @@ exports.getRandomUsers = async (req, res) => {
 };
 
 
+exports.deleteProfilePicture = async (req, res) => {
+  const userId = req.userId; // Assuming you have middleware that sets req.userId from the token
+
+  try {
+    const user = await Utilisateur.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (!user.photo) {
+      return res.status(400).json({ message: 'No profile picture to delete' });
+    }
+
+    // Add logic here to delete the profile picture file from the server
+    // For example, use fs.unlink if storing files directly on the server
+
+    user.photo = null; // Remove the profile picture reference
+    await user.save();
+
+    res.status(200).json({ message: 'Profile picture deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting profile picture:', error);
+    return res.status(500).json({
+      message: 'Error deleting profile picture',
+      error: error.message,
+    });
+  }
+};
+
+exports.findUsersBySubstring = async (req, res) => {
+  const substring = req.query.substring || '';
+  const currentUserId = req.userId; // Assuming this is how you get the current user's ID
+
+  try {
+    const userPromise = Utilisateur.findAll({
+      where: {
+        [Op.and]: [
+          { id_utilisateur: { [Op.ne]: currentUserId } },
+          { etat: 'autorise' },
+          Sequelize.where(Sequelize.fn('concat', Sequelize.col('nom'), ' ', Sequelize.col('prenom')), {
+            [Op.like]: `%${substring}%` // Use Op.like for case-insensitive search
+          })
+        ],
+      },
+      attributes: ['id_utilisateur', 'nom', 'prenom', 'email', 'photo'],
+    });
+
+    const offerPromise = Offre.findAll({
+      where: {
+        [Op.or]: [
+          { titre: { [Op.like]: `%${substring}%` } },
+        ],
+      },
+      attributes: ['id_offre', 'titre', 'description', 'prix', 'remise', 'type'],
+    });
+
+    const collabPromise = Collaborateur.findAll({
+      where: {
+        [Op.or]: [
+          { nom: { [Op.like]: `%${substring}%` } },
+         
+        ],
+      },
+      attributes: ['id_collaborateur', 'nom', 'logo']
+    });
+
+    const [users, offers, collaborators] = await Promise.all([userPromise, offerPromise, collabPromise]);
+
+    // Fetch images for each offer and map them
+    const offersWithImages = await Promise.all(offers.map(async (offer) => {
+      const images = await ImageOffre.findAll({
+        where: { id_offre: offer.id_offre },
+        attributes: ['image']
+      });
+      return { ...offer.dataValues, images: images.map(img => img.image) };
+    }));
+
+    if (users.length === 0 && offers.length === 0 && collaborators.length === 0) {
+      return res.status(200).json({ message: 'No users, offers, or collaborators found matching your search.' });
+    }
+
+    return res.status(200).json({ users, offers: offersWithImages, collaborators });
+  } catch (error) {
+    console.error('Error fetching users and offers by substring:', error);
+    return res.status(500).json({ message: 'Error fetching users and offers', error: error.message });
+  }
+};
+
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
+
+const client = new twilio(accountSid, authToken);
+
+exports.sendSMS = async (req, res) => {
+  const { phoneNumber } = req.body;
+
+  try {
+    const userId = req.userId;
+    const user = await Client.findOne({
+      where: {
+        id_utilisateur: userId
+      },
+      include: [{
+        model: Utilisateur,
+        as: 'utilisateur'
+      }],
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    }
+
+    if (user.points <= 0) {
+      return res.status(403).json({ message: 'Vous n\'avez pas assez de points pour envoyer un SMS.' });
+    }
+
+    // Calculate tomorrow's date
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const dateString = tomorrow.toLocaleDateString('fr-FR', { // Assuming you want the date in French format
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+
+    const messageBody = `Bonjour ${user.utilisateur.nom} ${user.utilisateur.prenom}, vous avez ${user.points} points valable jusqu'au ${dateString}`;
+
+    const messageResponse = await client.messages.create({
+      body: messageBody,
+      from: twilioPhoneNumber,
+      to: phoneNumber,
+    });
+
+    if (messageResponse.sid) {
+      await Client.update({ points: 0 }, { where: { id_utilisateur: userId } });
+      return res.status(200).json({ message: 'SMS envoyé avec succès. Vos points ont été réinitialisés.' });
+    } else {
+      return res.status(500).json({ message: 'Échec de l\'envoi du SMS.' });
+    }
+  } catch (error) {
+    console.error('Error in sendSMS:', error);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getPoints = async (req, res) => {
+  const id_utilisateur = req.userId; // Assuming user ID is retrieved from authentication middleware
+
+  try {
+    // Find the client record for the user ID
+    const client = await Client.findOne({ where: { id_utilisateur } });
+
+    if (client) {
+      // If client record exists, send the points in the response
+      res.status(200).json({ points: client.points });
+    } else {
+      // If client record does not exist, send an appropriate message
+      res.status(200).json({ message: 'Points not found for this user' });
+    }
+  } catch (error) {
+    // If an error occurs, send a 500 status response with the error message
+    res.status(500).json({ message: 'Error retrieving points', error: error.message });
+  }
+};
+exports.getUserBlockStatus = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await Utilisateur.findOne({
+      where: { id_utilisateur: userId },
+      attributes: ['blockSignalUntil'], // Assurez-vous que 'blockSignalUntil' est correctement défini dans votre modèle
+    });
+    if (user) {
+      res.json({ blockSignalUntil: user.blockSignalUntil });
+    } else {
+      res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 module.exports = exports;

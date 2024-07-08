@@ -9,15 +9,41 @@ import VerificationSignup from './pages/auth/verificationSignup';
 import LogoutButton from './pages/logoutButton';
 import InsererNom from './pages/auth/insererNom';
 import Load from './pages/auth/load';
-import TousLesUtilisateurs from './pages/admin/tousLesUtilisateurs';
-import Profil from './pages/profil';
-import ListClient from "./pages/admin/listClient";
-import ListEmploye from "./pages/admin/listEmploye";
+import TousLesUtilisateurs from './pages/admin/TousLesUtilisateurs/tousLesUtilisateurs';
+import Profil from './pages/profil/profil';
+import ListClient from './pages/admin/listClient/listClient';
+import ListEmploye from './pages/admin/listEmploye/listEmploye';
 import Navbar from './components/navbar/navbar';
 import NavbarHaut from './components/navbar/navbarHaut';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
+import ClientRestrictedRoute from './components/ClientRestrictedRoute'; 
+import AdminRestrictedRoute  from './components/AdminRestrictedRoute'; 
 import Home from './pages/home/home';
+import ListCollaborateur from './pages/admin/collaborateur/listCollaborateur';
+import ListCollab from './pages/admin/collaborateur/listCollab';
+import OffreAdmin from './pages/admin/offre/offreAdmin';
+import ListReservation from './pages/admin/reservation/CollabReserv';
+import CollaborateurPage from './pages/OffreEmploye/collaborateurPage';
+import OffreEmploye from './pages/OffreEmploye/OffreEmploye';
+import OffreEmployeDetails from './pages/OffreEmploye/OffreEmployeDetails';
+import CollaborateurClickPage from './pages/OffreEmploye/collabClickPage';
+import MyReservations from './pages/OffreEmploye/myReservation';
+import AdminPanel from './pages/admin/adherant/adminAdherant';
+import AdminSignalsPage from './pages/admin/signal/AdminSignalsPage';
+import PostLink from './components/postLink/postLink';
+import DemandeReservation from './pages/admin/reservation/CollabReserv2';
+import Message from './pages/message/message';
+import Dashboard from './pages/admin/dashboard/dashboard';
+import OffreAdminDetails from './pages/admin/offre/OffreAdminDetails';
+import AddFromCollaborateur from './pages/addFromCollab/addFromCollab';
+import ChatBot from './components/chatbot/chatbot';
+import ReclamationEmploye from './pages/OffreEmploye/ReclamationEmploye';
+import ReclamationsAdmin from './pages/admin/reclamations/ReclamationsAdmin';
+import Payment from './pages/OffreEmploye/paiement/Payment';
+import Success from './pages/OffreEmploye/paiement/Success';
+import Fail from './pages/OffreEmploye/paiement/Fail';
+
 function App() {
   return (
     <React.StrictMode>
@@ -25,23 +51,52 @@ function App() {
         <div className="App">
           <Routes>
             <Route
-              path="/"
+              path="/post/:postId"
+              element={
+                <ProtectedRoute>
+                  {' '}
+                  <Home />
+                  <PostLink />{' '}
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/Club22/:id_collaborateur"
+              element={<AddFromCollaborateur />}
+            />
+            <Route path="/payment" element={<Payment />} />{' '}
+            <Route path="/success" element={<Success />} />{' '}
+            <Route path="/fail" element={<Fail />} />
+            <Route
+              path="/payment"
               element={
                 <PublicRoute>
-                  <Login />
+                  {' '}
+                  <Payment />{' '}
                 </PublicRoute>
               }
             />
-
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/message" element={<Message />} />
+            <Route
+              path="/"
+              element={
+                <PublicRoute>
+                  {' '}
+                  <Login />{' '}
+                </PublicRoute>
+              }
+            />
             <Route
               path="/signup"
               element={
                 <PublicRoute>
-                  <Signup />
+                  {' '}
+                  <Signup />{' '}
                 </PublicRoute>
               }
             />
-
+            <Route path="/chatbot" element={<ChatBot />} />
             <Route
               path="/logout"
               element={
@@ -55,7 +110,8 @@ function App() {
               path="/insererNom"
               element={
                 <ProtectedRoute>
-                  <InsererNom />
+                  {' '}
+                  <InsererNom />{' '}
                 </ProtectedRoute>
               }
             />
@@ -63,7 +119,10 @@ function App() {
               path="/listClient"
               element={
                 <ProtectedRoute>
-                  <ListClient />
+                  <AdminRestrictedRoute>
+                    {' '}
+                    <ListClient />{' '}
+                  </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
             />
@@ -71,7 +130,174 @@ function App() {
               path="/listEmploye"
               element={
                 <ProtectedRoute>
-                  <ListEmploye />
+                  <AdminRestrictedRoute>
+                    {' '}
+                    <ListEmploye />{' '}
+                  </AdminRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/listCollaborateur"
+              element={
+                <ProtectedRoute>
+                  <AdminRestrictedRoute>
+                    {' '}
+                    <ListCollaborateur />{' '}
+                  </AdminRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/listCollab"
+              element={
+                <ProtectedRoute>
+                  <AdminRestrictedRoute>
+                    {' '}
+                    <ListCollab />{' '}
+                  </AdminRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/adminAdherant"
+              element={
+                <ProtectedRoute>
+                  <AdminRestrictedRoute>
+                    {' '}
+                    <AdminPanel />{' '}
+                  </AdminRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/adminSignal"
+              element={
+                <ProtectedRoute>
+                  <AdminRestrictedRoute>
+                    {' '}
+                    <AdminSignalsPage />{' '}
+                  </AdminRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reclamationsadmin"
+              element={
+                <ProtectedRoute>
+                  <AdminRestrictedRoute>
+                    {' '}
+                    <ReclamationsAdmin />{' '}
+                  </AdminRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/MesReservations"
+              element={
+                <ProtectedRoute>
+                  <ClientRestrictedRoute>
+                    {' '}
+                    <MyReservations />{' '}
+                  </ClientRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reclamation"
+              element={
+                <ProtectedRoute>
+                  <ClientRestrictedRoute>
+                    {' '}
+                    <ReclamationEmploye />{' '}
+                  </ClientRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/OffreAdmin"
+              element={
+                <ProtectedRoute>
+                  <AdminRestrictedRoute>
+                    {' '}
+                    <OffreAdmin />{' '}
+                  </AdminRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/OffreAdminDetails/:offreId"
+              element={
+                <ProtectedRoute>
+                  <AdminRestrictedRoute>
+                    <OffreAdminDetails />
+                  </AdminRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/listReservation"
+              element={
+                <ProtectedRoute>
+                  <AdminRestrictedRoute>
+                    {' '}
+                    <ListReservation />{' '}
+                  </AdminRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/demandeReservation"
+              element={
+                <ProtectedRoute>
+                  <AdminRestrictedRoute>
+                    {' '}
+                    <DemandeReservation />{' '}
+                  </AdminRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/collabPage"
+              element={
+                <ProtectedRoute>
+                  <ClientRestrictedRoute>
+                    {' '}
+                    <CollaborateurPage />{' '}
+                  </ClientRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/collabPage/:collabId"
+              element={
+                <ProtectedRoute>
+                  <ClientRestrictedRoute>
+                    {' '}
+                    <CollaborateurClickPage />{' '}
+                  </ClientRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/offrePage"
+              element={
+                <ProtectedRoute>
+                  <ClientRestrictedRoute>
+                    {' '}
+                    <OffreEmploye />{' '}
+                  </ClientRestrictedRoute>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/offrePageDetails/:offreId"
+              element={
+                <ProtectedRoute>
+                  <ClientRestrictedRoute>
+                    {' '}
+                    <OffreEmployeDetails />{' '}
+                  </ClientRestrictedRoute>
                 </ProtectedRoute>
               }
             />
@@ -85,7 +311,9 @@ function App() {
               path="/tousLesUtilisateurs"
               element={
                 <ProtectedRoute>
-                  <TousLesUtilisateurs />
+                  <AdminRestrictedRoute>
+                    <TousLesUtilisateurs />
+                  </AdminRestrictedRoute>
                 </ProtectedRoute>
               }
             />
@@ -93,7 +321,8 @@ function App() {
               path="/profil/:id"
               element={
                 <ProtectedRoute>
-                  <Profil />
+                  {' '}
+                  <Profil />{' '}
                 </ProtectedRoute>
               }
             />
@@ -101,7 +330,15 @@ function App() {
               path="/navbar"
               element={
                 <ProtectedRoute>
-                  <Navbar />
+                  <Navbar />{' '}
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/navbarHaut"
+              element={
+                <ProtectedRoute>
+                  <NavbarHaut />{' '}
                 </ProtectedRoute>
               }
             />
@@ -113,22 +350,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/navbarHaut"
-              element={
-                <ProtectedRoute>
-                  <NavbarHaut />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/home"
-              element={
-               
-                  <Home />
-               
-              }
-            />
+            <Route path="/home" element={<Home />} />
             <Route
               path="/activate-account/:userId/:token"
               element={<VerificationSignup />}

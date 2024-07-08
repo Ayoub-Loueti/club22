@@ -1,0 +1,262 @@
+.offre-admin-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+  background-color: #fff; /* White background for readability */
+  color: #191f43; /* Deep navy blue for text */
+}
+
+
+.offre-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.offre-card {
+  border: 1px solid #879eb9;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #f9f9f9; /* Slightly off-white for cards background */
+  justify-content: space-between; display: flex;
+  flex-direction: column;
+    text-align: center; /* Ensures text is aligned left */
+background-color: #f3f5f8;
+}
+.offre-card h2, p {
+  color: #191f43; /* Deep navy blue for text */
+}
+.offre-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.offre-card img {
+  width: 100%;
+ height: 200px; /* Hauteur fixe pour les images */
+  object-fit: cover;   border-radius: 5px;
+  transition: transform 0.5s ease;
+}
+
+.offre-card:hover img {
+  transform: scale(0.95);
+}
+
+.offre-card h2{
+  margin-bottom: 10px;
+         text-transform: uppercase; 
+
+}
+
+
+
+/* Add responsive design for smaller screens */
+@media (max-width: 768px) {
+  .offre-cards-container {
+    grid-template-columns: 1fr;
+  }
+}
+/* Primary Button (Add New Offer) */
+.add-offre-button {
+  padding: 10px 20px; /* Slightly larger for better visibility */
+  background-color: #c50f10; /* Vibrant red */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-offre-button:hover {
+  background-color: #a30e0e; /* Slightly darker on hover */
+}
+
+/* Secondary Buttons (Edit, Delete) */
+.offre-card button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 15px;
+}
+
+.offre-card button:first-child {
+  background-color: #879eb9; /* Soft blue for edit */
+  color: white;
+}
+
+.offre-card button:last-child {
+  background-color: #879eb9; /* Vibrant red for delete */
+  color: white;
+}
+
+.offre-card button:hover {
+  opacity: 0.9;
+}
+
+
+.offre-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 10px;}
+
+.offre-list-title {
+  color: #191f43; /* Deep navy blue for contrast */
+}
+
+.offre-list-search-input {
+  padding: 8px 15px;
+  width: 40%; /* Or adjust based on your layout needs */
+  border: 2px solid #879eb9; /* Styled to match your color scheme */
+  border-radius: 20px; /* Rounded borders for a modern look */
+  outline: none; /* Removes the default focus outline */
+  transition: border-color 0.3s ease;
+}
+
+.offre-list-search-input:focus {
+  border-color: #c50f10; /* Changes border color on focus */
+}
+.text-after-colon {
+  font-weight: bold;
+  color: #c50f10; /* Choose your preferred color */
+}
+.modifierOffreButton{
+   background-color: #879eb9; /* Your preferred button color */
+  color: white; /* Text color */
+    margin-right: 10px;
+
+}
+.modifierOffreButton:hover{
+  background-color: darken(#879eb9, 10%); /* Slightly darker on hover */
+
+}
+.offDes {
+  max-height: 90px;  /* Limit height to a small fixed value */
+  overflow-y: auto;  /* Enable vertical scrollbar when necessary */
+  text-align: justify;  /* Justify text for better alignment */
+  padding: 10px;  /* Padding inside the box */
+  margin: 10px 0;  /* Margin for spacing around the description box */
+  box-sizing: border-box;  /* Include padding in the box's dimension calculation */
+}
+
+/* Styling scrollbar within .offDes */
+.offDes::-webkit-scrollbar {
+  width: 6px;  /* Scrollbar width */
+}
+
+.offDes::-webkit-scrollbar-track {
+  background: #f0f0f0;  /* Light grey track */
+  border-radius: 10px;
+}
+
+.offDes::-webkit-scrollbar-thumb {
+  background-color: #ED1C24;  /* Dark grey thumb */
+  border-radius: 10px;
+  border: 2px solid #f0f0f0;  /* Light grey border around the thumb */
+}
+
+.offDes::-webkit-scrollbar-thumb:hover {
+  background-color: #879eb9;  /* Blue when hovered */
+}
+.category-filters button {
+  padding: 8px 16px;
+  margin-right: 10px;
+  border: none;
+  background-color: #c50f10;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-bottom: 20px;
+}
+
+.category-filters .active-filter-button {
+  font-weight: bold;
+  background-color: #5a7184;
+}
+
+.category-filters button:hover{
+  background-color: #6b85a4;
+
+}
+
+.see-more-link {
+  display: block;
+  color: #191f43;
+  text-align: center;
+  padding: 3px 0px;
+  border-radius: 5px;
+    text-decoration:underline ; 
+  transition: background-color 0.3s ease;
+}
+
+.see-more-link:hover {
+color: #6b85a4; 
+    text-decoration:underline ; 
+
+}
+
+.offre-card-content {
+  cursor: pointer; /* Indicates that the item is clickable */
+    text-decoration: none; /* Remove underline from links */
+
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Assure que tous les éléments sont alignés verticalement */
+  padding: 20px 0;
+  list-style: none;
+}
+
+.pagination li {
+  display: inline;
+  margin: 0 5px;
+}
+
+.pagination li a {
+  color: #191f43;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination li a:hover {
+  background-color: #ddd;
+    cursor: pointer;
+
+}
+
+.pagination li.active a {
+  background-color: #191f43;
+  color: white;
+  border: 1px solid #191f43;
+}
+
+.pagination .break-me {
+  cursor: default;
+}
+.pagination .pagination-previous,
+.pagination .pagination-next {
+  display: flex;
+  align-items: center; 
+  color: #191f43; 
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination .pagination-previous:hover,
+.pagination .pagination-next:hover {
+  background-color: #ddd;
+  cursor: pointer;
+}

@@ -1,0 +1,46 @@
+.list-client-container {
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+.list-client-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.list-client-header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #191F43;
+    flex: 1 100%;
+}
+
+.navigaate-container {
+    display: flex;
+    gap: 10px;
+    flex: 1 100%;
+    justify-content: flex-start;
+    margin-top: 10px;
+}
+
+.list-client-navigate-button {
+    padding: 8px 16px;
+    background-color: #A2C8CC;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+         font-weight: bold;
+
+}
+
+.list-client-navigate-button:hover {
+    background-color: #c5e0dc
+;
+}
+
+/* Ajoutez d'autres styles spécifiques à listClient si nécessaire */

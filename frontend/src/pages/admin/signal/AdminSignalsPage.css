@@ -1,0 +1,22 @@
+.adminSignalsContainer {
+  padding: 20px;
+  background-color: #f9f9fb; /* Light background for better contrast */
+}
+
+.adminSignalsContainer h2 {
+  text-align: center;
+  color: #333;
+}
+
+.adminSignalsContainer button {
+  margin-top: 10px;
+  cursor: pointer;
+  border: none; /* Remove default borders */
+  padding: 10px 20px; /* Padding for better touch */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.adminSignalsContainer button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}

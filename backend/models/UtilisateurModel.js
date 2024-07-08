@@ -33,6 +33,10 @@ const UtilisateurModel = sequelize.define(
     etat: {
       type: DataTypes.ENUM('En attente', 'autorise', 'bloque'),
     },
+    tel: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     resetPasswordToken: {
       type: DataTypes.STRING,
     },
@@ -51,6 +55,14 @@ const UtilisateurModel = sequelize.define(
     },
     lockUntil: {
       type: DataTypes.TIME,
+      defaultValue: null,
+    },
+    nbr_notifs: {
+      type: DataTypes.INTEGER,
+    },
+    blockSignalUntil: {
+      type: DataTypes.DATE,
+      allowNull: true,
       defaultValue: null,
     },
   },

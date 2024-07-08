@@ -1,0 +1,137 @@
+.offre-employee-container {
+  padding: 20px;
+}
+
+.offre-employee-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 25px;
+    margin-top: 20px;
+
+  color: #191f43;
+
+}
+
+.offre-employee-cards-container {
+  display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+      padding: 0 2rem;
+
+}
+
+.offre-employee-card {
+  position: relative;
+  border: 1px solid #ccc;
+      border-radius: 1rem;
+      padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+   min-height: 350px; /* Adjust based on your content */
+  display: flex;
+  flex-direction: column;
+      transition: 0.3s ease-in-out;
+              gap: 0.5rem;
+
+
+}
+
+.offre-employee-card:hover {
+ transform: translateX(0.4rem) translateY(-1rem);
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+
+}
+
+.offre-employee-card img {
+ width: 100%; /* ensures the image takes the full width of the card */
+  height: 200px; /* adjust based on your preference */
+  object-fit: cover; /* maintain aspect ratio without distortion */
+  transition: transform 0.5s ease;
+        border-radius: 1rem;
+
+}
+
+.offre-employee-card:hover img {
+  transform: scale(0.9); /* Decrease the size of the image on hover */
+}
+
+.offre-employee-card h2 {
+           text-transform: uppercase; 
+
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 42px;
+  color: rgba(25, 31, 67, 0.48);
+}
+
+.offre-employee-card p {
+  margin-bottom: 10px;
+}
+.offre-employee-card .rating span {
+  font-size: 24px;
+  color: #ffd700; /* Couleur des étoiles */
+  margin-right: 5px;
+    margin-top: auto;
+    
+}
+.voirPlusOffre {
+  padding: 8px 27px;
+  border: none;
+  border-radius: 10px;
+  background-color: #879eb9;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: auto;
+}
+
+.voirPlusOffre:hover {
+  background-color: #6b85a4;
+  box-shadow: 0 6px 9px rgba(0, 0, 0, 0.2);
+}
+
+.remise-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: #ED1C24; 
+  color: white;
+  border-radius: 50%; 
+  padding: 10px 15px; 
+  font-size: 18px; 
+  font-weight: bold;
+  z-index: 1; 
+}
+
+.filters button {
+  padding: 8px 16px;
+  margin-right: 10px;
+  border: none;
+  background-color: #879eb9;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-bottom: 70px;
+}
+
+.filters button:hover {
+  background-color: #6b85a4;
+}
+
+.filters .active {
+  font-weight: bold;
+  background-color: #5a7184;
+}
+
+.date-expiration p {
+  color: #d9534f; /* Rouge pour l'urgence */
+  font-weight: bold;
+  margin-top: 5px;
+}
+.apartir{
+  font-size: medium;
+  color: #191f43;
+}

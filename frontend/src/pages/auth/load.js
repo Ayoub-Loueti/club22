@@ -16,16 +16,19 @@ function Load() {
         const params = new URLSearchParams(location.search);
         const token = params.get('token');
         const userId = params.get('userId');
+        const type = params.get('type');
         console.log('Token:', token);
         console.log('UserId:', userId);
-        if (token && userId) {
+        console.log('User Type:', type);
+        if (token && userId && type) {
           localStorage.setItem('login', JSON.stringify({ isAuthenticated: true, token }));
-          localStorage.setItem('userId', JSON.stringify(userId)); // Save userId to localStorage
+          localStorage.setItem('userId', JSON.stringify(userId));
+          localStorage.setItem('userType', JSON.stringify(type));  // Correctly storing the user type
           setLoading(false);
           navigate(`/profil/${userId}`); // Redirect to the profile page
         } else {
           setLoading(false);
-          MySwal.fire('Error', 'Token or userId not found.', 'error');
+          MySwal.fire('Error', 'Token, userId or userType not found.', 'error');
         }
       } catch (error) {
         setLoading(false);

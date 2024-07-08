@@ -13,6 +13,7 @@ function LogoutButton() {
       });
       localStorage.removeItem('login');
       localStorage.removeItem('userId');
+      localStorage.removeItem('userType');
       setIsAuthenticated(false);
       navigate('/');
     } catch (error) {

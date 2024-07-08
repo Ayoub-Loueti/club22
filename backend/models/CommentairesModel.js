@@ -32,7 +32,15 @@ const CommentairesModel = sequelize.define('Commentaires', {
             model: 'utilisateur',
             key: 'id_utilisateur',
         },
-    }
+    },
+    nbr_likeCom: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+      },
+      semaineCom: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+      },
 }, {
     tableName: 'commentaires',
     timestamps: false

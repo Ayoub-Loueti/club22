@@ -1,0 +1,381 @@
+.messagePageContainer {
+    height: 100%;
+    margin: 0;
+    padding: 60px;
+    background: #7F7FD5;
+    background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+    background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+}
+/*body,
+html {
+	height: 100%;
+	margin: 0;
+	background: #7F7FD5;
+	background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+	background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+}*/
+
+.chatMsgs {
+	margin-top: auto;
+	margin-bottom: auto;
+}
+
+.cardMsgs {
+	height: 500px;
+	border-radius: 15px !important;
+	background-color: rgba(0, 0, 0, 0.4) !important;
+}
+
+.contacts_bodyMsgs {
+    padding: 0.75rem 0 !important;
+    overflow-y: auto;
+    white-space: nowrap;
+    position: relative;
+}
+
+
+
+.card-headerMsgs {
+	border-radius: 15px  !important;
+	border-bottom: 0 !important;
+}
+
+.card-footerMsgs {
+   	border-radius: 15px !important;
+	border-top: 0 !important;
+}
+
+.containerMsg {
+	align-content: center;
+}
+.online_icon {
+    position: absolute;
+    height: 15px;
+    width: 15px;
+    background-color: #4cd137; 
+    border-radius: 50%;
+    right: 272px;
+       border: 2px solid white;
+ 
+    bottom: 10px;
+}
+.searchMsgs {
+    border-radius: 15px !important;
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    color: white !important;
+    background-repeat: no-repeat;
+    background-position: 5px center; /* Position de l'icône */
+    outline: none;
+    
+}
+.searchMsgs::placeholder {
+    color: white; /* Couleur du texte du placeholder */
+    opacity: 1; /* Firefox fix pour la couleur du placeholder */
+}
+.searchMsgs:focus {
+  box-shadow: none !important;
+    border: none !important;
+}
+.user_connected_title {
+    color: white; /* Couleur du texte */
+    font-size: 18px; /* Taille de la police */
+    font-weight: bold; /* Gras pour le titre */
+    padding-left: 10px; /* Espacement à gauche pour alignement */
+    margin-bottom: 10px; /* Espacement en bas */
+}
+.type_msgMsgs {
+	background-color: rgba(0, 0, 0, 0.3) !important;
+	border: 0 !important;
+	color: white !important;
+	overflow-y: auto;
+     width: 81% !important;
+   	border-radius: 15px !important;
+margin-left: 15px !important;
+margin-bottom: 20px !important;
+
+}
+.type_msgMsgs::placeholder {
+    color: white !important;
+    opacity: 1; 
+}
+.type_msgMsgs:focus {
+	box-shadow: none !important;
+	outline: 0px !important;
+       	border-radius: 15px !important;
+
+}
+
+.attach_btnMsgs {
+	border-radius: 15px 0 0 15px !important;
+	background-color: rgba(0, 0, 0, 0.3) !important;
+	border: 0 !important;
+	color: white !important;
+	cursor: pointer;
+}
+
+.send_btnMsgs {
+   	border-radius: 15px !important;
+	background-color: rgba(0, 0, 0, 0.3) !important;
+	border: 0 !important;
+	color: white !important;
+	cursor: pointer;
+    margin-bottom: 20px !important;
+}
+
+.search_btnMsgs {
+   	border-radius: 15px !important;
+	background-color: rgba(0, 0, 0, 0.3) !important;
+	border: 0 !important;
+	color: white !important;
+	cursor: pointer;
+}
+
+.contactsMsgs {
+ position: relative;
+    margin-right: 10px;
+}
+
+.contactsMsgs li {
+	width: 100% !important;
+	padding: 5px 10px;
+	margin-bottom: 15px !important;
+}
+
+
+
+.user_imgMsgs {
+	height: 60px;
+	width: 60px;
+	border: 1.5px solid #f5f6fa;
+}
+
+.user_img_msgMsgs {
+	height: 40px;
+	width: 40px;
+	border: 1.5px solid #f5f6fa;
+}
+
+.img_contMsgs {
+	position: relative;
+	height: 70px;
+	width: 70px;
+}
+
+.img_cont_msgMsgs {
+	height: 40px;
+	width: 40px;
+}
+
+
+.offlineMsgs {
+	background-color: #c23616 !important;
+}
+
+.user_infoMsgs {
+	margin-top: auto;
+	margin-bottom: auto;
+	margin-left: 15px;
+}
+
+.user_infoMsgs span {
+	font-size: 20px;
+	color: white;
+}
+
+.user_infoMsgs p {
+	font-size: 10px;
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.video_camMsgs {
+	margin-left: 50px;
+	margin-top: 5px;
+}
+
+.video_camMsgs span {
+	color: white;
+	font-size: 20px;
+	cursor: pointer;
+	margin-right: 20px;
+}
+
+.msg_cotainerMsgs {
+    
+	margin-top: 10px;
+	margin-bottom: 20px;
+	margin-left: 10px;
+	border-radius: 25px;
+	background-color: #82ccdd;
+	padding: 10px;
+	position: relative;
+         width: 98% !important;
+
+}
+
+.msg_cotainer_sendMsgs {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	margin-right: 20px;
+	border-radius: 25px;
+	background-color: #78e08f;
+	padding: 10px;
+	position: relative;
+}
+
+.msg_timeMsgs {
+	position: absolute;
+	left: 0;
+	bottom: -15px;
+	color: rgba(255, 255, 255, 0.5);
+	font-size: 10px;
+}
+
+.msg_time_sendMsgs {
+	position: absolute;
+	right: 0;
+	bottom: -15px;
+	color: rgba(255, 255, 255, 0.5);
+	font-size: 10px;
+}
+
+.msg_headMsgs {
+	position: relative;
+    color: white;
+    font-weight: bold;
+    font-size: 24px !important;
+    justify-content: center !important;
+    align-items: center !important;
+      text-transform: uppercase;
+
+}
+/*
+#action_menu_btn {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	color: white;
+	cursor: pointer;
+	font-size: 20px;
+}
+
+.action_menu {
+	z-index: 1;
+	position: absolute;
+	padding: 15px 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	color: white;
+	border-radius: 15px;
+	top: 30px;
+	right: 15px;
+	display: none;
+}
+
+.action_menu ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.action_menu ul li {
+	width: 100%;
+	padding: 10px 15px;
+	margin-bottom: 5px;
+}
+
+.action_menu ul li i {
+	padding-right: 10px;
+}
+
+.action_menu ul li:hover {
+	cursor: pointer;
+	background-color: rgba(0, 0, 0, 0.2);
+}
+*/
+
+/* width 
+
+::-webkit-scrollbar {
+	width: 10px;
+}
+
+
+Track 
+
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+
+
+
+::-webkit-scrollbar-thumb {
+	background: #888;
+}
+
+
+
+::-webkit-scrollbar-thumb:hover {
+	background: #555;
+}*/
+
+.discussionsCard {
+    background-color: rgba(0, 0, 0, 0.4); /* Fond semi-transparent noir */
+    border-radius: 15px; /* Bords arrondis */
+    padding: 20px; /* Espacement interne */
+    margin-bottom: 20px; /* Espacement externe en bas */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Ombre subtile */
+    overflow: hidden; /* Assure que tout contenu débordant est masqué */
+}
+
+/* Appliquer également des styles pour les éléments internes si nécessaire */
+.discussionsCard h6 {
+    color: white; /* Texte en blanc */
+    margin-bottom: 10px; /* Espacement après le titre */
+}
+
+.discussionsCard .MuiButton-root {
+    background-color: #78e08f; /* Vert pour le bouton */
+    color: white;
+    border-radius: 20px;
+    padding: 10px 20px;
+}
+
+.discussionsCard .MuiTextField-root {
+    background-color: rgba(255, 255, 255, 0.1); /* Fond légèrement visible pour le champ de texte */
+    border-radius: 10px;
+    border: none;
+    color: white;
+}
+/* Discussion*/
+.discussionsCard::-webkit-scrollbar {
+	width: 10px;
+}
+.discussionsCard::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+.discussionsCard::-webkit-scrollbar-thumb {
+	background: #888;
+}
+.discussionsCard::-webkit-scrollbar-thumb:hover {
+	background: #555;
+}
+
+
+/*CARD MSGS */
+.msg_card_bodyMsgs::-webkit-scrollbar {
+	width: 10px;
+}
+.msg_card_bodyMsgs::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+.msg_card_bodyMsgs::-webkit-scrollbar-thumb {
+	background: #888;
+}
+.msg_card_bodyMsgs::-webkit-scrollbar-thumb:hover {
+	background: #555;
+}
+
+@media(max-width: 576px) {
+	.contacts_cardMsgs {
+		margin-bottom: 15px !important;
+	}
+}

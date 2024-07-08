@@ -7,6 +7,13 @@ import ooredoo1Image from '../../assets/ooredoo1.png';
 import ooredoo3Image from '../../assets/ooredoo3.png';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { TextField, Button, Container, Box, Typography, IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+
 function Login() {
   const [email, setEmail] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
@@ -16,6 +23,9 @@ function Login() {
   const [showConfirmationMessage, setShowConfirmationMessage] = useState(false);
   const navigate = useNavigate();
   const MySwal = withReactContent(Swal);
+  const [showPassword, setShowPassword] = useState(false);
+  const theme = useTheme(); // Déplacez useTheme ici
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleForgotPassword = async () => {
     if (!email) {
@@ -58,8 +68,9 @@ function Login() {
       });
       const { token, user,shouldUpdateProfile} = response.data;
       localStorage.setItem('login', JSON.stringify({ isAuthenticated: true, token }));
-      localStorage.setItem('userId', JSON.stringify(user.id_utilisateur)); // Store user ID upon login
-  
+      localStorage.setItem('userId', JSON.stringify(user.id_utilisateur.toString())); // Store user ID upon login
+      localStorage.setItem('userType', JSON.stringify(user.type)); // Storing the user type in local storage
+
       setLoading(false);
       if (shouldUpdateProfile){
 navigate ('/insererNom')
@@ -86,15 +97,33 @@ navigate ('/insererNom')
             confirmButtonText: 'Ok',
           });
         }
-        // Account is not authorized to log in
-        else if (error.response.data.error.includes('n’est pas autorisé')) {
-          Swal.fire({
-            title: 'Compte Non Autorisé',
-            text: 'Le compte utilisateur n’est pas autorisé à se connecter.',
-            icon: 'error',
-            confirmButtonText: 'Ok',
-          });
-        }
+else if (error.response.data.error.includes('n’est pas autorisé')) {
+  Swal.fire({
+    title: 'Compte Non Autorisé',
+    html: `
+      <p>Le compte utilisateur n’est pas autorisé à se connecter.</p>
+      <button id="resendEmailBtn" class="swal2-confirm swal2-styled"
+        style="border: 0; display: block; margin: 10px auto; padding: 10px 20px;">
+        Renvoyer l'email (${countdown})
+      </button>
+    `,
+    icon: 'error',
+    showConfirmButton: false,  // Hide the default confirm button
+    didOpen: () => {
+      const btn = document.getElementById('resendEmailBtn');
+      btn.disabled = resendDisabled;
+      btn.addEventListener('click', () => {
+        handleResendEmail();
+        btn.innerText = 'Renvoyer l\'email (' + countdown + ')';
+      });
+    },
+    willClose: () => {
+      if (document.getElementById('resendEmailBtn')) {
+        document.getElementById('resendEmailBtn').removeEventListener('click', handleResendEmail);
+      }
+    }
+  });
+}
         // Incorrect password or other login errors
         else {
           Swal.fire({
@@ -146,7 +175,133 @@ navigate ('/insererNom')
    }
  };
 
+ const togglePasswordVisibility = () => {
+  setShowPassword(!showPassword);
+};
 
+if (isMobile) {
+  return (
+    <Box className="login-page" sx={{
+      backgroundColor: '#1e1e1e',
+      height: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      backgroundImage: `url(${ooredoo3Image})`,
+      alignItems: 'center',
+    }}>
+      <Container maxWidth="sm" sx={{
+        display: 'flex',
+        flexDirection: { xs: 'column', md: 'row' },
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        padding: { xs: 2, sm: 4 },
+      }}>
+        <Box sx={{
+          width: '100%',
+          maxWidth: { sm: '500px' },
+          backgroundColor: 'white',
+          borderRadius: 2,
+          p: 3,
+          boxShadow: 3,
+          position: 'relative',
+        }}>
+          <img src={ooredoo1Image} alt="logo ooredoo" style={{ width: '100%', maxWidth: '200px', margin: '0 auto' }} />
+          <Typography variant="h5" component="h1" gutterBottom sx={{
+            color: '#2B3467',
+            fontSize: { xs: '1.25rem', sm: '1.5rem' },
+          }}>
+            Connexion
+          </Typography>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Mot de passe"
+              type={showPassword ? 'text' : 'password'}
+              id="password"
+              autoComplete="current-password"
+              value={motDePasse}
+              onChange={(e) => setMotDePasse(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={togglePasswordVisibility}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{
+                mt: 1.8, mb: 2,
+                backgroundColor: '#191F43',
+                '&:hover': {
+                  backgroundColor: '#someDarkerColor',
+                },
+                fontSize: { xs: '0.875rem', sm: '1rem' },
+              }}
+            >
+              Se connecter
+            </Button>
+            <Typography
+              sx={{
+                textAlign: 'center',
+                color: '#4F5475',
+                fontWeight: 'bold',
+                mt: 1,
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+              }}
+            >
+              Vous n'avez pas de compte ?&nbsp;
+              <a href="/signup" style={{
+                color: 'red',
+                textDecoration: 'none',
+              }}>
+                Inscrivez-vous
+              </a>
+            </Typography>
+            <a
+              href="http://localhost:5000/auth/google"
+              className="google-auth-link"
+              style={{
+                display: 'block',
+                textAlign: 'center',
+                marginTop: '20px',
+                textDecoration: 'none',
+                color: '#191F43',
+                fontWeight: 'bold',
+              }}
+            >
+              Connectez-vous avec Google
+            </a>
+          </Box>
+        </Box>
+      </Container>
+    </Box>
+  );
+} else {
   return (
     <div className="login-page">
       <div className="white-square">
@@ -189,12 +344,15 @@ navigate ('/insererNom')
               <div className="form-group">
                 <h3 className="input-label">Mot de passe</h3>
                 <input
-                  type="password"
-                  value={motDePasse}
+                   type={showPassword ? "text" : "password"}
+                   value={motDePasse}
                   onChange={(e) => setMotDePasse(e.target.value)}
                   className="input-field"
                   required
                 />
+                 <span onClick={togglePasswordVisibility} style={{ cursor: 'pointer', position: 'absolute', right: '60px', top: '257px' }}>
+          <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} style={{ color: '#4F5475' }} />
+        </span>
               </div>
 
               <div className="form-group">
@@ -376,6 +534,7 @@ navigate ('/insererNom')
       </div>
     </div>
   );
+}
 }
 
 export default Login;

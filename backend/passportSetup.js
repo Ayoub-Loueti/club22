@@ -36,6 +36,7 @@ passport.use(
             nom: profile.name.familyName,
             prenom: profile.name.givenName,
             email,
+            etat:'autorise'
             // Default values or null for other fields
           });
           const loginSuccess = loginSuccessEmailTemplate(user.nom,user.prenom);

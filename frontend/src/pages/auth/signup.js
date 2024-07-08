@@ -4,14 +4,26 @@ import ooredoo1Image from '../../assets/ooredoo1.png';
 import ooredoo3Image from '../../assets/ooredoo3.png';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 
 import {  useNavigate } from 'react-router-dom';
+
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { TextField, Button, Container, Box, Typography, IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 function Signup() {
  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const theme = useTheme(); // Déplacez useTheme ici
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const navigate = useNavigate(); 
 
@@ -21,7 +33,9 @@ function Signup() {
   };
 
   const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
+    const newPassword = event.target.value;
+    setPassword(newPassword);
+    updatePasswordValidity(newPassword);
   };
 
   const handleConfirmPasswordChange = (event) => {
@@ -31,10 +45,14 @@ function Signup() {
  const handleSubmit = async (event) => {
    event.preventDefault();
 
-   if (password !== confirmPassword) {
-     Swal.fire('Erreur', 'Les mots de passe ne correspondent pas.', 'error');
-     return;
-   }
+   if (password !== confirmPassword || !isPasswordValid) {
+    Swal.fire(
+      'Erreur',
+      'Le mot de passe ne remplit pas toutes les conditions ou les mots de passe ne correspondent pas.',
+      'error'
+    );
+    return;
+  }
 
    try {
      await axios.post('http://localhost:5000/signup', {
@@ -64,9 +82,198 @@ navigate("/")
    }
  };
 
+ const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+ const [isPasswordValid, setIsPasswordValid] = useState(false);
 
+ const hasLength = (password) => password.length >= 8;
+ const hasUpperAndLower = (password) => /[A-Z]/.test(password) && /[a-z]/.test(password);
+ const hasNumber = (password) => /\d/.test(password);
 
+ const updatePasswordValidity = (password) => {
+  // Check all conditions and set the password validity
+  const isValid =
+    hasLength(password) &&
+    hasUpperAndLower(password) &&
+    hasNumber(password);
+  setIsPasswordValid(isValid);
+};
 
+const togglePasswordVisibility = () => {
+  setShowPassword(!showPassword);
+};
+
+const toggleConfirmPasswordVisibility = () => {
+  setShowConfirmPassword(!showConfirmPassword);
+};
+
+if (isMobile) {
+  return (
+    <Box className="signup-page" sx={{
+      backgroundColor: '#1e1e1e',
+      height: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      backgroundImage: `url(${ooredoo3Image})`,
+      alignItems: 'center',
+    }}>
+      <Container maxWidth="sm" sx={{
+        display: 'flex',
+        flexDirection: { xs: 'column', md: 'row' },
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        padding: { xs: 2, sm: 4 },
+      }}>
+        <Box sx={{
+          width: '100%',
+          maxWidth: { sm: '500px' },
+          backgroundColor: 'white',
+          borderRadius: 2,
+          p: 3,
+          boxShadow: 3,
+          position: 'relative',
+        }}>
+          <img src={ooredoo1Image} alt="logo ooredoo" style={{ width: '100%', maxWidth: '200px', margin: '0 auto' }} />
+          <Typography variant="h5" component="h1" gutterBottom sx={{
+            color: '#2B3467',
+            fontSize: { xs: '1.25rem', sm: '1.5rem' },
+          }}>
+            Inscription
+          </Typography>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={email}
+              onChange={handleEmailChange}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Mot de passe"
+              type={showPassword ? 'text' : 'password'}
+              id="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={handlePasswordChange}
+              onFocus={() => setIsPasswordFocused(true)}
+              onBlur={() => setIsPasswordFocused(false)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={togglePasswordVisibility}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
+            {isPasswordFocused && (
+              <div style={{ marginTop: '0.1rem' }} className="password-validation-popup">
+                <p>
+                  <FontAwesomeIcon icon={faExclamationCircle} /> Le mot de passe doit avoir:
+                </p>
+                <ul>
+                  <li className={hasLength(password) ? 'valid' : 'invalid'}>
+                    <span className="icon"></span>8 caractères ou plus
+                  </li>
+                  <li className={hasUpperAndLower(password) ? 'valid' : 'invalid'}>
+                    <span className="icon"></span>des majuscules et des minuscules
+                  </li>
+                  <li className={hasNumber(password) ? 'valid' : 'invalid'}>
+                    <span className="icon"></span>au moins un chiffre
+                  </li>
+                </ul>
+              </div>
+            )}
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="confirmPassword"
+              label="Confirmer votre mot de passe"
+              type={showConfirmPassword ? 'text' : 'password'}
+              id="confirmPassword"
+              autoComplete="current-password"
+              value={confirmPassword}
+              onChange={handleConfirmPasswordChange}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={toggleConfirmPasswordVisibility}
+                      edge="end"
+                    >
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{
+                mt: 1.8, mb: 2,
+                backgroundColor: '#191F43',
+                '&:hover': {
+                  backgroundColor: '#someDarkerColor',
+                },
+                fontSize: { xs: '0.875rem', sm: '1rem' },
+              }}
+            >
+              S'inscrire
+            </Button>
+            <Typography
+              sx={{
+                textAlign: 'center',
+                color: '#4F5475',
+                fontWeight: 'bold',
+                mt: 1,
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+              }}
+            >
+              Vous avez déjà un compte ?&nbsp;
+              <a href="/" style={{
+                color: 'red',
+                textDecoration: 'none',
+              }}>
+                Connectez-vous
+              </a>
+            </Typography>
+            <a
+              href="http://localhost:5000/auth/google"
+              className="google-auth-link"
+              style={{
+                display: 'block',
+                textAlign: 'center',
+                marginTop: '20px',
+                textDecoration: 'none',
+                color: '#191F43',
+                fontWeight: 'bold',
+              }}
+            >
+              Connectez-vous avec Google
+            </a>
+          </Box>
+        </Box>
+      </Container>
+    </Box>
+  );
+} else {
   return (
     <div className="signup-container">
       <div className="signup-green-square">
@@ -170,29 +377,65 @@ navigate("/")
                   onChange={handleEmailChange}
                   className="signup-input-field"
                   required
+                  pattern="[^@\s]+@[^@\s]+\.[^@\s]+"
+                  title="Veuillez inclure un '@' et un domaine dans l'adresse e-mail. Par exemple : utilisateur@exemple.com"
+                  placeholder="utilisateur@exemple.com"
                 />
               </div>
               <div className="form-group">
-                <h3 className="signup-input-label">Mot de passe</h3>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={handlePasswordChange}
-                  className="signup-input-field"
-                  required
-                />
+              <h3 className="signup-input-label">Mot de passe</h3>
+              <input
+               type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={handlePasswordChange}
+                onFocus={() => setIsPasswordFocused(true)}
+                onBlur={() => setIsPasswordFocused(false)}
+                className="signup-input-field"
+                required
+              />
+               <span onClick={togglePasswordVisibility} style={{ cursor: 'pointer', position: 'absolute', right: '60px', top: '257px' }}>
+          <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} style={{ color: '#4F5475' }} />
+        </span>
+        {isPasswordFocused && (
+                  <div className="password-validation-popup">
+                    <p>
+                      {' '}
+                      <FontAwesomeIcon icon={faExclamationCircle} /> Le mot de
+                      passe doit avoir:
+                    </p>
+                    <ul>
+                      <li className={hasLength(password) ? 'valid' : 'invalid'}>
+                        <span className="icon"></span>8 caractères ou plus
+                      </li>
+                      <li
+                        className={
+                          hasUpperAndLower(password) ? 'valid' : 'invalid'
+                        }
+                      >
+                        <span className="icon"></span>des majuscules et des
+                        minuscules
+                      </li>
+                      <li className={hasNumber(password) ? 'valid' : 'invalid'}>
+                        <span className="icon"></span>au moins un chiffre
+                      </li>
+                    </ul>
+                  </div>
+                )}
               </div>
               <div className="form-group">
                 <h3 className="signup-input-label">
                   Confirmer votre mot de passe
                 </h3>
                 <input
-                  type="password"
-                  value={confirmPassword}
+                   type={showConfirmPassword ? "text" : "password"}
+                   value={confirmPassword}
                   onChange={handleConfirmPasswordChange}
                   className="signup-input-field"
                   required
                 />
+                 <span onClick={toggleConfirmPasswordVisibility} style={{ cursor: 'pointer', position: 'absolute', right: '60px', top: '344px' }}>
+          <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} style={{ color: '#4F5475' }} />
+        </span>
               </div>
 
               <button
@@ -208,7 +451,7 @@ navigate("/")
                   fontWeight: 'bold',
                   cursor: 'pointer',
                   position: 'absolute',
-                  top: '71%',
+                  top: '77%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
                   zIndex: '1',
@@ -223,7 +466,7 @@ navigate("/")
                   color: '#4F5475',
                   textAlign: 'center',
                   position: 'absolute',
-                  top: '76%',
+                  top: '82%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
                   zIndex: '1',
@@ -237,7 +480,7 @@ navigate("/")
                 className="google-auth-link"
                 style={{
                   position: 'absolute',
-                  top: '85%',
+                  top: '92%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
                   zIndex: '1',
@@ -268,6 +511,7 @@ navigate("/")
       <div className="signup-white-square"></div>{' '}
     </div>
   );
+}
 }
 
 export default Signup;
